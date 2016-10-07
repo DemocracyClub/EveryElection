@@ -87,3 +87,20 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+
+every_election/settings/local.py
+every_election/settings/production.py
+
+# collect static output directory
+every_election/assets/
+every_election/static/
+
+.DS_Store
+
+# node
+node_modules/
+
+# bower packages
+every_election/assets-src/vendor/
+.sass-cache/
