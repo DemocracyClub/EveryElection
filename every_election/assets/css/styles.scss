@@ -1,0 +1,15 @@
+@import 'dc_base';
+
+body {
+    background: #eee;
+}
+
+footer {
+  margin-top: 2em;
+
+  .dc-logo {
+      height: 45px;
+      margin-left: .5em;
+  }
+
+}
