@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<section class="columns large-6 large-centered">
+
+  <div class="card postcode_card">
+      <h2>Supported Organisations</h2>
+      <p>The following is a list of organisations that this project supports.</p>
+      <p>That means, we track elections for organisations on this list</p>
+
+      {% for object in object_list %}
+      <h3>{{ object.name }}</h3>
+      <p>Also known as "{{ object.common_name }}".</p>
+      <p>For election IDs, this should be referred to as <code>{{ object.slug }}</code></p>
+      <p>The official identifier is <code>{{ object.official_identifier }}</code></p>
+      <p>The organisation type is <code>{{ object.organisation_type }}</code></p>
+
+      {% endfor %}
+
+
+  </div>
+
+</section>
+{% endblock content %}

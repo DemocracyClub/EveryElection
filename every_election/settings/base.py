@@ -32,6 +32,7 @@ INSTALLED_APPS = [
 PROJECT_APPS = [
     'dc_theme',
     'static_precompiler',
+    'organisations',
 ]
 
 INSTALLED_APPS += PROJECT_APPS
@@ -158,6 +159,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 SITE_TITLE = "Every Election"
 
+DATA_CACHE_DIR = root('data_cache')
 
 # .local.py overrides all the common settings.
 try:
