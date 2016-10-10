@@ -8,6 +8,17 @@
 {% endblock extra_site_css %}
 
 
+{% block top_banner %}
+<nav class="top-bar ">
+        <div class="top-bar-left">
+            <ul class="menu">
+                <li><a href="{% url "home"%}">Home</a></li>
+                <li><a href="{% url "organisations_view"%}">Organisations</a></li>
+            </ul>
+          </div>
+</nav>
+{% endblock top_banner %}
+
 {% block base_title %}{% block page_title %}{% endblock page_title %} | WhereDoIVote?{% endblock base_title %}
 
 {% block site_meta %}
