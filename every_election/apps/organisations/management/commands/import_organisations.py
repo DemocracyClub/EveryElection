@@ -11,6 +11,16 @@ class Command(BaseCommand):
         # Local Authorities England
         local_authority_eng_importer()
 
+        # TODO: Local Authorities Wales
+
+        # TODO: Local Authorities Scotland
+
+        # TODO: Police force
+
+        # TODO: GLA
+
+        # TODO: Mayors
+
 
         # Parl
         Organisation.objects.update_or_create(

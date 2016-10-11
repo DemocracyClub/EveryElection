@@ -33,6 +33,7 @@ PROJECT_APPS = [
     'dc_theme',
     'static_precompiler',
     'organisations',
+    'elections',
 ]
 
 INSTALLED_APPS += PROJECT_APPS

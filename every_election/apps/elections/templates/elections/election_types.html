@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<section class="columns large-6 large-centered">
+
+  <div class="card postcode_card">
+      <h2>Election Types</h2>
+
+      {% for object in object_list %}
+      <h3>{{ object.name }}</h3>
+      <p>Election type: <code>{{ object.election_type }}</code></p>
+
+      {# <h5>Example Election ID</h5> #}
+      {# <code> #}
+      {#     {{ object.election_type }} #}
+      {#     {% if object.subtype.all %} #}
+      {#     .{{ object.subtype.all.0 }} #}
+      {#     {% endif %} #}
+      {# </code> #}
+
+      {% if object.subtype.all %}
+          <h5>Subtypes</h5>
+          <ul>
+          {% for subtype in object.subtype.all %}
+              <li>{{ subtype.name }}: <code>{{ subtype.election_subtype }}</code></li>
+          {% endfor %}
+          </ul>
+      {% endif %}
+      {% endfor %}
+
+
+  </div>
+
+</section>
+{% endblock content %}
