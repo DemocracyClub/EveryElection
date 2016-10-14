@@ -3,6 +3,7 @@ from django.conf import settings
 
 from organisations.models import Organisation
 from organisations.importers import local_authority_eng_importer
+from elections.models import ElectedRole, ElectionType
 
 
 class Command(BaseCommand):
@@ -23,7 +24,7 @@ class Command(BaseCommand):
 
 
         # Parl
-        Organisation.objects.update_or_create(
+        organisation, _ = Organisation.objects.update_or_create(
             official_identifier='parl-hoc',
             organisation_type="parl",
             defaults={
@@ -32,6 +33,13 @@ class Command(BaseCommand):
                 'slug': 'parl',
             }
         )
+        election_type = ElectionType.objects.get(election_type='parl')
+        ElectedRole.objects.update_or_create(
+            election_type=election_type,
+            organisation=organisation,
+            defaults={'elected_title': "Member of Parliament",}
+        )
+
 
         # # Lords
         # TODO

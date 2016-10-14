@@ -9,15 +9,25 @@
 
 
 {% block top_banner %}
-<nav class="top-bar ">
+
+<div class="callout warning">
+  <p class="text-center">This is an alpha site, so please don't expect anything to work just yet! <a href="https://democracyclub.org.uk/contact/">Get in touch</a> if you'd like to know more.</p>
+</div>
+
+<nav class="top-bar">
+    <div class="columns large-8 large-centered">
         <div class="top-bar-left">
             <ul class="menu">
                 <li><a href="{% url "home"%}">Home</a></li>
                 <li><a href="{% url "organisations_view"%}">Organisations</a></li>
                 <li><a href="{% url "election_types_view"%}">Election Types</a></li>
+                <li><a href="{% url "id_creator"%}">ID Creator</a></li>
             </ul>
-          </div>
+        </div>
+    </div>
 </nav>
+
+
 {% endblock top_banner %}
 
 {% block base_title %}{% block page_title %}{% endblock page_title %} | WhereDoIVote?{% endblock base_title %}

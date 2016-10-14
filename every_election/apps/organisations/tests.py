@@ -1,3 +1,7 @@
 from django.test import TestCase
 
-# Create your tests here.
+from organisations.models import Organisation
+
+class TestElectionIDs(TestCase):
+    def test_example_election_id(self):
+        pass
