@@ -32,6 +32,8 @@ def select_organisation(wizard):
     # if not wizard.get_cleaned_data_for_step('election_type'):
     #     return False
     election_type = wizard.get_election_type()
+    if not election_type:
+        return False
     qs = ElectedRole.objects.filter(election_type=election_type)
 
     if qs.count() > 1:
@@ -53,18 +55,18 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         return [TEMPLATES[self.steps.current]]
 
     def get_election_type(self):
-        return self.get_cleaned_data_for_step(
-            'election_type').get('election_type')
+        if self.get_cleaned_data_for_step('election_type'):
+            return self.get_cleaned_data_for_step(
+                'election_type').get('election_type')
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
         all_data = self.get_all_cleaned_data()
         if not all_data.get('election_organisation'):
             all_data.update(self.storage.extra_data)
-        print(all_data)
         context['all_data'] = all_data
         all_ids = []
-        for organisation in all_data['election_organisation']:
+        for organisation in all_data.get('election_organisation', []):
             all_ids.append(
                 IDMaker(
                 all_data['election_type'],
