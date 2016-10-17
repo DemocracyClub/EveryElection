@@ -1,8 +1,9 @@
 from django.core.management.base import BaseCommand
-from django.conf import settings
 
 from organisations.models import Organisation
-from organisations.importers import local_authority_eng_importer
+from organisations.importers import (
+    local_authority_eng_importer,
+    create_single)
 from elections.models import ElectedRole, ElectionType
 
 
@@ -18,38 +19,63 @@ class Command(BaseCommand):
 
         # TODO: Police force
 
-        # TODO: GLA
-
         # TODO: Mayors
+
+        # NAW
+        defaults={
+            'official_name': "Welsh assembly",
+            'common_name': "Welsh assembly",
+            'slug': 'naw',
+            'elected_title': "Assembly Member",
+        }
+        create_single('naw', 'naw', "naw", defaults)
+
+        # NIA
+        defaults={
+            'official_name': "Northern Ireland assembly",
+            'common_name': "Northern Ireland assembly",
+            'slug': 'nia',
+            'elected_title': "Assembly Member",
+        }
+        create_single('nia', 'nia', "nia", defaults)
+
+        # sp
+        defaults={
+            'official_name': "Scottish Parliament",
+            'common_name': "Scottish Parliament",
+            'slug': 'sp',
+            'elected_title': "Member of the Scottish Parliament",
+        }
+        create_single('sp', 'sp', "sp", defaults)
+
+        # gla
+        defaults={
+            'official_name': "Greater London assembly",
+            'common_name': "Greater London assembly",
+            'slug': 'gla',
+            'elected_title': "Assembly Member",
+        }
+        create_single('gla', 'gla', "gla", defaults)
 
 
         # Parl
-        organisation, _ = Organisation.objects.update_or_create(
-            official_identifier='parl-hoc',
-            organisation_type="parl",
-            defaults={
-                'official_name': "House of Commons of the United Kingdom",
-                'common_name': "House of Commons",
-                'slug': 'parl',
-            }
-        )
-        election_type = ElectionType.objects.get(election_type='parl')
-        ElectedRole.objects.update_or_create(
-            election_type=election_type,
-            organisation=organisation,
-            defaults={'elected_title': "Member of Parliament",}
-        )
+        defaults={
+            'official_name': "House of Commons of the United Kingdom",
+            'common_name': "House of Commons",
+            'slug': 'parl',
+            'elected_title': "Member of Parliament",
+        }
+        create_single('parl', 'parl-hoc', "parl", defaults)
+
 
 
         # # Lords
         # TODO
-        # Organisation.objects.update_or_create(
-        #     official_identifier='parl-hol',
-        #     organisation_type="parl",
-        #     defaults={
-        #         'official_name': "House of Lords of the United Kingdom",
-        #         'common_name': "House of Lords",
-        #         'slug': 'lords',
-        #     }
-        # )
+        # defaults={
+        #     'official_name': "House of Lords of the United Kingdom",
+        #     'common_name': "House of Lords",
+        #     'slug': 'hol',
+        #     'elected_title': "Lord",
+        # }
+        # create_single('parl', 'parl-hol', "parl", defaults)
 

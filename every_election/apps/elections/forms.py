@@ -2,7 +2,7 @@ from django import forms
 
 from organisations.models import Organisation
 
-from .models import ElectionType
+from .models import ElectionType, ElectionSubType
 
 
 #
@@ -28,14 +28,29 @@ class ElectionTypeForm(forms.Form):
         empty_label=None)
 
 
+class ElectionSubTypeForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        election_type = kwargs.pop('election_type', None)
+        super().__init__(*args, **kwargs)
+        if election_type:
+            qs = self.fields['election_subtype'].queryset
+            qs = qs.filter(
+                election_type__election_type=election_type)
+            self.fields['election_subtype'].queryset = qs
+
+    election_subtype = forms.ModelMultipleChoiceField(
+        queryset=ElectionSubType.objects.all(),
+        widget=forms.CheckboxSelectMultiple)
+
+
 class ElectionOrganisationForm(forms.Form):
     def __init__(self, *args, **kwargs):
-        election_types = kwargs.pop('election_types', None)
+        election_type = kwargs.pop('election_type', None)
         super().__init__(*args, **kwargs)
-        if election_types:
+        if election_type:
             qs = self.fields['election_organisation'].queryset
             qs = qs.filter(
-                election_types__election_type__in=election_types)
+                election_types__election_type=election_type)
             self.fields['election_organisation'].queryset = qs
 
     election_organisation = forms.ModelMultipleChoiceField(

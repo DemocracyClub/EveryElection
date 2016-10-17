@@ -8,33 +8,43 @@ from .models import Organisation
 from elections.models import ElectedRole, ElectionType
 
 
+def create_single(election_type, official_identifier,
+                  organisation_type, defaults, subtypes=None):
+
+    election_type = ElectionType.objects.get(election_type=election_type)
+    elected_title = defaults.pop('elected_title')
+
+    organisation, _ = Organisation.objects.update_or_create(
+        official_identifier=official_identifier,
+        organisation_type=organisation_type,
+        defaults=defaults
+    )
+
+    ElectedRole.objects.update_or_create(
+        election_type=election_type,
+        organisation=organisation,
+        defaults={
+            'elected_title': elected_title,
+        }
+    )
+
+
 def local_authority_eng_importer():
     file_name = "local-authorities-eng.tsv"
-    election_type = ElectionType.objects.get(election_type='local')
 
     data_file = csv.DictReader(
         open(os.path.join(settings.DATA_CACHE_DIR, file_name)),
         delimiter="\t")
     for line in data_file:
-        slug = slugify(line['name'])
-        organisation, _ = Organisation.objects.update_or_create(
-            official_identifier=line['local-authority-eng'],
-            organisation_type="local-authority",
-            defaults={
-                'official_name': line['official-name'],
-                'common_name': line['name'],
-                'organisation_subtype': line['local-authority-type'],
-                'slug': slug,
-                'territory_code': 'ENG',
-            }
-        )
-        ElectedRole.objects.update_or_create(
-            election_type=election_type,
-            organisation=organisation,
-            defaults={
-                'elected_title':
-                    "Councillor for {}".format(line['official-name']),
-            }
-        )
 
+        defaults = {
+            'official_name': line['official-name'],
+            'common_name': line['name'],
+            'organisation_subtype': line['local-authority-type'],
+            'slug': slugify(line['name']),
+            'territory_code': 'ENG',
+            'elected_title': "Councillor for {}".format(line['official-name']),
+        }
 
+        create_single('local', line['local-authority-eng'],
+                      "local-authority", defaults)

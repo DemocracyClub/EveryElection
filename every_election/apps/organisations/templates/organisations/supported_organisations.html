@@ -9,7 +9,13 @@
       <p>The following is a list of organisations that this project supports.</p>
       <p>That means, we track elections for organisations on this list</p>
 
-      {% for object in object_list %}
+      {% regroup object_list by organisation_type as grouped_list %}
+
+      {% for group in grouped_list %}
+      <details>
+      <summary><code>{{ group.grouper }}</code></summary>
+      {% for object in group.list %}
+
       <h3>{{ object.name }}</h3>
       <p>Also known as "{{ object.common_name }}".</p>
       <p>For election IDs, this should be referred to as <code>{{ object.slug }}</code></p>
@@ -24,6 +30,8 @@
       </ul>
       {% endif %}
 
+      {% endfor %}
+      </details>
       {% endfor %}
 
 

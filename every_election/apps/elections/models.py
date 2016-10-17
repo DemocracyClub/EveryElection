@@ -22,6 +22,9 @@ class ElectionSubType(models.Model):
     election_type = models.ForeignKey('ElectionType', related_name="subtype")
     election_subtype = models.CharField(blank=True, max_length=100)
 
+    def __str__(self):
+        return self.name
+
 
 class ElectedRole(models.Model):
     """
