@@ -44,6 +44,7 @@ def local_authority_eng_importer():
             'slug': slugify(line['name']),
             'territory_code': 'ENG',
             'elected_title': "Councillor for {}".format(line['official-name']),
+            'election_name': "{} local election".format(line['official-name']),
         }
 
         create_single('local', line['local-authority-eng'],

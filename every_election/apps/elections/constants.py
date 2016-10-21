@@ -1,6 +1,6 @@
 ELECTION_TYPES = {
     'parl': {
-        'name': "UK parliament",
+        'name': "UK Parliament",
         'subtypes': [],
     },
     'nia': {

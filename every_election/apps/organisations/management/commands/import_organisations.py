@@ -27,6 +27,7 @@ class Command(BaseCommand):
             'common_name': "Welsh assembly",
             'slug': 'naw',
             'elected_title': "Assembly Member",
+            'election_name': "National Assembly for Wales election",
         }
         create_single('naw', 'naw', "naw", defaults)
 
@@ -36,6 +37,7 @@ class Command(BaseCommand):
             'common_name': "Northern Ireland assembly",
             'slug': 'nia',
             'elected_title': "Assembly Member",
+            'election_name': "Northern Ireland assembly election",
         }
         create_single('nia', 'nia', "nia", defaults)
 
@@ -45,6 +47,7 @@ class Command(BaseCommand):
             'common_name': "Scottish Parliament",
             'slug': 'sp',
             'elected_title': "Member of the Scottish Parliament",
+            'election_name': "Scottish parliament election",
         }
         create_single('sp', 'sp', "sp", defaults)
 
@@ -54,6 +57,7 @@ class Command(BaseCommand):
             'common_name': "Greater London assembly",
             'slug': 'gla',
             'elected_title': "Assembly Member",
+            'election_name': "London Assembly election",
         }
         create_single('gla', 'gla', "gla", defaults)
 
@@ -64,6 +68,8 @@ class Command(BaseCommand):
             'common_name': "House of Commons",
             'slug': 'parl',
             'elected_title': "Member of Parliament",
+            'election_name': "UK general election",
+
         }
         create_single('parl', 'parl-hoc', "parl", defaults)
 

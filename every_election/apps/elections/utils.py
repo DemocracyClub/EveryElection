@@ -4,8 +4,11 @@ class IDMaker(object):
     def __init__(self, election_type, date, organisation=None, subtype=None):
         self.election_type = election_type
         self.date = date
+        self.use_org = True
         if organisation == election_type.election_type:
-            self.organisation = None
+            self.organisation = Organisation.objects.get(
+                organisation_type=election_type.election_type)
+            self.use_org = False
         else:
             self.organisation = organisation
         self.subtype = subtype
@@ -15,7 +18,7 @@ class IDMaker(object):
         parts.append(self.election_type.election_type)
         if self.subtype:
             parts.append(self.subtype.election_subtype)
-        if self.organisation:
+        if self.use_org and self.organisation:
             if isinstance(self.organisation, Organisation):
                 parts.append(self.organisation.slug)
             else:
@@ -25,6 +28,15 @@ class IDMaker(object):
 
     def _format_date(self, date):
         return self.date.strftime("%Y-%m-%d")
+
+    def to_title(self):
+        parts = []
+        if self.organisation:
+            parts.append(self.organisation.election_name)
+        if self.subtype:
+            parts.append("({})".format(self.subtype.name))
+        return " ".join(parts).strip()
+
 
     def to_id(self):
         return ".".join(self._get_parts())

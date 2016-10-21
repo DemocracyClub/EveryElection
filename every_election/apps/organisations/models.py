@@ -16,6 +16,7 @@ class Organisation(models.Model):
     territory_code = models.CharField(blank=True, max_length=10)
     election_types = models.ManyToManyField(
         'elections.ElectionType', through='elections.ElectedRole')
+    election_name = models.CharField(blank=True, max_length=255)
 
     def __str__(self):
         return "{}".format(self.name)

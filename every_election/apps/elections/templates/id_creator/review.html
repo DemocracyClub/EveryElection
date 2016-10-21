@@ -5,6 +5,7 @@
 
 
 {% for election_id in all_ids %}
+<h2>{{ election_id.to_title }}</h2>
     <h3><code>{{ election_id.to_id }}</code></h3>
 {% endfor %}
 
