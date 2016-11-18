@@ -99,6 +99,20 @@
 
 {% block extra_javascript %}
 {% if debug %}
+    <script>
+    // shim fallback in debug mode
+    if (typeof fallback == 'undefined') {
+        var fallback = {
+            ready: function(l, f) {
+                if (typeof l == "function") {
+                    l()
+                } else {
+                    f();
+                }
+            }
+        }
+    }
+    </script>
     {% javascript 'scripts' %}
 {% else %}
     <script src="{% static "dc_theme/js/fallback.min.js" %}"></script>

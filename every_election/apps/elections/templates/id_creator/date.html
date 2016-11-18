@@ -8,12 +8,12 @@
 {% block extra_javascript %}
 {{ block.super }}
 <script>
-fallback.ready(['scripts'], function() {
+fallback.ready(function() {
     var day = $('#id_date-date_0');
     var month = $('#id_date-date_1');
     var year = $('#id_date-date_2');
 
-    function CheckDOW() {
+    var CheckDOW = function () {
         if (day.val().length >= 1) {
             if (month.val().length >= 1) {
                 if (year.val().length == 4) {
@@ -28,7 +28,7 @@ fallback.ready(['scripts'], function() {
         }
     }
 
-    function NotThursdayWarning(method, date) {
+    var NotThursdayWarning = function (method, date) {
         $('.date_warning').remove();
         if (method == 'add') {
             var date_string = date.format("mmmm dS yyyy");
