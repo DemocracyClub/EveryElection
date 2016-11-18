@@ -8,7 +8,7 @@ django-model-utils
 
 psycopg2
 
-git+git://github.com/DemocracyClub/dc_base_theme.git@2b42c448711a9593ec73efa81c0fdbd547b68408
+git+git://github.com/DemocracyClub/dc_base_theme.git@d58c634bdb386224394260be0b287169971c4178
 django-formtools
 djangorestframework
 markdown
