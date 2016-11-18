@@ -1,12 +1,11 @@
 {% extends "dc_base.html" %}
 {% load i18n %}
 {% load static from staticfiles %}
-{% load compile_static %}
+{% load pipeline %}
 
 {% block extra_site_css %}
-    <link rel="stylesheet" href="{% static "css/styles.scss"|compile %}" />
+    {% stylesheet 'styles' %}
 {% endblock extra_site_css %}
-
 
 {% block top_banner %}
 
@@ -95,3 +94,19 @@
   </div>
 </footer>
 {% endblock site_footer %}
+
+
+{% block extra_javascript %}
+{% if debug %}
+    {% javascript 'scripts' %}
+{% else %}
+    <script src="{% static "dc_theme/js/fallback.min.js" %}"></script>
+    <script type="text/javascript">
+        fallback.load({
+            scripts: [
+                '{% static "js/scripts.js" %}'
+            ],
+        });
+    </script>
+{% endif %}
+{% endblock extra_javascript %}

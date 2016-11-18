@@ -1,21 +1,15 @@
 from django.http import HttpResponseRedirect
 from django import forms
 from formtools.wizard.views import NamedUrlSessionWizardView
-from django.views.generic import ListView
 
-from .models import ElectionType, ElectedRole, ElectionSubType
-from .utils import IDMaker
-from .forms import (
+from elections.models import ElectedRole, ElectionSubType, Election
+from elections.utils import IDMaker
+from elections.forms import (
     ElectionDateForm,
     ElectionTypeForm,
     ElectionSubTypeForm,
     ElectionOrganisationForm
     )
-
-
-class ElectionTypesView(ListView):
-    template_name = "elections/election_types.html"
-    model = ElectionType
 
 
 FORMS = [("date", ElectionDateForm),
@@ -44,9 +38,10 @@ def select_organisation(wizard):
         return True
     else:
         wizard.storage.extra_data.update({
-            'election_organisation': [qs[0].organisation.slug,]})
+            'election_organisation': [qs[0].organisation.slug, ]})
 
         return False
+
 
 def select_subtype(wizard):
     election_type = wizard.get_election_type()
@@ -76,6 +71,8 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
         all_data = self.get_all_cleaned_data()
+        if not 'date' in all_data:
+            return context
         if not all_data.get('election_organisation'):
             all_data.update(self.storage.extra_data)
         context['all_data'] = all_data
@@ -85,19 +82,19 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                 for subtype in all_data['election_subtype']:
                     all_ids.append(
                         IDMaker(
-                        all_data['election_type'],
-                        all_data['date'],
-                        organisation=organisation,
-                        subtype=subtype,
+                            all_data['election_type'],
+                            all_data['date'],
+                            organisation=organisation,
+                            subtype=subtype,
                         )
                     )
             else:
                 all_ids.append(
                     IDMaker(
-                    all_data['election_type'],
-                    all_data['date'],
-                    organisation=organisation,
-                    subtype=None,
+                        all_data['election_type'],
+                        all_data['date'],
+                        organisation=organisation,
+                        subtype=None,
                     )
                 )
 
@@ -107,7 +104,6 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
     def get_form_kwargs(self, step):
         if step in ["election_organisation", "election_subtype"]:
             election_type = self.get_election_type()
-            qs = ElectedRole.objects.filter(election_type=election_type)
 
             return {
                 'election_type': election_type.election_type
@@ -115,5 +111,18 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         return {}
 
     def done(self, form_list, **kwargs):
+
+        # Make the elections
+        context = self.get_context_data(form_list)
+        for election_data in context['all_ids']:
+            Election.objects.update_or_create(
+                    election_id=election_data.to_id(),
+                    poll_open_date=election_data.date,
+                    election_type=election_data.election_type,
+                    election_subtype=election_data.subtype,
+                    organisation=election_data.organisation,
+            )
+
+
         return HttpResponseRedirect('/')
         ...

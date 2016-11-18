@@ -1,6 +1,7 @@
 from django.conf.urls import url
 
-from .views import ElectionTypesView, IDCreatorWizard, FORMS, CONDITION_DICT
+from .views import (ElectionTypesView, AllElectionsView,
+                    IDCreatorWizard, FORMS, CONDITION_DICT)
 
 
 id_creator_wizard = IDCreatorWizard.as_view(

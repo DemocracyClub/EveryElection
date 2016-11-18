@@ -30,10 +30,16 @@ INSTALLED_APPS = [
 ]
 
 PROJECT_APPS = [
+    'api',
+    'core',
     'dc_theme',
-    'static_precompiler',
-    'organisations',
     'elections',
+    'organisations',
+    'rest_framework',
+    # 'static_precompiler',
+    'pipeline',
+    'suggested_content',
+    'django_extensions',
 ]
 
 INSTALLED_APPS += PROJECT_APPS
@@ -87,33 +93,24 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
     root('assets'),
-#     # root('static'),
 )
 
 STATIC_ROOT = root('static')
 
-STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'static_precompiler.finders.StaticPrecompilerFinder',
+
+from dc_theme.settings import (
+    get_pipeline_settings,
+    STATICFILES_STORAGE,
+    STATICFILES_FINDERS
 )
 
-# TODO find a way to move these in to the DC theme app?
-# STATIC_PRECOMPILER_ROOT =root('static')
-import os
-import dc_theme
-root_path = os.path.dirname(dc_theme.__file__)
-STATIC_PRECOMPILER_COMPILERS = (
-    ('static_precompiler.compilers.libsass.SCSS', {
-        "sourcemap_enabled": True,
-        # "output_style": "compressed",
-        "load_paths": [
-            root_path + '/static/dc_theme/bower_components/foundation-sites/assets',
-            root_path + '/static/dc_theme/bower_components/foundation-sites/scss',
-            root_path + '/static/dc_theme/bower_components/motion-ui/src',
-            root_path + '/static/dc_theme/scss/',
-        ],
-    }),
+PIPELINE = get_pipeline_settings(
+    extra_css=['css/styles.scss', ],
+    extra_js=['js/date.format.js', ],
+)
+
+INTERNAL_IPS = (
+    '127.0.0.1',
 )
 
 

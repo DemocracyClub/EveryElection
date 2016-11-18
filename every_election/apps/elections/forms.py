@@ -4,6 +4,8 @@ from organisations.models import Organisation
 
 from .models import ElectionType, ElectionSubType
 
+from dc_theme import forms as dc_forms
+
 
 #
 # Forms:
@@ -13,11 +15,7 @@ from .models import ElectionType, ElectionSubType
 
 
 class ElectionDateForm(forms.Form):
-    date = forms.DateField(
-        widget=forms.SelectDateWidget(
-            empty_label=("Year", "Month", " Day"),
-        ),
-    )
+    date = dc_forms.DCDateField(help_text="The date that polls open")
 
 
 class ElectionTypeForm(forms.Form):
