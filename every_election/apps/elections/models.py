@@ -1,4 +1,5 @@
 from django.db import models
+from suggested_content.models import SuggestedByPublicMixin
 
 
 class ElectionType(models.Model):
@@ -7,7 +8,7 @@ class ElectionType(models.Model):
     """
 
     name = models.CharField(blank=True, max_length=100)
-    election_type = models.CharField(blank=True, max_length=100)
+    election_type = models.CharField(blank=True, max_length=100, unique=True)
 
     def __str__(self):
         return self.name
@@ -37,17 +38,18 @@ class ElectedRole(models.Model):
     elected_title = models.CharField(blank=True, max_length=255)
 
 
-class Election(models.Model):
+class Election(SuggestedByPublicMixin, models.Model):
     """
     An election.
     This model should contain everything needed to make the  election ID,
     plus extra information about this election.
     """
-    election_id = models.CharField(blank=True, max_length=100)
+    election_id = models.CharField(blank=False, null=False, max_length=100)
     election_type = models.ForeignKey(ElectionType)
     election_subtype = models.ForeignKey(ElectionSubType, null=True)
     poll_open_date = models.DateField()
     organisation = models.ForeignKey('organisations.Organisation')
+    elected_role = models.ForeignKey(ElectedRole, null=True)
     divisions = models.ManyToManyField(
         'organisations.OrganisationDivision', through='ElectionDivisions')
 
