@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="columns large-6 large-centered">
+
+  <div class="card postcode_card">
+
+      {% for object in object_list %}
+      <h3>{{ object.election_id }}</h3>
+      <li><strong>election_type</strong>: {{ object.election_type }}</li>
+      <li><strong>election_subtype</strong>: {{ object.election_subtype }}</li>
+      <li><strong>poll_open_date</strong>: {{ object.poll_open_date }}</li>
+      <li><strong>organisation</strong>: {{ object.organisation }}</li>
+      <li><strong>divisions</strong>: {{ object.divisions }}</li>
+
+      {% endfor %}
+
+  </div>
+
+</section>
+{% endblock content %}

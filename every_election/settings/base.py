@@ -109,6 +109,7 @@ PIPELINE = get_pipeline_settings(
     extra_js=['js/date.format.js', ],
 )
 
+print(PIPELINE)
 INTERNAL_IPS = (
     '127.0.0.1',
 )

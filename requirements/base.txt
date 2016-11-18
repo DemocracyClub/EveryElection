@@ -8,7 +8,8 @@ django-model-utils
 
 psycopg2
 
-git+https://github.com/DemocracyClub/django-static-precompiler
-libsass
 git+git://github.com/DemocracyClub/dc_base_theme.git
 django-formtools
+djangorestframework
+markdown
+django-filter
