@@ -36,9 +36,11 @@ class OrganisationDivision(models.Model):
     This could be a ward, constituency or office
     """
     organisation = models.ForeignKey(Organisation)
+    name = models.CharField(blank=True, max_length=255)
     official_identifier = models.CharField(
         blank=True, max_length=255, db_index=True)
     gss = models.CharField(blank=True, max_length=20)
     slug = models.CharField(blank=True, max_length=100)
     division_type = models.CharField(blank=True, max_length=255)
     division_subtype = models.CharField(blank=True, max_length=255)
+    division_election_sub_type = models.CharField(blank=True, max_length=2)

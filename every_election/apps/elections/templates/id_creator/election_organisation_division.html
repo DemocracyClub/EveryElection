@@ -1,0 +1,24 @@
+{% extends "id_creator/id_creator_base.html" %}
+{% load dc_forms %}
+
+{% block form_tag_extra %}class="large_legends"{% endblock form_tag_extra %}
+
+{% block form_page_header %}
+<h1>Election Organisation</h1>
+
+<p>Enter the organisation(s) holding <strong>{{ all_data.election_type }}</strong>
+    on <strong>{{ all_data.date|date }}</strong></p>
+
+{% endblock form_page_header %}
+
+
+{# {% block form_content %} #}
+{# {% for group in form.field_groups %} #}
+{# <h2>{{ group.title }}</h2> #}
+{# {% for field in group.fields %} #}
+{# {{ field|dc_form }} #}
+{#  #}
+{# {% endfor %} #}
+
+{# {% endfor %} #}
+{# {% endblock form_content %} #}

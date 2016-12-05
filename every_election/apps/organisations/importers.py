@@ -1,7 +1,7 @@
-import os
 import csv
 
-from django.conf import settings
+import requests
+
 from django.utils.text import slugify
 
 from .models import Organisation
@@ -30,13 +30,14 @@ def create_single(election_type, official_identifier,
 
 
 def local_authority_eng_importer():
-    file_name = "local-authorities-eng.tsv"
+    url = "http://local-authority-eng.beta.openregister.org/records.tsv?page-size=5000"  # NOQA
+    req = requests.get(url)
 
     data_file = csv.DictReader(
-        open(os.path.join(settings.DATA_CACHE_DIR, file_name)),
+        req.text.splitlines(),
         delimiter="\t")
-    for line in data_file:
 
+    for line in data_file:
         defaults = {
             'official_name': line['official-name'],
             'common_name': line['name'],
@@ -49,3 +50,24 @@ def local_authority_eng_importer():
 
         create_single('local', line['local-authority-eng'],
                       "local-authority", defaults)
+    add_gss_to_LAs()
+
+
+def add_gss_to_LAs():
+    url = "https://raw.githubusercontent.com/openregister/local-authority-data/master/maps/gss.tsv"  # NOQA
+    req = requests.get(url)
+    map_file = csv.DictReader(
+        req.text.splitlines(),
+        delimiter="\t")
+    code_to_gss = {m['local-authority'].split(':')[1]: m['gss']
+                   for m in map_file}
+    for code, gss in code_to_gss.items():
+        try:
+            la =  Organisation.objects.get(official_identifier=code)
+            la.gss = gss
+            la.save()
+        except Organisation.DoesNotExist:
+            pass
+
+
+

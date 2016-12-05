@@ -103,3 +103,4 @@ node_modules/
 # bower packages
 every_election/assets-src/vendor/
 .sass-cache/
+*.sqlite

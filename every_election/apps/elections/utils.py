@@ -1,17 +1,19 @@
 from organisations.models import Organisation
 
 class IDMaker(object):
-    def __init__(self, election_type, date, organisation=None, subtype=None):
+    def __init__(self, election_type, date,
+                 organisation=None, subtype=None, division=None):
         self.election_type = election_type
         self.date = date
         self.use_org = True
-        if organisation == election_type.election_type:
+        if organisation.organisation_type == election_type.election_type:
             self.organisation = Organisation.objects.get(
                 organisation_type=election_type.election_type)
             self.use_org = False
         else:
             self.organisation = organisation
         self.subtype = subtype
+        self.division = division
 
     def _get_parts(self):
         parts = []
@@ -23,6 +25,8 @@ class IDMaker(object):
                 parts.append(self.organisation.slug)
             else:
                 parts.append(self.organisation)
+        if self.division:
+            parts.append(self.division.slug)
         parts.append(self._format_date(self.date))
         return parts
 

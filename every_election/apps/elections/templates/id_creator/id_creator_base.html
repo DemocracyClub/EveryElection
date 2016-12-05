@@ -10,7 +10,7 @@
 
     {# <p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p> #}
     {% block form_page_header %}{% endblock form_page_header %}
-    <form action="" method="post">
+    <form action="" method="post" {% block form_tag_extra %}{% endblock form_tag_extra %}>
         {% csrf_token %}
         {{ wizard.management_form }}
 
@@ -21,6 +21,7 @@
                     {{ form|dc_form }}
                 {% endfor %}
             {% else %}
+                {{ wizard.form.errors }}
                 {{ wizard.form|dc_form }}
             {% endif %}
         {% endblock form_content %}
@@ -30,7 +31,7 @@
             <input type="submit" class="button" value="Submit" />
 
             {% if wizard.steps.prev %}
-            <p><button name="wizard_goto_step" type="submit" class="button secondary" value="{{ wizard.steps.first }}">Start again</button></p>
+            <p><a href="{% url "id_creator" %}?reset" class="button secondary">Start again</a></p>
             {% endif %}
         </div>
 

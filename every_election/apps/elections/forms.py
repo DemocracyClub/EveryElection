@@ -55,3 +55,53 @@ class ElectionOrganisationForm(forms.Form):
         queryset=Organisation.objects.all(),
         widget=forms.CheckboxSelectMultiple,
         )
+
+
+class ElectionOrganisationDivisionForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        organisations = kwargs.pop('organisations', None)
+        election_subtype = kwargs.pop('election_subtype', None)
+        self.field_groups = []
+
+        super().__init__(*args, **kwargs)
+
+        self.choices = (
+            ('no_seats',"No Election"),
+            ('seats_contested',"Contested seats"),
+            ('by_election',"By-election")
+        )
+        if not organisations:
+            return
+        for organisation in organisations.all():
+            self.fields[organisation.pk] = dc_forms.DCHeaderField(
+                label=organisation.common_name)
+
+            if election_subtype:
+                for subtype in election_subtype:
+                    div_qs = organisation.organisationdivision_set.filter(
+                        division_election_sub_type=subtype.election_subtype
+                    )
+                    div_qs = div_qs.order_by('name')
+                    if div_qs:
+                        self.fields[subtype.pk] = dc_forms.DCHeaderField(
+                            label=subtype.name)
+                    for div in div_qs:
+                        self.add_single_field(organisation, div, subtype=subtype.election_subtype)
+            else:
+                div_qs = organisation.organisationdivision_set.all()
+                div_qs = div_qs.order_by('name')
+                for div in div_qs:
+                    self.add_single_field(organisation, div)
+
+
+    def add_single_field(self, organisation, div, subtype=None):
+                field_id = "__".join([
+                    str(x) for x in [organisation.pk, div.pk, subtype] if x])
+                field = forms.ChoiceField(
+                    choices=self.choices,
+                    widget=forms.RadioSelect,
+                    label=div.name,
+                    initial='no_seats',
+                    required=False,
+                    )
+                self.fields[field_id] = field

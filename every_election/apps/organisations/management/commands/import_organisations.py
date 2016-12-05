@@ -21,8 +21,19 @@ class Command(BaseCommand):
 
         # TODO: Mayors
 
+        # PCC
+        defaults={
+            'official_name': "Police and Crime Commissioners",
+            'common_name': "Police and Crime Commissioners",
+            'slug': 'pcc',
+            'elected_title': "Police and Crime Commissioner",
+            'election_name': "Police and Crime Commissioner",
+        }
+        create_single('naw', 'naw', "naw", defaults)
+
         # NAW
         defaults={
+            'gss': 'W08000001',
             'official_name': "Welsh assembly",
             'common_name': "Welsh assembly",
             'slug': 'naw',
@@ -33,6 +44,7 @@ class Command(BaseCommand):
 
         # NIA
         defaults={
+            'gss': 'N07000001',
             'official_name': "Northern Ireland assembly",
             'common_name': "Northern Ireland assembly",
             'slug': 'nia',
