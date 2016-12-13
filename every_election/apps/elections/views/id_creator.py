@@ -134,4 +134,3 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
 
 
         return HttpResponseRedirect('/')
-        ...
