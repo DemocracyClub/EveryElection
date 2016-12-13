@@ -2,9 +2,9 @@ from django.http import HttpResponseRedirect
 from django import forms
 from formtools.wizard.views import NamedUrlSessionWizardView
 
-from organisations.models import Organisation, OrganisationDivision
 from elections.models import ElectedRole, ElectionSubType, Election
-from elections.utils import IDMaker
+from elections.utils import (create_ids_grouped,
+                             create_ids_for_each_ballot_paper)
 from elections.forms import (
     ElectionDateForm,
     ElectionTypeForm,
@@ -98,72 +98,8 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         if not all_data.get('election_organisation'):
             all_data.update(self.storage.extra_data)
         context['all_data'] = all_data
-        all_ids = []
-        for organisation in all_data.get('election_organisation', []):
-            if type(organisation) == str:
-                organisation = Organisation.objects.get(
-                    organisation_type=organisation)
-            pk = str(organisation.pk)
-
-            div_data = {
-                k: v for k, v
-                in all_data.items()
-                if str(k).startswith(pk)
-                and '__' in str(k)
-                and v != "no_seats"
-            }
-
-            by_elections = {
-                k: v for k, v
-                in div_data.items()
-                if v == "by_election"
-            }
-
-            only_by_election = by_elections == div_data
-
-            args = [all_data['election_type'], all_data['date']]
-            kwargs = {
-                'organisation': organisation,
-            }
-
-            if self.get_election_subtypes():
-                for subtype in all_data.get('election_subtype', []):
-                    by_elections = {
-                        k: v for k, v
-                        in div_data.items()
-                        if v == "by_election"
-                        and k.endswith(subtype.election_subtype)
-                    }
-                    only_by_election = by_elections == div_data
-                    if only_by_election:
-                        for div in by_elections:
-                            org_div = OrganisationDivision.objects.get(
-                                pk=div.split('__')[1]
-                            )
-
-                            all_ids.append(IDMaker(
-                                *args,
-                                subtype=subtype,
-                                division=org_div,
-                                **kwargs))
-                    else:
-                        all_ids.append(
-                            IDMaker(*args, subtype=subtype, **kwargs))
-            else:
-                if only_by_election:
-                    for div in by_elections:
-                        org_div = OrganisationDivision.objects.get(
-                            pk=div.split('__')[1]
-                        )
-                        all_ids.append(IDMaker(
-                            *args,
-                            division=org_div,
-                            **kwargs
-                            ))
-                else:
-                    all_ids.append(IDMaker(*args, **kwargs))
-
-
+        all_ids = create_ids_for_each_ballot_paper(all_data, self.get_election_subtypes())
+        # all_ids = create_ids_grouped(all_data, self.get_election_subtypes())
         context['all_ids'] = all_ids
         return context
 
