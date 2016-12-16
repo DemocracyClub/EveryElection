@@ -3,8 +3,7 @@ from django import forms
 from formtools.wizard.views import NamedUrlSessionWizardView
 
 from elections.models import ElectedRole, ElectionSubType, Election
-from elections.utils import (create_ids_grouped,
-                             create_ids_for_each_ballot_paper)
+from elections.utils import (create_ids_for_each_ballot_paper)
 from elections.forms import (
     ElectionDateForm,
     ElectionTypeForm,

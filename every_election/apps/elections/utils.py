@@ -3,9 +3,11 @@ from organisations.models import Organisation, OrganisationDivision
 
 class IDMaker(object):
     def __init__(self, election_type, date,
-                 organisation=None, subtype=None, division=None):
+                 organisation=None, subtype=None,
+                 division=None, group_id=False):
         self.election_type = election_type
         self.date = date
+        self.group_id = group_id
         self.use_org = True
         if organisation:
             if organisation.organisation_type == election_type.election_type:
@@ -66,6 +68,7 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
             if str(k).startswith(pk)
             and '__' in str(k)
             and v != "no_seats"
+            and v != ""
         }
 
         args = [all_data['election_type'], all_data['date']]
@@ -73,13 +76,19 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
             'organisation': organisation,
         }
 
-        date_id = IDMaker(*args)
+        # GROUP 1
+        # Make a group ID for the date and election type
+        date_id = IDMaker(*args, group_id=True)
         if date_id not in all_ids:
             all_ids.append(date_id)
 
-        org_id = IDMaker(*args, **kwargs)
-        if org_id not in all_ids:
-            all_ids.append(org_id)
+
+        # GROUP 2
+        # Make a group ID for the date, election type and org
+        if div_data:
+            org_id = IDMaker(group_id=True, *args, **kwargs)
+            if org_id not in all_ids:
+                all_ids.append(org_id)
 
         if subtypes:
             for subtype in all_data.get('election_subtype', []):
@@ -106,70 +115,70 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
     return all_ids
 
 
-def create_ids_grouped(all_data, subtypes=None):
-    all_ids = []
-    for organisation in all_data.get('election_organisation', []):
-        if type(organisation) == str:
-            organisation = Organisation.objects.get(
-                organisation_type=organisation)
-        pk = str(organisation.pk)
-
-        div_data = {
-            k: v for k, v
-            in all_data.items()
-            if str(k).startswith(pk)
-            and '__' in str(k)
-            and v != "no_seats"
-        }
-
-        by_elections = {
-            k: v for k, v
-            in div_data.items()
-            if v == "by_election"
-        }
-
-        only_by_election = by_elections == div_data
-
-        args = [all_data['election_type'], all_data['date']]
-        kwargs = {
-            'organisation': organisation,
-        }
-
-        if subtypes:
-            for subtype in all_data.get('election_subtype', []):
-                by_elections = {
-                    k: v for k, v
-                    in div_data.items()
-                    if v == "by_election"
-                    and k.endswith(subtype.election_subtype)
-                }
-                only_by_election = by_elections == div_data
-                if only_by_election:
-                    for div in by_elections:
-                        org_div = OrganisationDivision.objects.get(
-                            pk=div.split('__')[1]
-                        )
-
-                        all_ids.append(IDMaker(
-                            *args,
-                            subtype=subtype,
-                            division=org_div,
-                            **kwargs))
-                else:
-                    all_ids.append(
-                        IDMaker(*args, subtype=subtype, **kwargs))
-        else:
-            if only_by_election:
-                for div in by_elections:
-                    org_div = OrganisationDivision.objects.get(
-                        pk=div.split('__')[1]
-                    )
-                    all_ids.append(IDMaker(
-                        *args,
-                        division=org_div,
-                        **kwargs
-                        ))
-            else:
-                all_ids.append(IDMaker(*args, **kwargs))
-
-    return all_ids
+# def create_ids_grouped(all_data, subtypes=None):
+#     all_ids = []
+#     for organisation in all_data.get('election_organisation', []):
+#         if type(organisation) == str:
+#             organisation = Organisation.objects.get(
+#                 organisation_type=organisation)
+#         pk = str(organisation.pk)
+#
+#         div_data = {
+#             k: v for k, v
+#             in all_data.items()
+#             if str(k).startswith(pk)
+#             and '__' in str(k)
+#             and v != "no_seats"
+#         }
+#
+#         by_elections = {
+#             k: v for k, v
+#             in div_data.items()
+#             if v == "by_election"
+#         }
+#
+#         only_by_election = by_elections == div_data
+#
+#         args = [all_data['election_type'], all_data['date']]
+#         kwargs = {
+#             'organisation': organisation,
+#         }
+#
+#         if subtypes:
+#             for subtype in all_data.get('election_subtype', []):
+#                 by_elections = {
+#                     k: v for k, v
+#                     in div_data.items()
+#                     if v == "by_election"
+#                     and k.endswith(subtype.election_subtype)
+#                 }
+#                 only_by_election = by_elections == div_data
+#                 if only_by_election:
+#                     for div in by_elections:
+#                         org_div = OrganisationDivision.objects.get(
+#                             pk=div.split('__')[1]
+#                         )
+#
+#                         all_ids.append(IDMaker(
+#                             *args,
+#                             subtype=subtype,
+#                             division=org_div,
+#                             **kwargs))
+#                 else:
+#                     all_ids.append(
+#                         IDMaker(*args, subtype=subtype, **kwargs))
+#         else:
+#             if only_by_election:
+#                 for div in by_elections:
+#                     org_div = OrganisationDivision.objects.get(
+#                         pk=div.split('__')[1]
+#                     )
+#                     all_ids.append(IDMaker(
+#                         *args,
+#                         division=org_div,
+#                         **kwargs
+#                         ))
+#             else:
+#                 all_ids.append(IDMaker(*args, **kwargs))
+#
+#     return all_ids
