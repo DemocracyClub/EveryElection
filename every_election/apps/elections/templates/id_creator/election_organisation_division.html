@@ -12,13 +12,20 @@
 {% endblock form_page_header %}
 
 
-{# {% block form_content %} #}
-{# {% for group in form.field_groups %} #}
-{# <h2>{{ group.title }}</h2> #}
-{# {% for field in group.fields %} #}
-{# {{ field|dc_form }} #}
-{#  #}
-{# {% endfor %} #}
+{% block extra_javascript %}
+{{ block.super }}
+<script>
+fallback.ready(function() {
 
-{# {% endfor %} #}
-{# {% endblock form_content %} #}
+    $("<button type=button class=button>Mark all seats as contested (can't be undone)</button>")
+    .insertAfter(".inline_radios .form-group h2").on('click', function() {
+        var container = $(this).parent();
+        var this_id = $('h2', container).attr('id');
+        $('input[id^="'+ this_id +'"][value=seats_contested]').prop("checked", true);
+    });
+});
+
+// });
+
+</script>
+{% endblock extra_javascript %}
