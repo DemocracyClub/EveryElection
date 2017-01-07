@@ -154,6 +154,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+DATA_UPLOAD_MAX_NUMBER_FIELDS = None
 
 SITE_TITLE = "Every Election"
 
