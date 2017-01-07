@@ -7,13 +7,14 @@ from elections.models import Election
 class IDMaker(object):
     def __init__(self, election_type, date,
                  organisation=None, subtype=None,
-                 division=None, group_id=False):
+                 division=None, is_group_id=False, group_id=None):
         self.election_type = election_type
         self.date = date
         if self.date is None:
             self.date_known = False
         else:
             self.date_known = True
+        self.is_group_id = is_group_id
         self.group_id = group_id
         self.use_org = True
         if organisation:
@@ -74,15 +75,25 @@ class IDMaker(object):
         """
         Performs a `get_or_create` on a model with this ID
         """
+
+        group_model = None
+        if self.group_id and not self.is_group_id:
+            group_model = getattr(self.group_id, 'model', None)
+            if not group_model:
+                group_model = self.group_id.save_model()
+
+        default_kwargs = {
+            'poll_open_date':  self.date,
+            'election_type':  self.election_type,
+            'election_subtype':  self.subtype,
+            'organisation':  self.organisation,
+            'division':  self.division,
+            'group':  group_model,
+        }
+
         if self.date_known:
             new_model, _ = Election.objects.update_or_create(
-                election_id=self.to_id(),
-                poll_open_date=self.date,
-                election_type=self.election_type,
-                election_subtype=self.subtype,
-                organisation=self.organisation,
-                division=self.division,
-            )
+                election_id=self.to_id(), **default_kwargs)
             return new_model
         else:
             # We will only allow one tmp ID per (type, subtype, org)
@@ -91,31 +102,25 @@ class IDMaker(object):
             try:
                 existing_model = Election.objects.get(
                     election_id=None,
-                    election_type=self.election_type,
-                    election_subtype=self.subtype,
-                    organisation=self.organisation,
-                    division=self.division,
+                    **default_kwargs
                 )
+                self.model = existing_model
                 return existing_model
             except Election.DoesNotExist:
                 existing_model = None
 
-            new_model, _ = Election.objects.update_or_create(
-                poll_open_date=self.date,
-                election_type=self.election_type,
-                election_subtype=self.subtype,
-                organisation=self.organisation,
-                division=self.division,
-            )
+            new_model, _ = Election.objects.update_or_create(**default_kwargs)
             tmp_election_id = self.to_id(tmp_id=new_model.pk)
             new_model.tmp_election_id = tmp_election_id
             new_model.save()
+            self.model = new_model
             return new_model
 
 
 def create_ids_for_each_ballot_paper(all_data, subtypes=None):
     all_ids = []
     for organisation in all_data.get('election_organisation', []):
+        group_id = None
         if type(organisation) == str:
             organisation = Organisation.objects.get(
                 organisation_type=organisation)
@@ -137,17 +142,16 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
 
         # GROUP 1
         # Make a group ID for the date and election type
-        date_id = IDMaker(*args, group_id=True)
+        date_id = IDMaker(*args, is_group_id=True)
         if date_id not in all_ids:
             all_ids.append(date_id)
-
 
         # GROUP 2
         # Make a group ID for the date, election type and org
         if div_data:
-            org_id = IDMaker(group_id=True, *args, **kwargs)
-            if org_id not in all_ids:
-                all_ids.append(org_id)
+            group_id = IDMaker(is_group_id=True, *args, **kwargs)
+            if group_id not in all_ids:
+                all_ids.append(group_id)
 
         if subtypes:
             for subtype in all_data.get('election_subtype', []):
@@ -160,6 +164,7 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                         *args,
                         subtype=subtype,
                         division=org_div,
+                        group_id=group_id,
                         **kwargs))
         else:
             for div in div_data:
@@ -169,6 +174,7 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                 all_ids.append(IDMaker(
                     *args,
                     division=org_div,
+                    group_id=group_id,
                     **kwargs
                     ))
     return all_ids

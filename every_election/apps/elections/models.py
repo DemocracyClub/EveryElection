@@ -51,9 +51,10 @@ class Election(SuggestedByPublicMixin, models.Model):
     poll_open_date = models.DateField(blank=True, null=True)
     organisation = models.ForeignKey('organisations.Organisation', null=True)
     elected_role = models.ForeignKey(ElectedRole, null=True)
-    division = models.ForeignKey('organisations.OrganisationDivision', related_name='tmp_real', null=True)
-    seats_contested = models.IntegerField(blank=False, null=False)
-    seats_total = models.IntegerField(blank=False, null=False)
+    division = models.ForeignKey('organisations.OrganisationDivision', null=True)
+    seats_contested = models.IntegerField(blank=False, null=True)
+    seats_total = models.IntegerField(blank=False, null=True)
+    group = models.ForeignKey('Election', null=True)
 
     # TODO:
     # Notice of election
