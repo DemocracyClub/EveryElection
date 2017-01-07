@@ -51,8 +51,9 @@ class Election(SuggestedByPublicMixin, models.Model):
     poll_open_date = models.DateField(blank=True, null=True)
     organisation = models.ForeignKey('organisations.Organisation', null=True)
     elected_role = models.ForeignKey(ElectedRole, null=True)
-    divisions = models.ManyToManyField(
-        'organisations.OrganisationDivision', through='ElectionDivisions')
+    division = models.ForeignKey('organisations.OrganisationDivision', related_name='tmp_real', null=True)
+    seats_contested = models.IntegerField(blank=False, null=False)
+    seats_total = models.IntegerField(blank=False, null=False)
 
     # TODO:
     # Notice of election
@@ -68,14 +69,3 @@ class Election(SuggestedByPublicMixin, models.Model):
         else:
             return self.tmp_election_id
 
-
-class ElectionDivisions(models.Model):
-    """
-    One of the sub-parts of an election, for example, a ward or constituency.
-
-    Some divisions can have more than one seat contested at a given election.
-    """
-    election = models.ForeignKey('Election')
-    division = models.ForeignKey('organisations.OrganisationDivision')
-    seats_contested = models.IntegerField(blank=False, null=False)
-    seats_total = models.IntegerField(blank=False, null=False)

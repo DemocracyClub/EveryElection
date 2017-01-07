@@ -81,6 +81,7 @@ class IDMaker(object):
                 election_type=self.election_type,
                 election_subtype=self.subtype,
                 organisation=self.organisation,
+                division=self.division,
             )
             return new_model
         else:
@@ -93,6 +94,7 @@ class IDMaker(object):
                     election_type=self.election_type,
                     election_subtype=self.subtype,
                     organisation=self.organisation,
+                    division=self.division,
                 )
                 return existing_model
             except Election.DoesNotExist:
@@ -103,6 +105,7 @@ class IDMaker(object):
                 election_type=self.election_type,
                 election_subtype=self.subtype,
                 organisation=self.organisation,
+                division=self.division,
             )
             tmp_election_id = self.to_id(tmp_id=new_model.pk)
             new_model.tmp_election_id = tmp_election_id
