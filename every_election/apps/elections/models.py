@@ -41,14 +41,15 @@ class ElectedRole(models.Model):
 class Election(SuggestedByPublicMixin, models.Model):
     """
     An election.
-    This model should contain everything needed to make the  election ID,
+    This model should contain everything needed to make the election ID,
     plus extra information about this election.
     """
-    election_id = models.CharField(blank=False, null=False, max_length=100)
+    election_id = models.CharField(blank=True, null=True, max_length=250)
+    tmp_election_id = models.CharField(blank=True, null=True, max_length=250)
     election_type = models.ForeignKey(ElectionType)
     election_subtype = models.ForeignKey(ElectionSubType, null=True)
-    poll_open_date = models.DateField()
-    organisation = models.ForeignKey('organisations.Organisation')
+    poll_open_date = models.DateField(blank=True, null=True)
+    organisation = models.ForeignKey('organisations.Organisation', null=True)
     elected_role = models.ForeignKey(ElectedRole, null=True)
     divisions = models.ManyToManyField(
         'organisations.OrganisationDivision', through='ElectionDivisions')
@@ -60,6 +61,12 @@ class Election(SuggestedByPublicMixin, models.Model):
     # hashtags? Other names?
     # Discription
     # Voting system
+
+    def get_id(self):
+        if self.election_id:
+            return self.election_id
+        else:
+            return self.tmp_election_id
 
 
 class ElectionDivisions(models.Model):

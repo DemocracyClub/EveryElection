@@ -2,9 +2,11 @@ from django.http import HttpResponseRedirect
 from django import forms
 from formtools.wizard.views import NamedUrlSessionWizardView
 
+from organisations.models import Organisation
 from elections.models import ElectedRole, ElectionSubType, Election
 from elections.utils import (create_ids_for_each_ballot_paper)
 from elections.forms import (
+    ElectionDateKnownForm,
     ElectionDateForm,
     ElectionTypeForm,
     ElectionSubTypeForm,
@@ -13,7 +15,9 @@ from elections.forms import (
     )
 
 
-FORMS = [("date", ElectionDateForm),
+FORMS = [
+         ("date_known", ElectionDateKnownForm),
+         ("date", ElectionDateForm),
          ("election_type", ElectionTypeForm),
          ("election_subtype", ElectionSubTypeForm),
          ("election_organisation", ElectionOrganisationForm),
@@ -22,6 +26,7 @@ FORMS = [("date", ElectionDateForm),
          ]
 
 TEMPLATES = {
+    "date_known": "id_creator/date_known.html",
     "date": "id_creator/date.html",
     "election_type": "id_creator/election_type.html",
     "election_subtype": "id_creator/election_subtype.html",
@@ -31,6 +36,14 @@ TEMPLATES = {
     "review": "id_creator/review.html",
 }
 
+
+def date_known(wizard):
+    date_known_step_data = wizard.get_cleaned_data_for_step('date_known')
+    if date_known_step_data:
+        known = date_known_step_data.get('date_known')
+        if known == "no":
+            return False
+    return True
 
 def select_organisation(wizard):
     election_type = wizard.get_election_type()
@@ -58,6 +71,7 @@ def select_subtype(wizard):
 
 
 CONDITION_DICT = {
+    'date': date_known,
     'election_organisation': select_organisation,
     'election_subtype': select_subtype,
 }
@@ -93,7 +107,7 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         all_data = self.get_all_cleaned_data()
         # print("\n".join(str(all_data).split(',')))
         if not 'date' in all_data:
-            return context
+            all_data['date'] = None
         if not all_data.get('election_organisation'):
             all_data.update(self.storage.extra_data)
         context['all_data'] = all_data
@@ -123,13 +137,7 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         # Make the elections
         context = self.get_context_data(form_list)
         for election_data in context['all_ids']:
-            Election.objects.update_or_create(
-                    election_id=election_data.to_id(),
-                    poll_open_date=election_data.date,
-                    election_type=election_data.election_type,
-                    election_subtype=election_data.subtype,
-                    organisation=election_data.organisation,
-            )
+            election_data.save_model()
 
 
         return HttpResponseRedirect('/')

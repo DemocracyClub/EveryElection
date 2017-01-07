@@ -1,4 +1,7 @@
+from django.db import transaction
+
 from organisations.models import Organisation, OrganisationDivision
+from elections.models import Election
 
 
 class IDMaker(object):
@@ -7,6 +10,10 @@ class IDMaker(object):
                  division=None, group_id=False):
         self.election_type = election_type
         self.date = date
+        if self.date is None:
+            self.date_known = False
+        else:
+            self.date_known = True
         self.group_id = group_id
         self.use_org = True
         if organisation:
@@ -18,10 +25,11 @@ class IDMaker(object):
                 self.organisation = organisation
         else:
             self.use_org = False
+            self.organisation = None
         self.subtype = subtype
         self.division = division
 
-    def _get_parts(self):
+    def _get_parts(self, tmp_id=None):
         parts = []
         parts.append(self.election_type.election_type)
         if self.subtype:
@@ -33,25 +41,73 @@ class IDMaker(object):
                 parts.append(self.organisation)
         if self.division:
             parts.append(self.division.slug)
-        parts.append(self._format_date(self.date))
+        if tmp_id:
+            parts.append("tmp-{}".format(tmp_id))
+        else:
+            parts.append(self._format_date(self.date))
         return parts
 
     def _format_date(self, date):
-        return self.date.strftime("%Y-%m-%d")
+        if self.date_known:
+            return self.date.strftime("%Y-%m-%d")
+        else:
+            return "<tmp-id>"
 
     def to_title(self):
         parts = []
         if self.use_org and self.organisation:
             parts.append(self.organisation.election_name)
+        if self.division:
+            parts.append("{}".format(self.division.name))
         if self.subtype:
             parts.append("({})".format(self.subtype.name))
         return " ".join(parts).strip()
 
-    def to_id(self):
-        return ".".join(self._get_parts())
+    def to_id(self, tmp_id=None):
+        return ".".join(self._get_parts(tmp_id))
 
     def __eq__(self, other):
         return other.to_id() == self.to_id()
+
+    @transaction.atomic
+    def save_model(self):
+        """
+        Performs a `get_or_create` on a model with this ID
+        """
+        if self.date_known:
+            new_model, _ = Election.objects.update_or_create(
+                election_id=self.to_id(),
+                poll_open_date=self.date,
+                election_type=self.election_type,
+                election_subtype=self.subtype,
+                organisation=self.organisation,
+            )
+            return new_model
+        else:
+            # We will only allow one tmp ID per (type, subtype, org)
+            # Assuming that we will never know of two upcoming elections
+            # that wont have the same date
+            try:
+                existing_model = Election.objects.get(
+                    election_id=None,
+                    election_type=self.election_type,
+                    election_subtype=self.subtype,
+                    organisation=self.organisation,
+                )
+                return existing_model
+            except Election.DoesNotExist:
+                existing_model = None
+
+            new_model, _ = Election.objects.update_or_create(
+                poll_open_date=self.date,
+                election_type=self.election_type,
+                election_subtype=self.subtype,
+                organisation=self.organisation,
+            )
+            tmp_election_id = self.to_id(tmp_id=new_model.pk)
+            new_model.tmp_election_id = tmp_election_id
+            new_model.save()
+            return new_model
 
 
 def create_ids_for_each_ballot_paper(all_data, subtypes=None):
