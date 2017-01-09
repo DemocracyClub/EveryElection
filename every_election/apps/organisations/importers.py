@@ -90,6 +90,21 @@ def add_gss_to_LAs():
             pass
 
 
+def police_importer():
+    url = "https://data.police.uk/api/forces"
+    req = requests.get(url)
+    for force in req.json():
+        defaults = {
+            'official_name': force['name'],
+            'common_name': force['name'],
+            'slug': force['id'],
+            'elected_title': "Police and Crime Commissioner",
+            'election_name': "Police and Crime Commissioner for {}".format(
+                force['name']
+            ),
+        }
+        create_single('pcc', force['id'], 'police_force', defaults)
+
 def mayor_importer():
     orgs_with_mayors = [
         {

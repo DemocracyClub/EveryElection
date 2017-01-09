@@ -6,6 +6,7 @@ from organisations.importers import (
     local_authority_wls_importer,
     local_authority_sct_importer,
     local_authority_nir_importer,
+    police_importer,
     mayor_importer,
     create_single)
 from elections.models import ElectedRole, ElectionType
@@ -17,7 +18,8 @@ class Command(BaseCommand):
         # Mayors
         mayor_importer()
 
-        # TODO: Local Authorities Scotland
+        # Police
+        police_importer()
 
         # Local Authorities England
         local_authority_eng_importer()
