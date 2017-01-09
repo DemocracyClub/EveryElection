@@ -24,7 +24,7 @@ class ElectionSubType(models.Model):
     election_subtype = models.CharField(blank=True, max_length=100)
 
     def __str__(self):
-        return self.name
+        return "{} ({})".format(self.name, self.election_type)
 
 
 class ElectedRole(models.Model):
@@ -36,6 +36,9 @@ class ElectedRole(models.Model):
     election_type = models.ForeignKey('ElectionType')
     organisation = models.ForeignKey('organisations.Organisation')
     elected_title = models.CharField(blank=True, max_length=255)
+
+    def __str__(self):
+        return "{} ({})".format(self.elected_title, self.organisation)
 
 
 class Election(SuggestedByPublicMixin, models.Model):
@@ -63,6 +66,9 @@ class Election(SuggestedByPublicMixin, models.Model):
     # hashtags? Other names?
     # Discription
     # Voting system
+
+    def __str__(self):
+        return self.get_id()
 
     def get_id(self):
         if self.election_id:
