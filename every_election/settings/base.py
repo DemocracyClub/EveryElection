@@ -160,6 +160,11 @@ SITE_TITLE = "Every Election"
 
 DATA_CACHE_DIR = root('data_cache')
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 100
+}
+
 # .local.py overrides all the common settings.
 try:
     from .local import *  # noqa

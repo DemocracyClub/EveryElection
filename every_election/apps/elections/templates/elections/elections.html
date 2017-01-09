@@ -15,6 +15,22 @@
 
       {% endfor %}
 
+      {% if is_paginated %}
+      <ul class="pagination" role="navigation" aria-label="Pagination">
+          {% if page_obj.has_previous %}
+          <li class="pagination-previous"><a href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+          {% endif %}
+
+          <li class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</li>
+
+          {% if page_obj.has_next %}
+
+          <li class="pagination-next"><a href="?page={{ page_obj.next_page_number }}">Next</a></li>
+          {% endif %}
+      </ul>
+      {% endif %}
+
+
   </div>
 
 </section>

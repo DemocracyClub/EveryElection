@@ -11,3 +11,4 @@ class ElectionTypesView(ListView):
 class AllElectionsView(ListView):
     template_name = "elections/elections.html"
     model = Election
+    paginate_by = 50
