@@ -148,7 +148,7 @@ def mayor_importer():
          'org_id': 'NTY',
          'election_name': "Mayor of Tees Valley Combined Authority",
          'slug': "north-tyneside",
-         'organisation_type': 'combined-authority',
+         'organisation_type': 'local-authority',
         },
         {
          'org': "Doncaster Metropolitan Borough Council",
