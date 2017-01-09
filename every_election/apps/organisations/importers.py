@@ -29,8 +29,7 @@ def create_single(election_type, official_identifier,
     )
 
 
-def local_authority_eng_importer():
-    url = "http://local-authority-eng.beta.openregister.org/records.tsv?page-size=5000"  # NOQA
+def base_local_authority_importer(territory_code, url):
     req = requests.get(url)
 
     data_file = csv.DictReader(
@@ -43,14 +42,35 @@ def local_authority_eng_importer():
             'common_name': line['name'],
             'organisation_subtype': line['local-authority-type'],
             'slug': slugify(line['name']),
-            'territory_code': 'ENG',
+            'territory_code': territory_code.upper(),
             'elected_title': "Councillor for {}".format(line['official-name']),
             'election_name': "{} local election".format(line['official-name']),
         }
 
-        create_single('local', line['local-authority-eng'],
+        create_single('local',
+                      line["local-authority-{}".format(territory_code)],
                       "local-authority", defaults)
     add_gss_to_LAs()
+
+
+def local_authority_eng_importer():
+    url = "https://local-authority-eng.beta.openregister.org/records.tsv?page-size=5000"  # NOQA
+    base_local_authority_importer("eng", url)
+
+
+def local_authority_wls_importer():
+    url = "https://local-authority-wls.discovery.openregister.org/records.tsv?page-size=5000"  # NOQA
+    base_local_authority_importer("wls", url)
+
+
+def local_authority_nir_importer():
+    url = "https://local-authority-nir.discovery.openregister.org/records.tsv?page-size=5000"  # NOQA
+    base_local_authority_importer("nir", url)
+
+
+def local_authority_sct_importer():
+    url = "https://local-authority-sct.discovery.openregister.org/records.tsv?page-size=5000"  # NOQA
+    base_local_authority_importer("sct", url)
 
 
 def add_gss_to_LAs():

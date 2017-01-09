@@ -3,6 +3,9 @@ from django.core.management.base import BaseCommand
 from organisations.models import Organisation
 from organisations.importers import (
     local_authority_eng_importer,
+    local_authority_wls_importer,
+    local_authority_sct_importer,
+    local_authority_nir_importer,
     mayor_importer,
     create_single)
 from elections.models import ElectedRole, ElectionType
@@ -16,9 +19,11 @@ class Command(BaseCommand):
 
         # TODO: Local Authorities Scotland
 
-        # TODO: Police force
-
-        # TODO: Mayors
+        # Local Authorities England
+        local_authority_eng_importer()
+        local_authority_wls_importer()
+        local_authority_sct_importer()
+        local_authority_nir_importer()
 
 
         # NAW
