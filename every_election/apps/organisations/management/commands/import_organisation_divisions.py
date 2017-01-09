@@ -34,7 +34,8 @@ class Command(BaseCommand):
             req = requests.get(initial_url)
             url = req.url
 
-            child_type = PARENT_TO_CHILD_AREAS.get(req.json()['type'])
+            parent_type = req.json()['type']
+            child_type = ",".join(PARENT_TO_CHILD_AREAS.get(parent_type, []))
             req = requests.get("{}/children?type={}".format(url, child_type))
 
             if not CACHE.has_url(req.url):
