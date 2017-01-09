@@ -14,7 +14,7 @@ class SuggestedByPublicMixin(models.Model):
     suggested_status = models.CharField(
         max_length=255,
         choices=[(x.name, x.value) for x in SuggestedStatuses],
-        default=SuggestedStatuses.suggested.value,
+        default=SuggestedStatuses.suggested.value.lower(),
     )
     suggestion_reason = models.TextField(blank=True)
     rejection_reason = models.TextField(blank=True)
