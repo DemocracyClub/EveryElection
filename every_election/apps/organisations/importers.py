@@ -70,4 +70,70 @@ def add_gss_to_LAs():
             pass
 
 
-
+def mayor_importer():
+    orgs_with_mayors = [
+        {
+         'org': "Greater London Authority",
+         'election_name': "Mayor of London",
+         'slug': 'london',
+         'organisation_type': 'local-authority',
+        },
+        {
+         'org': "West Midlands Combined Authority",
+         'election_name': "Mayor of West Midlands Combined Authority",
+         'slug': 'west-midlands',
+         'organisation_type': 'combined-authority',
+        },
+        {
+         'org': "Greater Manchester",
+         'election_name': "Mayor of Greater Manchester",
+         'slug': 'greater-manchester',
+         'organisation_type': 'local-authority',
+        },
+        {
+         'org': "Liverpool City Region",
+         'election_name': "Mayor of Liverpool City Region",
+         'slug': "liverpool",
+         'organisation_type': 'combined-authority',
+        },
+        {
+         'org': "Cambridgeshire and Peterborough Combined Authority",
+         'election_name': "Mayor of Cambridgeshire and Peterborough Combined Authority",
+         'slug': "cambridgeshire-and-peterborough",
+         'organisation_type': 'combined-authority',
+        },
+        {
+         'org': "Tees Valley Combined Authority",
+         'election_name': "Mayor of Tees Valley Combined Authority",
+         'slug': "tees-valley",
+         'organisation_type': 'combined-authority',
+        },
+        {
+         'org': "North Tyneside Council",
+         'org_id': 'NTY',
+         'election_name': "Mayor of Tees Valley Combined Authority",
+         'slug': "north-tyneside",
+         'organisation_type': 'combined-authority',
+        },
+        {
+         'org': "Doncaster Metropolitan Borough Council",
+         'org_id': 'DNC',
+         'election_name': "Mayor of Doncaster Metropolitan Borough Council",
+         'slug': "doncaster",
+         'organisation_type': 'local-authority',
+        },
+    ]
+    for org_data in orgs_with_mayors:
+        defaults = {
+            'official_name': org_data['org'],
+            'common_name': org_data['org'],
+            'slug': org_data['slug'],
+            'elected_title': "Mayor",
+            'election_name': org_data['election_name']
+        }
+        create_single(
+            'mayor',
+            org_data.get('org_id', org_data['slug']),
+            org_data['organisation_type'],
+            defaults
+        )

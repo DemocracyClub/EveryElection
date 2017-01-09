@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand
 from organisations.models import Organisation
 from organisations.importers import (
     local_authority_eng_importer,
+    mayor_importer,
     create_single)
 from elections.models import ElectedRole, ElectionType
 
@@ -10,10 +11,8 @@ from elections.models import ElectedRole, ElectionType
 class Command(BaseCommand):
     def handle(self, **options):
 
-        # Local Authorities England
-        local_authority_eng_importer()
-
-        # TODO: Local Authorities Wales
+        # Mayors
+        mayor_importer()
 
         # TODO: Local Authorities Scotland
 
@@ -21,15 +20,6 @@ class Command(BaseCommand):
 
         # TODO: Mayors
 
-        # PCC
-        defaults={
-            'official_name': "Police and Crime Commissioners",
-            'common_name': "Police and Crime Commissioners",
-            'slug': 'pcc',
-            'elected_title': "Police and Crime Commissioner",
-            'election_name': "Police and Crime Commissioner",
-        }
-        create_single('naw', 'naw', "naw", defaults)
 
         # NAW
         defaults={

@@ -10,6 +10,7 @@ class IDMaker(object):
                  division=None, is_group_id=False, group_id=None):
         self.election_type = election_type
         self.date = date
+
         if self.date is None:
             self.date_known = False
         else:
@@ -150,6 +151,11 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
         # Make a group ID for the date, election type and org
         if div_data:
             group_id = IDMaker(is_group_id=True, *args, **kwargs)
+            if group_id not in all_ids:
+                all_ids.append(group_id)
+
+        if all_data['election_type'].election_type == "mayor":
+            group_id = IDMaker(is_group_id=False, *args, **kwargs)
             if group_id not in all_ids:
                 all_ids.append(group_id)
 

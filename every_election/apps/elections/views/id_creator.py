@@ -65,14 +65,22 @@ def select_subtype(wizard):
     if not election_type:
         return False
     subtypes = ElectionSubType.objects.filter(election_type=election_type)
+    return subtypes.count() > 1
 
-    if subtypes.count() > 1:
-        return True
+def select_organisation_division(wizard):
+    election_type = wizard.get_election_type()
+    if not election_type:
+        return False
+    if wizard.get_election_type().election_type == "mayor":
+        return False
+    return True
+
 
 
 CONDITION_DICT = {
     'date': date_known,
     'election_organisation': select_organisation,
+    'election_organisation_division': select_organisation_division,
     'election_subtype': select_subtype,
 }
 
