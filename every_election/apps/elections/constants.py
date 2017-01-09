@@ -37,7 +37,7 @@ ELECTION_TYPES = {
         'subtypes': [],
     },
     'mayor': {
-        'name': "City mayor",
+        'name': "Directly elected Mayor",
         'subtypes': [],
     },
     'eu': {
