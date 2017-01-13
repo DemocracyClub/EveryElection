@@ -30,23 +30,23 @@
 
 {% endblock top_banner %}
 
-{% block base_title %}{% block page_title %}{% endblock page_title %} | WhereDoIVote?{% endblock base_title %}
+{% block base_title %}{% block page_title %}{% endblock page_title %} | Democracy Club Elections?{% endblock base_title %}
 
 {% block site_meta %}
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-    <meta name="description" content="{% block description %}Find where to vote{% endblock %}" />
-    <meta name="keywords" content="{% block keywords %}Polling stations,Election,Referendum{% endblock %}" />
+    <meta name="description" content="{% block description %}Recording Every Election in the UK{% endblock %}" />
+    <meta name="keywords" content="{% block keywords %}Election,Referendum{% endblock %}" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
     <link rel="canonical" href="{{ CANONICAL_URL }}{{ request.path }}" />
-    <meta property="og:site_name" content="WhereDoIVote?" />
+    <meta property="og:site_name" content="Democracy Club Elections" />
     <meta property="og:url" content="{{ CANONICAL_URL }}{{ request.path }}" />
     <meta property="fb:app_id" content="262795130596272" />
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@democlub">
     <meta property="og:image" content="{{ CANONICAL_URL }}{% block og_image %}{% static "dc_theme/images/logo-large.png" %}{% endblock og_image %}" />
     <meta property="og:title" content="{% block og_title %}WhereDoIVote?{% endblock og_title %}" />
-    <meta property="og:description" content="{% block og_description %}Find where to vote{% endblock og_description %}" />
+    <meta property="og:description" content="{% block og_description %}Recording Every Election in the UK{% endblock og_description %}" />
     {% block page_meta %}{% endblock page_meta %}
 {% endblock site_meta %}
 
