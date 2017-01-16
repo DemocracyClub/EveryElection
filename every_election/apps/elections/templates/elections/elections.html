@@ -6,7 +6,7 @@
   <div class="card postcode_card">
 
       {% for object in object_list %}
-      <h3>{{ object.get_id }}</h3>
+      <h3><a href="{{ object.get_absolute_url }}">{{ object.get_id }}</a></h3>
       <li><strong>election_type</strong>: {{ object.election_type }}</li>
       <li><strong>election_subtype</strong>: {{ object.election_subtype }}</li>
       <li><strong>poll_open_date</strong>: {{ object.poll_open_date }}</li>

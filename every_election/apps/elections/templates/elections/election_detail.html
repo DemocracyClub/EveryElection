@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<section class="columns large-6 large-centered">
+
+    <div class="card postcode_card">
+
+        <h1>{{ object.election_id }}</h1>
+        <h2>{{ object.election_title }}</h2>
+        <h2>{{ object.election_type }}</h2>
+        {% if object.election_subtype %}
+        <h3>{{ object.election_subtype }}</h3>
+        {% endif %}
+
+        <h3>{{ object.poll_open_date }}</h3>
+
+        <h3>Related IDs</h3>
+        <p>These are sub-IDs or IDs for each ballot paper</p>
+        {% for child in object.children.all %}
+            <li>{{ child }}</li>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}
+

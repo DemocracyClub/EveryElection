@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.urlresolvers import reverse
+
 from suggested_content.models import SuggestedByPublicMixin
 
 
@@ -61,6 +63,10 @@ class Election(SuggestedByPublicMixin, models.Model):
     seats_total = models.IntegerField(blank=False, null=True)
     group = models.ForeignKey('Election', null=True, related_name="children")
     group_type = models.CharField(blank=True, max_length=100, null=True)
+
+    def get_absolute_url(self):
+        return reverse("single_election_view", args=(self.election_id,))
+
 
     # TODO:
     # Notice of election

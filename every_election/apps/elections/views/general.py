@@ -1,4 +1,4 @@
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 
 from elections.models import ElectionType, Election
 
@@ -12,3 +12,9 @@ class AllElectionsView(ListView):
     template_name = "elections/elections.html"
     model = Election
     paginate_by = 50
+
+
+class SingleElection(DetailView):
+    model = Election
+    slug_url_kwarg = 'election_id'
+    slug_field = 'election_id'
