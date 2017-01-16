@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<section class="columns large-6 large-centered">
+
+    <div class="card postcode_card">
+
+        <h1>{{ object.name }}</h1>
+        <p>Also known as "{{ object.common_name }}".</p>
+        <p>For election IDs, this should be referred to as <code>{{ object.slug }}</code></p>
+        <p>The official identifier is <code>{{ object.official_identifier }}</code></p>
+        <p>The organisation type is <code>{{ object.organisation_type }}</code></p>
+        {% if object.election_types.all %}
+        <p>This organisation supports the following election types:</p>
+        <ul>
+            {% for election_type in object.election_types.all %}
+                <li><code>{{ election_type.election_type }}</code></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <h2>Sub-divisions</h2>
+        <ul>
+        {% for divisionset in object.divisionset.all %}
+            <h3>{{ divisionset }}</h3>
+            <p>Active from {{ divisionset.start_date }} to
+                {% if divisionset.end_date %}{{divisionset.end_date}}{% else %}now{% endif %}.</p>
+            <p>{{ divisionset.notes }}</p>
+            <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Geography Code</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for division in divisionset.divisions.all %}
+                <tr>
+                    <td>{{ division }}</td>
+                    <td>{{ division.division_subtype }}</td>
+                    <td>
+                        {% if division.geography_curie %}
+                        <a href="{{ division.format_geography_link }}.html">
+                            {{ division.geography_curie }}
+                        </a>
+                        {% else %}
+                        <strong>Missing</strong>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endfor %}
+        </ul>
+    </div>
+</div>
+
+{% endblock content %}
