@@ -105,6 +105,7 @@ class IDMaker(object):
         default_kwargs = {
             'poll_open_date':  self.date,
             'election_type':  self.election_type,
+            'election_title': self.to_title(),
             'election_subtype':  self.subtype,
             'organisation':  self.organisation,
             'division':  self.division,

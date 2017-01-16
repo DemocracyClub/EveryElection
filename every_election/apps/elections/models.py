@@ -50,6 +50,7 @@ class Election(SuggestedByPublicMixin, models.Model):
     """
     election_id = models.CharField(blank=True, null=True, max_length=250)
     tmp_election_id = models.CharField(blank=True, null=True, max_length=250)
+    election_title = models.CharField(blank=True, max_length=255)
     election_type = models.ForeignKey(ElectionType)
     election_subtype = models.ForeignKey(ElectionSubType, null=True)
     poll_open_date = models.DateField(blank=True, null=True)
