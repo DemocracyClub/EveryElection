@@ -57,7 +57,8 @@ class Election(SuggestedByPublicMixin, models.Model):
     division = models.ForeignKey('organisations.OrganisationDivision', null=True)
     seats_contested = models.IntegerField(blank=False, null=True)
     seats_total = models.IntegerField(blank=False, null=True)
-    group = models.ForeignKey('Election', null=True)
+    group = models.ForeignKey('Election', null=True, related_name="children")
+    group_type = models.CharField(blank=True, max_length=100, null=True)
 
     # TODO:
     # Notice of election
