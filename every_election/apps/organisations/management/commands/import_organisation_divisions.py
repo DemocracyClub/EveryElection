@@ -23,23 +23,30 @@ class Command(BaseCommand):
         "E12000007",
         "W08000001"  # See import_welsh_areas
     ]
+    BASE = "http://mapit.mysociety.org"
+
+    def add_arguments(self, parser):
+        parser.add_argument('--always_pick_option', action='store', type=int, default=0)
+
 
     def handle(self, **options):
+        self.always_pick_option = int(options['always_pick_option'])
+        self.load_mapit_generations()
         self.import_scottish_areas()
         self.import_gla_areas()
         self.import_parl_areas()
         self.import_ni_areas()
         self.import_welsh_areas()
-        base = "http://mapit.mysociety.org"
         qs = Organisation.objects.exclude(gss='')
         qs = qs.exclude(gss__in=self.skip_gss)
         for organisation in qs:
-            initial_url = "{}/area/{}".format(base, organisation.gss)
+            initial_url = "{}/area/{}".format(self.BASE, organisation.gss)
             print(initial_url)
             req = requests.get(initial_url)
             url = req.url
 
             parent_type = req.json()['type']
+            print(PARENT_TO_CHILD_AREAS.get(parent_type))
             child_type = ",".join(PARENT_TO_CHILD_AREAS.get(parent_type, []))
             req = requests.get("{}/children?type={}".format(url, child_type))
 
