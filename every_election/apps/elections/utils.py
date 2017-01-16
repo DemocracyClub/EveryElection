@@ -43,6 +43,13 @@ class IDMaker(object):
         self.subtype = subtype
         self.division = division
 
+        try:
+            self.elected_role = ElectedRole.objects.get(
+                organisation=self.organisation,
+                election_type=self.election_type)
+        except:
+            self.elected_role = None
+
     def _get_parts(self, tmp_id=None):
         parts = []
         parts.append(self.election_type.election_type)
@@ -103,6 +110,7 @@ class IDMaker(object):
             'division':  self.division,
             'group':  group_model,
             'group_type':  self.group_type,
+            'elected_role':  self.elected_role,
         }
 
         if self.date_known:

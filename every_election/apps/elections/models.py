@@ -36,6 +36,7 @@ class ElectedRole(models.Model):
     election_type = models.ForeignKey('ElectionType')
     organisation = models.ForeignKey('organisations.Organisation')
     elected_title = models.CharField(blank=True, max_length=255)
+    elected_role_name = models.CharField(blank=True, max_length=255)
 
     def __str__(self):
         return "{} ({})".format(self.elected_title, self.organisation)

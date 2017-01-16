@@ -12,7 +12,8 @@ def create_single(election_type, official_identifier,
                   organisation_type, defaults, subtypes=None):
 
     election_type = ElectionType.objects.get(election_type=election_type)
-    elected_title = defaults.pop('elected_title')
+    elected_title = defaults.pop('elected_title', None)
+    elected_role_name = defaults.pop('elected_role_name', elected_title)
 
     organisation, _ = Organisation.objects.update_or_create(
         official_identifier=official_identifier,
@@ -25,6 +26,7 @@ def create_single(election_type, official_identifier,
         organisation=organisation,
         defaults={
             'elected_title': elected_title,
+            'elected_role_name': elected_role_name,
         }
     )
 
@@ -43,8 +45,9 @@ def base_local_authority_importer(territory_code, url):
             'organisation_subtype': line['local-authority-type'],
             'slug': slugify(line['name']),
             'territory_code': territory_code.upper(),
-            'elected_title': "Councillor for {}".format(line['official-name']),
-            'election_name': "{} local election".format(line['official-name']),
+            'elected_title': "Local Councillor",
+            'elected_role_name': "Councillor for {}".format(line['official-name']),
+            'election_name': "{} local election".format(line['name']),
         }
 
         create_single('local',
@@ -99,7 +102,7 @@ def police_importer():
             'common_name': force['name'],
             'slug': force['id'],
             'elected_title': "Police and Crime Commissioner",
-            'election_name': "Police and Crime Commissioner for {}".format(
+            'elected_role_name': "Police and Crime Commissioner for {}".format(
                 force['name']
             ),
         }
@@ -109,51 +112,51 @@ def mayor_importer():
     orgs_with_mayors = [
         {
          'org': "Greater London Authority",
-         'election_name': "Mayor of London",
+         'elected_role_name': "Mayor of London",
          'slug': 'london',
          'organisation_type': 'local-authority',
         },
         {
          'org': "West Midlands Combined Authority",
-         'election_name': "Mayor of West Midlands Combined Authority",
+         'elected_role_name': "Mayor of West Midlands Combined Authority",
          'slug': 'west-midlands',
          'organisation_type': 'combined-authority',
         },
         {
          'org': "Greater Manchester",
-         'election_name': "Mayor of Greater Manchester",
+         'elected_role_name': "Mayor of Greater Manchester",
          'slug': 'greater-manchester',
          'organisation_type': 'local-authority',
         },
         {
          'org': "Liverpool City Region",
-         'election_name': "Mayor of Liverpool City Region",
+         'elected_role_name': "Mayor of Liverpool City Region",
          'slug': "liverpool",
          'organisation_type': 'combined-authority',
         },
         {
          'org': "Cambridgeshire and Peterborough Combined Authority",
-         'election_name': "Mayor of Cambridgeshire and Peterborough Combined Authority",
+         'elected_role_name': "Mayor of Cambridgeshire and Peterborough Combined Authority",
          'slug': "cambridgeshire-and-peterborough",
          'organisation_type': 'combined-authority',
         },
         {
          'org': "Tees Valley Combined Authority",
-         'election_name': "Mayor of Tees Valley Combined Authority",
+         'elected_role_name': "Mayor of Tees Valley Combined Authority",
          'slug': "tees-valley",
          'organisation_type': 'combined-authority',
         },
         {
          'org': "North Tyneside Council",
          'org_id': 'NTY',
-         'election_name': "Mayor of Tees Valley Combined Authority",
+         'elected_role_name': "Mayor of Tees Valley Combined Authority",
          'slug': "north-tyneside",
          'organisation_type': 'local-authority',
         },
         {
          'org': "Doncaster Metropolitan Borough Council",
          'org_id': 'DNC',
-         'election_name': "Mayor of Doncaster Metropolitan Borough Council",
+         'elected_role_name': "Mayor of Doncaster Metropolitan Borough Council",
          'slug': "doncaster",
          'organisation_type': 'local-authority',
         },
@@ -164,7 +167,7 @@ def mayor_importer():
             'common_name': org_data['org'],
             'slug': org_data['slug'],
             'elected_title': "Mayor",
-            'election_name': org_data['election_name']
+            'elected_role_name': org_data['elected_role_name']
         }
         create_single(
             'mayor',
