@@ -85,7 +85,8 @@ class ElectionOrganisationDivisionForm(forms.Form):
 
             if election_subtype:
                 for subtype in election_subtype:
-                    div_qs = organisation.organisationdivision_set.filter(
+                    # TODO Get Div Set by election date
+                    div_qs = organisation.divisions.filter(
                         division_election_sub_type=subtype.election_subtype
                     )
                     div_qs = div_qs.order_by('name')
@@ -95,7 +96,7 @@ class ElectionOrganisationDivisionForm(forms.Form):
                     for div in div_qs:
                         self.add_single_field(organisation, div, subtype=subtype.election_subtype)
             else:
-                div_qs = organisation.organisationdivision_set.all()
+                div_qs = organisation.divisions.all()
                 div_qs = div_qs.order_by('name')
                 for div in div_qs:
                     self.add_single_field(organisation, div)

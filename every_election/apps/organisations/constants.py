@@ -5,6 +5,7 @@ PARENT_TO_CHILD_AREAS = {
     'LBO': ['LBW',],
     'CED': ['CPC',],
     'UTA': ['UTW', 'UTE'],
+    'NIA': ['NIE',],
 }
 CHILD_TO_PARENT_AREAS = {
     'DIW': 'DIS',

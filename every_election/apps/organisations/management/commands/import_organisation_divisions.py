@@ -32,27 +32,33 @@ class Command(BaseCommand):
     def handle(self, **options):
         self.always_pick_option = int(options['always_pick_option'])
         self.load_mapit_generations()
-        self.import_scottish_areas()
-        self.import_gla_areas()
-        self.import_parl_areas()
+        # self.import_scottish_areas()
+        # self.import_gla_areas()
+        # self.import_parl_areas()
         self.import_ni_areas()
-        self.import_welsh_areas()
+        # self.import_welsh_areas()
         qs = Organisation.objects.exclude(gss='')
+        qs = Organisation.objects.filter(gss__startswith='N')
         qs = qs.exclude(gss__in=self.skip_gss)
+        # self.process_qs(qs)
+
+        self.process_qs(
+            Organisation.objects.filter(organisation_type='nia'),
+            child_types=['NIE',]
+        )
+
+    def process_qs(self, qs, child_types=None):
         for organisation in qs:
             initial_url = "{}/area/{}".format(self.BASE, organisation.gss)
             print(initial_url)
             req = requests.get(initial_url)
             url = req.url
 
-            parent_type = req.json()['type']
-            print(PARENT_TO_CHILD_AREAS.get(parent_type))
-            child_type = ",".join(PARENT_TO_CHILD_AREAS.get(parent_type, []))
-            req = requests.get("{}/children?type={}".format(url, child_type))
-
-            if not CACHE.has_url(req.url):
-                print("CACHE MISS")
-                time.sleep(5)
+            if not child_types:
+                parent_type = req.json()['type']
+                child_types = PARENT_TO_CHILD_AREAS.get(parent_type)
+            child_types = ",".join(child_types)
+            req = requests.get("{}/children?type={}".format(url, child_types))
 
             self.import_divisions(organisation, req.json())
 
@@ -65,6 +71,9 @@ class Command(BaseCommand):
 
     def _create_division_set(self, organisation, mapit_generation_uri,
             mapit_generation_start_date):
+        print("Creating")
+        print(organisation)
+        print("Creating")
         division_set, _ = OrganisationDivisionSet.objects.update_or_create(
             organisation=organisation,
             mapit_generation_id=mapit_generation_uri,
@@ -191,6 +200,7 @@ class Command(BaseCommand):
         for mapit_id, division in data.items():
 
             division_set = self.get_division_set(organisation, division)
+            print(division_set)
 
             try:
                 all_codes = [
@@ -228,11 +238,14 @@ class Command(BaseCommand):
         ni_org = Organisation.objects.get(organisation_type='nia')
         regions_req = requests.get("http://mapit.mysociety.org/areas/NIE")
         for mapit_id, region in regions_req.json().items():
+
+            division_set = self.get_division_set(ni_org, region)
+
             OrganisationDivision.objects.update_or_create(
                 official_identifier=region['codes']['osni_oid'],
                 organisation=ni_org,
                 defaults={
-                    'gss': region['codes'].get('gss', ''),
+                    'geography_curie': "gss:{}".format(region['codes'].get('gss', '')),
                     'name': region['name'],
                     'slug': slugify(region['name']),
                     'division_type': region['type'],
