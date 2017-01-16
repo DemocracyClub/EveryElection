@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from elections.models import Election, ElectionType, ElectionSubType
+from elections.models import (
+    Election, ElectionType, ElectionSubType, ElectedRole)
 from organisations.models import Organisation
 
 
@@ -34,18 +35,41 @@ class ElectionSubTypeSerializer(serializers.ModelSerializer):
         fields = ('name', 'election_subtype')
 
 
+class ElectedRoleField(serializers.RelatedField):
+    def to_representation(self, value):
+        return value.elected_title
+
+
 class ElectionSerializer(serializers.HyperlinkedModelSerializer):
     election_type = ElectionTypeSerializer()
     election_subtype = ElectionSubTypeSerializer()
     organisation = OrganisationSerializer()
+    group = serializers.SlugRelatedField(
+        slug_field='election_id',
+        read_only=True
+        )
+    children = serializers.SlugRelatedField(
+        slug_field='election_id',
+        read_only=True,
+        many=True
+    )
+    elected_role = ElectedRoleField(read_only=True)
+
 
     class Meta:
         model = Election
         fields = (
             'election_id',
+            'tmp_election_id',
+            'election_title',
             'poll_open_date',
             'election_type',
             'election_subtype',
             'organisation',
+            'group',
+            'group_type',
+            'children',
+            'elected_role',
         )
         depth = 1
+

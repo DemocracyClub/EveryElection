@@ -11,6 +11,7 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ElectionSerializer
     lookup_field = 'election_id'
     lookup_value_regex="(?!\.json$)[^/]+"
+    filter_fields = ('group_type', )
 
 
 class ElectionTypeViewSet(viewsets.ReadOnlyModelViewSet):
