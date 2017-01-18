@@ -26,40 +26,36 @@ class Command(BaseCommand):
     BASE = "http://mapit.mysociety.org"
 
     def add_arguments(self, parser):
-        parser.add_argument('--always_pick_option', action='store', type=int, default=0)
-
+        parser.add_argument(
+            '--always_pick_option', action='store', type=int, default=0)
 
     def handle(self, **options):
         self.always_pick_option = int(options['always_pick_option'])
         self.load_mapit_generations()
-        # self.import_scottish_areas()
-        # self.import_gla_areas()
-        # self.import_parl_areas()
+
+        self.import_scottish_areas()
+        self.import_gla_areas()
+        self.import_parl_areas()
         self.import_ni_areas()
-        # self.import_welsh_areas()
+        self.import_welsh_areas()
+
         qs = Organisation.objects.exclude(gss='')
-        qs = Organisation.objects.filter(gss__startswith='N')
+        qs = qs.exclude(gss=None)
+        qs = qs.exclude(gss__startswith='N')
         qs = qs.exclude(gss__in=self.skip_gss)
-        # self.process_qs(qs)
+        self.process_qs(qs)
 
-        self.process_qs(
-            Organisation.objects.filter(organisation_type='nia'),
-            child_types=['NIE',]
-        )
-
-    def process_qs(self, qs, child_types=None):
+    def process_qs(self, qs, default_child_types=None):
         for organisation in qs:
             initial_url = "{}/area/{}".format(self.BASE, organisation.gss)
-            print(initial_url)
             req = requests.get(initial_url)
             url = req.url
 
-            if not child_types:
+            if not default_child_types:
                 parent_type = req.json()['type']
                 child_types = PARENT_TO_CHILD_AREAS.get(parent_type)
             child_types = ",".join(child_types)
             req = requests.get("{}/children?type={}".format(url, child_types))
-
             self.import_divisions(organisation, req.json())
 
     def load_mapit_generations(self):
@@ -68,9 +64,32 @@ class Command(BaseCommand):
         for generation_id, generation in self.mapit_generations.items():
             generation['uri'] = "{}/{}".format(url, generation_id)
 
+    def create_single_division(self, division_set, organisation, mapit_dict):
+        all_codes = [
+            ('gss', mapit_dict['codes'].get('gss')),
+            ('ons', mapit_dict['codes'].get('ons')),
+            ('unit_id', mapit_dict['codes'].get('unit_id')),
+            ('osni_oid', mapit_dict['codes'].get('osni_oid')),
+        ]
+        all_codes = [x for x in all_codes if x[1]]
+
+        geography_curie = ":".join(all_codes[0])
+
+        OrganisationDivision.objects.update_or_create(
+            official_identifier=geography_curie,
+            organisation=organisation,
+            divisionset=division_set,
+            defaults={
+                'geography_curie': geography_curie,
+                'name': mapit_dict['name'],
+                'slug': slugify(mapit_dict['name']),
+                'division_type': mapit_dict['type'],
+                'division_subtype': mapit_dict['type_name'],
+            }
+        )
 
     def _create_division_set(self, organisation, mapit_generation_uri,
-            mapit_generation_start_date):
+                             mapit_generation_start_date):
         print("Creating")
         print(organisation)
         print("Creating")
@@ -160,7 +179,7 @@ class Command(BaseCommand):
         return division_set
 
     def carry_over_existing_divisions(self, organisation):
-        print("Carrying over…")
+        print("Carrying over {}…".format(organisation))
         all_sets = organisation.divisionset.all().order_by('start_date')
         if all_sets.count() == 1:
             print("Only 1 set, carrying on")
@@ -198,98 +217,31 @@ class Command(BaseCommand):
 
     def import_divisions(self, organisation, data):
         for mapit_id, division in data.items():
-
             division_set = self.get_division_set(organisation, division)
-            print(division_set)
-
-            try:
-                all_codes = [
-                    ('gss', division['codes'].get('gss')),
-                    ('ons', division['codes'].get('ons')),
-                    ('unit_id', division['codes'].get('unit_id')),
-                ]
-                all_codes = [x for x in all_codes if x[1]]
-
-                official_identifier = ":".join(all_codes[0])
-            except:
-                print(division)
-
-            OrganisationDivision.objects.update_or_create(
-                official_identifier=official_identifier,
-                organisation=organisation,
-                divisionset=division_set,
-                defaults={
-                    'geography_curie': official_identifier,
-                    'name': division['name'],
-                    'slug': slugify(division['name']),
-                    'division_type': division['type'],
-                    'division_subtype': division['type_name'],
-                    'mapit_generation_low': int(division['generation_low']),
-                    'mapit_generation_high': int(division['generation_high']),
-
-                }
-            )
+            self.create_single_division(division_set, organisation, division)
         self.carry_over_existing_divisions(organisation)
+
+    def _import_area(self, org_type, mapit_code):
+        print("Importing {}".format(org_type))
+        org = Organisation.objects.get(organisation_type=org_type)
+        regions_req = requests.get(
+            "http://mapit.mysociety.org/areas/{}".format(mapit_code))
+        for mapit_id, region in regions_req.json().items():
+            division_set = self.get_division_set(org, region)
+            self.create_single_division(division_set, org, region)
+        print("Finished importing {}".format(org_type))
 
     def import_ni_areas(self):
         """
         NIA doesn't have 'children' in MapIt, so we have to do this manually
         """
-        ni_org = Organisation.objects.get(organisation_type='nia')
-        regions_req = requests.get("http://mapit.mysociety.org/areas/NIE")
-        for mapit_id, region in regions_req.json().items():
-
-            division_set = self.get_division_set(ni_org, region)
-
-            OrganisationDivision.objects.update_or_create(
-                official_identifier=region['codes']['osni_oid'],
-                organisation=ni_org,
-                defaults={
-                    'geography_curie': "gss:{}".format(region['codes'].get('gss', '')),
-                    'name': region['name'],
-                    'slug': slugify(region['name']),
-                    'division_type': region['type'],
-                    'division_subtype': region['type_name'],
-                }
-            )
+        self._import_area('nia', 'NIE')
 
     def import_parl_areas(self):
-        parl_org = Organisation.objects.get(organisation_type='parl')
-        regions_req = requests.get("http://mapit.mysociety.org/areas/WMC")
-        for mapit_id, region in regions_req.json().items():
-            print(region)
-            OrganisationDivision.objects.update_or_create(
-                official_identifier=region['codes'].get(
-                    'unit_id', region['codes'].get('osni_oid')),
-                organisation=parl_org,
-                defaults={
-                    'gss': region['codes'].get('gss', ''),
-                    'name': region['name'],
-                    'slug': slugify(region['name']),
-                    'division_type': region['type'],
-                    'division_subtype': region['type_name'],
-                }
-            )
+        self._import_area('parl', 'WMC')
 
     def import_gla_areas(self):
-        gla_org = Organisation.objects.get(organisation_type='gla')
-        regions_req = requests.get("http://mapit.mysociety.org/areas/LAC")
-        for mapit_id, region in regions_req.json().items():
-            print(region)
-            OrganisationDivision.objects.update_or_create(
-                official_identifier=region['codes'].get(
-                    'unit_id', region['codes'].get('osni_oid')),
-                organisation=gla_org,
-                defaults={
-                    'gss': region['codes'].get('gss', ''),
-                    'name': region['name'],
-                    'slug': slugify(region['name']),
-                    'division_type': region['type'],
-                    'division_subtype': region['type_name'],
-                    'division_election_sub_type': 'c'
-                }
-            )
-
+        self._import_area('gla', 'LAC')
 
     def import_welsh_areas(self):
         """
@@ -297,78 +249,35 @@ class Command(BaseCommand):
         constituencies, we can't use the 'children' link on 'Wales' (W08000001)
         """
 
-        wales_org = Organisation.objects.get(organisation_type='naw')
+        org = Organisation.objects.get(organisation_type='naw')
 
         regions_req = requests.get("http://mapit.mysociety.org/areas/WAE")
-        # time.sleep(1)
         for mapit_id, region in regions_req.json().items():
-            OrganisationDivision.objects.update_or_create(
-                official_identifier=region['codes']['unit_id'],
-                organisation=wales_org,
-                defaults={
-                    'gss': region['codes'].get('gss', ''),
-                    'name': region['name'],
-                    'slug': slugify(region['name']),
-                    'division_type': region['type'],
-                    'division_subtype': region['type_name'],
-                    'division_election_sub_type': 'r'
-                }
-            )
-            req = requests.get("http://mapit.mysociety.org/area/{}/children".format(
-                mapit_id
-            ))
-            # time.sleep(2)
+            division_set = self.get_division_set(org, region)
+            self.create_single_division(division_set, org, region)
+            req = requests.get(
+                "http://mapit.mysociety.org/area/{}/children".format(
+                    mapit_id
+                ))
             for const_id, const in req.json().items():
-                OrganisationDivision.objects.update_or_create(
-                    official_identifier=const['codes']['unit_id'],
-                    organisation=wales_org,
-                    defaults={
-                        'gss': const['codes'].get('gss', ''),
-                        'name': const['name'],
-                        'slug': slugify(const['name']),
-                        'division_type': const['type'],
-                        'division_subtype': const['type_name'],
-                        'division_election_sub_type': 'c'
-                    }
-                )
+                division_set = self.get_division_set(org, const)
+                self.create_single_division(division_set, org, region)
+        self.carry_over_existing_divisions(org)
 
     def import_scottish_areas(self):
         """
         See Wales.
         """
-
-        scot_org = Organisation.objects.get(organisation_type='sp')
-
+        org = Organisation.objects.get(organisation_type='sp')
         regions_req = requests.get("http://mapit.mysociety.org/areas/SPE")
-        # time.sleep(1)
         for mapit_id, region in regions_req.json().items():
-            OrganisationDivision.objects.update_or_create(
-                official_identifier=region['codes']['unit_id'],
-                organisation=scot_org,
-                defaults={
-                    'gss': region['codes'].get('gss', ''),
-                    'name': region['name'],
-                    'slug': slugify(region['name']),
-                    'division_type': region['type'],
-                    'division_subtype': region['type_name'],
-                    'division_election_sub_type': 'r'
-                }
-            )
-            req = requests.get("http://mapit.mysociety.org/area/{}/children".format(
-                mapit_id
-            ))
-            # time.sleep(2)
-            for const_id, const in req.json().items():
-                OrganisationDivision.objects.update_or_create(
-                    official_identifier=const['codes']['unit_id'],
-                    organisation=scot_org,
-                    defaults={
-                        'gss': const['codes'].get('gss', ''),
-                        'name': const['name'],
-                        'slug': slugify(const['name']),
-                        'division_type': const['type'],
-                        'division_subtype': const['type_name'],
-                        'division_election_sub_type': 'c'
-                    }
-                )
+            division_set = self.get_division_set(org, region)
+            self.create_single_division(division_set, org, region)
 
+            req = requests.get(
+                "http://mapit.mysociety.org/area/{}/children".format(
+                    mapit_id
+                ))
+            for const_id, const in req.json().items():
+                division_set = self.get_division_set(org, const)
+                self.create_single_division(division_set, org, region)
