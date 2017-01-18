@@ -22,14 +22,27 @@
         <h2>Sub-divisions</h2>
         <ul>
         {% for divisionset in object.divisionset.all %}
-            <h3>{{ divisionset }}</h3>
+            <h3>{{ divisionset.short_title }}</h3>
             <p>Active from {{ divisionset.start_date }} to
                 {% if divisionset.end_date %}{{divisionset.end_date}}{% else %}now{% endif %}.</p>
+
+            {% if divisionset.legislation_url %}
+            <p>These sub-divisions were enacted in
+                <a href="{{ divisionset.legislation_url }}">this legislation</a>.</p>
+            {% endif %}
+            {% if divisionset.consultation_url %}
+            <p>
+                <a href="{{ divisionset.consultation_url }}">
+                Read the consultation that lead to these changes</a>.
+            </p>
+            {% endif %}
+
             <p>{{ divisionset.notes }}</p>
             <table>
             <thead>
                 <tr>
                     <th>Name</th>
+                    <th>Seats</th>
                     <th>Type</th>
                     <th>Geography Code</th>
                 </tr>
@@ -38,6 +51,7 @@
             {% for division in divisionset.divisions.all %}
                 <tr>
                     <td>{{ division }}</td>
+                    <td>{{ division.seats_total|default_if_none:"Unknown" }}</td>
                     <td>{{ division.division_subtype }}</td>
                     <td>
                         {% if division.geography_curie %}
