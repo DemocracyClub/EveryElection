@@ -85,6 +85,8 @@ class Command(BaseCommand):
                 'slug': slugify(mapit_dict['name']),
                 'division_type': mapit_dict['type'],
                 'division_subtype': mapit_dict['type_name'],
+                'mapit_generation_low': int(mapit_dict['generation_low']),
+                'mapit_generation_high': int(mapit_dict['generation_high']),
             }
         )
 
