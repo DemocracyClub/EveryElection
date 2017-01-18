@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.http import HttpResponseRedirect
 from django import forms
 from formtools.wizard.views import NamedUrlSessionWizardView
@@ -110,6 +112,12 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             )
             return qs
 
+    def get_election_date(self):
+        election_date = self.get_cleaned_data_for_step('date')
+        if not election_date:
+            election_date = datetime.now()
+        return election_date
+
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
         all_data = self.get_all_cleaned_data()
@@ -134,9 +142,11 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         if step == "election_organisation_division":
             organisations = self.get_organisations()
             election_subtype = self.get_election_subtypes()
+
             return {
                 'organisations': organisations,
                 'election_subtype': election_subtype,
+                'election_date': self.get_election_date(),
             }
         return {}
 

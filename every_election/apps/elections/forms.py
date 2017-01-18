@@ -1,6 +1,7 @@
 from django import forms
 
 from organisations.models import Organisation
+from organisations.models import OrganisationDivisionSet
 
 from .models import ElectionType, ElectionSubType
 
@@ -68,6 +69,7 @@ class ElectionOrganisationDivisionForm(forms.Form):
     def __init__(self, *args, **kwargs):
         organisations = kwargs.pop('organisations', None)
         election_subtype = kwargs.pop('election_subtype', None)
+        election_date = kwargs.pop('election_date', None)
         self.field_groups = []
 
         super().__init__(*args, **kwargs)
@@ -83,10 +85,15 @@ class ElectionOrganisationDivisionForm(forms.Form):
             self.fields[organisation.pk] = dc_forms.DCHeaderField(
                 label=organisation.common_name)
 
+            div_set = OrganisationDivisionSet.objects.filter(
+                organisation=organisation,
+                start_date__lte=election_date
+                ).order_by('-start_date').first()
+
             if election_subtype:
                 for subtype in election_subtype:
                     # TODO Get Div Set by election date
-                    div_qs = organisation.divisions.filter(
+                    div_qs = div_set.divisions.filter(
                         division_election_sub_type=subtype.election_subtype
                     )
                     div_qs = div_qs.order_by('name')
@@ -96,7 +103,7 @@ class ElectionOrganisationDivisionForm(forms.Form):
                     for div in div_qs:
                         self.add_single_field(organisation, div, subtype=subtype.election_subtype)
             else:
-                div_qs = organisation.divisions.all()
+                div_qs = div_set.divisions.all()
                 div_qs = div_qs.order_by('name')
                 for div in div_qs:
                     self.add_single_field(organisation, div)
