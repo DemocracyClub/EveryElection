@@ -44,10 +44,16 @@ class OrganisationDivisionSet(models.Model):
     notes = models.TextField(blank=True)
 
     def __str__(self):
-        return "{}".format(self.short_title)
+        return "{}:{} ({} to {})".format(
+            self.pk,
+            self.short_title,
+            self.start_date,
+            self.end_date or "now"
+        )
 
     class Meta:
         ordering = ('-start_date',)
+
 
 class OrganisationDivision(models.Model):
     """
