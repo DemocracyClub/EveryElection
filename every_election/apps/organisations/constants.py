@@ -6,6 +6,7 @@ PARENT_TO_CHILD_AREAS = {
     'CED': ['CPC',],
     'UTA': ['UTW', 'UTE'],
     'NIA': ['NIE',],
+    'COI': ['COP',],
 }
 CHILD_TO_PARENT_AREAS = {
     'DIW': 'DIS',
@@ -15,4 +16,5 @@ CHILD_TO_PARENT_AREAS = {
     'CED': 'CTY',
     'LBW': 'LBO',
     'CPC': 'CED',
+    'COP': 'COI',
 }
