@@ -38,6 +38,7 @@ class OrganisationDivisionSet(models.Model):
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)
     legislation_url = models.CharField(blank=True, max_length=500, null=True)
+    consultation_url = models.CharField(blank=True, max_length=500, null=True)
     short_title = models.CharField(blank=True, max_length=200)
     mapit_generation_id = models.CharField(blank=True, max_length=255)
     notes = models.TextField(blank=True)
