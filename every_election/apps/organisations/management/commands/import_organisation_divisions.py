@@ -198,6 +198,8 @@ class Command(BaseCommand):
             if not newer_set:
                 return
 
+            if not newer_set.mapit_generation_id:
+                continue
             new_gen_id = int(newer_set.mapit_generation_id.split('/')[-1])
             carry_over = div_set.divisions.filter(
                 mapit_generation_high__gte=new_gen_id)
