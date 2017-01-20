@@ -187,9 +187,13 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                 group_id = date_id
 
         if all_data['election_type'].election_type == "mayor":
-            group_id = IDMaker(is_group_id=False, *args, **kwargs)
-            if group_id not in all_ids:
-                all_ids.append(group_id)
+            group_id = date_id
+            mayor_id = IDMaker(
+                group_id=group_id,
+                is_group_id=False,
+                *args, **kwargs)
+            if mayor_id not in all_ids:
+                all_ids.append(mayor_id)
 
         if subtypes:
             for subtype in all_data.get('election_subtype', []):
