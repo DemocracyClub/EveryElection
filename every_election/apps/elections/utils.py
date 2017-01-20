@@ -163,6 +163,9 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
             'organisation': organisation,
         }
 
+        election_type = all_data['election_type'].election_type
+        organisation_type = organisation.organisation_type
+
         # GROUP 1
         # Make a group ID for the date and election type
         date_id = IDMaker(*args, is_group_id=True, group_type="election")
@@ -172,13 +175,16 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
         # GROUP 2
         # Make a group ID for the date, election type and org
         if div_data:
-            group_id = IDMaker(
-                is_group_id=True,
-                group_type="organisation",
-                group_id=date_id,
-                *args, **kwargs)
-            if group_id not in all_ids:
-                all_ids.append(group_id)
+            if election_type != organisation_type:
+                group_id = IDMaker(
+                    is_group_id=True,
+                    group_type="organisation",
+                    group_id=date_id,
+                    *args, **kwargs)
+                if group_id not in all_ids:
+                    all_ids.append(group_id)
+            else:
+                group_id = date_id
 
         if all_data['election_type'].election_type == "mayor":
             group_id = IDMaker(is_group_id=False, *args, **kwargs)
