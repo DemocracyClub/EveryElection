@@ -5,23 +5,50 @@
 
 
 {% block content %}
-<section class="columns large-6 large-centered">
+<div class="row">
+    <section class="columns large-12 large-centered">
 
-  <div class="card postcode_card">
-      <h2>Finding elections</h2>
-      <p>One of the craziest problems that we have in trying to get everyone <a href="https://democracyclub.org.uk/report_2016/#section_four_year_plan">better information on the democratic process of the UK</a> is that we don’t even know when your next election is. There’s no data on that. And given that one of Democracy Club’s goals is to be able to alert everyone about every election that they can vote in, that’s a problem. We also need to know about every election before we can get the details on every candidate. Essentially, the <a href="https://democracyclub.org.uk/projects/election-ids/">election ID is the foundation of election-related data</a>.</p>
+      <div class="card text-center">
+          <h1>Help build the free database of UK elections</h1>
+          <h2 class="large-10 large-centered">We want to know of every distinct council level election and above</h2>
+      </div>
 
-      <p>So we need that database of elections and we’re going to need your help to build it. We’re envisaging something like our candidates tool — where anyone can add a piece of information that they’ve come across, sourcing appropriately, and then a team of super-volunteers or DC staff will make it official.</p>
+    <div class="row">
 
-      <a class="button" href="https://docs.google.com/spreadsheets/d/1eJMr8SRZTte55U_Bt4FvNpdZjdG3s9IywJNCX6G7zpE/edit#gid=0">View the preview</a>
+        <div class="columns large-6" >
+            <div class="card">
+                <h3>Upcoming elections</h3>
+                <ul>
+                {% for election in upcoming_elections  %}
+                    <li><a href="{{ election.get_absolute_url }}">{{ election }}</a></li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
 
-      <p>Do you think we’re missing any key fields? What else might we need to think about with each election? Don’t be shy. <a href="https://democracyclub.org.uk/contact/">Get in touch to give us feedback</a></p>
+        <div class="columns large-6">
+            <div class="card">
+                <h3>Heard about a new election?</h3>
+                <a href="{% url "id_creator" %}" class="button">Add a new election</a>
+            </div>
+        </div>
 
-      <p>If you're new to our projects, <a href="https://democracyclub.org.uk/about/">find out more about Democracy Club's work</a>.</p>
+    </div>
 
+    <div class="row">
+        <div class="columns large-12">
+            <div class="card">
+                <h3>The data is open to all</h3>
+                <p><a href="{% url "api-root" %}">We are building an API</a> that you can start using.
+                    It's very new and will change a bit, so it's best
+                    to <a href="https://democracyclub.org.uk/contact/">get in touch</a>
+                    if you're interested in using that data.</p>
+            </div>
+        </div>
+    </div>
 
-  </div>
+    </section>
 
-</section>
+</div>
 
 {% endblock content %}
