@@ -114,8 +114,11 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
 
     def get_election_date(self):
         election_date = self.get_cleaned_data_for_step('date')
-        if not election_date:
+        if election_date:
+            election_date = election_date['date']
+        else:
             election_date = datetime.now()
+
         return election_date
 
     def get_context_data(self, form, **kwargs):
