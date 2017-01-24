@@ -34,6 +34,7 @@ class Command(BaseCommand):
             'official_name': "Welsh assembly",
             'common_name': "Welsh assembly",
             'slug': 'naw',
+            'territory_code': 'WLS',
             'elected_title': "Assembly Member",
             'election_name': "National Assembly for Wales election",
         }
@@ -45,6 +46,7 @@ class Command(BaseCommand):
             'official_name': "Northern Ireland assembly",
             'common_name': "Northern Ireland assembly",
             'slug': 'nia',
+            'territory_code': 'NIR',
             'elected_title': "Assembly Member",
             'election_name': "Northern Ireland assembly election",
         }
@@ -55,6 +57,7 @@ class Command(BaseCommand):
             'official_name': "Scottish Parliament",
             'common_name': "Scottish Parliament",
             'slug': 'sp',
+            'territory_code': 'SCT',
             'elected_title': "Member of the Scottish Parliament",
             'election_name': "Scottish parliament election",
         }
@@ -65,6 +68,7 @@ class Command(BaseCommand):
             'official_name': "Greater London assembly",
             'common_name': "Greater London assembly",
             'slug': 'gla',
+            'territory_code': 'ENG',
             'elected_title': "Assembly Member",
             'election_name': "London Assembly election",
         }
@@ -76,6 +80,7 @@ class Command(BaseCommand):
             'official_name': "House of Commons of the United Kingdom",
             'common_name': "House of Commons",
             'slug': 'parl',
+            'territory_code': 'GBN',
             'elected_title': "Member of Parliament",
             'election_name': "UK general election",
 

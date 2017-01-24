@@ -103,14 +103,28 @@ def police_importer():
         "northern-ireland",
     ]
 
+    AREAS_IN_WALES = [
+        'south-wales',
+        'north-wales',
+        'gwent',
+        'dyfed-powys',
+    ]
+
+
     for force in req.json():
         if force['id'] in AREAS_WITHOUT_PCCS:
             continue
+
+        if force['id'] in AREAS_IN_WALES:
+            territory_code = "WLS"
+        else:
+            territory_code = "ENG"
 
         defaults = {
             'official_name': force['name'],
             'common_name': force['name'],
             'slug': force['id'],
+            'territory_code': territory_code,
             'elected_title': "Police and Crime Commissioner",
             'elected_role_name': "Police and Crime Commissioner for {}".format(
                 force['name']
@@ -124,36 +138,42 @@ def mayor_importer():
          'org': "Greater London Authority",
          'elected_role_name': "Mayor of London",
          'slug': 'london',
+         'territory_code': 'ENG',
          'organisation_type': 'local-authority',
         },
         {
          'org': "West Midlands Combined Authority",
          'elected_role_name': "Mayor of West Midlands Combined Authority",
          'slug': 'west-midlands',
+         'territory_code': 'ENG',
          'organisation_type': 'combined-authority',
         },
         {
          'org': "Greater Manchester",
          'elected_role_name': "Mayor of Greater Manchester",
          'slug': 'greater-manchester',
+         'territory_code': 'ENG',
          'organisation_type': 'local-authority',
         },
         {
          'org': "Liverpool City Region",
          'elected_role_name': "Mayor of Liverpool City Region",
          'slug': "liverpool",
+         'territory_code': 'ENG',
          'organisation_type': 'combined-authority',
         },
         {
          'org': "Cambridgeshire and Peterborough Combined Authority",
          'elected_role_name': "Mayor of Cambridgeshire and Peterborough Combined Authority",
          'slug': "cambridgeshire-and-peterborough",
+         'territory_code': 'ENG',
          'organisation_type': 'combined-authority',
         },
         {
          'org': "Tees Valley Combined Authority",
          'elected_role_name': "Mayor of Tees Valley Combined Authority",
          'slug': "tees-valley",
+         'territory_code': 'ENG',
          'organisation_type': 'combined-authority',
         },
         {
@@ -161,6 +181,7 @@ def mayor_importer():
          'org_id': 'NTY',
          'elected_role_name': "Mayor of Tees Valley Combined Authority",
          'slug': "north-tyneside",
+         'territory_code': 'ENG',
          'organisation_type': 'local-authority',
         },
         {
@@ -168,6 +189,7 @@ def mayor_importer():
          'org_id': 'DNC',
          'elected_role_name': "Mayor of Doncaster Metropolitan Borough Council",
          'slug': "doncaster",
+         'territory_code': 'ENG',
          'organisation_type': 'local-authority',
         },
     ]
@@ -176,6 +198,7 @@ def mayor_importer():
             'official_name': org_data['org'],
             'common_name': org_data['org'],
             'slug': org_data['slug'],
+            'territory_code': org_data.get('territory_code'),
             'elected_title': "Mayor",
             'elected_role_name': org_data['elected_role_name']
         }
