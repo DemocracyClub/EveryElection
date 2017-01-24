@@ -6,6 +6,7 @@ from django.utils.text import slugify
 
 from .models import Organisation
 from elections.models import ElectedRole, ElectionType
+from organisations import constants
 
 
 def create_single(election_type, official_identifier,
@@ -97,25 +98,11 @@ def police_importer():
     url = "https://data.police.uk/api/forces"
     req = requests.get(url)
 
-    AREAS_WITHOUT_PCCS = [
-        "metropolitan",
-        "city-of-london",
-        "northern-ireland",
-    ]
-
-    AREAS_IN_WALES = [
-        'south-wales',
-        'north-wales',
-        'gwent',
-        'dyfed-powys',
-    ]
-
-
     for force in req.json():
-        if force['id'] in AREAS_WITHOUT_PCCS:
+        if force['id'] in constants.AREAS_WITHOUT_PCCS:
             continue
 
-        if force['id'] in AREAS_IN_WALES:
+        if force['id'] in constants.AREAS_IN_WALES:
             territory_code = "WLS"
         else:
             territory_code = "ENG"

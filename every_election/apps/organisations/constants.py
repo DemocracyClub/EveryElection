@@ -18,3 +18,16 @@ CHILD_TO_PARENT_AREAS = {
     'CPC': 'CED',
     'COP': 'COI',
 }
+
+AREAS_WITHOUT_PCCS = [
+    "metropolitan",
+    "city-of-london",
+    "northern-ireland",
+]
+
+AREAS_IN_WALES = [
+    'south-wales',
+    'north-wales',
+    'gwent',
+    'dyfed-powys',
+]
