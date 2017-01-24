@@ -130,7 +130,7 @@ def police_importer():
                 force['name']
             ),
         }
-        create_single('pcc', force['id'], 'police_force', defaults)
+        create_single('pcc', force['id'], 'police_area', defaults)
 
 def mayor_importer():
     orgs_with_mayors = [
