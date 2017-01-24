@@ -96,7 +96,17 @@ def add_gss_to_LAs():
 def police_importer():
     url = "https://data.police.uk/api/forces"
     req = requests.get(url)
+
+    AREAS_WITHOUT_PCCS = [
+        "metropolitan",
+        "city-of-london",
+        "northern-ireland",
+    ]
+
     for force in req.json():
+        if force['id'] in AREAS_WITHOUT_PCCS:
+            continue
+
         defaults = {
             'official_name': force['name'],
             'common_name': force['name'],
