@@ -1,9 +1,10 @@
 from rest_framework import viewsets
 
 from elections.models import Election, ElectionType, ElectionSubType
-from organisations.models import Organisation
+from organisations.models import Organisation, OrganisationDivision
 from .serializers import (ElectionSerializer, ElectionTypeSerializer,
-                          ElectionSubTypeSerializer, OrganisationSerializer)
+                          ElectionSubTypeSerializer, OrganisationSerializer,
+                          OrganisationDivisionSerializer)
 
 
 class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -28,3 +29,7 @@ class ElectionSubTypeViewSet(viewsets.ReadOnlyModelViewSet):
 class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Organisation.objects.all()
     serializer_class = OrganisationSerializer
+
+class OrganisationDivisionViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = OrganisationDivision.objects.all()
+    serializer_class = OrganisationDivisionSerializer
