@@ -11,6 +11,8 @@ class ElectionType(models.Model):
 
     name = models.CharField(blank=True, max_length=100)
     election_type = models.CharField(blank=True, max_length=100, unique=True)
+    default_voting_system = models.ForeignKey(
+        'elections.VotingSystem', null=True)
 
     def __str__(self):
         return self.name
@@ -63,6 +65,7 @@ class Election(SuggestedByPublicMixin, models.Model):
     seats_total = models.IntegerField(blank=False, null=True)
     group = models.ForeignKey('Election', null=True, related_name="children")
     group_type = models.CharField(blank=True, max_length=100, null=True)
+    voting_system = models.ForeignKey('elections.VotingSystem', null=True)
 
     def get_absolute_url(self):
         return reverse("single_election_view", args=(self.election_id,))
@@ -74,7 +77,6 @@ class Election(SuggestedByPublicMixin, models.Model):
     # Link to legislation
     # hashtags? Other names?
     # Discription
-    # Voting system
 
     def __str__(self):
         return self.get_id()
@@ -85,3 +87,13 @@ class Election(SuggestedByPublicMixin, models.Model):
         else:
             return self.tmp_election_id
 
+
+class VotingSystem(models.Model):
+    slug = models.SlugField(primary_key=True)
+    name = models.CharField(blank=True, max_length=100)
+    wikipedia_url = models.URLField(blank=True)
+    description = models.TextField(blank=True)
+    uses_party_lists = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
