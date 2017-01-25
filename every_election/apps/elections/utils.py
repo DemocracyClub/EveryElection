@@ -50,6 +50,8 @@ class IDMaker(object):
         except:
             self.elected_role = None
 
+        self.voting_system = self.get_voting_system()
+
     def _get_parts(self, tmp_id=None):
         parts = []
         parts.append(self.election_type.election_type)
@@ -90,6 +92,9 @@ class IDMaker(object):
     def __eq__(self, other):
         return other.to_id() == self.to_id()
 
+    def get_voting_system(self):
+        return self.election_type.default_voting_system
+
     @transaction.atomic
     def save_model(self):
         """
@@ -112,6 +117,7 @@ class IDMaker(object):
             'group':  group_model,
             'group_type':  self.group_type,
             'elected_role':  self.elected_role,
+            'voting_system': self.voting_system
         }
 
         if self.date_known:
