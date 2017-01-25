@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from elections.models import (
-    Election, ElectionType, ElectionSubType, ElectedRole)
+    Election, ElectionType, ElectionSubType, ElectedRole, VotingSystem)
 from organisations.models import (Organisation, OrganisationDivision,
                                   OrganisationDivisionSet)
 
@@ -71,6 +71,12 @@ class ElectionSubTypeSerializer(serializers.ModelSerializer):
         fields = ('name', 'election_subtype')
 
 
+class VotingSystemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VotingSystem
+        fields = ('slug', 'name', 'uses_party_lists')
+
+
 class ElectedRoleField(serializers.RelatedField):
     def to_representation(self, value):
         return value.elected_title
@@ -91,6 +97,7 @@ class ElectionSerializer(serializers.HyperlinkedModelSerializer):
         many=True
     )
     elected_role = ElectedRoleField(read_only=True)
+    voting_system = VotingSystemSerializer()
 
 
     class Meta:
@@ -108,6 +115,7 @@ class ElectionSerializer(serializers.HyperlinkedModelSerializer):
             'children',
             'elected_role',
             'division',
+            'voting_system',
         )
         depth = 1
 
