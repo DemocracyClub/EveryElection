@@ -23,6 +23,7 @@ class Command(BaseCommand):
         parser.add_argument('url', action='store')
 
     def handle(self, *args, **options):
+        self.org_curie_to_area_type = {}
         url = options['url']
         csv_reader = csv.DictReader(requests.get(url).text.splitlines())
         for line in csv_reader:
@@ -64,6 +65,24 @@ class Command(BaseCommand):
             ])
             return identifier
 
+    def get_division_type_from_mapit(self, line):
+        curie = ":".join([
+            line['Organisation ID type'],
+            line['Organisation ID'],
+        ])
+        if not curie in self.org_curie_to_area_type:
+            code_redirect_req = requests.get(
+                "https://mapit.mysociety.org/code/{}/{}".format(
+                    line['Organisation ID type'],
+                    line['Organisation ID'],
+                )
+            )
+            children_req = requests.get(
+                "{}/children".format(code_redirect_req.url))
+            self.org_curie_to_area_type[curie] = \
+                list(children_req.json().values())[0]['type']
+        return self.org_curie_to_area_type[curie]
+
     def create_div_from_line(self, div_set, identifier, line):
         div, _ = OrganisationDivision.objects.update_or_create(
             official_identifier=identifier,
@@ -73,6 +92,8 @@ class Command(BaseCommand):
                 'geography_curie': line['geography_curie'],
                 'name': line['Name'],
                 'slug': slugify(line['Name']),
+                'division_type':
+                    self.get_division_type_from_mapit(line),
                 'seats_total': line['seats_total'],
             }
         )
