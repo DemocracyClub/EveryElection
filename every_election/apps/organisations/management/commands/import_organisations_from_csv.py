@@ -84,12 +84,17 @@ class Command(BaseCommand):
         return self.org_curie_to_area_type[curie]
 
     def create_div_from_line(self, div_set, identifier, line):
+        if line['geography_curie']:
+            geography_curie = line['geography_curie']
+        else:
+            geography_curie = identifier
+
         div, _ = OrganisationDivision.objects.update_or_create(
             official_identifier=identifier,
             organisation=div_set.organisation,
             divisionset=div_set,
             defaults={
-                'geography_curie': line['geography_curie'],
+                'geography_curie': geography_curie,
                 'name': line['Name'],
                 'slug': slugify(line['Name']),
                 'division_type':
