@@ -20,7 +20,10 @@
                 <h3>Upcoming elections</h3>
                 <ul>
                 {% for election in upcoming_elections  %}
-                    <li><a href="{{ election.get_absolute_url }}">{{ election }}</a></li>
+                    <li>
+                        <a href="{{ election.get_absolute_url }}">{{ election }}</a> 
+                        ( {{ election.election_type }} {{ election.poll_open_date }} ) 
+                    </li>
                 {% endfor %}
                 </ul>
             </div>
