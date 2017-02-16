@@ -12,7 +12,7 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ElectionSerializer
     lookup_field = 'election_id'
     lookup_value_regex="(?!\.json$)[^/]+"
-    filter_fields = ('group_type', )
+    filter_fields = ('group_type', 'poll_open_date')
 
 
 class ElectionTypeViewSet(viewsets.ReadOnlyModelViewSet):
