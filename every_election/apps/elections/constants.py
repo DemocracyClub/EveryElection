@@ -81,7 +81,7 @@ VOTING_SYSTEMS = [
         "name": "Supplementary Vote",
         "wikipedia_url": "https://en.wikipedia.org/wiki/Contingent_vote#Supplementary_vote",
         "description": "Under the supplementary vote (SV), voters express a first and second choice of candidate only, and, if no candidate receives an absolute majority of first-choice votes, all but the two leading candidates are eliminated and the votes of those eliminated redistributed according to their second-choice votes to determine the winner.",
-        "uses_party_lists": True,
+        "uses_party_lists": False,
     },
     {
         "slug": "STV",
