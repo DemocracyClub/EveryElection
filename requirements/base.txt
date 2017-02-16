@@ -15,3 +15,4 @@ markdown
 django-filter
 django_extensions
 requests
+glob2

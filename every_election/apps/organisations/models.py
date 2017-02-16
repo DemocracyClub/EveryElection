@@ -1,4 +1,4 @@
-from django.db import models
+from django.contrib.gis.db import models
 from django.core.urlresolvers import reverse
 
 
@@ -31,6 +31,12 @@ class Organisation(models.Model):
 
     def get_absolute_url(self):
         return reverse("organisation_view", args=(self.official_identifier,))
+
+    def format_geography_link(self):
+        return "https://mapit.mysociety.org/code/gss/{}".format(
+            self.gss
+        )
+
 
 
 class OrganisationDivisionSet(models.Model):
@@ -88,3 +94,11 @@ class OrganisationDivision(models.Model):
         return "https://mapit.mysociety.org/code/{}/{}".format(
             code_type, code
         )
+
+class DivisionGeography(models.Model):
+    division = models.OneToOneField(
+        OrganisationDivision, related_name="geography", null=True)
+    organisation = models.OneToOneField(
+        Organisation, related_name="geography", null=True)
+    geography = models.MultiPolygonField()
+
