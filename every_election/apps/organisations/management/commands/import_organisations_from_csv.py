@@ -65,16 +65,26 @@ class Command(BaseCommand):
             ])
             return identifier
 
-    def get_division_type_from_mapit(self, line):
+    def get_division_type_from_registers(self, line):
+        if not getattr(self, 'register_gss_map', None):
+            req = requests.get("https://raw.githubusercontent.com/openregister/local-authority-data/master/maps/gss.tsv")
+            self.register_gss_map = {}
+            for map_line in req.text.splitlines():
+                map_line = map_line.split('\t')
+                if map_line[0] == "gss":
+                    continue
+                self.register_gss_map[map_line[1]] = map_line[0]
+
         curie = ":".join([
             line['Organisation ID type'],
             line['Organisation ID'],
         ])
+
+
         if not curie in self.org_curie_to_area_type:
             code_redirect_req = requests.get(
-                "https://mapit.mysociety.org/code/{}/{}".format(
-                    line['Organisation ID type'],
-                    line['Organisation ID'],
+                "https://mapit.mysociety.org/area/{}".format(
+                    self.register_gss_map[curie]
                 )
             )
             children_req = requests.get(
@@ -98,7 +108,7 @@ class Command(BaseCommand):
                 'name': line['Name'],
                 'slug': slugify(line['Name']),
                 'division_type':
-                    self.get_division_type_from_mapit(line),
+                    self.get_division_type_from_registers(line),
                 'seats_total': line['seats_total'],
             }
         )
