@@ -9,7 +9,6 @@ from organisations.importers import (
     police_importer,
     mayor_importer,
     create_single)
-from elections.models import ElectedRole, ElectionType
 
 
 class Command(BaseCommand):
