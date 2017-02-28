@@ -52,6 +52,9 @@ class IDMaker(object):
 
         self.voting_system = self.get_voting_system()
 
+    def __repr__(self):
+        return self.to_id()
+
     def _get_parts(self, tmp_id=None):
         parts = []
         parts.append(self.election_type.election_type)
