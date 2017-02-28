@@ -194,7 +194,8 @@ def mayor_importer():
             'slug': org_data['slug'],
             'territory_code': org_data.get('territory_code'),
             'elected_title': "Mayor",
-            'elected_role_name': org_data['elected_role_name']
+            'elected_role_name': org_data['elected_role_name'],
+            'election_name': org_data['org']
         }
         create_single(
             'mayor',
