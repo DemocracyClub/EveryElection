@@ -52,7 +52,8 @@ class Election(SuggestedByPublicMixin, models.Model):
     This model should contain everything needed to make the election ID,
     plus extra information about this election.
     """
-    election_id = models.CharField(blank=True, null=True, max_length=250)
+    election_id = models.CharField(
+        blank=True, null=True, max_length=250, unique=True)
     tmp_election_id = models.CharField(blank=True, null=True, max_length=250)
     election_title = models.CharField(blank=True, max_length=255)
     election_type = models.ForeignKey(ElectionType)
