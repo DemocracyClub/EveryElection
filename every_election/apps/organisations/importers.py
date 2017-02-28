@@ -157,6 +157,13 @@ def mayor_importer():
          'organisation_type': 'combined-authority',
         },
         {
+         'org': "West of England Combined Authority",
+         'elected_role_name': "Mayor of West of England Combined Authority",
+         'slug': "west-of-england",
+         'territory_code': 'ENG',
+         'organisation_type': 'combined-authority',
+        },
+        {
          'org': "Tees Valley Combined Authority",
          'elected_role_name': "Mayor of Tees Valley Combined Authority",
          'slug': "tees-valley",
