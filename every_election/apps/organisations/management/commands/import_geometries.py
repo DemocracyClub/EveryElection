@@ -17,7 +17,8 @@ from organisations.models import (
     Organisation,
 )
 from organisations.utils import create_geom_from_curie_list
-from organisations.constants import POLICE_AREA_NAME_TO_GSS
+from organisations.constants import (
+    POLICE_AREA_NAME_TO_GSS, COMBINED_AUTHORITY_SLUG_TO_GSS)
 
 
 class Command(BaseCommand):
@@ -31,6 +32,8 @@ class Command(BaseCommand):
         self.import_from_mapit()
         self.import_from_dgu()
         self.create_police_areas()
+        self.create_combined_authority_areas()
+        self.create_uk_areas()
 
     def import_boundary_line(self, base_path):
         LAYERS_BY_GSS = {}
@@ -198,3 +201,77 @@ class Command(BaseCommand):
                     geography=poly
                 )
 
+    def create_combined_authority_areas(self):
+        for ca_name, codes in COMBINED_AUTHORITY_SLUG_TO_GSS.items():
+            codes = ["gss:{}".format(x) for x in codes]
+            poly = self.clean_poly(create_geom_from_curie_list(codes))
+            print(ca_name)
+            org = Organisation.objects.get(
+                slug=ca_name, organisation_type="combined-authority")
+
+            if hasattr(org, 'geography'):
+                org.geography.geography = poly
+                org.geography.save()
+            else:
+                geog = DivisionGeography.objects.create(
+                    organisation=org,
+                    geography=poly
+                )
+
+    def create_uk_areas(self):
+        # GB
+        data_file = open(os.path.join(
+            os.path.abspath('ad_hoc_boundaries'),
+            "GB.geojson")).read()
+        try:
+            GB_geojson = DataSource(data_file)
+        except:
+            GB_geojson = DataSource(data_file)
+
+        poly = self.clean_poly(GB_geojson[0][0].geom.geos)
+
+        org = Organisation.objects.get(slug="parl")
+
+        if hasattr(org, 'geography'):
+            org.geography.geography = poly
+            org.geography.save()
+        else:
+            geog = DivisionGeography.objects.create(
+                organisation=org,
+                geography=poly
+            )
+
+        # Scotland
+        data_file = open(os.path.join(
+            os.path.abspath('ad_hoc_boundaries'),
+            "Scotland.geojson")).read()
+        try:
+            Scotland_geojson = DataSource(data_file)
+        except:
+            Scotland_geojson = DataSource(data_file)
+
+        poly = self.clean_poly(Scotland_geojson[0][0].geom.geos)
+
+        org = Organisation.objects.get(slug="sp")
+
+        if hasattr(org, 'geography'):
+            org.geography.geography = poly
+            org.geography.save()
+        else:
+            geog = DivisionGeography.objects.create(
+                organisation=org,
+                geography=poly
+            )
+
+        # London
+        org = Organisation.objects.get(slug="gla", organisation_type="gla")
+
+        london = Organisation.objects.get(slug="london")
+        if hasattr(london, 'geography'):
+            london.geography.geography = org.geography.geography
+            london.geography.save()
+        else:
+            geog = DivisionGeography.objects.create(
+                organisation=london,
+                geography=org.geography.geography
+            )

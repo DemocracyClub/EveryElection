@@ -70,6 +70,38 @@ def local_authority_wls_importer():
 def local_authority_nir_importer():
     url = "https://local-authority-nir.discovery.openregister.org/records.tsv?page-size=5000"  # NOQA
     base_local_authority_importer("nir", url)
+    overload_gss_code = {
+        'NIR-A': '95A',
+        'NIR-B': '95B',
+        'NIR-C': '95C',
+        'NIR-D': '95D',
+        'NIR-E': '95E',
+        'NIR-F': '95F',
+        'NIR-G': '95G',
+        'NIR-H': '95H',
+        'NIR-I': '95I',
+        'NIR-J': '95J',
+        'NIR-K': '95K',
+        'NIR-L': '95L',
+        'NIR-M': '95M',
+        'NIR-N': '95N',
+        'NIR-O': '95O',
+        'NIR-P': '95P',
+        'NIR-Q': '95Q',
+        'NIR-R': '95R',
+        'NIR-S': '95S',
+        'NIR-T': '95T',
+        'NIR-U': '95U',
+        'NIR-V': '95V',
+        'NIR-W': '95W',
+        'NIR-X': '95X',
+        'NIR-Y': '95Y',
+    }
+
+    for official_identifier, code in overload_gss_code.items():
+        Organisation.objects.filter(
+            official_identifier=official_identifier, gss="").update(
+                gss=code)
 
 
 def local_authority_sct_importer():
@@ -138,14 +170,14 @@ def mayor_importer():
         {
          'org': "Greater Manchester",
          'elected_role_name': "Mayor of Greater Manchester",
-         'slug': 'greater-manchester',
+         'slug': 'greater-manchester-ca',
          'territory_code': 'ENG',
-         'organisation_type': 'local-authority',
+         'organisation_type': 'combined-authority',
         },
         {
          'org': "Liverpool City Region",
          'elected_role_name': "Mayor of Liverpool City Region",
-         'slug': "liverpool",
+         'slug': "liverpool-city-ca",
          'territory_code': 'ENG',
          'organisation_type': 'combined-authority',
         },

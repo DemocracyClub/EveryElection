@@ -53,6 +53,7 @@ class Command(BaseCommand):
 
         # sp
         defaults={
+            'gss': 'S15000001',
             'official_name': "Scottish Parliament",
             'common_name': "Scottish Parliament",
             'slug': 'sp',
@@ -64,6 +65,7 @@ class Command(BaseCommand):
 
         # gla
         defaults={
+            'gss': "E15000007",
             'official_name': "Greater London assembly",
             'common_name': "Greater London assembly",
             'slug': 'gla',

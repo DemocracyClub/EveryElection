@@ -33,7 +33,7 @@ class Organisation(models.Model):
         return reverse("organisation_view", args=(self.official_identifier,))
 
     def format_geography_link(self):
-        return "https://mapit.mysociety.org/code/gss/{}".format(
+        return "https://mapit.mysociety.org/area/{}".format(
             self.gss
         )
 
