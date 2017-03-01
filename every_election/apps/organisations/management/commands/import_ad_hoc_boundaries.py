@@ -128,6 +128,58 @@ class Command(BaseCommand):
                     year,
                     "Inverclyde_Council_Area_Final_Recommendations"
                 ),
+            self._get_div_set('MLN', date, 'local-authority'):
+                self._mk_file_path(
+                    year,
+                    "Midlothian_Council_Area_Final_Recommendations"
+                ),
+            self._get_div_set('MRY', date, 'local-authority'):
+                self._mk_file_path(
+                    year,
+                    "Moray_Council_Area_Final_Recommendations"
+                ),
+            self._get_div_set('NAY', date, 'local-authority'):
+                self._mk_file_path(
+                    year,
+                    "North_Ayrshire_Council_Area_Final_Recommendations"
+                ),
+            self._get_div_set('NLK', date, 'local-authority'):
+                self._mk_file_path(
+                    year,
+                    "North_Lanarkshire_Council_Area_Final_Recommendations"
+                ),
+            self._get_div_set('PKN', date, 'local-authority'):
+                self._mk_file_path(
+                    year,
+                    "Perth_and_Kinross_Council_Area_Final_Recommendations"
+                ),
+            self._get_div_set('RFW', date, 'local-authority'):
+                self._mk_file_path(
+                    year,
+                    "Renfrewshire_Council_Area_Final_Recommendations"
+                ),
+            self._get_div_set('SAY', date, 'local-authority'):
+                self._mk_file_path(
+                    year,
+                    "South_Ayrshire_Council_Area_Final_recommendations"
+                ),
+            self._get_div_set('SLK', date, 'local-authority'):
+                self._mk_file_path(
+                    year,
+                    "South_Lanarkshire_Council_Area_Final_Recommendations"
+                ),
+            self._get_div_set('STG', date, 'local-authority'):
+                self._mk_file_path(
+                    year,
+                    "Stirling_Council_Area_Final_Recommendations"
+                ),
+            self._get_div_set('WDU', date, 'local-authority'):
+                self._mk_file_path(
+                    year,
+                    "West_Dunbartonshire_Council_Area_Final_Recommendations"
+                ),
+
+
         }
         self.import_from_divisionset_to_file_map(
             divisionset_to_file_map, data_type="shp", name_field="Ward_Name")
