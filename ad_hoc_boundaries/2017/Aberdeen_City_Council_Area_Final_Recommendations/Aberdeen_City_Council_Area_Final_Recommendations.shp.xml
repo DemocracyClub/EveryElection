@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<!-- <!DOCTYPE metadata SYSTEM "http://www.esri.com/metadata/esriprof80.dtd"> -->
+<metadata xml:lang="en"><Esri><CreaDate>20160316</CreaDate><CreaTime>14542100</CreaTime><ArcGISFormat>1.0</ArcGISFormat><SyncOnce>FALSE</SyncOnce><DataProperties><lineage><Process ToolSource="c:\program files\arcgis\desktop10.1\ArcToolbox\Toolboxes\Data Management Tools.tbx\DeleteField" Date="20160316" Time="145421" Name="" export="">DeleteField "L:\Electoral Reviews\20_5th Reviews 2013 on\90_Final_Recommendations\2_SHPs\Aberdeen\Aberdeen_council_area_Final.shp" AREA_CODE;DESCRIPTIO;FILE_NAME;NUMBER;NUMBER0;POLYGON_ID;UNIT_ID;CODE;TYPE_CODE</Process><Process ToolSource="c:\program files\arcgis\desktop10.1\ArcToolbox\Toolboxes\Data Management Tools.tbx\Sort" Date="20160520" Time="152653" Name="" export="">Sort Aberdeen_council_area_Final "L:\Electoral Reviews\20_5th Reviews 2013 on\90_Final_Recommendations\2_SHPs\Aberdeen\Aberdeen_council_area_Final_sorted.shp" "Ward_No ASCENDING" UR</Process><Process ToolSource="c:\program files (x86)\arcgis\desktop10.3\ArcToolbox\Toolboxes\Data Management Tools.tbx\CalculateField" Date="20160920" Time="131630">CalculateField Aberdeen_City_Council_Area_Final_Recommendations Ward_Code "[SI] = [Ward_Code]" VB #</Process><Process ToolSource="c:\program files (x86)\arcgis\desktop10.3\ArcToolbox\Toolboxes\Data Management Tools.tbx\CalculateField" Date="20160920" Time="131904">CalculateField Aberdeen_City_Council_Area_Final_Recommendations Ward_Code "[Ward_Code] = [SI]" VB #</Process><Process ToolSource="c:\program files (x86)\arcgis\desktop10.3\ArcToolbox\Toolboxes\Data Management Tools.tbx\CalculateField" Date="20160920" Time="131956">CalculateField Aberdeen_City_Council_Area_Final_Recommendations Ward_Code "[Ward_Code] = [SI]" VB #</Process><Process ToolSource="c:\program files (x86)\arcgis\desktop10.3\ArcToolbox\Toolboxes\Data Management Tools.tbx\CalculateField" Date="20160920" Time="132830">CalculateField Aberdeen_City_Council_Area_Final_Recommendations Ward_Code [SI] VB #</Process></lineage><itemProps><itemName Sync="TRUE">Aberdeen_City_Council_Area_Final_Recommendations</itemName><imsContentType Sync="TRUE">002</imsContentType><itemSize Sync="TRUE">0.226</itemSize><itemLocation><linkage Sync="TRUE">file://\\scotland.gov.uk\DC1\DCGroup_BCS\lgbcs\Electoral Reviews\20_5th Reviews 2013 on\90_Final_Recommendations\2_SHPs\Aberdeen\Aberdeen_City_Council_Area_Final_Recommendations.shp</linkage><protocol Sync="TRUE">Local Area Network</protocol></itemLocation><nativeExtBox><westBL Sync="TRUE">378237.500000</westBL><eastBL Sync="TRUE">399121.500000</eastBL><southBL Sync="TRUE">798394.100000</southBL><northBL Sync="TRUE">816096.100000</northBL><exTypeCode Sync="TRUE">1</exTypeCode></nativeExtBox></itemProps><coordRef><type Sync="TRUE">Projected</type><geogcsn Sync="TRUE">GCS_OSGB_1936</geogcsn><csUnits Sync="TRUE">Linear Unit: Meter (1.000000)</csUnits><projcsn Sync="TRUE">British_National_Grid</projcsn><peXml Sync="TRUE">&lt;ProjectedCoordinateSystem xsi:type='typens:ProjectedCoordinateSystem' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:typens='http://www.esri.com/schemas/ArcGIS/10.3'&gt;&lt;WKT&gt;PROJCS[&amp;quot;British_National_Grid&amp;quot;,GEOGCS[&amp;quot;GCS_OSGB_1936&amp;quot;,DATUM[&amp;quot;D_OSGB_1936&amp;quot;,SPHEROID[&amp;quot;Airy_1830&amp;quot;,6377563.396,299.3249646]],PRIMEM[&amp;quot;Greenwich&amp;quot;,0.0],UNIT[&amp;quot;Degree&amp;quot;,0.0174532925199433]],PROJECTION[&amp;quot;Transverse_Mercator&amp;quot;],PARAMETER[&amp;quot;False_Easting&amp;quot;,400000.0],PARAMETER[&amp;quot;False_Northing&amp;quot;,-100000.0],PARAMETER[&amp;quot;Central_Meridian&amp;quot;,-2.0],PARAMETER[&amp;quot;Scale_Factor&amp;quot;,0.9996012717],PARAMETER[&amp;quot;Latitude_Of_Origin&amp;quot;,49.0],UNIT[&amp;quot;Meter&amp;quot;,1.0],AUTHORITY[&amp;quot;EPSG&amp;quot;,27700]]&lt;/WKT&gt;&lt;XOrigin&gt;-5220400&lt;/XOrigin&gt;&lt;YOrigin&gt;-15524400&lt;/YOrigin&gt;&lt;XYScale&gt;450481592.76709664&lt;/XYScale&gt;&lt;ZOrigin&gt;-100000&lt;/ZOrigin&gt;&lt;ZScale&gt;10000&lt;/ZScale&gt;&lt;MOrigin&gt;-100000&lt;/MOrigin&gt;&lt;MScale&gt;10000&lt;/MScale&gt;&lt;XYTolerance&gt;0.001&lt;/XYTolerance&gt;&lt;ZTolerance&gt;0.001&lt;/ZTolerance&gt;&lt;MTolerance&gt;0.001&lt;/MTolerance&gt;&lt;HighPrecision&gt;true&lt;/HighPrecision&gt;&lt;WKID&gt;27700&lt;/WKID&gt;&lt;LatestWKID&gt;27700&lt;/LatestWKID&gt;&lt;/ProjectedCoordinateSystem&gt;</peXml></coordRef></DataProperties><SyncDate>20160920</SyncDate><SyncTime>11354200</SyncTime><ModDate>20160920</ModDate><ModTime>11354200</ModTime><scaleRange><minScale>150000000</minScale><maxScale>5000</maxScale></scaleRange><ArcGISProfile>ItemDescription</ArcGISProfile></Esri><dataIdInfo><envirDesc Sync="TRUE">Microsoft Windows 7 Version 6.1 (Build 7601) Service Pack 1; Esri ArcGIS 10.3.0.4322</envirDesc><dataLang><languageCode value="eng" Sync="TRUE"/><countryCode value="GBR" Sync="TRUE"/></dataLang><idCitation><resTitle Sync="FALSE">Aberdeen_City_Council_Area_Final_Recommendations</resTitle><presForm><PresFormCd value="005" Sync="TRUE"/></presForm></idCitation><spatRpType><SpatRepTypCd value="001" Sync="TRUE"/></spatRpType><dataExt><geoEle><GeoBndBox esriExtentType="search"><exTypeCode Sync="TRUE">1</exTypeCode><westBL Sync="TRUE">-2.360557</westBL><eastBL Sync="TRUE">-2.014493</eastBL><northBL Sync="TRUE">57.235777</northBL><southBL Sync="TRUE">57.076228</southBL></GeoBndBox></geoEle></dataExt></dataIdInfo><mdLang><languageCode value="eng" Sync="TRUE"/><countryCode value="GBR" Sync="TRUE"/></mdLang><mdChar><CharSetCd value="004" Sync="TRUE"/></mdChar><distInfo><distFormat><formatName Sync="TRUE">Shapefile</formatName></distFormat><distTranOps><transSize Sync="TRUE">0.226</transSize></distTranOps></distInfo><mdHrLv><ScopeCd value="005" Sync="TRUE"/></mdHrLv><mdHrLvName Sync="TRUE">dataset</mdHrLvName><refSysInfo><RefSystem><refSysID><identCode code="27700" Sync="TRUE"/><idCodeSpace Sync="TRUE">EPSG</idCodeSpace><idVersion Sync="TRUE">8.2.6</idVersion></refSysID></RefSystem></refSysInfo><spatRepInfo><VectSpatRep><geometObjs Name="Aberdeen_City_Council_Area_Final_Recommendations"><geoObjTyp><GeoObjTypCd value="002" Sync="TRUE"></GeoObjTypCd></geoObjTyp><geoObjCnt Sync="TRUE">13</geoObjCnt></geometObjs><topLvl><TopoLevCd value="001" Sync="TRUE"></TopoLevCd></topLvl></VectSpatRep></spatRepInfo><spdoinfo><ptvctinf><esriterm Name="Aberdeen_City_Council_Area_Final_Recommendations"><efeatyp Sync="TRUE">Simple</efeatyp><efeageom code="4" Sync="TRUE"></efeageom><esritopo Sync="TRUE">FALSE</esritopo><efeacnt Sync="TRUE">13</efeacnt><spindex Sync="TRUE">FALSE</spindex><linrefer Sync="TRUE">FALSE</linrefer></esriterm></ptvctinf></spdoinfo><eainfo><detailed Name="Aberdeen_City_Council_Area_Final_Recommendations"><enttyp><enttypl Sync="TRUE">Aberdeen_City_Council_Area_Final_Recommendations</enttypl><enttypt Sync="TRUE">Feature Class</enttypt><enttypc Sync="TRUE">13</enttypc></enttyp><attr><attrlabl Sync="TRUE">FID</attrlabl><attalias Sync="TRUE">FID</attalias><attrtype Sync="TRUE">OID</attrtype><attwidth Sync="TRUE">4</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale><attrdef Sync="TRUE">Internal feature number.</attrdef><attrdefs Sync="TRUE">Esri</attrdefs><attrdomv><udom Sync="TRUE">Sequential unique whole numbers that are automatically generated.</udom></attrdomv></attr><attr><attrlabl Sync="TRUE">Shape</attrlabl><attalias Sync="TRUE">Shape</attalias><attrtype Sync="TRUE">Geometry</attrtype><attwidth Sync="TRUE">0</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale><attrdef Sync="TRUE">Feature geometry.</attrdef><attrdefs Sync="TRUE">Esri</attrdefs><attrdomv><udom Sync="TRUE">Coordinates defining the features.</udom></attrdomv></attr><attr><attrlabl Sync="TRUE">NAME</attrlabl><attalias Sync="TRUE">Name</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">100</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr><attr><attrlabl Sync="TRUE">Review</attrlabl><attalias Sync="TRUE">Review</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">100</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr><attr><attrlabl Sync="TRUE">Council</attrlabl><attalias Sync="TRUE">Council</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">100</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr><attr><attrlabl Sync="TRUE">Ward_No</attrlabl><attalias Sync="TRUE">Ward_No</attalias><attrtype Sync="TRUE">Double</attrtype><attwidth Sync="TRUE">19</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr><attr><attrlabl Sync="TRUE">Ward_Name</attrlabl><attalias Sync="TRUE">Ward_Name</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">100</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr><attr><attrlabl Sync="TRUE">Date</attrlabl><attalias Sync="TRUE">Date</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">50</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr><attr><attrlabl Sync="TRUE">SI</attrlabl><attalias Sync="TRUE">SI</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">50</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr><attr><attrlabl Sync="TRUE">Report_No</attrlabl><attalias Sync="TRUE">Report_No</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">50</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr></detailed></eainfo><mdDateSt Sync="TRUE">20160920</mdDateSt><GEMINI_Metadata><IdentificationInfo><spatialRepresentationType codeList="001"></spatialRepresentationType><extent><geographicElement><westBoundLongitude>-2.360557</westBoundLongitude><eastBoundLongitude>-2.014492</eastBoundLongitude><northBoundLatitude>57.235777</northBoundLatitude><southBoundLatitude>57.076228</southBoundLatitude></geographicElement></extent></IdentificationInfo><dateStamp>20160920</dateStamp><metadataStandardName>UK GEMINI Standard</metadataStandardName><metadataStandardVersion>1.0</metadataStandardVersion><referenceSystemInfo><referenceSystemIdentifier><code>001</code></referenceSystemIdentifier></referenceSystemInfo></GEMINI_Metadata><gmd:GEMINI_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:srv="http://www.isotc211.org/2005/srv" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:msxsl="urn:schemas-microsoft-com:xslt">
+		<gmd:hierarchyLevel>
+			<gmd:MD_ScopeCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#MD_ScopeCode" codeListValue="dataset">Dataset</gmd:MD_ScopeCode>
+		</gmd:hierarchyLevel>
+		<gmd:dateStamp>
+			<gco:Date>2016-09-20</gco:Date>
+		</gmd:dateStamp>
+		<gmd:language>
+			<gmd:LanguageCode codeList="http://www.loc.gov/standards/iso639-2/php/code_list.php" codeListValue="eng">English</gmd:LanguageCode>
+		</gmd:language>
+		<gmd:identificationInfo>
+			<gmd:MD_DataIdentification>
+				<gmd:spatialResolution>
+					<gmd:MD_Resolution>
+						<gmd:distance>
+							<gco:Distance uom="Meters">2.21984652881702E-09</gco:Distance>
+						</gmd:distance>
+					</gmd:MD_Resolution>
+				</gmd:spatialResolution>
+				<gmd:citation>
+					<gmd:CI_Citation>
+						<gmd:title>
+							<gco:CharacterString>Aberdeen_City_Council_Area_Final_Recommendations</gco:CharacterString>
+						</gmd:title>
+					</gmd:CI_Citation>
+				</gmd:citation>
+				<gmd:extent>
+					<gmd:EX_Extent>
+						<gmd:verticalElement>
+							<gmd:EX_VerticalExtent>
+								<gmd:minimumValue>
+									<gco:Real>-100000.00</gco:Real>
+								</gmd:minimumValue>
+								<gmd:maximumValue>
+									<gco:Real>900719825474.10</gco:Real>
+								</gmd:maximumValue>
+								<gmd:verticalCRS xlink:href=""/>
+							</gmd:EX_VerticalExtent>
+						</gmd:verticalElement>
+					</gmd:EX_Extent>
+				</gmd:extent>
+			</gmd:MD_DataIdentification>
+		</gmd:identificationInfo>
+		<gmd:distributionInfo>
+			<gmd:MD_Distribution>
+				<gmd:transferOptions>
+					<gmd:MD_DigitalTransferOptions>
+						<gmd:onLine>
+							<gmd:CI_OnlineResource>
+								<gmd:linkage>
+									<gmd:URL>\\scotland.gov.uk\DC1\DCGroup_BCS\lgbcs\Electoral Reviews\20_5th Reviews 2013 on\90_Final_Recommendations\2_SHPs\Aberdeen\Aberdeen_City_Council_Area_Final_Recommendations.shp</gmd:URL>
+								</gmd:linkage>
+							</gmd:CI_OnlineResource>
+						</gmd:onLine>
+					</gmd:MD_DigitalTransferOptions>
+				</gmd:transferOptions>
+			</gmd:MD_Distribution>
+		</gmd:distributionInfo>
+		<gmd:referenceSystemInfo>
+			<gmd:MD_ReferenceSystem>
+				<gmd:referenceSystemIdentifier>
+					<gmd:RS_Identifier>
+						<gmd:code>
+							<gco:CharacterString>Great Britain National Grid</gco:CharacterString>
+						</gmd:code>
+					</gmd:RS_Identifier>
+				</gmd:referenceSystemIdentifier>
+			</gmd:MD_ReferenceSystem>
+		</gmd:referenceSystemInfo>
+	</gmd:GEMINI_Metadata></metadata>
