@@ -1,3 +1,4 @@
+import os
 import json
 import time
 
@@ -5,6 +6,7 @@ import requests
 import glob2
 
 from django.core.management.base import BaseCommand
+from django.conf import settings
 from django.contrib.gis import geos
 from django.contrib.gis.gdal import DataSource, GDALException
 
@@ -20,9 +22,11 @@ from organisations.constants import POLICE_AREA_NAME_TO_GSS
 
 class Command(BaseCommand):
     def handle(self, **options):
-        # TODO take as an ARG or config
         self.import_boundary_line(
-            "/Users/symroe/Projects/democracyclub/data/**/*.shp")
+            os.path.join(
+            settings.BOUNADY_PATH,
+            "official_boundaries/**/*.shp"
+        ))
 
         self.import_from_mapit()
         self.import_from_dgu()
