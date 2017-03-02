@@ -27,7 +27,7 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         self.base_path = os.path.abspath('ad_hoc_boundaries')
-        # self.import_lgbce()
+        self.import_lgbce()
         self.import_lgbcs()
 
     def _mk_file_path(self, year, filename):

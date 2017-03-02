@@ -111,7 +111,6 @@ class Command(BaseCommand):
     def import_from_mapit(self):
 
         def _process_qs(qs, obj_type="division"):
-            import ipdb; ipdb.set_trace()
             count = qs.count()
             for i, obj in enumerate(qs):
                 print("{} of {}: {} ({})".format(
