@@ -11,7 +11,9 @@ class BaseElectionCreatorMixIn():
         self._create_models()
 
     def tearDown(self):
+        super().tearDown()
         self.base_data = None
+
 
     def _create_models(self):
         self.date = datetime.today()
@@ -41,12 +43,26 @@ class BaseElectionCreatorMixIn():
             name="Test Div 1",
             slug="test-div"
         )
+        self.org_div_2 = OrganisationDivision.objects.create(
+            organisation=self.org1,
+            name="Test Div 2",
+            slug="test-div-2"
+        )
 
         self.base_data = {
             'election_organisation': [self.org1, ],
             'election_type': self.election_type1,
             'date': self.date,
         }
+
+    def make_div_id(self, org=None, div=None):
+        if not org:
+            org = self.org1
+
+        if not div:
+            div = self.org_div_1
+
+        return "__".join(map(str, [org.pk, div.pk]))
 
     def create_ids(self, all_data, save_model=True):
         all_ids = create_ids_for_each_ballot_paper(all_data)
