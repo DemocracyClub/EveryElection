@@ -1,6 +1,8 @@
 from django.core.management.base import BaseCommand
 
-from organisations.models import Organisation
+# import requests
+
+# from organisations.models import Organisation
 from organisations.importers import (
     local_authority_eng_importer,
     local_authority_wls_importer,
@@ -88,15 +90,40 @@ class Command(BaseCommand):
         }
         create_single('parl', 'parl-hoc', "parl", defaults)
 
+        # self.add_missing_gss_codes()
 
+    # def add_missing_gss_codes(self):
+    #     """
+    #     Some areas don't come with them. Add them from the register maps
+    #     where possible
+    #     """
+    #
+    #     if not getattr(self, 'register_gss_map', None):
+    #         req = requests.get("https://raw.githubusercontent.com/openregister/local-authority-data/master/maps/gss.tsv")  # noqa
+    #         self.register_gss_map = {}
+    #         for map_line in req.text.splitlines():
+    #             map_line = map_line.split('\t')
+    #             if map_line[0] == "gss":
+    #                 continue
+    #             self.register_gss_map[map_line[1]] = map_line[0]
+    #
+    #
+    #     for org in Organisation.objects.filter(gss=''):
+    #         org_register_curie = "{}:{}".format(
+    #             "{}-{}".format(
+    #                 org.organisation_type,
+    #                 org.territory_code.lower()
+    #             ),
+    #             org.official_identifier
+    #         )
+    #         import ipdb; ipdb.set_trace()
 
-        # # Lords
-        # TODO
-        # defaults={
-        #     'official_name': "House of Lords of the United Kingdom",
-        #     'common_name': "House of Lords",
-        #     'slug': 'hol',
-        #     'elected_title': "Lord",
-        # }
-        # create_single('parl', 'parl-hol', "parl", defaults)
-
+    # # Lords
+    # TODO
+    # defaults={
+    #     'official_name': "House of Lords of the United Kingdom",
+    #     'common_name': "House of Lords",
+    #     'slug': 'hol',
+    #     'elected_title': "Lord",
+    # }
+    # create_single('parl', 'parl-hol', "parl", defaults)

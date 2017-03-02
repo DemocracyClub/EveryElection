@@ -38,6 +38,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         self.run_test_with_data(
             all_data,
             expected_ids
+            
         )
 
     def test_creates_div_data_ids_1(self):

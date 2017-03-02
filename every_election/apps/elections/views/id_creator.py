@@ -131,6 +131,7 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             all_data.update(self.storage.extra_data)
         context['all_data'] = all_data
         all_ids = create_ids_for_each_ballot_paper(all_data, self.get_election_subtypes())
+        import ipdb; ipdb.set_trace()
         # all_ids = create_ids_grouped(all_data, self.get_election_subtypes())
         context['all_ids'] = all_ids
         return context

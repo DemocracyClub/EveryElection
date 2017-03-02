@@ -111,6 +111,7 @@ class Command(BaseCommand):
     def import_from_mapit(self):
 
         def _process_qs(qs, obj_type="division"):
+            import ipdb; ipdb.set_trace()
             count = qs.count()
             for i, obj in enumerate(qs):
                 print("{} of {}: {} ({})".format(
@@ -141,7 +142,7 @@ class Command(BaseCommand):
         _process_qs(OrganisationDivision.objects.filter(
             geography=None).exclude(mapit_generation_high=None))
         _process_qs(Organisation.objects.filter(
-            geography=None,).exclude(gss=""), obj_type="organisation")
+            geography=None,).exclude(gss=None), obj_type="organisation")
 
 
     def import_from_dgu(self):
