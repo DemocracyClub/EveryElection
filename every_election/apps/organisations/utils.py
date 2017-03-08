@@ -1,6 +1,6 @@
 from datetime import timedelta, datetime
 
-from django.contrib.gis.geos import MultiPolygon, Polygon, GEOSGeometry
+from django.contrib.gis.geos import GEOSGeometry
 
 
 from organisations.models import (

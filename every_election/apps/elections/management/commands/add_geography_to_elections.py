@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand
 
 from elections.models import Election
-from elections import constants
 
 
 class Command(BaseCommand):
@@ -23,4 +22,3 @@ class Command(BaseCommand):
             geography=None,
             division=None),
             geography_type="organisation")
-

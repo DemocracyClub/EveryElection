@@ -1,0 +1,8 @@
+[run]
+omit =
+    */tests/*
+    */apps.py
+    */migrations/*
+    */migrations/*
+    every_election/wsgi.py
+    */lib/python3.4/site-packages/*

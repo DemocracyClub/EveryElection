@@ -5,7 +5,7 @@ from django import forms
 from formtools.wizard.views import NamedUrlSessionWizardView
 
 from organisations.models import Organisation
-from elections.models import ElectedRole, ElectionSubType, Election
+from elections.models import ElectedRole, ElectionSubType
 from elections.utils import (create_ids_for_each_ballot_paper)
 from elections.forms import (
     ElectionDateKnownForm,

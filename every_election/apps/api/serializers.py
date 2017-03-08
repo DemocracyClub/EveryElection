@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from elections.models import (
-    Election, ElectionType, ElectionSubType, ElectedRole, VotingSystem)
+    Election, ElectionType, ElectionSubType, VotingSystem)
 from organisations.models import (Organisation, OrganisationDivision,
                                   OrganisationDivisionSet)
 

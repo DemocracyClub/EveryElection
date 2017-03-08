@@ -2,22 +2,24 @@ sudo: false
 language: python
 python:
   - '3.4'
-  - '3.5'
 addons:
   - postgresql: '9.3'
-before_script:
-  - psql -U postgres -c "create extension postgis"
 cache:
   pip: true
   directories:
     - /home/travis/virtualenv
     - $HOME/.pip-cache/
+    - $HOME/.tox/
+    - .tox
 install:
-  - pip install pip==9.0.1
-  - pip install -r requirements/testing.txt --cache-dir $HOME/.pip-cache
+  - pip install tox coveralls
 script:
-  - python manage.py check
-  - python manage.py test
+  - tox
+after_success:
+  - coveralls
+before_cache:
+    - rm -f .tox/py34-django110/log/*.log
+    - rm -f .cache/pip/log/*.log
 notifications:
   slack:
     secure: XDoMlbyJR1HOfF3ibOGNEizbb7MYGG8abDPrVTdTBscV5d3vm7qE0Uvd7Hq7YefwhSv8dJ+psrnWwMxBH7Z8zQmyLDyeVCNysOIfc3JfLi/cgrxZ0x0GoqUiiW8sgMl4Um/9jlEpcd5te5HpIeCFp0PHDO3GIWpzxx7xMbS6/0Q=

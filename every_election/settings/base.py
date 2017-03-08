@@ -98,11 +98,9 @@ STATICFILES_DIRS = (
 STATIC_ROOT = root('static')
 
 
-from dc_theme.settings import (
-    get_pipeline_settings,
-    STATICFILES_STORAGE,
-    STATICFILES_FINDERS
-)
+from dc_theme.settings import get_pipeline_settings
+from dc_theme.settings import STATICFILES_STORAGE, STATICFILES_FINDERS  # noqa
+
 
 PIPELINE = get_pipeline_settings(
     extra_css=['css/styles.scss', ],

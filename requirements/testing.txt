@@ -2,3 +2,12 @@
 
 mock
 model-mommy
+tox
+pytest
+pytest-django
+pytest-pep8
+pytest-flakes
+pytest-cov
+factory_boy
+vcrpy
+

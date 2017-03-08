@@ -196,7 +196,7 @@ class Command(BaseCommand):
                 org.geography.geography = poly
                 org.geography.save()
             else:
-                geog = DivisionGeography.objects.create(
+                DivisionGeography.objects.create(
                     organisation=org,
                     geography=poly
                 )
@@ -213,7 +213,7 @@ class Command(BaseCommand):
                 org.geography.geography = poly
                 org.geography.save()
             else:
-                geog = DivisionGeography.objects.create(
+                DivisionGeography.objects.create(
                     organisation=org,
                     geography=poly
                 )
@@ -236,7 +236,7 @@ class Command(BaseCommand):
             org.geography.geography = poly
             org.geography.save()
         else:
-            geog = DivisionGeography.objects.create(
+            DivisionGeography.objects.create(
                 organisation=org,
                 geography=poly
             )
@@ -258,7 +258,7 @@ class Command(BaseCommand):
             org.geography.geography = poly
             org.geography.save()
         else:
-            geog = DivisionGeography.objects.create(
+            DivisionGeography.objects.create(
                 organisation=org,
                 geography=poly
             )
@@ -271,7 +271,7 @@ class Command(BaseCommand):
             london.geography.geography = org.geography.geography
             london.geography.save()
         else:
-            geog = DivisionGeography.objects.create(
+            DivisionGeography.objects.create(
                 organisation=london,
                 geography=org.geography.geography
             )

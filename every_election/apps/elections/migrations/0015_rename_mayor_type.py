@@ -4,8 +4,6 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 
-from elections.constants import ELECTION_TYPES
-
 
 def rename_mayor_type(apps, schema_editor):
     ElectionType = apps.get_model("elections", "ElectionType")

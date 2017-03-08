@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-import time
 
 import requests
 import requests_cache
