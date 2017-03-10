@@ -164,6 +164,7 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
 }
 
+
 # .local.py overrides all the common settings.
 try:
     from .local import *  # noqa
