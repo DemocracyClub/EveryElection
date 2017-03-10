@@ -1,4 +1,5 @@
 # EveryElection
+[![Build Status](https://travis-ci.org/DemocracyClub/EveryElection.svg?branch=master)](https://travis-ci.org/DemocracyClub/EveryElection) [![Coverage Status](https://coveralls.io/repos/github/DemocracyClub/EveryElection/badge.svg?branch=master)](https://coveralls.io/github/DemocracyClub/EveryElection?branch=master)
 
 For recording every election in the UK
 
