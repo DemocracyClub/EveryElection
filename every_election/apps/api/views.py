@@ -19,6 +19,15 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
        postcode = self.request.query_params.get('postcode', None)
        if postcode is not None:
            queryset = queryset.for_postcode(postcode)
+
+       current = self.request.query_params.get('current', None)
+       if current is not None:
+           queryset = queryset.current()
+
+       future = self.request.query_params.get('future', None)
+       if future is not None:
+           queryset = queryset.future()
+
        return queryset
 
 
