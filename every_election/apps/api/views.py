@@ -20,6 +20,11 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
        if postcode is not None:
            queryset = queryset.for_postcode(postcode)
 
+       coords = self.request.query_params.get('coords', None)
+       if coords is not None:
+           lat, lng = map(float,coords.split(','))
+           queryset = queryset.for_lat_lng(lat=lat, lng=lng)
+
        current = self.request.query_params.get('current', None)
        if current is not None:
            queryset = queryset.current()

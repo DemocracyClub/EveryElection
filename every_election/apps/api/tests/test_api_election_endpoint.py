@@ -57,3 +57,15 @@ class TestElectionAPIQueries(APITestCase):
 
         assert len(data['results']) == 1
         assert data['results'][0]['election_id'] == election_id
+
+    def test_election_endpoint_for_lat_lng(self):
+        election_id = "local.place-name.2017-03-23"
+        ElectionFactory(group=None, election_id=election_id)
+        ElectionFactory(group=None, geography=None)
+
+        resp = self.client.get(
+            "/api/elections/?coords=51.5010089365,-0.141587600123")
+        data = resp.json()
+
+        assert data['results'][0]['election_id'] == election_id
+        assert len(data['results']) == 1
