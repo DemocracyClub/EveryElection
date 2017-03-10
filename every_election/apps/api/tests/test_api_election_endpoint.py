@@ -1,13 +1,9 @@
 from datetime import datetime, timedelta
 
-from django.contrib.gis.geos import Point
-
 import vcr
 from rest_framework.test import APITestCase
 
 from elections.tests.factories import (ElectionFactory, )
-from elections.models import Election
-
 
 
 class TestElectionAPIQueries(APITestCase):

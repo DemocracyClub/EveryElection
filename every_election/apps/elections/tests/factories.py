@@ -2,7 +2,6 @@ import factory
 
 from elections.models import Election, ElectionType, ElectedRole
 from organisations.tests.factories import (OrganisationFactory,
-                                           OrganisationDivisionSetFactory,
                                            OrganisationDivisionFactory,
                                            DivisionGeographyFactory)
 

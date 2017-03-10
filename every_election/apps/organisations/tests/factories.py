@@ -1,5 +1,3 @@
-from django.contrib.gis import geos
-
 import factory
 
 from organisations.models import (Organisation, OrganisationDivisionSet,

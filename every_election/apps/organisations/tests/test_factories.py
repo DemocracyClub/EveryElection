@@ -22,4 +22,4 @@ class TestElectionIDs(TestCase):
         assert od.geography_curie.startswith("test:")
 
     def test_division_geography_factory(self):
-        od = DivisionGeographyFactory()
+        DivisionGeographyFactory()
