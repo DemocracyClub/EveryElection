@@ -3,6 +3,8 @@ from django.core.urlresolvers import reverse
 
 from suggested_content.models import SuggestedByPublicMixin
 
+from .managers import ElectionManager
+
 
 class ElectionType(models.Model):
     """
@@ -68,6 +70,8 @@ class Election(SuggestedByPublicMixin, models.Model):
     group = models.ForeignKey('Election', null=True, related_name="children")
     group_type = models.CharField(blank=True, max_length=100, null=True)
     voting_system = models.ForeignKey('elections.VotingSystem', null=True)
+
+    objects = ElectionManager.as_manager()
 
     def get_absolute_url(self):
         return reverse("single_election_view", args=(self.election_id,))

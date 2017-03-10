@@ -14,6 +14,13 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_value_regex="(?!\.json$)[^/]+"
     filter_fields = ('group_type', 'poll_open_date')
 
+    def get_queryset(self):
+       queryset = Election.objects.all()
+       postcode = self.request.query_params.get('postcode', None)
+       if postcode is not None:
+           queryset = queryset.for_postcode(postcode)
+       return queryset
+
 
 class ElectionTypeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ElectionType.objects.all()
