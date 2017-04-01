@@ -88,7 +88,7 @@ VOTING_SYSTEMS = [
         "name": "Single Transferable Vote",
         "wikipedia_url": "https://en.wikipedia.org/wiki/Single_transferable_vote",
         "description": "The single transferable vote (STV) is a voting system designed to achieve proportional representation through ranked voting in multi-seat organizations or constituencies (voting districts).",
-        "uses_party_lists": True,
+        "uses_party_lists": False,
     },
     {
         "slug": "PR-CL",
