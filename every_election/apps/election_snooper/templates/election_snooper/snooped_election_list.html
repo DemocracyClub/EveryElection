@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<section class="columns large-6 large-centered">
+    {% for object in object_list %}
+    <div class="card postcode_card">
+        <h3>{{ object.title }}</h3>
+        <div class="row">
+            <div class="columns large-8">
+                {{ object.detail }}
+                <p>
+                    {% if object.snooper_name == "ALDC" %}
+                        <a href="{{ object.source }}">{{ object.source }}</a>
+                    {% else %}
+                        <a href="{{ object.detail_url }}">{{ object.detail_url }}</a>
+                    {% endif %}
+                </p>
+            </div>
+            <div class="columns large-4">
+                <button class="button success">This is an election</button>
+                <button class="button">Not an election</button>
+                <button class="button">Duplicate election</button>
+            </div>
+        </div>
+
+
+
+    </div>
+    {% endfor %}
+
+</section>
+{% endblock content %}

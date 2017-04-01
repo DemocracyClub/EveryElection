@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'', include('elections.urls')),
     url(r'^api/', include('api.urls')),
     url('^markdown/', include('django_markdown.urls')),
+    url(r'^election_radar/', include('election_snooper.urls')),
 ]
 
 urlpatterns += static(

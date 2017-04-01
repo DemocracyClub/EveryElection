@@ -20,3 +20,4 @@ glob2
 markdown
 requests
 requests_cache
+bs4
