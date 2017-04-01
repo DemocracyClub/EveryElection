@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^organisations/', include('organisations.urls')),
     url(r'', include('elections.urls')),
     url(r'^api/', include('api.urls')),
+    url(r'^election_radar/', include('election_snooper.urls')),
 ]
 
 urlpatterns += static(

@@ -40,6 +40,7 @@ PROJECT_APPS = [
     'pipeline',
     'suggested_content',
     'django_extensions',
+    'election_snooper',
 ]
 
 INSTALLED_APPS += PROJECT_APPS
