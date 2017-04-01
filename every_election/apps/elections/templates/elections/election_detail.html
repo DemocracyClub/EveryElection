@@ -19,16 +19,23 @@
         <p>Organisaation: <a href="{{ object.organisation.get_absolute_url }}">
             {{ object.organisation }}</a>.</p>
         {% endif %}
-        {% if object.voting_system %}
-        <p>Voting system: <a href="{{ object.voting_system.wikipedia_url }}">
-            {{ object.voting_system }}</a>.</p>
+
+        {% if object.group_type == 'organisation' or not object.group_type %}
+            {% if object.voting_system %}
+            <p>Voting system: <a href="{{ object.voting_system.wikipedia_url }}">
+                {{ object.voting_system }}</a>.</p>
+            {% endif %}
+
+
+            {# Only do this for non-group IDs #}
         {% endif %}
 
-
+        {% if object.group_type == 'organisation' %}
         <p>View <a href="https://whocanivotefor.co.uk/elections/{{ object.election_id }}/{{ object.election_type|slugify }}">
             this election on WhoCanIVoteFor</a>.</p>
         <p>View <a href="https://candidates.democracyclub.org.uk/election/{{ object.election_id }}/constituencies">
             this election on candidates.democracyclub.org.uk</a>.</p>
+        {% endif %}
 
         <h3>Related IDs</h3>
         {% if object.group %}
