@@ -73,6 +73,9 @@ class Election(SuggestedByPublicMixin, models.Model):
 
     objects = ElectionManager.as_manager()
 
+    class Meta:
+        ordering = ('election_id',)
+
     def get_absolute_url(self):
         return reverse("single_election_view", args=(self.election_id,))
 
