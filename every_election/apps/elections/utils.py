@@ -1,7 +1,9 @@
+from datetime import datetime
+
 from django.db import transaction
 
 from organisations.models import Organisation, OrganisationDivision
-from elections.models import Election, ElectedRole
+from elections.models import Election, ElectedRole, ElectionType
 
 
 class IDMaker(object):
@@ -9,7 +11,14 @@ class IDMaker(object):
                  organisation=None, subtype=None,
                  division=None, is_group_id=False,
                  group_id=None, group_type=None):
+
+        if type(election_type) == str:
+            election_type = ElectionType.objects.get(
+                election_type=election_type)
         self.election_type = election_type
+
+        if type(date) == str:
+            date = datetime.strptime(date, "%Y-%m-%d")
         self.date = date
 
         if self.date is None:
