@@ -3,7 +3,7 @@ from datetime import datetime
 from django.db import transaction
 
 from organisations.models import Organisation, OrganisationDivision
-from elections.models import Election, ElectedRole, ElectionType
+from elections.models import Election, ElectedRole, ElectionType, VotingSystem
 
 
 class IDMaker(object):
@@ -105,6 +105,10 @@ class IDMaker(object):
         return other.to_id() == self.to_id()
 
     def get_voting_system(self):
+        if self.use_org:
+            if self.organisation.territory_code == "SCT" and \
+                    self.election_type.election_type == "local":
+                return VotingSystem.objects.get(slug="STV")
         return self.election_type.default_voting_system
 
     @transaction.atomic
