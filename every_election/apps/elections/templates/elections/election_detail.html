@@ -6,20 +6,44 @@
 
     <div class="card postcode_card">
 
-        <h1>{{ object.election_id }}</h1>
-        <h2>{{ object.election_title }}</h2>
-        <h2>{{ object.election_type }}</h2>
+        <h1 style="font-size:1.6em">{{ object.election_id }}</h1>
+        <h2 style="font-size:1.4em">{{ object.election_title }}</h2>
+        <h2 style="font-size:1.4em">{{ object.election_type }}</h2>
         {% if object.election_subtype %}
         <h3>{{ object.election_subtype }}</h3>
         {% endif %}
 
-        <h3>{{ object.poll_open_date }}</h3>
+        <p>Election date: <strong>{{ object.poll_open_date }}</strong></p>
+        <p>Election type: <code>{{ object.election_type.election_type }}</code></p>
+        {% if object.organisation %}
+        <p>Organisaation: <a href="{{ object.organisation.get_absolute_url }}">
+            {{ object.organisation }}</a>.</p>
+        {% endif %}
+        {% if object.voting_system %}
+        <p>Voting system: <a href="{{ object.voting_system.wikipedia_url }}">
+            {{ object.voting_system }}</a>.</p>
+        {% endif %}
+
+
+        <p>View <a href="https://whocanivotefor.co.uk/elections/{{ object.election_id }}/{{ object.election_type|slugify }}">
+            this election on WhoCanIVoteFor</a>.</p>
+        <p>View <a href="https://candidates.democracyclub.org.uk/election/{{ object.election_id }}/constituencies">
+            this election on candidates.democracyclub.org.uk</a>.</p>
 
         <h3>Related IDs</h3>
-        <p>These are sub-IDs or IDs for each ballot paper</p>
-        {% for child in object.children.all %}
-            <li>{{ child }}</li>
-        {% endfor %}
+        {% if object.group %}
+            <p>Part of the election group <a href="{{ object.group.get_absolute_url }}">
+                {{ object.group }}</a></p>
+        {% endif %}
+
+        {% if object.children.all.exists %}
+            <p>These are sub-IDs or IDs for each ballot paper</p>
+            <ul>
+            {% for child in object.children.all %}
+                <li><a href="{{ child.get_absolute_url }}">{{ child }}</a></li>
+            {% endfor %}
+            </ul>
+        {% endif %}
     </div>
 </div>
 
