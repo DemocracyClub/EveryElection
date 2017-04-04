@@ -71,10 +71,7 @@ class IDMaker(object):
         if self.subtype:
             parts.append(self.subtype.election_subtype)
         if self.use_org and self.organisation:
-            if isinstance(self.organisation, Organisation):
-                parts.append(self.organisation.slug)
-            else:
-                parts.append(self.organisation)
+            parts.append(self.organisation.slug)
         if self.division:
             parts.append(self.division.slug)
         if self.contest_type == "by_election":
@@ -129,7 +126,6 @@ class IDMaker(object):
                 group_model = self.group_id.save_model()
 
         default_kwargs = {
-            'poll_open_date':  self.date,
             'election_type':  self.election_type,
             'election_title': self.to_title(),
             'election_subtype':  self.subtype,
@@ -141,7 +137,22 @@ class IDMaker(object):
             'voting_system': self.voting_system
         }
 
-        if self.date_known:
+        try:
+            existing_model = Election.objects.get(
+                election_id=None,
+                **default_kwargs
+            )
+            self.model = existing_model
+        except Election.DoesNotExist:
+            existing_model = None
+
+        if existing_model and self.date_known:
+            existing_model.poll_open_date = self.date
+            existing_model.election_id = self.to_id()
+            existing_model.save()
+            return existing_model
+        elif self.date_known and not existing_model:
+            default_kwargs['poll_open_date'] = self.date
             new_model, _ = Election.objects.update_or_create(
                 election_id=self.to_id(), defaults=default_kwargs)
             return new_model
@@ -149,16 +160,6 @@ class IDMaker(object):
             # We will only allow one tmp ID per (type, subtype, org)
             # Assuming that we will never know of two upcoming elections
             # that wont have the same date
-            try:
-                existing_model = Election.objects.get(
-                    election_id=None,
-                    defaults=default_kwargs
-                )
-                self.model = existing_model
-                return existing_model
-            except Election.DoesNotExist:
-                existing_model = None
-
             new_model, _ = Election.objects.update_or_create(**default_kwargs)
             tmp_election_id = self.to_id(tmp_id=new_model.pk)
             new_model.tmp_election_id = tmp_election_id
@@ -223,6 +224,14 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
 
         if subtypes:
             for subtype in all_data.get('election_subtype', []):
+
+                subtype_id = IDMaker(
+                    group_id=date_id,
+                    is_group_id=True,
+                    subtype=subtype,
+                    *args, **kwargs)
+                all_ids.append(subtype_id)
+
                 for div in div_data:
                     org_div = OrganisationDivision.objects.get(
                         pk=div.split('__')[1]

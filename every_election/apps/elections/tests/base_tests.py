@@ -64,8 +64,8 @@ class BaseElectionCreatorMixIn():
 
         return "__".join(map(str, [org.pk, div.pk]))
 
-    def create_ids(self, all_data, save_model=True):
-        all_ids = create_ids_for_each_ballot_paper(all_data)
+    def create_ids(self, all_data, save_model=True, **kwargs):
+        all_ids = create_ids_for_each_ballot_paper(all_data, **kwargs)
         if save_model:
             [e_id.save_model() for e_id in all_ids]
 
