@@ -10,7 +10,7 @@ class IDMaker(object):
     def __init__(self, election_type, date,
                  organisation=None, subtype=None,
                  division=None, is_group_id=False,
-                 group_id=None, group_type=None):
+                 group_id=None, group_type=None, contest_type=None):
 
         if type(election_type) == str:
             election_type = ElectionType.objects.get(
@@ -60,6 +60,7 @@ class IDMaker(object):
             self.elected_role = None
 
         self.voting_system = self.get_voting_system()
+        self.contest_type = contest_type
 
     def __repr__(self):
         return self.to_id()
@@ -76,6 +77,8 @@ class IDMaker(object):
                 parts.append(self.organisation)
         if self.division:
             parts.append(self.division.slug)
+        if self.contest_type == "by_election":
+            parts.append('by')
         if tmp_id:
             parts.append("tmp-{}".format(tmp_id))
         else:
@@ -96,6 +99,8 @@ class IDMaker(object):
             parts.append("{}".format(self.division.name))
         if self.subtype:
             parts.append("({})".format(self.subtype.name))
+        if self.contest_type == "by_election":
+            parts.append('by-election')
         return " ".join(parts).strip()
 
     def to_id(self, tmp_id=None):
@@ -230,7 +235,7 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                         group_id=group_id,
                         **kwargs))
         else:
-            for div in div_data:
+            for div, contest_type in div_data.items():
                 org_div = OrganisationDivision.objects.get(
                     pk=div.split('__')[1]
                 )
@@ -238,6 +243,7 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                     *args,
                     division=org_div,
                     group_id=group_id,
+                    contest_type=contest_type,
                     **kwargs
                     ))
     return all_ids

@@ -72,3 +72,25 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             expected_ids
         )
 
+    def test_creates_by_election(self):
+        all_data = self.base_data
+
+        all_data.update({
+            self.make_div_id(): 'by_election',
+            self.make_div_id(div=self.org_div_2): 'by_election',
+        })
+        expected_ids = [
+            'local.'+self.date_str,
+            'local.test.'+self.date_str,
+            'local.test.test-div.by.'+self.date_str,
+            'local.test.test-div-2.by.'+self.date_str,
+        ]
+
+        self.run_test_with_data(
+            all_data,
+            expected_ids
+        )
+
+        for election in Election.objects.filter(group_type=None):
+            assert 'by-election' in election.election_title
+
