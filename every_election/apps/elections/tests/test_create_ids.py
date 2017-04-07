@@ -25,7 +25,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         all_data = self.base_data
         all_data.update({self.make_div_id(): 'contested'})
         ids = create_ids_for_each_ballot_paper(all_data)
-        assert repr(ids[0]) == "local.2017-04-04"
+        assert repr(ids[0]) == "local.{}".format(self.date_str)
         assert ids[0] != ids[1]
 
 
