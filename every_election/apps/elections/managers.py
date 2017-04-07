@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from django.db import models
 from django.contrib.gis.geos import Point
-from elections.query_helpers import MaPitPostcodeLookup
+from elections.query_helpers import get_point_from_postcode
 
 
 class ElectionManager(models.QuerySet):
@@ -15,7 +15,7 @@ class ElectionManager(models.QuerySet):
         return self.for_point(point)
 
     def for_postcode(self, postcode):
-        point = MaPitPostcodeLookup(postcode).point
+        point = get_point_from_postcode(postcode)
         return self.for_point(point)
 
     def current(self):

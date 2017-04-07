@@ -3,6 +3,10 @@ import requests
 from django.contrib.gis.geos import Point
 
 
+class PostcodeError(Exception):
+    pass
+
+
 class BasePostcodeLookup:
     def __init__(self, postcode):
         self.postcode = postcode.replace(' ', '')
@@ -33,3 +37,42 @@ class MaPitPostcodeLookup(BasePostcodeLookup):
             self.mapit_data['wgs84_lon'],
             self.mapit_data['wgs84_lat']
         )
+
+
+class ONSPDStaticJsonLookup(BasePostcodeLookup):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        try:
+            self.fetch()
+        except:
+            raise PostcodeError()
+
+    def fetch(self):
+        if hasattr(self, 'data'):
+            return self.data
+        url_fmt = "https://s3-eu-west-1.amazonaws.com/onspd-static-json/{}"
+        req = requests.get(url_fmt.format(self.postcode))
+        if req.status_code != 200:
+            raise PostcodeError
+        self.data = req.json()
+        return self.data
+
+    @property
+    def point(self):
+        return Point(
+            self.data['wgs84_lon'],
+            self.data['wgs84_lat']
+        )
+
+def get_point_from_postcode(postcode):
+    point = None
+    methods = [
+        ONSPDStaticJsonLookup,
+        MaPitPostcodeLookup,
+    ]
+    for method in methods:
+        try:
+            return method(postcode).point
+        except PostcodeError:
+            continue
+    raise PostcodeError
