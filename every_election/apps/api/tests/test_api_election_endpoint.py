@@ -30,6 +30,8 @@ class TestElectionAPIQueries(APITestCase):
         assert len(data['results']) == 1
         assert data['results'][0]['election_id'] == \
             "local.place-name-1.2017-03-23"
+        assert data['results'][0]['current'] == True
+
 
     def test_election_endpoint_future(self):
         ElectionFactory(

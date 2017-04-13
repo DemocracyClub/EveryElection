@@ -1,3 +1,5 @@
+from datetime import date, timedelta
+
 from rest_framework import serializers
 
 from elections.models import (
@@ -100,6 +102,20 @@ class ElectionSerializer(serializers.HyperlinkedModelSerializer):
     voting_system = VotingSystemSerializer()
 
 
+    # Current
+    # TODO This is shonky and should be done on the model
+    current = serializers.SerializerMethodField()
+
+    def get_current(self, obj):
+        """
+        For the moment, we'll just define 'current' and any election
+        with a poll date greater than 30 days ago.
+        # TODO replace this with a current status of the election model
+        """
+        recent_past = date.today() - timedelta(days=30)
+        return obj.poll_open_date > recent_past
+
+
     class Meta:
         model = Election
         fields = (
@@ -116,6 +132,7 @@ class ElectionSerializer(serializers.HyperlinkedModelSerializer):
             'elected_role',
             'division',
             'voting_system',
+            'current',
         )
         depth = 1
 
