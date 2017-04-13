@@ -112,7 +112,7 @@ class ElectionSerializer(serializers.HyperlinkedModelSerializer):
         with a poll date greater than 30 days ago.
         # TODO replace this with a current status of the election model
         """
-        recent_past = date.today() - timedelta(days=30)
+        recent_past = date.today() - timedelta(days=20)
         return obj.poll_open_date > recent_past
 
 
