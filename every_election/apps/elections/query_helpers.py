@@ -65,7 +65,6 @@ class ONSPDStaticJsonLookup(BasePostcodeLookup):
         )
 
 def get_point_from_postcode(postcode):
-    point = None
     methods = [
         ONSPDStaticJsonLookup,
         MaPitPostcodeLookup,
