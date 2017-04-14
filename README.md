@@ -21,3 +21,17 @@ Finally an ID is made _per ballot paper_ using `[type].[organiation].[organisati
 [See the reference for more information](https://democracyclub.org.uk/projects/election-ids/reference/).
 
 ![Graph](docs/graph.png)
+
+## Setting up a dev copy
+
+* Clone the repo
+* `pip install -r requirements/testing.txt`
+* `sudo -u postgres createdb every_election`
+* `sudo -u postgres createuser dc -P -s`
+* `sudo -u postgres psql every_election`
+* `CREATE EXTENSION postgis;`
+* `cp every_election/settings/local.example.py every_election/settings/local.py`
+* Populate `local.py` with your DB password
+* `python manage.py migrate`
+* `python manage.py import_organisations`
+* TODO: importing organisation_divisions and geometries!
