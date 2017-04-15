@@ -65,14 +65,15 @@ class Election(SuggestedByPublicMixin, models.Model):
     organisation = models.ForeignKey('organisations.Organisation', null=True)
     elected_role = models.ForeignKey(ElectedRole, null=True)
     division = models.ForeignKey('organisations.OrganisationDivision', null=True)
-    geography = models.ForeignKey('organisations.DivisionGeography', null=True)
+    geography = models.ForeignKey('organisations.DivisionGeography',
+        null=True, blank=True)
     seats_contested = models.IntegerField(blank=False, null=True)
     seats_total = models.IntegerField(blank=False, null=True)
     group = models.ForeignKey('Election', null=True, related_name="children")
     group_type = models.CharField(blank=True, max_length=100, null=True)
     voting_system = models.ForeignKey('elections.VotingSystem', null=True)
     explanation = models.ForeignKey('elections.Explanation',
-        null=True, on_delete=models.SET_NULL)
+        null=True, blank=True, on_delete=models.SET_NULL)
 
     objects = ElectionManager.as_manager()
 
