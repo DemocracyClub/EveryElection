@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.urlresolvers import reverse
+from django_markdown.models import MarkdownField
 
 from suggested_content.models import SuggestedByPublicMixin
 
@@ -70,6 +71,8 @@ class Election(SuggestedByPublicMixin, models.Model):
     group = models.ForeignKey('Election', null=True, related_name="children")
     group_type = models.CharField(blank=True, max_length=100, null=True)
     voting_system = models.ForeignKey('elections.VotingSystem', null=True)
+    explanation = models.ForeignKey('elections.Explanation',
+        null=True, on_delete=models.SET_NULL)
 
     objects = ElectionManager.as_manager()
 
@@ -106,3 +109,10 @@ class VotingSystem(models.Model):
 
     def __str__(self):
         return self.name
+
+class Explanation(models.Model):
+    description = models.CharField(blank=False, max_length=100)
+    explanation = MarkdownField(blank=False)
+
+    def __str__(self):
+        return self.description
