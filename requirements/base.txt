@@ -12,6 +12,7 @@ git+git://github.com/DemocracyClub/dc_base_theme.git@e4dc67ce289f8f93b6dbbdcf568
 django-formtools
 djangorestframework
 markdown
+django-markdown-app
 django-filter
 django_extensions
 requests

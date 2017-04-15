@@ -1,3 +1,4 @@
+import django_markdown
 from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
@@ -11,6 +12,7 @@ urlpatterns = [
     url(r'^organisations/', include('organisations.urls')),
     url(r'', include('elections.urls')),
     url(r'^api/', include('api.urls')),
+    url('^markdown/', include('django_markdown.urls')),
 ]
 
 urlpatterns += static(
