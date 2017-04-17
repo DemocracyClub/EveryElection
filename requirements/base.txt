@@ -2,7 +2,7 @@
 # After the first "pip install -r", just run "pip freeze" and add the version
 # to each package in each requirements/*.txt.
 
-Django
+Django>=1.10,<1.11
 
 django-model-utils
 
@@ -15,4 +15,5 @@ markdown
 django-filter
 django_extensions
 requests
+requests_cache
 glob2
