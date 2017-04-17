@@ -99,7 +99,7 @@ class ElectionSerializer(serializers.HyperlinkedModelSerializer):
         many=True
     )
     elected_role = ElectedRoleField(read_only=True)
-    voting_system = VotingSystemSerializer()
+    voting_system = serializers.SerializerMethodField()
 
 
     # Current
@@ -115,6 +115,10 @@ class ElectionSerializer(serializers.HyperlinkedModelSerializer):
         recent_past = date.today() - timedelta(days=20)
         return obj.poll_open_date > recent_past
 
+    def get_voting_system(self, obj):
+        if obj.group_type == 'organisation' or not obj.group_type:
+            return VotingSystemSerializer(obj.voting_system).data
+        return None
 
     class Meta:
         model = Election
