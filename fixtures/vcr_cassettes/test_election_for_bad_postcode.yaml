@@ -1,0 +1,49 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.13.0]
+    method: GET
+    uri: https://s3-eu-west-1.amazonaws.com/onspd-static-json/SW1A1AX
+  response:
+    body: {string: '<?xml version="1.0" encoding="UTF-8"?>
+
+        <Error><Code>NoSuchKey</Code><Message>The specified key does not exist.</Message><Key>SW1A1AX</Key><RequestId>FD6D24043AD1C638</RequestId><HostId>roGB0fZlgJa3RBW+yf3wSkcfkLJllBnqXEQIXUaGkYucMmBn0sq+zmNmyedoCscaqRYZh/1yg+k=</HostId></Error>'}
+    headers:
+      Content-Type: [application/xml]
+      Date: ['Mon, 24 Apr 2017 13:06:35 GMT']
+      Server: [AmazonS3]
+      x-amz-id-2: [roGB0fZlgJa3RBW+yf3wSkcfkLJllBnqXEQIXUaGkYucMmBn0sq+zmNmyedoCscaqRYZh/1yg+k=]
+      x-amz-request-id: [FD6D24043AD1C638]
+    status: {code: 404, message: Not Found}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.13.0]
+    method: GET
+    uri: https://mapit.mysociety.org/postcode/SW1A1AX
+  response:
+    body: {string: '{"code": 404, "error": "No Postcode matches the given query."}'}
+    headers:
+      Accept-Ranges: [bytes, bytes]
+      Access-Control-Allow-Origin: ['*']
+      Age: ['0', '0']
+      Cache-Control: [max-age=2419200]
+      Connection: [keep-alive]
+      Content-Language: [en-gb]
+      Content-Length: ['62']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 24 Apr 2017 13:06:36 GMT']
+      Server: [nginx]
+      Vary: ['Accept-Language,Cookie']
+      X-Quota-Current: ['1']
+      X-Quota-Limit: ['50']
+      x-url: [/postcode/SW1A1AX]
+    status: {code: 404, message: NOT FOUND}
+version: 1

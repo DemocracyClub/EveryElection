@@ -60,6 +60,17 @@ class TestElectionAPIQueries(APITestCase):
         assert len(data['results']) == 1
         assert data['results'][0]['election_id'] == election_id
 
+    @vcr.use_cassette(
+        'fixtures/vcr_cassettes/test_election_for_bad_postcode.yaml')
+    def test_election_endpoint_for_bad_postcode(self):
+        election_id = "local.place-name.2017-03-23"
+        ElectionFactory(group=None, election_id=election_id)
+        ElectionFactory(group=None, geography=None)
+        resp = self.client.get("/api/elections/?postcode=SW1A1AX")
+        data = resp.json()
+
+        assert data['detail'] == "Invalid postcode"
+
     def test_election_endpoint_for_lat_lng(self):
         election_id = "local.place-name.2017-03-23"
         ElectionFactory(group=None, election_id=election_id)
