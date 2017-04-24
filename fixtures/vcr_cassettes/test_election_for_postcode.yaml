@@ -7,42 +7,18 @@ interactions:
       Connection: [keep-alive]
       User-Agent: [python-requests/2.13.0]
     method: GET
-    uri: https://mapit.mysociety.org/postcode/SW1A1AA
+    uri: https://s3-eu-west-1.amazonaws.com/onspd-static-json/SW1A1AA
   response:
-    body:
-      string: !!binary |
-        H4sIAP0EplgC/8VYW4/aOhD+K1ZezlY6W9m557ylEUt1Ctr2oBWPKCUuWAo2ih2tULX//cw4sEsg
-        3LqpygPg2/ibL9+Mx/npPC907M/K3Dj/kIB9DCijNE680I+SKP6bOHOlqkJvNI47Qwd69FJVZl4b
-        DT0/nek4g98wiIIExp7zqoBmHISJXVvLuSihww2o/4LjzW5KQt89/ch8FsRRSClz3ZB5zIUpa6XN
-        XBUc95tMWUpYmuK2PNdGyAXCdBOACF15BZ0WRULxY/+uoVeaGY5BW9ZlCTMXXPIqN0LJ2VIsljDA
-        rIGynMl8xa0RxCcQfWPM4i/ehnAeYvqsas2J+kEytVopqZ2to6ba4DA2zWbNZ7v5T1/I17wqBTSl
-        cdpYSvWMUN4svK6639nBxnT81UEIFhi7xUuPnveSnfJyUFdqzXN5gP2coyeW3O7u4Klx13dpcNMz
-        PeOttbXvrIOPDjejLvCQRJGz7/6Ua7MSUhteEcriA9cHR76DDUbGoihKTkb5BlZN6jV8P9ZmXRuS
-        AnByN7SAS6F58aGbGa+DmoFclLks9gl6HA/f9BD2qYfwlB5GShZKklRrvvpebi4ScjCfWGDXqqHD
-        5VE6sS67rh/15DCaaimilsLM7JDjM99nLUUMYSNUw86x2kAaFOYyE+cW/iobw1FqwXk+ZNqe6LC2
-        /nCEPADu94bGg4XJaOAGQU/UNMa6uYHj0o+88Bw32XXkjNQzyuT3Z4/RXvZwOyh6zQS35w/3d+YP
-        cqeX8HvK/WsTyaBJJFCR9JVIwFSXOCj99MVC1VutWIo8D/v2cg1jLPSxr1TzvLzPdwninttqx5lO
-        xifVlcE8KESaMutKTr+rStXg03tI/PTYRJkfJ6y3KLPGWkTKpbb70SRtUZDBVhALu5x6t0fJh4s0
-        ZKWQApi2BZzQGtBBXUmGwMq6kxQ3uY6VLGsCi7HYjTtI2R44t5GCtlqc7NTkubaA8w/UhCdXcqQX
-        smXs5ribg5aNMDWX83edWKM0s6DwZtBFTRNCN1HzesnoCLvht1bgBZjQ/EOqMPDcFlUTQ/7Fff46
-        rOovBROxF593RdTUIoloHPVV4Fhbf/jU6uFEHz3soqq3Wtfa6tROtK8bFtibYHQcYhDfx6fbRcJe
-        b0gVX4hm/q/qZfD0n0VgL949sbK7xB/nGuZjAHnJAREYtbSdmIURXOPteBsfAJvsCesiRa3b8hXZ
-        50oR4VuKFwtUVWbZvEZgURIG7OV/XewVRAMRAAA=
+    body: {string: '{"wgs84_lon": -0.141588, "wgs84_lat": 51.501009}'}
     headers:
-      Accept-Ranges: [bytes, bytes]
-      Access-Control-Allow-Origin: ['*']
-      Age: ['1863246', '1863246']
-      Cache-Control: [max-age=2419200]
-      Connection: [keep-alive]
-      Content-Encoding: [gzip]
-      Content-Language: [en-gb]
-      Content-Length: ['941']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 10 Mar 2017 09:35:07 GMT']
-      Server: [nginx]
-      Vary: ['Accept-Language,Cookie,Accept-Encoding']
-      X-Quota-Current: ['1169']
-      X-Quota-Limit: ['0']
-      x-url: [/postcode/SW1A1AA]
+      Accept-Ranges: [bytes]
+      Content-Length: ['48']
+      Content-Type: [application/json]
+      Date: ['Mon, 24 Apr 2017 13:54:31 GMT']
+      ETag: ['"958f0df0058ede37bba7d66f6fd35bb7"']
+      Last-Modified: ['Fri, 07 Apr 2017 17:36:47 GMT']
+      Server: [AmazonS3]
+      x-amz-id-2: [iE9HrzyIWXxSUYbzmD6ZuW49Wo3Dt7sc+rrL/oWNDVfvtvpRmvnARTL7eGEgmoFkb0pK21IxMrs=]
+      x-amz-request-id: [AB4F114EB66F3991]
     status: {code: 200, message: OK}
 version: 1
