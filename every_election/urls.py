@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^organisations/', include('organisations.urls')),
     url(r'', include('elections.urls')),
     url(r'^api/', include('api.urls')),
+    url('^markdown/', include('django_markdown.urls')),
 ]
 
 urlpatterns += static(

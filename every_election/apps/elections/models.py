@@ -2,6 +2,7 @@ from datetime import date, timedelta
 
 from django.db import models
 from django.core.urlresolvers import reverse
+from django_markdown.models import MarkdownField
 
 from suggested_content.models import SuggestedByPublicMixin
 from .managers import ElectionManager
@@ -65,12 +66,15 @@ class Election(SuggestedByPublicMixin, models.Model):
     organisation = models.ForeignKey('organisations.Organisation', null=True)
     elected_role = models.ForeignKey(ElectedRole, null=True)
     division = models.ForeignKey('organisations.OrganisationDivision', null=True)
-    geography = models.ForeignKey('organisations.DivisionGeography', null=True)
+    geography = models.ForeignKey('organisations.DivisionGeography',
+        null=True, blank=True)
     seats_contested = models.IntegerField(blank=False, null=True)
     seats_total = models.IntegerField(blank=False, null=True)
     group = models.ForeignKey('Election', null=True, related_name="children")
     group_type = models.CharField(blank=True, max_length=100, null=True)
     voting_system = models.ForeignKey('elections.VotingSystem', null=True)
+    explanation = models.ForeignKey('elections.Explanation',
+        null=True, blank=True, on_delete=models.SET_NULL)
     current = models.NullBooleanField()
 
     objects = ElectionManager.as_manager()
@@ -116,3 +120,10 @@ class VotingSystem(models.Model):
 
     def __str__(self):
         return self.name
+
+class Explanation(models.Model):
+    description = models.CharField(blank=False, max_length=100)
+    explanation = MarkdownField(blank=False)
+
+    def __str__(self):
+        return self.description

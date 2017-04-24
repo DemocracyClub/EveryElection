@@ -1,6 +1,6 @@
 from django.contrib import admin
-
-from .models import Election
+from django_markdown.admin import MarkdownModelAdmin
+from .models import Election, Explanation
 
 class ElectionAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
@@ -21,3 +21,4 @@ class ElectionAdmin(admin.ModelAdmin):
     )
 
 admin.site.register(Election, ElectionAdmin)
+admin.site.register(Explanation, MarkdownModelAdmin)
