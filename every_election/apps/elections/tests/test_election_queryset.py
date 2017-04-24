@@ -33,12 +33,25 @@ class TestElectionGeoQueries(TestCase):
         qs = Election.objects.for_postcode("SW1A 1AA")
         assert qs.count() == 1
 
-
     def test_current_elections(self):
+        # This is implicetly current
         ElectionFactory(group=None, poll_open_date=datetime.today())
+        # This is implicetly not current
         ElectionFactory(
             group=None, poll_open_date=datetime.today() - timedelta(days=60))
-        assert Election.objects.current().count() == 1
+        # This is implicetly not current, but current manually set
+        ElectionFactory(
+            group=None,
+            poll_open_date=datetime.today() - timedelta(days=60),
+            current = True
+            )
+        # This is implicetly current, current manually set to False
+        ElectionFactory(
+            group=None,
+            poll_open_date=datetime.today() - timedelta(days=1),
+            current = False
+            )
+        assert Election.objects.current().count() == 2
 
     def test_future_elections(self):
         ElectionFactory(group=None, poll_open_date=datetime.today())
