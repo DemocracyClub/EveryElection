@@ -1,8 +1,9 @@
+from datetime import date, timedelta
+
 from django.db import models
 from django.core.urlresolvers import reverse
 
 from suggested_content.models import SuggestedByPublicMixin
-
 from .managers import ElectionManager
 
 
@@ -70,6 +71,7 @@ class Election(SuggestedByPublicMixin, models.Model):
     group = models.ForeignKey('Election', null=True, related_name="children")
     group_type = models.CharField(blank=True, max_length=100, null=True)
     voting_system = models.ForeignKey('elections.VotingSystem', null=True)
+    current = models.NullBooleanField()
 
     objects = ElectionManager.as_manager()
 
@@ -79,6 +81,14 @@ class Election(SuggestedByPublicMixin, models.Model):
     def get_absolute_url(self):
         return reverse("single_election_view", args=(self.election_id,))
 
+    @property
+    def get_current(self):
+        model_current = getattr(self, 'current', None)
+        if model_current is None:
+            # We've not explicetly set current
+            recent_past = date.today() - timedelta(days=20)
+            return self.poll_open_date > recent_past
+        return model_current
 
     # TODO:
     # Notice of election

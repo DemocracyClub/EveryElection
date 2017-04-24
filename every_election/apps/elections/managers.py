@@ -25,7 +25,11 @@ class ElectionManager(models.QuerySet):
         # TODO replace this with a current status of the election model
         """
         recent_past = datetime.today() - timedelta(days=30)
-        return self.filter(poll_open_date__gt=recent_past)
+        return self.filter(
+            models.Q(poll_open_date__gt=recent_past)
+            |
+            models.Q(current=True)
+        ).exclude(current=False)
 
     def future(self):
         return self.filter(poll_open_date__gte=datetime.today())
