@@ -1,10 +1,17 @@
 from rest_framework import viewsets
+from rest_framework.exceptions import APIException
 
 from elections.models import Election, ElectionType, ElectionSubType
+from elections.query_helpers import PostcodeError
 from organisations.models import Organisation, OrganisationDivision
 from .serializers import (ElectionSerializer, ElectionTypeSerializer,
                           ElectionSubTypeSerializer, OrganisationSerializer,
                           OrganisationDivisionSerializer)
+
+class APIPostcodeException(APIException):
+    status_code = 400
+    default_detail = 'Invalid postcode'
+    default_code = 'invalid_postcode'
 
 
 class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -18,7 +25,10 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
        queryset = Election.objects.all()
        postcode = self.request.query_params.get('postcode', None)
        if postcode is not None:
-           queryset = queryset.for_postcode(postcode)
+           try:
+               queryset = queryset.for_postcode(postcode)
+           except PostcodeError:
+               raise APIPostcodeException()
 
        coords = self.request.query_params.get('coords', None)
        if coords is not None:

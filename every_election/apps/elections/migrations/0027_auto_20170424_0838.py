@@ -12,10 +12,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterModelOptions(
-            name='election',
-            options={'ordering': ('election_id',)},
-        ),
         migrations.AddField(
             model_name='election',
             name='current',

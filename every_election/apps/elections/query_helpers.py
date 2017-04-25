@@ -28,11 +28,15 @@ class MaPitPostcodeLookup(BasePostcodeLookup):
         req = requests.get("https://mapit.mysociety.org/postcode/{}".format(
             self.postcode
         ))
+        if req.status_code != 200:
+            raise PostcodeError
         self.mapit_data = req.json()
         return self.mapit_data
 
     @property
     def point(self):
+        if not 'wgs84_lon' in self.mapit_data:
+            raise PostcodeError
         return Point(
             self.mapit_data['wgs84_lon'],
             self.mapit_data['wgs84_lat']
