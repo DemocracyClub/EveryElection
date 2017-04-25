@@ -16,7 +16,7 @@ class BasePostcodeLookup:
         raise NotImplementedError
 
 
-class MaPitPostcodeLookup(BasePostcodeLookup):
+class BaseMaPitPostcodeLookup(BasePostcodeLookup):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fetch_from_mapit()
@@ -25,7 +25,8 @@ class MaPitPostcodeLookup(BasePostcodeLookup):
         if hasattr(self, 'mapit_data'):
             return self.mapit_data
 
-        req = requests.get("https://mapit.mysociety.org/postcode/{}".format(
+        req = requests.get("{}/postcode/{}".format(
+            self.mapit_base,
             self.postcode
         ))
         if req.status_code != 200:
@@ -41,6 +42,14 @@ class MaPitPostcodeLookup(BasePostcodeLookup):
             self.mapit_data['wgs84_lon'],
             self.mapit_data['wgs84_lat']
         )
+
+
+class mySocietyMapitPostcodeLookup(BaseMaPitPostcodeLookup):
+    mapit_base = "https://mapit.mysociety.org/"
+
+
+class DemocracyClubMapitPostcodeLookup(BaseMaPitPostcodeLookup):
+    mapit_base = "https://mapit.democracyclub.org.uk/"
 
 
 class ONSPDStaticJsonLookup(BasePostcodeLookup):
@@ -71,7 +80,8 @@ class ONSPDStaticJsonLookup(BasePostcodeLookup):
 def get_point_from_postcode(postcode):
     methods = [
         ONSPDStaticJsonLookup,
-        MaPitPostcodeLookup,
+        DemocracyClubMapitPostcodeLookup,
+        mySocietyMapitPostcodeLookup,
     ]
     for method in methods:
         try:

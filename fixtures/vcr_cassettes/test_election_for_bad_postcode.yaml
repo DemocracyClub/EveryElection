@@ -11,13 +11,13 @@ interactions:
   response:
     body: {string: '<?xml version="1.0" encoding="UTF-8"?>
 
-        <Error><Code>NoSuchKey</Code><Message>The specified key does not exist.</Message><Key>SW1A1AX</Key><RequestId>FD6D24043AD1C638</RequestId><HostId>roGB0fZlgJa3RBW+yf3wSkcfkLJllBnqXEQIXUaGkYucMmBn0sq+zmNmyedoCscaqRYZh/1yg+k=</HostId></Error>'}
+        <Error><Code>NoSuchKey</Code><Message>The specified key does not exist.</Message><Key>SW1A1AX</Key><RequestId>A5C0D88D28C52AAD</RequestId><HostId>NnHYT46KmTGlHeAldfgNF66nEIGCCGihecZqIbS63QXKtPqucQSBWqauZdrv95PfMPZdoLqMKMw=</HostId></Error>'}
     headers:
       Content-Type: [application/xml]
-      Date: ['Mon, 24 Apr 2017 13:06:35 GMT']
+      Date: ['Mon, 24 Apr 2017 13:54:28 GMT']
       Server: [AmazonS3]
-      x-amz-id-2: [roGB0fZlgJa3RBW+yf3wSkcfkLJllBnqXEQIXUaGkYucMmBn0sq+zmNmyedoCscaqRYZh/1yg+k=]
-      x-amz-request-id: [FD6D24043AD1C638]
+      x-amz-id-2: [NnHYT46KmTGlHeAldfgNF66nEIGCCGihecZqIbS63QXKtPqucQSBWqauZdrv95PfMPZdoLqMKMw=]
+      x-amz-request-id: [A5C0D88D28C52AAD]
     status: {code: 404, message: Not Found}
 - request:
     body: null
@@ -27,7 +27,27 @@ interactions:
       Connection: [keep-alive]
       User-Agent: [python-requests/2.13.0]
     method: GET
-    uri: https://mapit.mysociety.org/postcode/SW1A1AX
+    uri: https://mapit.democracyclub.org.uk//postcode/SW1A1AX
+  response:
+    body: {string: '{"code": 404, "error": "No Postcode matches the given query."}'}
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: [max-age=2419200]
+      Connection: [keep-alive]
+      Content-Length: ['62']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 24 Apr 2017 13:54:50 GMT']
+      Server: [nginx]
+    status: {code: 404, message: Not Found}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.13.0]
+    method: GET
+    uri: https://mapit.mysociety.org//postcode/SW1A1AX
   response:
     body: {string: '{"code": 404, "error": "No Postcode matches the given query."}'}
     headers:
@@ -39,10 +59,10 @@ interactions:
       Content-Language: [en-gb]
       Content-Length: ['62']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 24 Apr 2017 13:06:36 GMT']
+      Date: ['Mon, 24 Apr 2017 13:54:29 GMT']
       Server: [nginx]
       Vary: ['Accept-Language,Cookie']
-      X-Quota-Current: ['1']
+      X-Quota-Current: ['4']
       X-Quota-Limit: ['50']
       x-url: [/postcode/SW1A1AX]
     status: {code: 404, message: NOT FOUND}
