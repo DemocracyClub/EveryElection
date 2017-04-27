@@ -1,7 +1,7 @@
 sudo: false
 language: python
 python:
-  - '3.4'
+  - '3.5'
 addons:
   - postgresql: '9.3'
 cache:
@@ -18,7 +18,7 @@ script:
 after_success:
   - coveralls
 before_cache:
-    - rm -f .tox/py34-django110/log/*.log
+    - rm -f .tox/py35-django110/log/*.log
     - rm -f .cache/pip/log/*.log
 notifications:
   slack:
