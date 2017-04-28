@@ -284,3 +284,4 @@ class Command(BaseCommand):
             for const_id, const in req.json().items():
                 division_set = self.get_division_set(org, const)
                 self.create_single_division(division_set, org, region)
+        self.carry_over_existing_divisions(org)
