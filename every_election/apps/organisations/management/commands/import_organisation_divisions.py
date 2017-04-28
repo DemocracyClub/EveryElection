@@ -50,11 +50,14 @@ class Command(BaseCommand):
             req = requests.get(initial_url)
             url = req.url
 
+            url = "{}/children".format(url)
             if not default_child_types:
                 parent_type = req.json()['type']
                 child_types = PARENT_TO_CHILD_AREAS.get(parent_type)
-            child_types = ",".join(child_types)
-            req = requests.get("{}/children?type={}".format(url, child_types))
+                if child_types:
+                    child_types = ",".join(child_types)
+                    url = "{}?type={}".format(url, child_types)
+            req = requests.get(url)
             self.import_divisions(organisation, req.json())
 
     def load_mapit_generations(self):
