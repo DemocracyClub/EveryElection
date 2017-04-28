@@ -7,16 +7,18 @@ PARENT_TO_CHILD_AREAS = {
     'UTA': ['UTW', 'UTE'],
     'NIA': ['NIE',],
     'COI': ['COP',],
+    'LGD': ['LGE',],
 }
 CHILD_TO_PARENT_AREAS = {
-    'DIW': 'DIS',
-    'MTW': 'MTD',
-    'UTW': 'UTA',
-    'UTE': 'UTA',
     'CED': 'CTY',
-    'LBW': 'LBO',
-    'CPC': 'CED',
     'COP': 'COI',
+    'CPC': 'CED',
+    'DIW': 'DIS',
+    'LBW': 'LBO',
+    'LGE': 'LGD',
+    'MTW': 'MTD',
+    'UTE': 'UTA',
+    'UTW': 'UTA',
 }
 
 AREAS_WITHOUT_PCCS = [
