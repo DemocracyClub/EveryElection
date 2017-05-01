@@ -11,6 +11,7 @@ from organisations.models import (
     OrganisationDivisionSet
 )
 from organisations.utils import add_end_date_to_previous_div_sets
+from organisations.constants import ORG_CURIE_TO_MAPIT_AREA_TYPE
 
 
 class Command(BaseCommand):
@@ -23,7 +24,7 @@ class Command(BaseCommand):
         parser.add_argument('url', action='store')
 
     def handle(self, *args, **options):
-        self.org_curie_to_area_type = {}
+        self.org_curie_to_area_type = ORG_CURIE_TO_MAPIT_AREA_TYPE
         url = options['url']
         csv_reader = csv.DictReader(requests.get(url).text.splitlines())
         for line in csv_reader:
@@ -74,23 +75,18 @@ class Command(BaseCommand):
                 if map_line[0] == "gss":
                     continue
                 self.register_gss_map[map_line[1]] = map_line[0]
+                if 'principal-local-authority' in map_line[1]:
+                    wls_key = map_line[1].replace(
+                        'principal-local-authority',
+                        'local-authority-wls',
+                    )
+                    self.register_gss_map[wls_key] = map_line[0]
 
         curie = ":".join([
             line['Organisation ID type'],
             line['Organisation ID'],
         ])
 
-
-        if not curie in self.org_curie_to_area_type:
-            code_redirect_req = requests.get(
-                "https://mapit.mysociety.org/area/{}".format(
-                    self.register_gss_map[curie]
-                )
-            )
-            children_req = requests.get(
-                "{}/children".format(code_redirect_req.url))
-            self.org_curie_to_area_type[curie] = \
-                list(children_req.json().values())[0]['type']
         return self.org_curie_to_area_type[curie]
 
     def create_div_from_line(self, div_set, identifier, line):
