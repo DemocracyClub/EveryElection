@@ -95,6 +95,10 @@ class Command(BaseCommand):
         else:
             geography_curie = identifier
 
+        seats_total = line['seats_total']
+        if not seats_total:
+            seats_total = 1
+
         div, _ = OrganisationDivision.objects.update_or_create(
             official_identifier=identifier,
             organisation=div_set.organisation,
@@ -105,7 +109,7 @@ class Command(BaseCommand):
                 'slug': slugify(line['Name']),
                 'division_type':
                     self.get_division_type_from_registers(line),
-                'seats_total': line['seats_total'],
+                'seats_total': seats_total,
             }
         )
         return div
