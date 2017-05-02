@@ -19,6 +19,9 @@ class ElectionAdmin(admin.ModelAdmin):
         'seats_total',
         'group',
     )
+    exclude = (
+        'geography',
+    )
 
 admin.site.register(Election, ElectionAdmin)
 admin.site.register(Explanation, MarkdownModelAdmin)
