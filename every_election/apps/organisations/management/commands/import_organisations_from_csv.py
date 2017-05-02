@@ -11,7 +11,8 @@ from organisations.models import (
     OrganisationDivisionSet
 )
 from organisations.utils import add_end_date_to_previous_div_sets
-from organisations.constants import ORG_CURIE_TO_MAPIT_AREA_TYPE
+from organisations.constants import (
+    ORG_CURIE_TO_MAPIT_AREA_TYPE, PARENT_TO_CHILD_AREAS)
 
 
 class Command(BaseCommand):
@@ -86,8 +87,7 @@ class Command(BaseCommand):
             line['Organisation ID type'],
             line['Organisation ID'],
         ])
-
-        return self.org_curie_to_area_type[curie]
+        return PARENT_TO_CHILD_AREAS[self.org_curie_to_area_type[curie]][0]
 
     def create_div_from_line(self, div_set, identifier, line):
         if line['geography_curie']:
