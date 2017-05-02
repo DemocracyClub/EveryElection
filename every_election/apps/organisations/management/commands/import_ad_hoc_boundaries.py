@@ -27,6 +27,7 @@ class Command(BaseCommand):
         self.base_path = os.path.abspath('ad_hoc_boundaries')
         self.import_lgbce()
         self.import_lgbcs()
+        self.import_torfaen_2013()
 
     def _mk_file_path(self, year, filename):
         return os.path.join(self.base_path, year, filename)
@@ -46,6 +47,41 @@ class Command(BaseCommand):
         if isinstance(poly, geos.Polygon):
             poly = geos.MultiPolygon(poly)
         return poly
+
+    def import_torfaen_2013(self):
+        date = "2017-05-04"
+        year = "2017"
+        div_set = self._get_div_set('TOF', date, 'local-authority')
+        data_path = self._mk_file_path(
+                    year,
+                    "torfaen-communities-order-2013"
+                )
+
+        try:
+            geo_data = DataSource(data_path)
+        except:
+            geo_data = DataSource(data_path)
+
+        for feat in geo_data[0]:
+
+            name = feat.get('Name')
+            print(name)
+            div = div_set.divisions.get(name=name)
+
+            try:
+                geog = div.geography
+            except DivisionGeography.DoesNotExist:
+                geog = DivisionGeography(division=div)
+
+            new_geog = feat.geom.clone()
+            new_geog.coord_dim = 2
+
+            geog.geography = self.clean_poly(new_geog.geos)
+            geog.save()
+            div.save()
+
+
+
 
     def import_lgbcs(self):
         date = "2017-05-04"
