@@ -1,3 +1,4 @@
+import abc
 import requests
 
 from django.contrib.gis.geos import Point
@@ -7,19 +8,25 @@ class PostcodeError(Exception):
     pass
 
 
-class BasePostcodeLookup:
+class BasePostcodeLookup(metaclass=abc.ABCMeta):
     def __init__(self, postcode):
         self.postcode = postcode.replace(' ', '')
 
     @property
+    @abc.abstractmethod
     def point(self):
-        raise NotImplementedError
+        pass
 
 
-class BaseMaPitPostcodeLookup(BasePostcodeLookup):
+class BaseMaPitPostcodeLookup(BasePostcodeLookup, metaclass=abc.ABCMeta):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fetch_from_mapit()
+
+    @property
+    @abc.abstractmethod
+    def mapit_base(self):
+        pass
 
     def fetch_from_mapit(self):
         if hasattr(self, 'mapit_data'):
