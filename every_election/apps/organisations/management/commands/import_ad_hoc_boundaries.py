@@ -27,7 +27,7 @@ class Command(BaseCommand):
         self.base_path = os.path.abspath('ad_hoc_boundaries')
         self.import_lgbce()
         self.import_lgbcs()
-        self.import_torfaen_2013()
+        self.import_lgbcw()
 
     def _mk_file_path(self, year, filename):
         return os.path.join(self.base_path, year, filename)
@@ -48,38 +48,43 @@ class Command(BaseCommand):
             poly = geos.MultiPolygon(poly)
         return poly
 
-    def import_torfaen_2013(self):
+    def import_lgbcw(self):
         date = "2017-05-04"
         year = "2017"
-        div_set = self._get_div_set('TOF', date, 'local-authority')
-        data_path = self._mk_file_path(
+        divisionset_to_file_map = {
+            self._get_div_set('TOF', date, 'local-authority'):
+                self._mk_file_path(
                     year,
-                    "torfaen-communities-order-2013"
-                )
+                    "Torfaen"
+                ),
+            self._get_div_set('CRF', date, 'local-authority'):
+                self._mk_file_path(
+                    year,
+                    "Cardiff"
+                ),
+            self._get_div_set('FLN', date, 'local-authority'):
+                self._mk_file_path(
+                    year,
+                    "Flintshire"
+                ),
+            self._get_div_set('NTL', date, 'local-authority'):
+                self._mk_file_path(
+                    year,
+                    "Neath & Port Talbot"
+                ),
+        }
+        self.import_from_divisionset_to_file_map(
+            divisionset_to_file_map, data_type="shp", name_field="Electoral_")
 
-        try:
-            geo_data = DataSource(data_path)
-        except:
-            geo_data = DataSource(data_path)
-
-        for feat in geo_data[0]:
-
-            name = feat.get('Name')
-            print(name)
-            div = div_set.divisions.get(name=name)
-
-            try:
-                geog = div.geography
-            except DivisionGeography.DoesNotExist:
-                geog = DivisionGeography(division=div)
-
-            new_geog = feat.geom.clone()
-            new_geog.coord_dim = 2
-
-            geog.geography = self.clean_poly(new_geog.geos)
-            geog.save()
-            div.save()
-
+        divisionset_to_file_map = {
+            self._get_div_set('RCT', date, 'local-authority'):
+            self._mk_file_path(
+                year,
+                "Rhondda Cynon Taff"
+            ),
+        }
+        self.import_from_divisionset_to_file_map(
+            divisionset_to_file_map, data_type="shp", name_field="Name")
 
 
 
@@ -386,8 +391,12 @@ class Command(BaseCommand):
         if len(data[0]) != div_set.divisions.count():
             raise ValueError("Features and Division counts don't match")
 
+        if name_field not in data[0].fields:
+            raise ValueError("{} not in {}".format(
+                name_field, ", ".join(data[0].fields)
+            ))
         data_names = set(
-            [x.get('Ward_Name') for x in data[0]])
+            [x.get(name_field) for x in data[0]])
         div_names = set([strip_accents(x.name) for x in div_set.divisions.all()])
 
         assert data_names == div_names, \
@@ -413,6 +422,13 @@ class Command(BaseCommand):
                 slug="eilean-aa2-cha-o").update(name="Eilean a′ Chéo")
             OrganisationDivision.objects.filter(
                 slug="eilean-aa2-cha-o").update(slug="eilean-a-cheo")
+        if div_set.organisation.slug == "cardiff":
+            OrganisationDivision.objects.filter(
+                name="Pontprennau/Old St Mellons").update(
+                    name="Pontprennau/Old St. Mellons")
+            OrganisationDivision.objects.filter(
+                name="Creigiau/St Fagans").update(
+                    name="Creigiau/St. Fagans")
 
 
     def import_from_divisionset_to_file_map(
