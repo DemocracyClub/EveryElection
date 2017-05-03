@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from rest_framework_gis.serializers import (
+    GeoFeatureModelSerializer, GeometrySerializerMethodField)
 
 from elections.models import (
     Election, ElectionType, ElectionSubType, VotingSystem)
@@ -9,6 +11,37 @@ from organisations.models import (Organisation, OrganisationDivision,
 class OrganisationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organisation
+        lookup_field = 'official_identifier'
+        fields = (
+            'official_identifier',
+            'organisation_type',
+            'organisation_subtype',
+            'official_name',
+            'common_name',
+            'gss',
+            'slug',
+            'territory_code',
+            'election_name'
+        )
+
+class OrganisationGeoSerializer(GeoFeatureModelSerializer):
+
+    geography_model = GeometrySerializerMethodField()
+
+    def get_geography_model(self, obj):
+        return obj.geography.geography.simplify(0.0009)
+
+    class Meta:
+        model = Organisation
+        extra_kwargs = {
+            'url': {
+                'view_name': 'organisation-geo',
+                'lookup_field': 'pk'
+            }
+        }
+
+        geo_field = 'geography_model'
+
         fields = (
             'official_identifier',
             'organisation_type',

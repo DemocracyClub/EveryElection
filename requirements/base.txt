@@ -18,3 +18,4 @@ django_extensions
 requests
 requests_cache
 glob2
+djangorestframework-gis
