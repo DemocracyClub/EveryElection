@@ -100,10 +100,11 @@ class Command(BaseCommand):
         _process_qs(Organisation.objects.filter(
             geography=None), obj_type="organisation")
 
-    def clean_poly(self, poly, srid=27700):
+    def clean_poly(self, poly, srid=27700, transform=True):
         if not poly.srid:
             poly.set_srid(srid)
-        poly = poly.transform(4326, clone=True)
+        if transform:
+            poly = poly.transform(4326, clone=True)
         if isinstance(poly, geos.Polygon):
             poly = geos.MultiPolygon(poly)
         return poly
@@ -122,7 +123,6 @@ class Command(BaseCommand):
                 ))
 
                 initial_req = requests.get(obj.format_geography_link())
-
                 geo_json_url = "{}.geojson".format(initial_req.url)
                 req = requests.get(geo_json_url)
                 if req.status_code != 200:
@@ -130,7 +130,9 @@ class Command(BaseCommand):
                     continue
                 json_data = req.text
 
-                poly = self.clean_poly(geos.GEOSGeometry(json_data))
+                poly = self.clean_poly(
+                    geos.GEOSGeometry(json_data), transform=False, srid=4326)
+
                 kwargs = {
                     'geography': poly,
                     obj_type: obj,
