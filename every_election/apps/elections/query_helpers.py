@@ -85,6 +85,7 @@ class ONSPDStaticJsonLookup(BasePostcodeLookup):
         )
 
 def get_point_from_postcode(postcode):
+    postcode = postcode.upper()
     methods = [
         ONSPDStaticJsonLookup,
         DemocracyClubMapitPostcodeLookup,
