@@ -5,18 +5,18 @@
 Django>=1.10,<1.11
 six
 
-django-model-utils
+django-model-utils==2.6.1
 
 psycopg2
 
 git+git://github.com/DemocracyClub/dc_base_theme.git@e4dc67ce289f8f93b6dbbdcf568095941d6c5e71
-django-formtools
-djangorestframework
-markdown
-django-markdown-app
+django-formtools==2.0
 django-filter
-django_extensions
+django-markdown-app
+djangorestframework==3.5.4
+djangorestframework-gis==0.11
+django-extensions==1.7.7
+glob2
+markdown
 requests
 requests_cache
-glob2
-djangorestframework-gis
