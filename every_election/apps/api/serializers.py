@@ -85,6 +85,7 @@ class OrganisationDivisionSerializer(serializers.ModelSerializer):
             'seats_total',
             'mapit_generation_low',
             'mapit_generation_high',
+            'territory_code',
         )
 
 

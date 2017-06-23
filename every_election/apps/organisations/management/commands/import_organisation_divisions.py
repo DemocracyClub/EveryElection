@@ -73,9 +73,26 @@ class Command(BaseCommand):
             ('unit_id', mapit_dict['codes'].get('unit_id')),
             ('osni_oid', mapit_dict['codes'].get('osni_oid')),
         ]
-        all_codes = [x for x in all_codes if x[1]]
+        all_codes = [
+            (code_type, code_value)
+            for code_type, code_value in all_codes
+            if code_value
+        ]
 
         geography_curie = ":".join(all_codes[0])
+
+        territory_code = ""
+        if geography_curie.startswith('gss:E'):
+            territory_code = "ENG"
+        if geography_curie.startswith('gss:W'):
+            territory_code = "WLS"
+        if geography_curie.startswith('gss:S'):
+            territory_code = "SCT"
+        if geography_curie.startswith('gss:N'):
+            territory_code = "NIR"
+        if geography_curie.startswith('osni_oid'):
+            territory_code = "NIR"
+
 
         OrganisationDivision.objects.update_or_create(
             official_identifier=geography_curie,
@@ -89,6 +106,7 @@ class Command(BaseCommand):
                 'division_subtype': mapit_dict['type_name'],
                 'mapit_generation_low': int(mapit_dict['generation_low']),
                 'mapit_generation_high': int(mapit_dict['generation_high']),
+                'territory_code': territory_code,
             }
         )
 

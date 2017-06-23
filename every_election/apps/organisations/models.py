@@ -81,6 +81,7 @@ class OrganisationDivision(models.Model):
     seats_total = models.IntegerField(blank=True, null=True)
     mapit_generation_low = models.IntegerField(blank=True, null=True)
     mapit_generation_high = models.IntegerField(blank=True, null=True)
+    territory_code = models.CharField(blank=True, max_length=10)
 
 
     def __str__(self):
