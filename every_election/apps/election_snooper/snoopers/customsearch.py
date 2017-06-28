@@ -1,16 +1,18 @@
 from urllib.parse import urlencode
 
+from django.conf import settings
+
 from .base import BaseSnooper
 from election_snooper.models import SnoopedElection
 
 
 class CustomSearchScraper(BaseSnooper):
-    snooper_name = "CustomSearch:NoticeOfElection"
+    snooper_name = "CustomSearch:NoticeOfElectionPDF"
     base_url = "https://www.googleapis.com/customsearch/v1"
 
     def get_all(self):
         args = {
-            'key': "AIzaSyACZWi21EYTtvQ4gLiUsYq77Zr-ADYNm-U",
+            'key': settings.GCS_API_KEY,
             'cx': "018004400196177335143:vyu4hunm_wm",
             'q': '"notice of election"',
             'dateRestrict': "m1",
@@ -33,9 +35,13 @@ class CustomSearchScraper(BaseSnooper):
                 'source': url,
                 'detail': content,
                 'extra': item,
+                'snooper_name': self.snooper_name,
+                'status': 'new',
             }
-            SnoopedElection.objects.update_or_create(
+            item, created = SnoopedElection.objects.update_or_create(
                 snooper_name=self.snooper_name,
                 detail_url=detail_url,
                 defaults=data
             )
+            if created:
+                self.post_to_slack(item)

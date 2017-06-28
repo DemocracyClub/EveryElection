@@ -1,9 +1,9 @@
 from django.conf.urls import url
-from .views import (SnoopedElectionView, )
+from election_snooper import views
 
 
 urlpatterns = [
     url(r'^$',
-        SnoopedElectionView.as_view(),
+        views.SnoopedElectionView.as_view(),
         name='snooped_election_view'),
 ]
