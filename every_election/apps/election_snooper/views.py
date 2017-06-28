@@ -21,13 +21,16 @@ class SnoopedElectionView(TemplateView):
 
         object_list = []
         for item in queryset:
-            object_list.append(ReviewElectionForm(instance=item))
+            object_list.append(
+                ReviewElectionForm(instance=item, prefix=item.pk)
+            )
         context['object_list'] = object_list
         return context
 
     def post(self, request, *args, **kwargs):
         instance = SnoopedElection.objects.get(pk=request.POST.get('pk'))
-        form = ReviewElectionForm(request.POST, instance=instance)
+        form = ReviewElectionForm(
+            request.POST, instance=instance, prefix=instance.pk)
         if form.is_valid():
             form.save()
         # TODO: if there's an error it's not processed yet
