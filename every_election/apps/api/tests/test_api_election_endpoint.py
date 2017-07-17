@@ -1,9 +1,12 @@
+import json
 from datetime import datetime, timedelta
 
 import vcr
 from rest_framework.test import APITestCase
 
-from elections.tests.factories import (ElectionFactory, )
+from elections.tests.factories import ElectionFactory
+from organisations.tests.factories import (
+    OrganisationFactory, OrganisationDivisionFactory)
 
 
 class TestElectionAPIQueries(APITestCase):
@@ -11,25 +14,25 @@ class TestElectionAPIQueries(APITestCase):
     lon = -0.141587600123
 
     def test_election_endpoint(self):
-        ElectionFactory(group=None)
+        id = ElectionFactory(group=None).election_id
         resp = self.client.get("/api/elections/")
         data = resp.json()
 
         assert len(data['results']) == 1
-        assert data['results'][0]['election_id'] == \
-            "local.place-name-0.2017-03-23"
+        assert data['results'][0]['election_id'] == id
 
     def test_election_endpoint_current(self):
-        ElectionFactory(group=None, poll_open_date=datetime.today())
-        ElectionFactory(
-            group=None, poll_open_date=datetime.today() - timedelta(days=60))
+        id_current = ElectionFactory(
+            group=None, poll_open_date=datetime.today()).election_id
+        id_future = ElectionFactory(
+            group=None,
+            poll_open_date=datetime.today() - timedelta(days=60)).election_id
 
         resp = self.client.get("/api/elections/?current")
         data = resp.json()
 
         assert len(data['results']) == 1
-        assert data['results'][0]['election_id'] == \
-            "local.place-name-1.2017-03-23"
+        assert data['results'][0]['election_id'] == id_current
         assert data['results'][0]['current'] == True
 
 
