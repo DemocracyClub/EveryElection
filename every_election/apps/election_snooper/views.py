@@ -11,7 +11,7 @@ class SnoopedElectionView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        queryset = SnoopedElection.objects.all().order_by('date_seen')
+        queryset = SnoopedElection.objects.all().order_by('-date_seen', 'id')
 
         if 'status' in self.request.GET:
             queryset = queryset.filter(status=self.request.GET['status'])
