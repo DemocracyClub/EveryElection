@@ -24,7 +24,7 @@ class TestElectionAPIQueries(APITestCase):
     def test_election_endpoint_current(self):
         id_current = ElectionFactory(
             group=None, poll_open_date=datetime.today()).election_id
-        id_future = ElectionFactory(
+        id_future = ElectionFactory(  # noqa
             group=None,
             poll_open_date=datetime.today() - timedelta(days=60)).election_id
 
