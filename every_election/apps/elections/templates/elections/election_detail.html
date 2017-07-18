@@ -16,7 +16,7 @@
         <p>Election date: <strong>{{ object.poll_open_date }}</strong></p>
         <p>Election type: <code>{{ object.election_type.election_type }}</code></p>
         {% if object.organisation %}
-        <p>Organisaation: <a href="{{ object.organisation.get_absolute_url }}">
+        <p>Organisation: <a href="{{ object.organisation.get_absolute_url }}">
             {{ object.organisation }}</a>.</p>
         {% endif %}
 
