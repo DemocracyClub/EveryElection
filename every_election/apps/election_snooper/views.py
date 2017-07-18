@@ -1,3 +1,4 @@
+import urllib
 from django.views.generic import TemplateView
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
@@ -11,7 +12,7 @@ class SnoopedElectionView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        queryset = SnoopedElection.objects.all().order_by('date_seen')
+        queryset = SnoopedElection.objects.all().order_by('-date_seen', 'id')
 
         if 'status' in self.request.GET:
             queryset = queryset.filter(status=self.request.GET['status'])
@@ -34,5 +35,10 @@ class SnoopedElectionView(TemplateView):
         if form.is_valid():
             form.save()
         # TODO: if there's an error it's not processed yet
-        return HttpResponseRedirect(reverse('snooped_election_view'))
+        return HttpResponseRedirect(
+            "%s?status=%s" % (
+                reverse('snooped_election_view'),
+                urllib.parse.quote_plus(request.GET['status']),
+            )
+        )
 
