@@ -36,7 +36,6 @@ class CustomSearchScraper(BaseSnooper):
                 'detail': content,
                 'extra': item,
                 'snooper_name': self.snooper_name,
-                'status': 'new',
             }
             item, created = SnoopedElection.objects.update_or_create(
                 snooper_name=self.snooper_name,

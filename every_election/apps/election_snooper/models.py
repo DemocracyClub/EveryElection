@@ -25,6 +25,7 @@ class SnoopedElection(StatusModel):
     extra = models.TextField(blank=True)
     date_seen = models.DateField(default=datetime.datetime.today)
     reviewed = models.BooleanField(default=False)
+    status = models.CharField(choices=STATUS, default='new', max_length=100)
     election = models.ForeignKey('elections.Election', null=True)
 
     def get_absolute_url(self):

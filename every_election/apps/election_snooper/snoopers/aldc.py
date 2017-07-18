@@ -33,7 +33,6 @@ class ALDCScraper(BaseSnooper):
                 'cause': cause,
                 'detail': "\n".join([x.text for x in content]),
                 'snooper_name': self.snooper_name,
-                'status': 'new',
             }
             item, created = SnoopedElection.objects.update_or_create(
                 snooper_name=self.snooper_name,
