@@ -58,7 +58,7 @@ def base_local_authority_importer(territory_code, url):
 
 
 def local_authority_eng_importer():
-    url = "https://local-authority-eng.beta.openregister.org/records.tsv?page-size=5000"  # NOQA
+    url = "https://local-authority-eng.register.gov.uk/records.tsv?page-size=5000"  # NOQA
     base_local_authority_importer("eng", url)
 
 
