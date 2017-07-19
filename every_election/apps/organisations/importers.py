@@ -105,7 +105,7 @@ def local_authority_nir_importer():
 
 
 def local_authority_sct_importer():
-    url = "https://local-authority-sct.discovery.openregister.org/records.tsv?page-size=5000"  # NOQA
+    url = "https://local-authority-sct.register.gov.uk/records.tsv?page-size=5000"  # NOQA
     base_local_authority_importer("sct", url)
 
 
