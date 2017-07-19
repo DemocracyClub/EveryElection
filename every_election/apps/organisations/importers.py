@@ -62,18 +62,18 @@ def base_local_authority_importer(territory_code, url, code_field, org_type=None
 
 
 def local_authority_eng_importer():
-    url = "https://local-authority-eng.register.gov.uk/records.tsv?page-size=5000"  # NOQA
-    base_local_authority_importer("eng", url, 'local-authority-eng')
+    base_local_authority_importer(
+        "eng", constants.ENGLAND_REGISTER_URL, 'local-authority-eng')
 
 
 def local_authority_wls_importer():
-    url = "https://principal-local-authority.beta.openregister.org/records.tsv?page-size=5000"  # NOQA
-    base_local_authority_importer("wls", url, 'principal-local-authority', 'UA')
+    base_local_authority_importer(
+        "wls", constants.WALES_REGISTER_URL, 'principal-local-authority', 'UA')
 
 
 def local_authority_nir_importer():
-    url = "https://local-authority-nir.discovery.openregister.org/records.tsv?page-size=5000"  # NOQA
-    base_local_authority_importer("nir", url, 'local-authority-nir')
+    base_local_authority_importer(
+        "nir", constants.NI_REGISTER_URL, 'local-authority-nir')
     overload_gss_code = {
         'NIR-A': '95A',
         'NIR-B': '95B',
@@ -109,12 +109,12 @@ def local_authority_nir_importer():
 
 
 def local_authority_sct_importer():
-    url = "https://local-authority-sct.register.gov.uk/records.tsv?page-size=5000"  # NOQA
-    base_local_authority_importer("sct", url, 'local-authority-sct')
+    base_local_authority_importer(
+        "sct", constants.SCOTLAND_REGISTER_URL, 'local-authority-sct')
 
 
 def add_gss_to_LAs():
-    url = "https://raw.githubusercontent.com/openregister/local-authority-data/master/maps/gss.tsv"  # NOQA
+    url = constants.REGISTER_GSS_URL
     req = requests.get(url)
     map_file = csv.DictReader(
         req.text.splitlines(),
@@ -131,7 +131,7 @@ def add_gss_to_LAs():
 
 
 def police_importer():
-    url = "https://data.police.uk/api/forces"
+    url = constants.POLICE_FORCES_URL
     req = requests.get(url)
 
     for force in req.json():

@@ -1,3 +1,10 @@
+ENGLAND_REGISTER_URL = 'https://local-authority-eng.register.gov.uk/records.tsv?page-size=5000'  # NOQA
+NI_REGISTER_URL = 'https://local-authority-nir.discovery.openregister.org/records.tsv?page-size=5000'  # NOQA
+SCOTLAND_REGISTER_URL = 'https://local-authority-sct.register.gov.uk/records.tsv?page-size=5000'  # NOQA
+WALES_REGISTER_URL = 'https://principal-local-authority.beta.openregister.org/records.tsv?page-size=5000'  # NOQA
+REGISTER_GSS_URL = 'https://raw.githubusercontent.com/openregister/local-authority-data/master/maps/gss.tsv'  # NOQA
+POLICE_FORCES_URL = 'https://data.police.uk/api/forces'
+
 PARENT_TO_CHILD_AREAS = {
     'DIS': ['DIW',],
     'MTD': ['MTW',],
