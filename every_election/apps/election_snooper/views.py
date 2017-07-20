@@ -35,10 +35,12 @@ class SnoopedElectionView(TemplateView):
         if form.is_valid():
             form.save()
         # TODO: if there's an error it's not processed yet
-        return HttpResponseRedirect(
-            "%s?status=%s" % (
-                reverse('snooped_election_view'),
-                urllib.parse.quote_plus(request.GET.get('status')),
+
+        url = reverse('snooped_election_view')
+        if 'status' in self.request.GET:
+            url = "{}?status={}".format(
+                url,
+                urllib.parse.quote_plus(request.GET['status']),
             )
-        )
+        return HttpResponseRedirect(url)
 
