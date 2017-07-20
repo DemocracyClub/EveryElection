@@ -38,7 +38,7 @@ class SnoopedElectionView(TemplateView):
         return HttpResponseRedirect(
             "%s?status=%s" % (
                 reverse('snooped_election_view'),
-                urllib.parse.quote_plus(request.GET['status']),
+                urllib.parse.quote_plus(request.GET.get('status')),
             )
         )
 
