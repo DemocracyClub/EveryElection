@@ -14,18 +14,18 @@ from elections.forms import (
     ElectionSubTypeForm,
     ElectionOrganisationForm,
     ElectionOrganisationDivisionForm
-    )
+)
 
 
 FORMS = [
-         ("date_known", ElectionDateKnownForm),
-         ("date", ElectionDateForm),
-         ("election_type", ElectionTypeForm),
-         ("election_subtype", ElectionSubTypeForm),
-         ("election_organisation", ElectionOrganisationForm),
-         ("election_organisation_division", ElectionOrganisationDivisionForm),
-         ("review", forms.Form),
-         ]
+    ("date_known", ElectionDateKnownForm),
+    ("date", ElectionDateForm),
+    ("election_type", ElectionTypeForm),
+    ("election_subtype", ElectionSubTypeForm),
+    ("election_organisation", ElectionOrganisationForm),
+    ("election_organisation_division", ElectionOrganisationDivisionForm),
+    ("review", forms.Form),
+]
 
 TEMPLATES = {
     "date_known": "id_creator/date_known.html",
