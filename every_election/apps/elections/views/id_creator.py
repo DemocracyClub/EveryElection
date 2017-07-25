@@ -288,3 +288,9 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             se.save()
 
         return HttpResponseRedirect('/')
+
+    def get(self, request, *args, **kwargs):
+        if 'reset' in self.request.GET:
+            self.storage.reset()
+            return HttpResponseRedirect('/')
+        return super().get(self, request, *args, **kwargs)
