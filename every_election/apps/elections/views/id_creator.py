@@ -1,5 +1,6 @@
 import datetime
 
+from django.db import transaction
 from django.http import HttpResponseRedirect
 from django import forms
 from formtools.wizard.views import NamedUrlSessionWizardView
@@ -247,6 +248,7 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             }
         return {}
 
+    @transaction.atomic
     def done(self, form_list, **kwargs):
         # Make the elections
 
