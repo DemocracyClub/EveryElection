@@ -15,6 +15,13 @@ from dc_theme import forms as dc_forms
 #   ElectionOrganisationForm
 
 
+class ElectionSourceForm(forms.Form):
+    source = forms.CharField(required=True, max_length=1000,
+        label="Where did you find out about this election?")
+    document = forms.URLField(required=False, max_length=1000,
+        label="Link to 'Notice of Election' Document")
+
+
 class ElectionDateKnownForm(forms.Form):
     date_known = forms.ChoiceField(
         choices=(('yes', 'Yes'), ('no', 'No')),
