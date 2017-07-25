@@ -26,20 +26,20 @@
                     {% endif %}
                 </p>
                 <p>Found via <code>{{ form.instance.snooper_name }}</code></p>
-                {% if not form.instance.election_id and form.instance.status == 'election' %}
+                {% if form.instance.status == 'election' %}
                   <a href="{% url 'id_creator' %}?radar_id={{ form.instance.id }}">Create an ID for this election</a>
                 {% endif %}
             </div>
             <div class="columns large-4">
-              {% if not form.instance.election_id %}
+              {% if form.instance.status == 'id_created' %}
+                &nbsp;
+              {% else %}
                 <form method=post>
                 {% csrf_token %}
                 {{ form|dc_form }}
                 <input type=hidden name="pk" value={{ form.instance.pk }}>
                 <button type="submit" class="button">Save</button>
                 </form>
-              {% else %}
-                &nbsp;
               {% endif %}
             </div>
         </div>

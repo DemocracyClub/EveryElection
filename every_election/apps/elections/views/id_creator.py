@@ -277,4 +277,14 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         for election in context['all_ids']:
             election.save_model()
 
+        # if this election was created from a radar entry set the status
+        # of the radar entry to indicate we have made an id for it
+        if isinstance(self.storage.extra_data, dict) and\
+            self.storage.extra_data.get('radar_id', False):
+
+            se = SnoopedElection.objects.get(
+                pk=self.storage.extra_data['radar_id'])
+            se.status = 'id_created'
+            se.save()
+
         return HttpResponseRedirect('/')
