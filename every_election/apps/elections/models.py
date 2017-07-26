@@ -1,6 +1,10 @@
+import tempfile
+import urllib.request
+
 from datetime import date, timedelta
 
 from django.db import models
+from django.core.files import File
 from django.core.urlresolvers import reverse
 from django_markdown.models import MarkdownField
 
@@ -140,3 +144,16 @@ class Document(models.Model):
     uploaded_file = models.FileField(
         upload_to='',
         storage=S3Boto3Storage())
+
+    def archive_document(self, url, election_id):
+        # copy a notice of election document to our s3 bucket
+        # because it won't stay on the council website forever
+
+        filename = url.split('/')[-1]
+        if filename == '':
+            filename = 'Notice_of_Election'
+        with tempfile.NamedTemporaryFile() as tmp:
+            urllib.request.urlretrieve(url, tmp.name)
+            self.uploaded_file.save(
+                "%s/%s" % (election_id, filename), File(tmp))
+        return self.uploaded_file
