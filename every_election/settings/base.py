@@ -39,6 +39,7 @@ PROJECT_APPS = [
     'rest_framework',
     # 'static_precompiler',
     'pipeline',
+    'storages',
     'suggested_content',
     'django_extensions',
     'election_snooper',

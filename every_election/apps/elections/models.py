@@ -4,6 +4,7 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django_markdown.models import MarkdownField
 
+from storages.backends.s3boto3 import S3Boto3Storage
 from suggested_content.models import SuggestedByPublicMixin
 from .managers import ElectionManager
 
@@ -77,6 +78,10 @@ class Election(SuggestedByPublicMixin, models.Model):
         null=True, blank=True, on_delete=models.SET_NULL)
     current = models.NullBooleanField()
 
+    # Notice of Election document
+    notice = models.ForeignKey('elections.Document',
+        null=True, blank=True, on_delete=models.SET_NULL)
+
     objects = ElectionManager.as_manager()
 
     class Meta:
@@ -121,9 +126,17 @@ class VotingSystem(models.Model):
     def __str__(self):
         return self.name
 
+
 class Explanation(models.Model):
     description = models.CharField(blank=False, max_length=100)
     explanation = MarkdownField(blank=False)
 
     def __str__(self):
         return self.description
+
+
+class Document(models.Model):
+    source_url = models.URLField(max_length=1000)
+    uploaded_file = models.FileField(
+        upload_to='',
+        storage=S3Boto3Storage())
