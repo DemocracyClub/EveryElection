@@ -76,8 +76,6 @@ class Election(SuggestedByPublicMixin, models.Model):
     explanation = models.ForeignKey('elections.Explanation',
         null=True, blank=True, on_delete=models.SET_NULL)
     current = models.NullBooleanField()
-    explanation = models.ForeignKey('elections.Explanation',
-        null=True, blank=True, on_delete=models.SET_NULL)
 
     objects = ElectionManager.as_manager()
 
