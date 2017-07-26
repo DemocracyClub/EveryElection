@@ -139,11 +139,15 @@ class Explanation(models.Model):
         return self.description
 
 
+class PdfS3Storage(S3Boto3Storage):
+    default_content_type = 'application/pdf'
+
+
 class Document(models.Model):
     source_url = models.URLField(max_length=1000)
     uploaded_file = models.FileField(
         upload_to='',
-        storage=S3Boto3Storage())
+        storage=PdfS3Storage())
 
     def archive_document(self, url, election_id):
         # copy a notice of election document to our s3 bucket
