@@ -108,7 +108,6 @@ class Election(SuggestedByPublicMixin, models.Model):
         return model_current
 
     # TODO:
-    # Notice of election
     # Reason for election
     # Link to legislation
     # hashtags? Other names?
