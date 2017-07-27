@@ -150,6 +150,7 @@ class PdfS3Storage(S3Boto3Storage):
 class Document(models.Model):
     source_url = models.URLField(max_length=1000)
     uploaded_file = models.FileField(
+        max_length=1000,
         upload_to='',
         storage=PdfS3Storage())
 
