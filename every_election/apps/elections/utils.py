@@ -194,8 +194,6 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
         args = [all_data['election_type'], all_data['date']]
         kwargs = {
             'organisation': organisation,
-            'source': all_data.get('source', ''),
-            'snooped_election_id': all_data.get('radar_id', None)
         }
 
         election_type = all_data['election_type'].election_type
@@ -226,6 +224,8 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
             mayor_id = IDMaker(
                 group_id=group_id,
                 is_group_id=False,
+                source=all_data.get('source', ''),
+                snooped_election_id=all_data.get('radar_id', None),
                 *args, **kwargs)
             if mayor_id not in all_ids:
                 all_ids.append(mayor_id)
@@ -250,6 +250,8 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                         subtype=subtype,
                         division=org_div,
                         group_id=group_id,
+                        source=all_data.get('source', ''),
+                        snooped_election_id=all_data.get('radar_id', None),
                         **kwargs))
         else:
             for div, contest_type in div_data.items():
@@ -261,6 +263,8 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                     division=org_div,
                     group_id=group_id,
                     contest_type=contest_type,
+                    source=all_data.get('source', ''),
+                    snooped_election_id=all_data.get('radar_id', None),
                     **kwargs
                     ))
     return all_ids
