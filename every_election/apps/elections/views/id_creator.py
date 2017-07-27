@@ -188,7 +188,11 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                     # put these in the session - they aren't user-modifiable
                     self.storage.extra_data.update({
                         'radar_id': se.id,
-                        'radar_date': se.date,
+                        'radar_date': [
+                            se.date.day,
+                            se.date.month,
+                            se.date.year,
+                        ],
                     })
                     # auto-populate the form with these to allow editing
                     return {
@@ -205,13 +209,9 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                 self.storage.extra_data.get('radar_date', False):
 
                 radar_date = self.storage.extra_data['radar_date']
-                if isinstance(radar_date, datetime.date):
+                if isinstance(radar_date, list):
                     return {
-                        'date': [
-                            radar_date.day,
-                            radar_date.month,
-                            radar_date.year
-                        ]
+                        'date': radar_date,
                     }
 
         return self.initial_dict.get(step, {})
