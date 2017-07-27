@@ -90,6 +90,9 @@ class Election(SuggestedByPublicMixin, models.Model):
     notice = models.ForeignKey('elections.Document',
         null=True, blank=True, on_delete=models.SET_NULL)
 
+    # optional FK to a SnoopedElection record
+    snooped_election = models.ForeignKey('election_snooper.SnoopedElection', null=True)
+
     objects = ElectionManager.as_manager()
 
     class Meta:
