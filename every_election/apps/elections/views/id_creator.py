@@ -222,8 +222,12 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         # print("\n".join(str(all_data).split(',')))
         if not 'date' in all_data:
             all_data['date'] = None
+
         if not all_data.get('election_organisation'):
             all_data.update(self.storage.extra_data)
+        else:
+            all_data['radar_id'] = self.storage.extra_data.get('radar_id', None)
+
         context['all_data'] = all_data
         all_ids = create_ids_for_each_ballot_paper(all_data, self.get_election_subtypes())
         # all_ids = create_ids_grouped(all_data, self.get_election_subtypes())
