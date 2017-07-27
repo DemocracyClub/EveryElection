@@ -120,3 +120,21 @@ class ElectionOrganisationDivisionForm(forms.Form):
                     required=False,
                     )
                 self.fields[field_id] = field
+
+
+class NoticeOfElectionForm(forms.Form):
+    document = forms.URLField(required=True, max_length=1000,
+        label="Link to 'Notice of Election' Document")
+
+    def clean_document(self):
+        document = self.cleaned_data['document']
+        """
+        TODO: do we want to do any additional validation checks here?
+        Notice of Election URLs are not gauranteed to end in .pdf
+        and aren't always hosted on a .gov.uk domain.
+
+        Examples:
+        https://www.tewkesbury.gov.uk/voting-and-elections
+        http://doncaster.gov.uk/services/the-council-democracy/notice-of-elections
+        """
+        return document

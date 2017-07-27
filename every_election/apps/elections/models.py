@@ -1,9 +1,14 @@
+import tempfile
+import urllib.request
+
 from datetime import date, timedelta
 
 from django.db import models
+from django.core.files import File
 from django.core.urlresolvers import reverse
 from django_markdown.models import MarkdownField
 
+from storages.backends.s3boto3 import S3Boto3Storage
 from suggested_content.models import SuggestedByPublicMixin
 from .managers import ElectionManager
 
@@ -77,6 +82,10 @@ class Election(SuggestedByPublicMixin, models.Model):
         null=True, blank=True, on_delete=models.SET_NULL)
     current = models.NullBooleanField()
 
+    # Notice of Election document
+    notice = models.ForeignKey('elections.Document',
+        null=True, blank=True, on_delete=models.SET_NULL)
+
     objects = ElectionManager.as_manager()
 
     class Meta:
@@ -121,9 +130,34 @@ class VotingSystem(models.Model):
     def __str__(self):
         return self.name
 
+
 class Explanation(models.Model):
     description = models.CharField(blank=False, max_length=100)
     explanation = MarkdownField(blank=False)
 
     def __str__(self):
         return self.description
+
+
+class PdfS3Storage(S3Boto3Storage):
+    default_content_type = 'application/pdf'
+
+
+class Document(models.Model):
+    source_url = models.URLField(max_length=1000)
+    uploaded_file = models.FileField(
+        upload_to='',
+        storage=PdfS3Storage())
+
+    def archive_document(self, url, election_id):
+        # copy a notice of election document to our s3 bucket
+        # because it won't stay on the council website forever
+
+        filename = url.split('/')[-1]
+        if filename == '':
+            filename = 'Notice_of_Election'
+        with tempfile.NamedTemporaryFile() as tmp:
+            urllib.request.urlretrieve(url, tmp.name)
+            self.uploaded_file.save(
+                "%s/%s" % (election_id, filename), File(tmp))
+        return self.uploaded_file

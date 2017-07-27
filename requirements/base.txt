@@ -15,9 +15,11 @@ django-filter
 django-markdown-app
 djangorestframework==3.5.4
 djangorestframework-gis==0.11
+django-storages
 django-extensions==1.7.7
 glob2
 markdown
 requests
 requests_cache
 bs4
+boto3

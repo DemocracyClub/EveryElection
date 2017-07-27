@@ -37,6 +37,22 @@
             this election on candidates.democracyclub.org.uk</a>.</p>
         {% endif %}
 
+        {% if object.notice %}
+            {% include './notice_doc.html' with object=object only %}
+        {% elif object.group.notice %}
+            {% include './notice_doc.html' with object=object.group only %}
+        {% else %}
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.as_p }}
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="button" value="Submit" />
+                </div>
+            </form>
+        {% endif %}
+
         <h3>Related IDs</h3>
         {% if object.group %}
             <p>Part of the election group <a href="{{ object.group.get_absolute_url }}">

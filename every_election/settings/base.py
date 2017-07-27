@@ -39,6 +39,7 @@ PROJECT_APPS = [
     'rest_framework',
     # 'static_precompiler',
     'pipeline',
+    'storages',
     'suggested_content',
     'django_extensions',
     'election_snooper',
@@ -166,6 +167,14 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 100,
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
 }
+
+
+AWS_ACCESS_KEY_ID = ''
+AWS_SECRET_ACCESS_KEY = ''
+AWS_STORAGE_BUCKET_NAME = 'notice-of-election'
+AWS_S3_REGION_NAME = 'eu-west-1'
+# versioning is on so we can retreive old copies
+AWS_S3_FILE_OVERWRITE = True
 
 
 # .local.py overrides all the common settings.
