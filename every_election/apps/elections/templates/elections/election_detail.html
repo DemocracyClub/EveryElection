@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load dc_forms %}
 
 {% block content %}
 <section class="columns large-6 large-centered">
@@ -45,7 +45,7 @@
             <form action="" method="post">
                 {% csrf_token %}
                 <div class="form-group">
-                    {{ form.as_p }}
+                    {{ form|dc_form }}
                 </div>
                 <div class="form-group">
                     <input type="submit" class="button" value="Submit" />
