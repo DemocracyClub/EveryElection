@@ -82,6 +82,10 @@ class Election(SuggestedByPublicMixin, models.Model):
         null=True, blank=True, on_delete=models.SET_NULL)
     current = models.NullBooleanField()
 
+    # where did we hear about this election
+    # (not necessarily the Notice of Election)
+    source = models.CharField(blank=True, max_length=1000)
+
     # Notice of Election document
     notice = models.ForeignKey('elections.Document',
         null=True, blank=True, on_delete=models.SET_NULL)
