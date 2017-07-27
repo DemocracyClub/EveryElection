@@ -7,10 +7,9 @@ from elections.models import Election, ElectedRole, ElectionType, VotingSystem
 
 
 class IDMaker(object):
-    def __init__(self, election_type, date,
-                 organisation=None, subtype=None,
-                 division=None, is_group_id=False,
-                 group_id=None, group_type=None, contest_type=None):
+    def __init__(self, election_type, date, organisation=None, subtype=None,
+                 division=None, is_group_id=False, group_id=None,
+                 group_type=None, contest_type=None, source=''):
 
         if type(election_type) == str:
             election_type = ElectionType.objects.get(
@@ -61,6 +60,7 @@ class IDMaker(object):
 
         self.voting_system = self.get_voting_system()
         self.contest_type = contest_type
+        self.source = source
 
     def __repr__(self):
         return self.to_id()
@@ -134,7 +134,8 @@ class IDMaker(object):
             'group':  group_model,
             'group_type':  self.group_type,
             'elected_role':  self.elected_role,
-            'voting_system': self.voting_system
+            'voting_system': self.voting_system,
+            'source': self.source,
         }
 
         try:
@@ -188,6 +189,7 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
         args = [all_data['election_type'], all_data['date']]
         kwargs = {
             'organisation': organisation,
+            'source': all_data.get('source', ''),
         }
 
         election_type = all_data['election_type'].election_type
