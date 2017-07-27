@@ -60,6 +60,7 @@ class IDMaker(object):
 
         self.voting_system = self.get_voting_system()
         self.contest_type = contest_type
+        self.notice = None
         self.source = source
 
     def __repr__(self):
@@ -135,6 +136,7 @@ class IDMaker(object):
             'group_type':  self.group_type,
             'elected_role':  self.elected_role,
             'voting_system': self.voting_system,
+            'notice': self.notice,
             'source': self.source,
         }
 
@@ -258,3 +260,37 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                     **kwargs
                     ))
     return all_ids
+
+
+def get_notice_directory(elections):
+    """
+    given a list of IDMaker objects work out a
+    sensible place to store the notice of election doc
+    """
+
+    election_group_id = ''
+    organisation_group_id = ''
+    ballot_id = ''
+    ballot_count = 0
+    for election in elections:
+        if election.is_group_id and election.group_type == 'election':
+            election_group_id = election.to_id()
+        if election.is_group_id and election.group_type == 'organisation':
+            organisation_group_id = election.to_id()
+        if not election.is_group_id:
+            if ballot_count == 0:
+                ballot_id = election.to_id()
+            else:
+                ballot_id = ''
+            ballot_count = ballot_count + 1
+
+    if ballot_count == 1 and ballot_id:
+        return ballot_id
+    elif organisation_group_id:
+        return organisation_group_id
+    elif election_group_id:
+        return election_group_id
+
+    # if we get here, something went wrong
+    # the function might have been called with an empty list
+    raise ValueError("Can't find an appropriate election id")
