@@ -7,10 +7,10 @@ from elections.models import Election, ElectedRole, ElectionType, VotingSystem
 
 
 class IDMaker(object):
-    def __init__(self, election_type, date,
-                 organisation=None, subtype=None,
-                 division=None, is_group_id=False,
-                 group_id=None, group_type=None, contest_type=None):
+    def __init__(self, election_type, date, organisation=None, subtype=None,
+                 division=None, is_group_id=False, group_id=None,
+                 group_type=None, contest_type=None, source='',
+                 snooped_election_id=None):
 
         if type(election_type) == str:
             election_type = ElectionType.objects.get(
@@ -61,6 +61,9 @@ class IDMaker(object):
 
         self.voting_system = self.get_voting_system()
         self.contest_type = contest_type
+        self.notice = None
+        self.source = source
+        self.snooped_election_id = snooped_election_id
 
     def __repr__(self):
         return self.to_id()
@@ -134,7 +137,10 @@ class IDMaker(object):
             'group':  group_model,
             'group_type':  self.group_type,
             'elected_role':  self.elected_role,
-            'voting_system': self.voting_system
+            'voting_system': self.voting_system,
+            'notice': self.notice,
+            'source': self.source,
+            'snooped_election_id': self.snooped_election_id,
         }
 
         try:
@@ -218,6 +224,8 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
             mayor_id = IDMaker(
                 group_id=group_id,
                 is_group_id=False,
+                source=all_data.get('source', ''),
+                snooped_election_id=all_data.get('radar_id', None),
                 *args, **kwargs)
             if mayor_id not in all_ids:
                 all_ids.append(mayor_id)
@@ -242,6 +250,8 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                         subtype=subtype,
                         division=org_div,
                         group_id=group_id,
+                        source=all_data.get('source', ''),
+                        snooped_election_id=all_data.get('radar_id', None),
                         **kwargs))
         else:
             for div, contest_type in div_data.items():
@@ -253,6 +263,42 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                     division=org_div,
                     group_id=group_id,
                     contest_type=contest_type,
+                    source=all_data.get('source', ''),
+                    snooped_election_id=all_data.get('radar_id', None),
                     **kwargs
                     ))
     return all_ids
+
+
+def get_notice_directory(elections):
+    """
+    given a list of IDMaker objects work out a
+    sensible place to store the notice of election doc
+    """
+
+    election_group_id = ''
+    organisation_group_id = ''
+    ballot_id = ''
+    ballot_count = 0
+    for election in elections:
+        if election.is_group_id and election.group_type == 'election':
+            election_group_id = election.to_id()
+        if election.is_group_id and election.group_type == 'organisation':
+            organisation_group_id = election.to_id()
+        if not election.is_group_id:
+            if ballot_count == 0:
+                ballot_id = election.to_id()
+            else:
+                ballot_id = ''
+            ballot_count = ballot_count + 1
+
+    if ballot_count == 1 and ballot_id:
+        return ballot_id
+    elif organisation_group_id:
+        return organisation_group_id
+    elif election_group_id:
+        return election_group_id
+
+    # if we get here, something went wrong
+    # the function might have been called with an empty list
+    raise ValueError("Can't find an appropriate election id")

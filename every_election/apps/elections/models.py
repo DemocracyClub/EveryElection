@@ -82,9 +82,17 @@ class Election(SuggestedByPublicMixin, models.Model):
         null=True, blank=True, on_delete=models.SET_NULL)
     current = models.NullBooleanField()
 
+    # where did we hear about this election
+    # (not necessarily the Notice of Election)
+    source = models.CharField(blank=True, max_length=1000)
+
     # Notice of Election document
     notice = models.ForeignKey('elections.Document',
         null=True, blank=True, on_delete=models.SET_NULL)
+
+    # optional FK to a SnoopedElection record
+    snooped_election = models.ForeignKey('election_snooper.SnoopedElection',
+        null=True, on_delete=models.SET_NULL)
 
     objects = ElectionManager.as_manager()
 
@@ -104,7 +112,6 @@ class Election(SuggestedByPublicMixin, models.Model):
         return model_current
 
     # TODO:
-    # Notice of election
     # Reason for election
     # Link to legislation
     # hashtags? Other names?
@@ -146,6 +153,7 @@ class PdfS3Storage(S3Boto3Storage):
 class Document(models.Model):
     source_url = models.URLField(max_length=1000)
     uploaded_file = models.FileField(
+        max_length=1000,
         upload_to='',
         storage=PdfS3Storage())
 
