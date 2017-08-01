@@ -1,7 +1,14 @@
 from django.conf.urls import url
 
-from .views import (ElectionTypesView, AllElectionsView,
-                    IDCreatorWizard, FORMS, CONDITION_DICT, SingleElection)
+from .views import (
+    ElectionTypesView,
+    AllElectionsView,
+    IDCreatorWizard,
+    FORMS,
+    CONDITION_DICT,
+    SingleElection,
+)
+from elections.views.sync import get_election_fixture
 
 
 id_creator_wizard = IDCreatorWizard.as_view(
@@ -15,6 +22,7 @@ urlpatterns = [
     url(r'^election_types$',
         ElectionTypesView.as_view(),
         name='election_types_view'),
+
     url(r'^elections$',
         AllElectionsView.as_view(),
         name='elections_view'),
@@ -24,4 +32,6 @@ urlpatterns = [
 
     url(r'^id_creator/(?P<step>.+)/$', id_creator_wizard, name='id_creator_step'),
     url(r'^id_creator/$', id_creator_wizard, name='id_creator'),
+
+    url(r'^sync/$', get_election_fixture),
 ]
