@@ -6,8 +6,8 @@ from election_snooper.snoopers.lib_dem_newbies import LibDemNewbiesScraper
 
 class Command(BaseCommand):
 
-    def add_arguments(self, parser):
-        parser.add_argument('sample', nargs='+')
+    # def add_arguments(self, parser):
+    #     parser.add_argument('sample', nargs='+')
 
     def handle(self, *args, **options):
         ALDCScraper().get_all()
