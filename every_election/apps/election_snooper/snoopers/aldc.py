@@ -23,9 +23,11 @@ class ALDCScraper(BaseSnooper):
                 'div', {'class': 'election-content'}).find_all('p')
             date = datetime.strptime(content[0].strong.text, "%B %d, %Y")
 
-            # print(content[0].text)
-            seat_control, cause = content[1].text.lower().split('cause')
-            cause = cause.split('\n')[0].strip(": .")
+            if 'cause' in content[1].text.lower():
+                seat_control, cause = content[1].text.lower().split('cause')
+                cause = cause.split('\n')[0].strip(": .")
+            else:
+                cause = "unknown"
             data = {
                 'title': title,
                 'source': url,
