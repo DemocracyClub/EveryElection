@@ -91,6 +91,7 @@ ENV/
 
 every_election/settings/local.py
 every_election/settings/production.py
+every_election/data/
 
 # collect static output directory
 every_election/static/
