@@ -5,6 +5,7 @@ from django.contrib import admin
 
 from core.views import HomeView
 
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', HomeView.as_view(), name="home"),
@@ -13,6 +14,7 @@ urlpatterns = [
     url(r'^api/', include('api.urls')),
     url('^markdown/', include('django_markdown.urls')),
     url(r'^election_radar/', include('election_snooper.urls')),
+    url(r'^email/', include('dc_signup_form.urls')),
 ]
 
 urlpatterns += static(

@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_markdown',
+    'dc_signup_form',
 ]
 
 PROJECT_APPS = [
@@ -134,6 +135,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
+                'dc_signup_form.context_processors.signup_form',
             ],
         },
     }
@@ -175,6 +177,10 @@ AWS_STORAGE_BUCKET_NAME = 'notice-of-election'
 AWS_S3_REGION_NAME = 'eu-west-1'
 # versioning is on so we can retreive old copies
 AWS_S3_FILE_OVERWRITE = True
+
+
+EMAIL_SIGNUP_ENDPOINT = 'https://democracyclub.org.uk/mailing_list/api_signup/'
+EMAIL_SIGNUP_API_KEY = ''
 
 
 # .local.py overrides all the common settings.
