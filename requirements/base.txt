@@ -9,7 +9,7 @@ django-model-utils==2.6.1
 
 psycopg2
 
-git+git://github.com/DemocracyClub/dc_base_theme.git@ec4dfda1e4c3d67b753d791978632cc846eb8766
+git+git://github.com/DemocracyClub/dc_base_theme.git@72f902ea6fbf1c3891ac279351d7d42a6f7eb216
 django-formtools==2.0
 django-filter
 django-markdown-app
