@@ -22,7 +22,12 @@ class LibDemNewbiesScraper(BaseSnooper):
                 title = title.text
 
             content = tile.text
-            cause = re.match(".*\n(\S+) seat. [cC]ause: (\S+)\n.*", content).group(2)
+
+            if 'cause' in content.lower():
+                cause = re.match(".*\n(\S+) seat. [cC]ause: (\S+)\n.*", content).group(2)
+            else:
+                cause = "unknown"
+
             date = datetime.strptime(tile.find_previous_sibling('h3').text, "%d/%m/%Y")
 
             data = {
