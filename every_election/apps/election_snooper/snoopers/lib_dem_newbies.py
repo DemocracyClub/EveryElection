@@ -10,6 +10,7 @@ class LibDemNewbiesScraper(BaseSnooper):
 
     def get_all(self):
         url = "{}elections/forthcoming-by-elections/".format(self.base_url)
+        print(url)
         soup = self.get_soup(url)
         wrapper = soup.find('section', {'class': 'av_textblock_section'})
 
@@ -39,9 +40,15 @@ class LibDemNewbiesScraper(BaseSnooper):
                 'snooper_name': self.snooper_name,
             }
 
+            specific_url= "%s#%s-%s" % (
+                url,
+                title.lower().replace(' ','-'),
+                date.strftime('%Y-%m-%d')
+            )
+
             item, created = SnoopedElection.objects.update_or_create(
                 snooper_name=self.snooper_name,
-                detail_url=self.base_url,
+                detail_url=specific_url,
                 defaults=data
             )
 
