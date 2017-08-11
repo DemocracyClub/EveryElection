@@ -184,7 +184,7 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                         'source': se.detail_url,
                         'document': se.detail_url,
                     }
-                elif se.snooper_name == "ALDC":
+                elif se.snooper_name == "ALDC" or se.snooper_name == "LibDemNewbies":
                     # put these in the session - they aren't user-modifiable
                     self.storage.extra_data.update({
                         'radar_id': se.id,
