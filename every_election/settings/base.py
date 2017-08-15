@@ -179,7 +179,7 @@ AWS_S3_REGION_NAME = 'eu-west-1'
 AWS_S3_FILE_OVERWRITE = True
 
 
-EMAIL_SIGNUP_ENDPOINT = 'https://democracyclub.org.uk/mailing_list/api_signup/'
+EMAIL_SIGNUP_ENDPOINT = 'https://democracyclub.org.uk/mailing_list/api_signup/v1/'
 EMAIL_SIGNUP_API_KEY = ''
 
 
