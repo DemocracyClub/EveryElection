@@ -25,7 +25,11 @@ class LibDemNewbiesScraper(BaseSnooper):
             content = tile.text
 
             if 'cause' in content.lower():
-                cause = re.match(".*\n(\S+) seat. [cC]ause: (\S+)\n.*", content).group(2)
+                try:
+                    cause = re.match(
+                        ".*\n(\S+) seat. [cC]ause: (\S+)\n.*", content).group(2)
+                except AttributeError:
+                    cause = "unknown"
             else:
                 cause = "unknown"
 
