@@ -6,6 +6,7 @@ from datetime import date, timedelta
 from django.db import models
 from django.core.files import File
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ObjectDoesNotExist
 from django_markdown.models import MarkdownField
 
 from storages.backends.s3boto3 import S3Boto3Storage
@@ -125,6 +126,21 @@ class Election(SuggestedByPublicMixin, models.Model):
             return self.election_id
         else:
             return self.tmp_election_id
+
+    def get_geography(self):
+        try:
+            if not self.group_type and not self.geography and self.division:
+                return self.division.geography
+            if self.group_type == "organisation" and not self.geography and not self.division:
+                return self.organisation.geography
+        except ObjectDoesNotExist:
+            pass
+        return None
+
+    def save(self, *args, **kwargs):
+        if not self.geography:
+            self.geography = self.get_geography()
+        super().save(*args, **kwargs)
 
 
 class VotingSystem(models.Model):
