@@ -5,6 +5,11 @@
 
 {% block extra_site_css %}
     {% stylesheet 'styles' %}
+<style>
+  .callout.success {
+    margin-top: 2rem;
+  }
+</style>
 {% endblock extra_site_css %}
 
 {% block top_banner %}
@@ -76,6 +81,7 @@
         <a href="{% url 'home' %}">Home</a>
         <a href="https://democracyclub.org.uk/about/">About</a>
         <a href="https://democracyclub.org.uk/blog/">Blog</a>
+        <a href="{% url 'dc_signup_form:mailing_list_signup_view' %}">Mailing List</a>
         <a href="https://democracyclub.org.uk/contact/">Contact</a>
       </p>
       <p>Democracy Club is a UK based Community Interest Company that builds
