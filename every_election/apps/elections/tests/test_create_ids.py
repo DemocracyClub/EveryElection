@@ -2,7 +2,7 @@ from django.test import TestCase
 
 from elections.models import Election, ElectionType, ElectionSubType
 from elections.utils import create_ids_for_each_ballot_paper
-from organisations.models import Organisation
+from organisations.models import Organisation, DivisionGeography
 
 from .base_tests import BaseElectionCreatorMixIn
 
@@ -250,3 +250,74 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
                 tmp_election_id__startswith=expected_id).exists()
             assert Election.objects.get(
                 tmp_election_id__startswith=expected_id).election_id != None
+
+    def test_election_with_organisation_geography(self):
+        all_data = self.base_data
+
+        geog = DivisionGeography()
+        geog.organisation = all_data['election_organisation'][0]
+        geog.geography = self.test_polygon
+        geog.save()
+
+        all_data.update({
+            self.make_div_id(): 'contested',
+            self.make_div_id(div=self.org_div_2): 'contested',
+        })
+        expected_ids = [
+            'local.'+self.date_str,
+            'local.test.'+self.date_str,
+            'local.test.test-div.'+self.date_str,
+            'local.test.test-div-2.'+self.date_str,
+        ]
+
+        self.run_test_with_data(
+            all_data,
+            expected_ids
+        )
+
+        for election in Election.objects.all():
+            if election.group_type == 'organisation':
+                self.assertTrue(election.geography != None)
+            else:
+                self.assertTrue(election.geography == None)
+
+        result = Election.objects.for_lat_lng(
+            51.50124158773981, -0.13715744018554688)
+        self.assertEqual(1, len(result))
+        self.assertEqual('local.test.'+self.date_str, result[0].election_id)
+
+
+    def test_election_with_division_geography(self):
+        all_data = self.base_data
+
+        geog = DivisionGeography()
+        geog.division = self.org_div_2
+        geog.geography = self.test_polygon
+        geog.save()
+
+        all_data.update({
+            self.make_div_id(): 'contested',
+            self.make_div_id(div=self.org_div_2): 'contested',
+        })
+        expected_ids = [
+            'local.'+self.date_str,
+            'local.test.'+self.date_str,
+            'local.test.test-div.'+self.date_str,
+            'local.test.test-div-2.'+self.date_str,
+        ]
+
+        self.run_test_with_data(
+            all_data,
+            expected_ids
+        )
+
+        for election in Election.objects.all():
+            if election.election_id == 'local.test.test-div-2.'+self.date_str:
+                self.assertTrue(election.geography != None)
+            else:
+                self.assertTrue(election.geography == None)
+
+        result = Election.objects.for_lat_lng(
+            51.50124158773981, -0.13715744018554688)
+        self.assertEqual(1, len(result))
+        self.assertEqual('local.test.test-div-2.'+self.date_str, result[0].election_id)
