@@ -33,21 +33,24 @@ class LibDemNewbiesScraper(BaseSnooper):
             else:
                 cause = "unknown"
 
-            date = datetime.strptime(tile.find_previous_sibling('h3').text, "%d/%m/%Y")
-
             data = {
                 'title': title,
                 'source': url,
-                'date': date,
                 'cause': cause,
                 'detail': content,
                 'snooper_name': self.snooper_name,
             }
+            try:
+                data['date'] = datetime.strptime(
+                    tile.find_previous_sibling('h3').text, "%d/%m/%Y")
+                datef = data['date'].strftime('%Y-%m-%d')
+            except ValueError:
+                datef = tile.find_previous_sibling('h3').text
 
             specific_url= "%s#%s-%s" % (
                 url,
                 title.lower().replace(' ','-'),
-                date.strftime('%Y-%m-%d')
+                datef
             )
 
             item, created = SnoopedElection.objects.update_or_create(
