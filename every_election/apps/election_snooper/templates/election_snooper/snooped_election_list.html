@@ -44,10 +44,34 @@
             </div>
         </div>
     </div>
+
     {% empty %}
     <div class="card">
       No items!
     </div>
     {% endfor %}
+
+    <div class="card">
+      <ul class="pagination" role="navigation" aria-label="Pagination">
+        <span class="step-links">
+          {% if object_list.has_previous %}
+            <li class="pagination-previous">
+              <a href="?page={{ object_list.previous_page_number }}">previous</a>
+            </li>
+          {% endif %}
+
+          <li class="current">
+            Page {{ object_list.number }} of {{ object_list.paginator.num_pages }}.
+          </li>
+
+          {% if object_list.has_next %}
+            <li class="pagination-next">
+              <a href="?page={{ object_list.next_page_number }}">next</a>
+            </li>
+          {% endif %}
+        </span>
+      </ul>
+    </div>
+
 </section>
 {% endblock content %}
