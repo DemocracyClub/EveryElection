@@ -1,6 +1,7 @@
 import urllib
 from django.views.generic import TemplateView
 from django.http import HttpResponseRedirect
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
 
 from election_snooper.models import SnoopedElection
@@ -25,7 +26,18 @@ class SnoopedElectionView(TemplateView):
             object_list.append(
                 ReviewElectionForm(instance=item, prefix=item.pk)
             )
-        context['object_list'] = object_list
+
+        paginator = Paginator(object_list, 25) # Show 25 records per page
+        page = self.request.GET.get('page')
+        try:
+            context['object_list'] = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            context['object_list'] = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range, deliver last page of results.
+            context['object_list'] = paginator.page(paginator.num_pages)
+
         return context
 
     def post(self, request, *args, **kwargs):
