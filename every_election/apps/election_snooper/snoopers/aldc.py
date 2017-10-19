@@ -12,18 +12,15 @@ class ALDCScraper(BaseSnooper):
         url = "{}category/forthcoming-by-elections/".format(self.base_url)
         print(url)
         soup = self.get_soup(url)
-        wrapper = soup.find('section', {'class': 'mod-tile-wrap'})
-        for tile in wrapper.find_all('div', {'class': 'tile'}):
+        for tile in soup.find_all('article'):
 
-            title = tile.find(
-                'div', {'class': 'election-heading'}).text.strip()
-            detail_url = tile.find(
-                'div', {'class': 'election-heading'}).a['href'].strip()
-            content = tile.find(
-                'div', {'class': 'election-content'}).find_all('p')
+            title = tile.find('h2').a.text.strip()
+            detail_url = tile.find('h2').a['href'].strip()
+            date = tile.find('date').text.strip()
+            content = tile.find('div', {'class': 'c-editor'}).find_all('p')
 
-            if 'cause' in content[1].text.lower():
-                seat_control, cause = content[1].text.lower().split('cause')
+            if 'cause' in content[0].text.lower():
+                seat_control, cause = content[0].text.lower().split('cause')
                 cause = cause.split('\n')[0].strip(": .")
             else:
                 cause = "unknown"
@@ -35,7 +32,7 @@ class ALDCScraper(BaseSnooper):
                 'snooper_name': self.snooper_name,
             }
             try:
-                data['date'] = datetime.strptime(content[0].strong.text, "%B %d, %Y")
+                data['date'] = datetime.strptime(date, "%B %d, %Y")
             except ValueError:
                 pass
 
