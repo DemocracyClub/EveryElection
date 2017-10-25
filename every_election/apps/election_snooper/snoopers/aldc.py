@@ -14,8 +14,8 @@ class ALDCScraper(BaseSnooper):
         soup = self.get_soup(url)
         for tile in soup.find_all('article'):
 
-            title = tile.find('h2').a.text.strip()
-            detail_url = tile.find('h2').a['href'].strip()
+            title = tile.find('h2').text.strip()
+            detail_url = url + '#' + tile['id']
             date = tile.find('date').text.strip()
             content = tile.find('div', {'class': 'c-editor'}).find_all('p')
 
