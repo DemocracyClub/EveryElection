@@ -212,7 +212,6 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
 
         expected_ids = [
             'naw.'+self.date_str,
-            'naw.c.'+self.date_str,
             'naw.c.test-div.'+self.date_str,
         ]
 

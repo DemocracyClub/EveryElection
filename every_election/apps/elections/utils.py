@@ -229,14 +229,6 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
 
         if subtypes:
             for subtype in all_data.get('election_subtype', []):
-
-                subtype_id = IDMaker(
-                    group_id=date_id,
-                    is_group_id=True,
-                    subtype=subtype,
-                    *args, **kwargs)
-                all_ids.append(subtype_id)
-
                 for div in div_data:
                     org_div = OrganisationDivision.objects.get(
                         pk=div.split('__')[1]
