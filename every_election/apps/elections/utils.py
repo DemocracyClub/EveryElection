@@ -4,6 +4,7 @@ from django.db import transaction
 
 from organisations.models import Organisation, OrganisationDivision
 from elections.models import Election, ElectedRole, ElectionType, VotingSystem
+from uk_election_ids.election_ids import IdBuilder
 
 
 class IDMaker(object):
@@ -68,29 +69,6 @@ class IDMaker(object):
     def __repr__(self):
         return self.to_id()
 
-    def _get_parts(self, tmp_id=None):
-        parts = []
-        parts.append(self.election_type.election_type)
-        if self.subtype:
-            parts.append(self.subtype.election_subtype)
-        if self.use_org and self.organisation:
-            parts.append(self.organisation.slug)
-        if self.division:
-            parts.append(self.division.slug)
-        if self.contest_type == "by_election":
-            parts.append('by')
-        if tmp_id:
-            parts.append("tmp-{}".format(tmp_id))
-        else:
-            parts.append(self._format_date(self.date))
-        return parts
-
-    def _format_date(self, date):
-        if self.date_known:
-            return self.date.strftime("%Y-%m-%d")
-        else:
-            return "<tmp-id>"
-
     def to_title(self):
         parts = []
         if self.use_org and self.organisation:
@@ -104,7 +82,26 @@ class IDMaker(object):
         return " ".join(parts).strip()
 
     def to_id(self, tmp_id=None):
-        return ".".join(self._get_parts(tmp_id))
+        if self.date_known:
+            id = IdBuilder(self.election_type.election_type, self.date)
+        else:
+            id = IdBuilder(self.election_type.election_type, IdBuilder.TEMP)
+        if self.subtype:
+            id = id.with_subtype(self.subtype.election_subtype)
+        if self.use_org and self.organisation:
+            id = id.with_organisation(self.organisation.slug)
+        if self.division:
+            id = id.with_division(self.division.slug)
+        if self.contest_type == "by_election":
+            id = id.with_contest_type('by')
+
+        if not self.is_group_id:
+            return id.ballot_id
+        else:
+            if self.group_type == "election":
+                return id.election_group_id
+            else:
+                return id.organisation_group_id
 
     def __eq__(self, other):
         return other.to_id() == self.to_id()
