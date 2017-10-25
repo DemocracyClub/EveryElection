@@ -1,5 +1,3 @@
-import datetime
-
 from django.db import transaction
 from django.http import HttpResponseRedirect
 from django import forms
@@ -12,7 +10,6 @@ from elections.utils import (
     get_notice_directory,
 )
 from elections.forms import (
-    ElectionDateKnownForm,
     ElectionDateForm,
     ElectionTypeForm,
     ElectionSubTypeForm,
@@ -25,7 +22,6 @@ from election_snooper.models import SnoopedElection
 
 FORMS = [
     ("source", ElectionSourceForm),
-    ("date_known", ElectionDateKnownForm),
     ("date", ElectionDateForm),
     ("election_type", ElectionTypeForm),
     ("election_subtype", ElectionSubTypeForm),
@@ -36,7 +32,6 @@ FORMS = [
 
 TEMPLATES = {
     "source": "id_creator/source.html",
-    "date_known": "id_creator/date_known.html",
     "date": "id_creator/date.html",
     "election_type": "id_creator/election_type.html",
     "election_subtype": "id_creator/election_subtype.html",
@@ -62,30 +57,7 @@ def show_source_step(wizard):
     return False
 
 
-def show_date_known_step(wizard):
-    # if we've already got a date in extra_data
-    # we can skip the `date_known` form
-    if isinstance(wizard.storage.extra_data, dict) and\
-        wizard.storage.extra_data.get('radar_date', False):
-        return False
-
-    # if the user has submitted a 'Notice of Election' document
-    # skip the `date_known` form (i.e: don't allow creating an id without
-    # a date when we have a Notice of Election)
-    data = wizard.get_cleaned_data_for_step('source')
-    if isinstance(data, dict) and 'document' in data and data['document']:
-        return False
-
-    # otherwise, show it
-    return True
-
-
 def date_known(wizard):
-    date_known_step_data = wizard.get_cleaned_data_for_step('date_known')
-    if date_known_step_data:
-        known = date_known_step_data.get('date_known')
-        if known == "no":
-            return False
     return True
 
 
@@ -124,7 +96,6 @@ def select_organisation_division(wizard):
 
 CONDITION_DICT = {
     'source': show_source_step,
-    'date_known': show_date_known_step,
     'date': date_known,
     'election_organisation': select_organisation,
     'election_organisation_division': select_organisation_division,
@@ -159,12 +130,7 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
 
     def get_election_date(self):
         election_date = self.get_cleaned_data_for_step('date')
-        if election_date:
-            election_date = election_date['date']
-        else:
-            election_date = datetime.now()
-
-        return election_date
+        return election_date['date']
 
     def get_form_initial(self, step):
         if step == 'source':

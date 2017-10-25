@@ -22,8 +22,6 @@ CONTEST_TYPES = ('by', 'by election', 'by-election', 'election')
 
 class IdBuilder:
 
-    TEMP = "<tmp-id>"
-
     def __init__(self, election_type, date):
         if election_type == 'ref':
             raise NotImplementedError()
@@ -32,10 +30,7 @@ class IdBuilder:
         self._validate_election_type(election_type)
         self.election_type = election_type
         self.spec = ELECTION_TYPES[self.election_type]
-        if date == self.TEMP:
-            self.date = date
-        else:
-            self.date = self._format_date(date)
+        self.date = self._format_date(date)
         self.subtype = None
         self.organisation = None
         self.division = None

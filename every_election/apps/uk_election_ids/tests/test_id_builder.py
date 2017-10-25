@@ -294,35 +294,25 @@ class TestIdBuilder(TestCase):
             id = IdBuilder('local', date(2018, 5, 3))\
                 .with_contest_type('foo')
 
-    def test_tmp_id(self):
-        id = IdBuilder('local', IdBuilder.TEMP)\
-            .with_organisation('test-org')\
-            .with_division('test-division')
-        self.assertEqual([
-            "local.<tmp-id>",
-            "local.test-org.<tmp-id>",
-            "local.test-org.test-division.<tmp-id>"
-        ], id.ids)
-
     def test_eq_equal(self):
-        obj1 = IdBuilder('local', IdBuilder.TEMP)\
+        obj1 = IdBuilder('local', date(2018, 5, 3))\
             .with_organisation('test-org')\
             .with_division('test-division')
-        obj2 = IdBuilder('local', IdBuilder.TEMP)\
+        obj2 = IdBuilder('local', date(2018, 5, 3))\
             .with_organisation('test-org')\
             .with_division('test-division')
         self.assertEqual(obj1, obj2)
 
     def test_eq_not_equal(self):
-        obj1 = IdBuilder('local', IdBuilder.TEMP)\
+        obj1 = IdBuilder('local', date(2018, 5, 3))\
             .with_organisation('test-org')\
             .with_division('test-division')
-        obj2 = IdBuilder('local', IdBuilder.TEMP)\
+        obj2 = IdBuilder('local', date(2018, 5, 3))\
             .with_organisation('test-org')
         self.assertNotEqual(obj1, obj2)
 
     def test_eq_different_types(self):
-        obj1 = IdBuilder('local', IdBuilder.TEMP)\
+        obj1 = IdBuilder('local', date(2018, 5, 3))\
             .with_organisation('test-org')\
             .with_division('test-division')
         obj2 = 7

@@ -22,10 +22,6 @@ class IDMaker(object):
             date = datetime.strptime(date, "%Y-%m-%d")
         self.date = date
 
-        if self.date is None:
-            self.date_known = False
-        else:
-            self.date_known = True
         self.is_group_id = is_group_id
         self.group_id = group_id
 
@@ -81,11 +77,8 @@ class IDMaker(object):
             parts.append('by-election')
         return " ".join(parts).strip()
 
-    def to_id(self, tmp_id=None):
-        if self.date_known:
-            id = IdBuilder(self.election_type.election_type, self.date)
-        else:
-            id = IdBuilder(self.election_type.election_type, IdBuilder.TEMP)
+    def to_id(self):
+        id = IdBuilder(self.election_type.election_type, self.date)
         if self.subtype:
             id = id.with_subtype(self.subtype.election_subtype)
         if self.use_org and self.organisation:
@@ -149,25 +142,15 @@ class IDMaker(object):
         except Election.DoesNotExist:
             existing_model = None
 
-        if existing_model and self.date_known:
+        if existing_model:
             existing_model.poll_open_date = self.date
             existing_model.election_id = self.to_id()
             existing_model.save()
             return existing_model
-        elif self.date_known and not existing_model:
+        else:
             default_kwargs['poll_open_date'] = self.date
             new_model, _ = Election.objects.update_or_create(
                 election_id=self.to_id(), defaults=default_kwargs)
-            return new_model
-        else:
-            # We will only allow one tmp ID per (type, subtype, org)
-            # Assuming that we will never know of two upcoming elections
-            # that wont have the same date
-            new_model, _ = Election.objects.update_or_create(**default_kwargs)
-            tmp_election_id = self.to_id(tmp_id=new_model.pk)
-            new_model.tmp_election_id = tmp_election_id
-            new_model.save()
-            self.model = new_model
             return new_model
 
 

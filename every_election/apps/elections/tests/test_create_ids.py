@@ -221,35 +221,6 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             subtypes=[naw_election_sub_type, ]
         )
 
-    def test_creates_tmp_id(self):
-        all_data =  self.base_data
-
-        all_data['date'] = None
-
-        all_data.update({self.make_div_id(): 'contested'})
-        expected_ids = [
-            'local.tmp-',
-            'local.test.tmp-',
-            'local.test.test-div.tmp-',
-        ]
-
-        self.create_ids(all_data)
-        assert Election.objects.count() == len(expected_ids)
-        for expected_id in expected_ids:
-            assert Election.objects.filter(
-                tmp_election_id__startswith=expected_id).exists()
-            assert Election.objects.get(
-                tmp_election_id__startswith=expected_id).election_id == None
-
-        all_data['date'] = self.date
-        self.create_ids(all_data)
-        assert Election.objects.count() == len(expected_ids)
-        for expected_id in expected_ids:
-            assert Election.objects.filter(
-                tmp_election_id__startswith=expected_id).exists()
-            assert Election.objects.get(
-                tmp_election_id__startswith=expected_id).election_id != None
-
     def test_election_with_organisation_geography(self):
         all_data = self.base_data
 

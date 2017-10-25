@@ -26,10 +26,7 @@
     {% block wizard_buttons %}
         <div class="form-group">
             <input type="submit" class="button" value="Submit" />
-
-            {% if wizard.steps.prev or wizard.steps.current == 'source' %}
             <p><a href="{% url "id_creator" %}?reset" class="button secondary">Start again</a></p>
-            {% endif %}
         </div>
 
     {% endblock wizard_buttons %}

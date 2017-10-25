@@ -22,13 +22,6 @@ class ElectionSourceForm(forms.Form):
         label="Link to 'Notice of Election' Document")
 
 
-class ElectionDateKnownForm(forms.Form):
-    date_known = forms.ChoiceField(
-        choices=(('yes', 'Yes'), ('no', 'No')),
-        widget=forms.RadioSelect,
-        label="Do you know the date of the election?")
-
-
 class ElectionDateForm(forms.Form):
     date = dc_forms.DCDateField(help_text="The date that polls open")
 
