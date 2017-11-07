@@ -1,4 +1,5 @@
 from collections import namedtuple
+from datetime import datetime
 
 
 IdSpec = namedtuple('IdSpec', [
@@ -37,6 +38,11 @@ class IdBuilder:
         self.contest_type = None
 
     def _format_date(self, date):
+        if isinstance(date, str):
+            # if we've been given a string, validate it
+            # by converting to a datetime and back again
+            return datetime.strptime(date, "%Y-%m-%d").strftime("%Y-%m-%d")
+
         return date.strftime("%Y-%m-%d")
 
     @property

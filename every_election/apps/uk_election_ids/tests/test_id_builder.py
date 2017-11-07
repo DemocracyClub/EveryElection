@@ -9,9 +9,16 @@ class TestIdBuilder(TestCase):
         with self.assertRaises(ValueError):
             IdBuilder('foo', date(2018, 5, 3))
 
-    def test_invalid_date(self):
-        with self.assertRaises(AttributeError):
+    def test_invalid_dates(self):
+        with self.assertRaises(ValueError):
             IdBuilder('parl', 'not a date')
+        with self.assertRaises(ValueError):
+            IdBuilder('parl', '2017-02-31')  # 31st Feb is not a date
+
+    def test_string_date(self):
+        id = IdBuilder('parl', '2018-05-03')
+        election_id = id.election_group_id
+        self.assertEqual('parl.2018-05-03', election_id)
 
     def test_naw_sp_without_subtype(self):
         for election_type in ('naw', 'sp'):
