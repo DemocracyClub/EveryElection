@@ -14,7 +14,8 @@ class HomeView(TemplateView):
         election_qs = Election.objects.all()
         election_qs = election_qs.filter(group_type='election')
         election_qs = election_qs.filter(poll_open_date__gt=datetime.today())
-        election_qs = election_qs.order_by('poll_open_date', 'election_id')[:5]
+        election_qs = election_qs.order_by(
+            'poll_open_date', 'election_id')[:15]
         context['upcoming_elections'] = election_qs
 
         return context
