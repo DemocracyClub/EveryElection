@@ -1,23 +1,10 @@
-from collections import namedtuple
 from datetime import datetime
+from .datapackage import ELECTION_TYPES
+from .parser import DataPackageParser
 
 
-IdSpec = namedtuple('IdSpec', [
-    'subtypes',
-    'can_have_orgs',
-    'can_have_divs'])
-
-ELECTION_TYPES = {
-    "naw":   IdSpec(('c', 'r'), False, True),
-    "sp":    IdSpec(('c', 'r'), False, True),
-    "nia":   IdSpec(None, False, True),
-    "parl":  IdSpec(None, False, True),
-    "local": IdSpec(None, True,  True),
-    "pcc":   IdSpec(None, True,  False),
-    "mayor": IdSpec(None, True,  False),
-    "gla":   IdSpec(('c', 'a'), False, {'c': True, 'a': False}),
-}
-
+parser = DataPackageParser(ELECTION_TYPES)
+RULES = parser.build_rules()
 CONTEST_TYPES = ('by', 'by election', 'by-election', 'election')
 
 
@@ -30,7 +17,7 @@ class IdBuilder:
             raise NotImplementedError()
         self._validate_election_type(election_type)
         self.election_type = election_type
-        self.spec = ELECTION_TYPES[self.election_type]
+        self.spec = RULES[self.election_type]
         self.date = self._format_date(date)
         self.subtype = None
         self.organisation = None
