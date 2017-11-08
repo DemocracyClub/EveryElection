@@ -1,6 +1,7 @@
 from datetime import datetime
 from .datapackage import ELECTION_TYPES
 from .parser import DataPackageParser
+from .slugger import slugify
 
 
 parser = DataPackageParser(ELECTION_TYPES)
@@ -45,11 +46,17 @@ class IdBuilder:
         return self
 
     def with_organisation(self, organisation):
+        if organisation is None:
+            organisation = ''
+        organisation = slugify(organisation)
         self._validate_organisation(organisation)
         self.organisation = organisation
         return self
 
     def with_division(self, division):
+        if division is None:
+            division = ''
+        division = slugify(division)
         self._validate_division(division)
         self.division = division
         return self

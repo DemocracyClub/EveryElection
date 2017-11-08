@@ -350,3 +350,14 @@ class TestIdBuilder(TestCase):
             "local.2018-05-03",
             "local.test-org.2018-05-03"
         ], id.ids)
+
+    def test_slugger(self):
+        id1 = IdBuilder('local', date(2018, 5, 3))\
+            .with_organisation('Test Org')\
+            .with_division('Test Division')\
+            .ballot_id
+        id2 = IdBuilder('local', date(2018, 5, 3))\
+            .with_organisation('test-org')\
+            .with_division('test-division')\
+            .ballot_id
+        self.assertEqual(id1, id2)
