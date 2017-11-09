@@ -1,63 +1,16 @@
-ELECTION_TYPES = {
-    'parl': {
-        'name': "UK Parliament",
-        'subtypes': [],
-        'default_voting_system': 'FPTP',
-    },
-    'nia': {
-        'name': "Northern Ireland assembly",
-        'subtypes': [],
-        'default_voting_system': 'STV',
-    },
-    'naw': {
-        'name': "Welsh assembly",
-        'subtypes': [
-            {'name': 'Constituencies', 'election_subtype': 'c'},
-            {'name': 'Regions', 'election_subtype': 'r'},
-        ],
-        'default_voting_system': 'AMS',
-    },
-    'sp': {
-        'name': "Scottish parliament",
-        'subtypes': [
-            {'name': 'Constituencies', 'election_subtype': 'c'},
-            {'name': 'Regions', 'election_subtype': 'r'},
-        ],
-        'default_voting_system': 'AMS',
-    },
-    'gla': {
-        'name': "Greater London assembly",
-        'subtypes': [
-            {'name': 'Constituencies', 'election_subtype': 'c'},
-            {'name': 'Additional', 'election_subtype': 'a'},
-        ],
-        'default_voting_system': 'AMS',
-    },
-    'local': {
-        'name': "Local elections",
-        'subtypes': [],
-        'default_voting_system': 'FPTP',
-    },
-    'pcc': {
-        'name': "Police and crime commissioner",
-        'subtypes': [],
-        'default_voting_system': 'sv',
-    },
-    'mayor': {
-        'name': "Directly elected Mayor",
-        'subtypes': [],
-        'default_voting_system': 'sv',
-    },
-    'eu': {
-        'name': "European parliament (UK)",
-        'subtypes': [],
-        'default_voting_system': 'PR-CL',
-    },
-    'ref': {
-        'name': "Referendum",
-        'subtypes': [],
-        'default_voting_system': 'FPTP',
-    },
+from uk_election_ids.datapackage import ELECTION_TYPES
+
+
+# These types exist in EE but don't have defined behaviour in the IdBuilder
+ELECTION_TYPES['eu'] = {
+    'name': "European parliament (UK)",
+    'subtypes': [],
+    'default_voting_system': 'PR-CL',
+}
+ELECTION_TYPES['ref'] = {
+    'name': "Referendum",
+    'subtypes': [],
+    'default_voting_system': 'FPTP',
 }
 
 

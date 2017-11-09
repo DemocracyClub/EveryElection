@@ -4,6 +4,7 @@ from django.db import transaction
 
 from organisations.models import Organisation, OrganisationDivision
 from elections.models import Election, ElectedRole, ElectionType, VotingSystem
+from uk_election_ids.election_ids import IdBuilder
 
 
 class IDMaker(object):
@@ -21,10 +22,6 @@ class IDMaker(object):
             date = datetime.strptime(date, "%Y-%m-%d")
         self.date = date
 
-        if self.date is None:
-            self.date_known = False
-        else:
-            self.date_known = True
         self.is_group_id = is_group_id
         self.group_id = group_id
 
@@ -68,29 +65,6 @@ class IDMaker(object):
     def __repr__(self):
         return self.to_id()
 
-    def _get_parts(self, tmp_id=None):
-        parts = []
-        parts.append(self.election_type.election_type)
-        if self.subtype:
-            parts.append(self.subtype.election_subtype)
-        if self.use_org and self.organisation:
-            parts.append(self.organisation.slug)
-        if self.division:
-            parts.append(self.division.slug)
-        if self.contest_type == "by_election":
-            parts.append('by')
-        if tmp_id:
-            parts.append("tmp-{}".format(tmp_id))
-        else:
-            parts.append(self._format_date(self.date))
-        return parts
-
-    def _format_date(self, date):
-        if self.date_known:
-            return self.date.strftime("%Y-%m-%d")
-        else:
-            return "<tmp-id>"
-
     def to_title(self):
         parts = []
         if self.use_org and self.organisation:
@@ -103,8 +77,24 @@ class IDMaker(object):
             parts.append('by-election')
         return " ".join(parts).strip()
 
-    def to_id(self, tmp_id=None):
-        return ".".join(self._get_parts(tmp_id))
+    def to_id(self):
+        id = IdBuilder(self.election_type.election_type, self.date)
+        if self.subtype:
+            id = id.with_subtype(self.subtype.election_subtype)
+        if self.use_org and self.organisation:
+            id = id.with_organisation(self.organisation.slug)
+        if self.division:
+            id = id.with_division(self.division.slug)
+        if self.contest_type == "by_election":
+            id = id.with_contest_type('by')
+
+        if not self.is_group_id:
+            return id.ballot_id
+        else:
+            if self.group_type == "election":
+                return id.election_group_id
+            else:
+                return id.organisation_group_id
 
     def __eq__(self, other):
         return other.to_id() == self.to_id()
@@ -152,25 +142,15 @@ class IDMaker(object):
         except Election.DoesNotExist:
             existing_model = None
 
-        if existing_model and self.date_known:
+        if existing_model:
             existing_model.poll_open_date = self.date
             existing_model.election_id = self.to_id()
             existing_model.save()
             return existing_model
-        elif self.date_known and not existing_model:
+        else:
             default_kwargs['poll_open_date'] = self.date
             new_model, _ = Election.objects.update_or_create(
                 election_id=self.to_id(), defaults=default_kwargs)
-            return new_model
-        else:
-            # We will only allow one tmp ID per (type, subtype, org)
-            # Assuming that we will never know of two upcoming elections
-            # that wont have the same date
-            new_model, _ = Election.objects.update_or_create(**default_kwargs)
-            tmp_election_id = self.to_id(tmp_id=new_model.pk)
-            new_model.tmp_election_id = tmp_election_id
-            new_model.save()
-            self.model = new_model
             return new_model
 
 
@@ -232,14 +212,6 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
 
         if subtypes:
             for subtype in all_data.get('election_subtype', []):
-
-                subtype_id = IDMaker(
-                    group_id=date_id,
-                    is_group_id=True,
-                    subtype=subtype,
-                    *args, **kwargs)
-                all_ids.append(subtype_id)
-
                 for div in div_data:
                     org_div = OrganisationDivision.objects.get(
                         pk=div.split('__')[1]
