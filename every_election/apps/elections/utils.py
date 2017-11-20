@@ -118,7 +118,14 @@ class IDMaker(object):
             if not group_model:
                 group_model = self.group_id.save_model()
 
-        default_kwargs = {
+        try:
+            return Election.objects.get(election_id=self.to_id())
+        except Election.DoesNotExist:
+            pass
+
+        return Election.objects.create(**{
+            'election_id': self.to_id(),
+            'poll_open_date': self.date,
             'election_type':  self.election_type,
             'election_title': self.to_title(),
             'election_subtype':  self.subtype,
@@ -131,27 +138,7 @@ class IDMaker(object):
             'notice': self.notice,
             'source': self.source,
             'snooped_election_id': self.snooped_election_id,
-        }
-
-        try:
-            existing_model = Election.objects.get(
-                election_id=None,
-                **default_kwargs
-            )
-            self.model = existing_model
-        except Election.DoesNotExist:
-            existing_model = None
-
-        if existing_model:
-            existing_model.poll_open_date = self.date
-            existing_model.election_id = self.to_id()
-            existing_model.save()
-            return existing_model
-        else:
-            default_kwargs['poll_open_date'] = self.date
-            new_model, _ = Election.objects.update_or_create(
-                election_id=self.to_id(), defaults=default_kwargs)
-            return new_model
+        })
 
 
 def create_ids_for_each_ballot_paper(all_data, subtypes=None):
