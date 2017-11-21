@@ -1,6 +1,7 @@
 from datetime import datetime
 from organisations.models import Organisation, OrganisationDivision
-from elections.models import Election, ElectedRole, ElectionType, VotingSystem
+from elections.models import (
+    Election, ElectedRole, ElectionSubType, ElectionType, VotingSystem)
 from uk_election_ids.election_ids import IdBuilder
 
 
@@ -36,11 +37,26 @@ class ElectionBuilder:
         self.snooped_election_id = None
 
     def with_subtype(self, subtype):
+        valid_subtypes = ElectionSubType.objects.filter(
+            election_type=self.election_type)
+        if subtype not in valid_subtypes:
+            raise ValueError(
+                "'%s' is not a valid subtype for election type '%s'" %\
+                (subtype, self.election_type)
+            )
+
         self.id = self.id.with_subtype(subtype.election_subtype)
         self.subtype = subtype
         return self
 
     def with_organisation(self, organisation):
+        valid_election_types = organisation.election_types.all()
+        if self.election_type not in valid_election_types:
+            raise ValueError(
+                "'%s' is not a valid organisation for election type '%s'" %\
+                (organisation, self.election_type)
+            )
+
         # if this is a top-level group id
         # we associate the election object with an organisation
         # but the organisation doesn't form part of the id
@@ -55,6 +71,12 @@ class ElectionBuilder:
         return self
 
     def with_division(self, division):
+        if division.organisation != self.organisation:
+            raise ValueError(
+                "'%s' is not a child of '%s'" %\
+                (division, self.organisation)
+            )
+
         self.id = self.id.with_division(division.slug)
         self.division = division
         return self
