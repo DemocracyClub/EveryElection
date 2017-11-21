@@ -202,11 +202,6 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
             and v != ""
         }
 
-        args = [all_data['election_type'], all_data['date']]
-        kwargs = {
-            'organisation': organisation,
-        }
-
         election_type = all_data['election_type'].election_type
         organisation_type = organisation.organisation_type
 
