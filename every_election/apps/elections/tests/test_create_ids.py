@@ -214,6 +214,11 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             name="Test Div 3",
             slug="test-div-3"
         )
+        org_div_4 = OrganisationDivision.objects.create(
+            organisation=naw_org,
+            name="Test Div 4",
+            slug="test-div-4"
+        )
 
 
         all_data =  {
@@ -224,12 +229,16 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         }
 
         all_data.update({
-            self.make_div_id(org=naw_org, div=org_div_3): 'contested',
+            self.make_div_id(
+                org=naw_org, div=org_div_3): 'contested',  # contested seat
+            self.make_div_id(
+                org=naw_org, div=org_div_4): 'by_election',  # by election
         })
 
         expected_ids = [
             'naw.'+self.date_str,
-            'naw.c.test-div-3.'+self.date_str,
+            'naw.c.test-div-3.'+self.date_str,  # no 'by' suffix
+            'naw.c.test-div-4.by.'+self.date_str,  # 'by' suffix
         ]
 
         self.run_test_with_data(
