@@ -1,5 +1,6 @@
 from django.test import TestCase
 from elections.utils import ElectionBuilder
+from election_snooper.models import SnoopedElection
 from organisations.tests.factories import OrganisationFactory
 from .base_tests import BaseElectionCreatorMixIn
 
@@ -20,3 +21,15 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
 
         # now these objects will build funamentally different elections
         self.assertNotEqual(eb1, eb2)
+
+    def test_with_metadata(self):
+        snooper = SnoopedElection.objects.create()
+        builder = ElectionBuilder('local', '2017-06-08')\
+            .with_organisation(self.org1)\
+            .with_division(self.org_div_1)\
+            .with_source('foo/bar.baz')\
+            .with_snooped_election(snooper.id)
+        election = builder.build_ballot(None)
+        election.save()
+        self.assertEqual('foo/bar.baz', election.source)
+        assert isinstance(election.snooped_election, SnoopedElection)
