@@ -14,8 +14,15 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
     def run_test_with_data(self, all_data, expected_ids, **kwargs):
         self.create_ids(all_data, **kwargs)
         assert Election.objects.count() == len(expected_ids)
+
+        # ensure the records created match the expected ids
         for expected_id in expected_ids:
             assert Election.objects.filter(election_id=expected_id).exists()
+
+        # ensure group relationships have been saved correctly
+        for election in Election.objects.all():
+            if election.group_type != 'election':
+                assert isinstance(election.group_id, int)
 
     def test_group_id(self):
         self.run_test_with_data(
