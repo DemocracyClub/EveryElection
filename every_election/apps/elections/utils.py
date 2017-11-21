@@ -230,7 +230,7 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
             else:
                 group_id = date_id
 
-        if all_data['election_type'].election_type == "mayor":
+        if all_data['election_type'].election_type in ["mayor", "pcc"]:
             group_id = date_id
             mayor_id = ElectionBuilder(
                 all_data['election_type'], all_data['date'])\
