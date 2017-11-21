@@ -243,38 +243,44 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
 
         if subtypes:
             for subtype in all_data.get('election_subtype', []):
-                for div in div_data:
+                for div, contest_type in div_data.items():
                     org_div = OrganisationDivision.objects.get(
                         pk=div.split('__')[1]
                     )
 
-                    all_ids.append(
-                        ElectionBuilder(
-                            all_data['election_type'], all_data['date'])\
-                            .with_subtype(subtype)\
-                            .with_organisation(organisation)\
-                            .with_division(org_div)\
-                            .with_source(all_data.get('source', ''))\
-                            .with_snooped_election(all_data.get('radar_id', None))\
-                            .build_ballot(group_id)
-                    )
+                    builder = ElectionBuilder(
+                        all_data['election_type'], all_data['date'])\
+                        .with_subtype(subtype)\
+                        .with_organisation(organisation)\
+                        .with_division(org_div)\
+                        .with_source(all_data.get('source', ''))\
+                        .with_snooped_election(all_data.get('radar_id', None))
+
+                    if contest_type == 'by_election':
+                        all_ids.append(
+                            builder.with_contest_type('by').build_ballot(group_id))
+                    elif contest_type in ['contested', 'seats_contested']:
+                        all_ids.append(builder.build_ballot(group_id))
+                    else:
+                        raise ValueError("Unrecognised contest_type value '%s'" % contest_type)
         else:
             for div, contest_type in div_data.items():
                 org_div = OrganisationDivision.objects.get(
                     pk=div.split('__')[1]
                 )
 
-                election = ElectionBuilder(
+                builder = ElectionBuilder(
                     all_data['election_type'], all_data['date'])\
                     .with_organisation(organisation)\
                     .with_division(org_div)\
                     .with_source(all_data.get('source', ''))\
                     .with_snooped_election(all_data.get('radar_id', None))
+
                 if contest_type == 'by_election':
                     all_ids.append(
-                        election.with_contest_type('by').build_ballot(group_id))
+                        builder.with_contest_type('by').build_ballot(group_id))
                 elif contest_type in ['contested', 'seats_contested']:
-                    all_ids.append(election.build_ballot(group_id))
+                    all_ids.append(builder.build_ballot(group_id))
                 else:
                     raise ValueError("Unrecognised contest_type value '%s'" % contest_type)
     return all_ids
