@@ -1,8 +1,10 @@
 from django.test import TestCase
 
-from elections.models import Election, ElectionType, ElectionSubType
+from elections.models import (
+    ElectedRole, Election, ElectionType, ElectionSubType)
 from elections.utils import create_ids_for_each_ballot_paper
-from organisations.models import Organisation, DivisionGeography
+from organisations.models import (
+    Organisation, OrganisationDivision, DivisionGeography)
 
 from .base_tests import BaseElectionCreatorMixIn
 
@@ -123,6 +125,12 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         mayor_election_type = ElectionType.objects.get(
             election_type='mayor',
         )
+        ElectedRole.objects.create(
+            election_type=mayor_election_type,
+            organisation=mayor_org,
+            elected_title="Mayor",
+            elected_role_name="Mayor of Foo Town",
+        )
 
 
         all_data =  {
@@ -184,10 +192,20 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         naw_election_type = ElectionType.objects.get(
             election_type='naw',
         )
-
         naw_election_sub_type = ElectionSubType.objects.get(
             election_subtype='c',
             election_type=naw_election_type,
+        )
+        ElectedRole.objects.create(
+            election_type=naw_election_type,
+            organisation=naw_org,
+            elected_title="Assembly Member",
+            elected_role_name="Assembly Member for Foo",
+        )
+        org_div_3 = OrganisationDivision.objects.create(
+            organisation=naw_org,
+            name="Test Div 3",
+            slug="test-div-3"
         )
 
 
@@ -199,12 +217,12 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         }
 
         all_data.update({
-            self.make_div_id(org=naw_org): 'contested',
+            self.make_div_id(org=naw_org, div=org_div_3): 'contested',
         })
 
         expected_ids = [
             'naw.'+self.date_str,
-            'naw.c.test-div.'+self.date_str,
+            'naw.c.test-div-3.'+self.date_str,
         ]
 
         self.run_test_with_data(

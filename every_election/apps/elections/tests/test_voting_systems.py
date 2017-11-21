@@ -3,8 +3,8 @@ from django.test import TestCase
 from elections.utils import ElectionBuilder
 
 from .base_tests import BaseElectionCreatorMixIn
+from elections.models import ElectedRole
 from organisations.tests.factories import OrganisationFactory
-
 
 
 class TestElectoralSystems(BaseElectionCreatorMixIn, TestCase):
@@ -22,6 +22,13 @@ class TestElectoralSystems(BaseElectionCreatorMixIn, TestCase):
         scot_org = OrganisationFactory(
             territory_code="SCT",
             gss="S0000001"
+        )
+
+        ElectedRole.objects.create(
+            election_type=self.election_type1,
+            organisation=scot_org,
+            elected_title="MSP",
+            elected_role_name="MSP for Foo Town",
         )
 
         # Scotish local elections are STV
