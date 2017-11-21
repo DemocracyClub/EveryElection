@@ -2,7 +2,6 @@ from django.test import TestCase
 
 from elections.models import (
     ElectedRole, Election, ElectionType, ElectionSubType)
-from elections.utils import create_ids_for_each_ballot_paper
 from organisations.models import (
     Organisation, OrganisationDivision, DivisionGeography)
 
