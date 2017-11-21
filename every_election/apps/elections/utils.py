@@ -1,18 +1,14 @@
 from datetime import datetime
-
-from django.db import transaction
-
 from organisations.models import Organisation, OrganisationDivision
 from elections.models import Election, ElectedRole, ElectionType, VotingSystem
 from uk_election_ids.election_ids import IdBuilder
 
 
-class IDMaker(object):
-    def __init__(self, election_type, date, organisation=None, subtype=None,
-                 division=None, is_group_id=False, group_id=None,
-                 group_type=None, contest_type=None, source='',
-                 snooped_election_id=None):
+class ElectionBuilder:
 
+    def __init__(self, election_type, date):
+
+        # init params
         if type(election_type) == str:
             election_type = ElectionType.objects.get(
                 election_type=election_type)
@@ -22,119 +18,145 @@ class IDMaker(object):
             date = datetime.strptime(date, "%Y-%m-%d")
         self.date = date
 
-        self.is_group_id = is_group_id
-        self.group_id = group_id
+        # Initialise an IdBuiler object.
+        # We'll build up an id string progressively
+        # as we add properties to the election object
+        self.id = IdBuilder(self.election_type.election_type, self.date)
 
-        override_group_types = [
-            'mayor',
-        ]
-        if self.election_type.election_type in override_group_types:
-            if self.is_group_id:
-                self.group_type = "election"
-            else:
-                self.group_type = "organisation"
-        else:
-            self.group_type = group_type
-        self.use_org = True
-        if organisation:
-            if organisation.organisation_type == election_type.election_type:
-                self.organisation = Organisation.objects.get(
-                    organisation_type=election_type.election_type)
-                self.use_org = False
-            else:
-                self.organisation = organisation
-        else:
-            self.use_org = False
-            self.organisation = None
+        # core election data
+        self.subtype = None
+        self.organisation = None
+        self.division = None
+        self.contest_type = None
+
+        # meta-data
+        self._use_org = False
+        self.notice = None
+        self.source = ''
+        self.snooped_election_id = None
+
+    def with_subtype(self, subtype):
+        self.id = self.id.with_subtype(subtype.election_subtype)
         self.subtype = subtype
+        return self
+
+    def with_organisation(self, organisation):
+        # if this is a top-level group id
+        # we associate the election object with an organisation
+        # but the organisation doesn't form part of the id
+        if organisation.organisation_type == self.election_type.election_type:
+            self._use_org = False
+            self.organisation = Organisation.objects.get(
+                organisation_type=self.election_type.election_type)
+        else:
+            self._use_org = True
+            self.id = self.id.with_organisation(organisation.slug)
+            self.organisation = organisation
+        return self
+
+    def with_division(self, division):
+        self.id = self.id.with_division(division.slug)
         self.division = division
+        return self
+
+    def with_contest_type(self, contest_type):
+        self.id = self.id.with_contest_type(contest_type)
+        self.contest_type = contest_type
+        return self
+
+    def with_source(self, source):
+        self.source = source
+        return self
+
+    def with_snooped_election(self, id):
+        self.snooped_election_id = id
+        return self
+
+    def get_elected_role(self):
+        if not self.organisation:
+            return None
 
         try:
-            self.elected_role = ElectedRole.objects.get(
+            return ElectedRole.objects.get(
                 organisation=self.organisation,
                 election_type=self.election_type)
-        except:
-            self.elected_role = None
-
-        self.voting_system = self.get_voting_system()
-        self.contest_type = contest_type
-        self.notice = None
-        self.source = source
-        self.snooped_election_id = snooped_election_id
-
-    def __repr__(self):
-        return self.to_id()
-
-    def to_title(self):
-        parts = []
-        if self.use_org and self.organisation:
-            parts.append(self.organisation.election_name)
-        if self.division:
-            parts.append("{}".format(self.division.name))
-        if self.subtype:
-            parts.append("({})".format(self.subtype.name))
-        if self.contest_type == "by_election":
-            parts.append('by-election')
-        return " ".join(parts).strip()
-
-    def to_id(self):
-        id = IdBuilder(self.election_type.election_type, self.date)
-        if self.subtype:
-            id = id.with_subtype(self.subtype.election_subtype)
-        if self.use_org and self.organisation:
-            id = id.with_organisation(self.organisation.slug)
-        if self.division:
-            id = id.with_division(self.division.slug)
-        if self.contest_type == "by_election":
-            id = id.with_contest_type('by')
-
-        if not self.is_group_id:
-            return id.ballot_id
-        else:
-            if self.group_type == "election":
-                return id.election_group_id
-            else:
-                return id.organisation_group_id
-
-    def __eq__(self, other):
-        return other.to_id() == self.to_id()
+        except ElectedRole.DoesNotExist:
+            return None
 
     def get_voting_system(self):
-        if self.use_org:
+        if self._use_org:
             if self.organisation.territory_code == "SCT" and \
                     self.election_type.election_type == "local":
                 return VotingSystem.objects.get(slug="STV")
         return self.election_type.default_voting_system
 
-    @transaction.atomic
-    def save_model(self):
-        """
-        Performs a `get_or_create` on a model with this ID
-        """
+    def __repr__(self):
+        return self.id.__repr__()
 
-        group_model = None
-        if self.group_id:
-            group_model = getattr(self.group_id, 'model', None)
-            if not group_model:
-                group_model = self.group_id.save_model()
+    def to_title(self):
+        parts = []
+        if self._use_org and self.organisation:
+            parts.append(self.organisation.election_name)
+        if self.division:
+            parts.append("{}".format(self.division.name))
+        if self.subtype:
+            parts.append("({})".format(self.subtype.name))
+        if self.contest_type == "by":
+            parts.append('by-election')
+        return " ".join(parts).strip()
+
+    def __eq__(self, other):
+        return self.id.__eq__(other.id)
+
+    def _build(self, record):
+
+        def merge_dicts(d1, d2):
+            d3 = d1.copy()
+            d3.update(d2)
+            return d3
 
         try:
-            return Election.objects.get(election_id=self.to_id())
+            return Election.objects.get(election_id=record['election_id'])
         except Election.DoesNotExist:
-            pass
+            # return an instance of elections.models.Election
+            # but don't persist it to the DB yet.
+            # The calling code is responsible for calling .save()
+            return Election(**merge_dicts(record, {
+                'poll_open_date': self.date,
+                'election_type': self.election_type,
+                'election_title': self.to_title(),
+                'election_subtype': self.subtype,
+                'organisation': self.organisation,
+                'division': self.division,
+                'elected_role': self.get_elected_role(),
+                'voting_system': self.get_voting_system(),
+            }))
 
-        return Election.objects.create(**{
-            'election_id': self.to_id(),
-            'poll_open_date': self.date,
-            'election_type':  self.election_type,
-            'election_title': self.to_title(),
-            'election_subtype':  self.subtype,
-            'organisation':  self.organisation,
-            'division':  self.division,
-            'group':  group_model,
-            'group_type':  self.group_type,
-            'elected_role':  self.elected_role,
-            'voting_system': self.voting_system,
+    def build_election_group(self):
+        return self._build({
+            'election_id': self.id.election_group_id,
+            'group': None,
+            'group_type': 'election',
+            'notice': None,
+            'source': '',
+            'snooped_election_id': None,
+        })
+
+    def build_organisation_group(self, group):
+        return self._build({
+            'election_id': self.id.organisation_group_id,
+            'group': group,
+            'group_type': 'organisation',
+            'notice': None,
+            'source': '',
+            'snooped_election_id': None,
+        })
+
+    def build_ballot(self, group):
+        return self._build({
+            'election_id': self.id.ballot_id,
+            'group': group,
+            'group_type': None,
             'notice': self.notice,
             'source': self.source,
             'snooped_election_id': self.snooped_election_id,
@@ -168,7 +190,8 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
 
         # GROUP 1
         # Make a group ID for the date and election type
-        date_id = IDMaker(*args, is_group_id=True, group_type="election")
+        date_id = ElectionBuilder(all_data['election_type'], all_data['date'])\
+            .build_election_group()
         if date_id not in all_ids:
             all_ids.append(date_id)
 
@@ -176,11 +199,10 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
         # Make a group ID for the date, election type and org
         if div_data:
             if election_type != organisation_type:
-                group_id = IDMaker(
-                    is_group_id=True,
-                    group_type="organisation",
-                    group_id=date_id,
-                    *args, **kwargs)
+                group_id = ElectionBuilder(
+                    all_data['election_type'], all_data['date'])\
+                    .with_organisation(organisation)\
+                    .build_organisation_group(date_id)
                 if group_id not in all_ids:
                     all_ids.append(group_id)
             else:
@@ -188,12 +210,12 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
 
         if all_data['election_type'].election_type == "mayor":
             group_id = date_id
-            mayor_id = IDMaker(
-                group_id=group_id,
-                is_group_id=False,
-                source=all_data.get('source', ''),
-                snooped_election_id=all_data.get('radar_id', None),
-                *args, **kwargs)
+            mayor_id = ElectionBuilder(
+                all_data['election_type'], all_data['date'])\
+                .with_organisation(organisation)\
+                .with_source(all_data.get('source', ''))\
+                .with_snooped_election(all_data.get('radar_id', None))\
+                .build_ballot(group_id)
             if mayor_id not in all_ids:
                 all_ids.append(mayor_id)
 
@@ -204,34 +226,41 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                         pk=div.split('__')[1]
                     )
 
-                    all_ids.append(IDMaker(
-                        *args,
-                        subtype=subtype,
-                        division=org_div,
-                        group_id=group_id,
-                        source=all_data.get('source', ''),
-                        snooped_election_id=all_data.get('radar_id', None),
-                        **kwargs))
+                    all_ids.append(
+                        ElectionBuilder(
+                            all_data['election_type'], all_data['date'])\
+                            .with_subtype(subtype)\
+                            .with_organisation(organisation)\
+                            .with_division(org_div)\
+                            .with_source(all_data.get('source', ''))\
+                            .with_snooped_election(all_data.get('radar_id', None))\
+                            .build_ballot(group_id)
+                    )
         else:
             for div, contest_type in div_data.items():
                 org_div = OrganisationDivision.objects.get(
                     pk=div.split('__')[1]
                 )
-                all_ids.append(IDMaker(
-                    *args,
-                    division=org_div,
-                    group_id=group_id,
-                    contest_type=contest_type,
-                    source=all_data.get('source', ''),
-                    snooped_election_id=all_data.get('radar_id', None),
-                    **kwargs
-                    ))
+
+                election = ElectionBuilder(
+                    all_data['election_type'], all_data['date'])\
+                    .with_organisation(organisation)\
+                    .with_division(org_div)\
+                    .with_source(all_data.get('source', ''))\
+                    .with_snooped_election(all_data.get('radar_id', None))
+                if contest_type == 'by_election':
+                    all_ids.append(
+                        election.with_contest_type('by').build_ballot(group_id))
+                elif contest_type in ['contested', 'seats_contested']:
+                    all_ids.append(election.build_ballot(group_id))
+                else:
+                    raise ValueError("Unrecognised contest_type value '%s'" % contest_type)
     return all_ids
 
 
 def get_notice_directory(elections):
     """
-    given a list of IDMaker objects work out a
+    given a list of Election objects work out a
     sensible place to store the notice of election doc
     """
 
@@ -240,16 +269,18 @@ def get_notice_directory(elections):
     ballot_id = ''
     ballot_count = 0
     for election in elections:
-        if election.is_group_id and election.group_type == 'election':
-            election_group_id = election.to_id()
-        if election.is_group_id and election.group_type == 'organisation':
-            organisation_group_id = election.to_id()
-        if not election.is_group_id:
+        if election.group_type == 'election':
+            election_group_id = election.election_id
+        elif election.group_type == 'organisation':
+            organisation_group_id = election.election_id
+        elif not election.group_type:
             if ballot_count == 0:
-                ballot_id = election.to_id()
+                ballot_id = election.election_id
             else:
                 ballot_id = ''
             ballot_count = ballot_count + 1
+        else:
+            raise ValueError("unrecognised Election group_type '%s'" % (election.group_type))
 
     if ballot_count == 1 and ballot_id:
         return ballot_id

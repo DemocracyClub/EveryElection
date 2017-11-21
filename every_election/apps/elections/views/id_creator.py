@@ -241,11 +241,11 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                 # because we can't make a safe assumption about whether
                 # all of the elections in a group are covered by a single
                 # Notice of Election document - it will vary
-                if not election.is_group_id:
+                if not election.group_type:
                     election.notice = doc
 
         for election in context['all_ids']:
-            election.save_model()
+            election.save()
 
         # if this election was created from a radar entry set the status
         # of the radar entry to indicate we have made an id for it

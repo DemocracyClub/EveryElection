@@ -69,5 +69,5 @@ class BaseElectionCreatorMixIn():
     def create_ids(self, all_data, save_model=True, **kwargs):
         all_ids = create_ids_for_each_ballot_paper(all_data, **kwargs)
         if save_model:
-            [e_id.save_model() for e_id in all_ids]
+            [e_id.save() for e_id in all_ids]
 
