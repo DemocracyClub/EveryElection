@@ -1,8 +1,9 @@
 from django.test import TestCase
 
-from elections.models import Election, ElectionType, ElectionSubType
-from elections.utils import create_ids_for_each_ballot_paper
-from organisations.models import Organisation, DivisionGeography
+from elections.models import (
+    ElectedRole, Election, ElectionType, ElectionSubType)
+from organisations.models import (
+    Organisation, OrganisationDivision, DivisionGeography)
 
 from .base_tests import BaseElectionCreatorMixIn
 
@@ -12,22 +13,21 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
     def run_test_with_data(self, all_data, expected_ids, **kwargs):
         self.create_ids(all_data, **kwargs)
         assert Election.objects.count() == len(expected_ids)
+
+        # ensure the records created match the expected ids
         for expected_id in expected_ids:
             assert Election.objects.filter(election_id=expected_id).exists()
+
+        # ensure group relationships have been saved correctly
+        for election in Election.objects.all():
+            if election.group_type != 'election':
+                assert isinstance(election.group_id, int)
 
     def test_group_id(self):
         self.run_test_with_data(
             self.base_data,
             ['local.'+self.date_str, ]
         )
-
-    def test_id_repr_and_eq(self):
-        all_data = self.base_data
-        all_data.update({self.make_div_id(): 'contested'})
-        ids = create_ids_for_each_ballot_paper(all_data)
-        assert repr(ids[0]) == "local.{}".format(self.date_str)
-        assert ids[0] != ids[1]
-
 
     def test_creates_div_data_ids(self):
         self.assertEqual(Election.objects.count(), 0)
@@ -131,6 +131,12 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         mayor_election_type = ElectionType.objects.get(
             election_type='mayor',
         )
+        ElectedRole.objects.create(
+            election_type=mayor_election_type,
+            organisation=mayor_org,
+            elected_title="Mayor",
+            elected_role_name="Mayor of Foo Town",
+        )
 
 
         all_data =  {
@@ -192,10 +198,25 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         naw_election_type = ElectionType.objects.get(
             election_type='naw',
         )
-
         naw_election_sub_type = ElectionSubType.objects.get(
             election_subtype='c',
             election_type=naw_election_type,
+        )
+        ElectedRole.objects.create(
+            election_type=naw_election_type,
+            organisation=naw_org,
+            elected_title="Assembly Member",
+            elected_role_name="Assembly Member for Foo",
+        )
+        org_div_3 = OrganisationDivision.objects.create(
+            organisation=naw_org,
+            name="Test Div 3",
+            slug="test-div-3"
+        )
+        org_div_4 = OrganisationDivision.objects.create(
+            organisation=naw_org,
+            name="Test Div 4",
+            slug="test-div-4"
         )
 
 
@@ -207,12 +228,16 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         }
 
         all_data.update({
-            self.make_div_id(org=naw_org): 'contested',
+            self.make_div_id(
+                org=naw_org, div=org_div_3): 'contested',  # contested seat
+            self.make_div_id(
+                org=naw_org, div=org_div_4): 'by_election',  # by election
         })
 
         expected_ids = [
             'naw.'+self.date_str,
-            'naw.c.test-div.'+self.date_str,
+            'naw.c.test-div-3.'+self.date_str,  # no 'by' suffix
+            'naw.c.test-div-4.by.'+self.date_str,  # 'by' suffix
         ]
 
         self.run_test_with_data(

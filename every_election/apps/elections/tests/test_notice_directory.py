@@ -1,73 +1,73 @@
 from django.test import TestCase
 from elections.utils import get_notice_directory
+from elections.utils import ElectionBuilder
+from .base_tests import BaseElectionCreatorMixIn
 
 
-class IDMakerMock(object):
-    def __init__(self, **kwargs):
-        self.__dict__.update(kwargs)
+class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
 
+    def setUp(self):
+        super().setUp()
 
-election = IDMakerMock(
-    group_type='election',
-    is_group_id=True,
-    to_id=lambda: "local.election.date")
+        self.election = \
+            ElectionBuilder('local', '2017-06-08')\
+                .build_election_group()
 
-organisation = IDMakerMock(
-    group_type='organisation',
-    is_group_id=True,
-    to_id=lambda: "local.election.organisation.date")
+        self.organisation =\
+            ElectionBuilder('local', '2017-06-08')\
+                .with_organisation(self.org1)\
+                .build_organisation_group(None)
 
-ballot1 = IDMakerMock(
-    group_type='election',
-    is_group_id=False,
-    to_id=lambda: "local.election.ballot1.date")
+        self.ballot1 =\
+            ElectionBuilder('local', '2017-06-08')\
+                .with_organisation(self.org1)\
+                .with_division(self.org_div_1)\
+                .build_ballot(None)
 
-ballot2 = IDMakerMock(
-    group_type='election',
-    is_group_id=False,
-    to_id=lambda: "local.election.ballot2.date")
-
-
-class TestCreateIds(TestCase):
+        self.ballot2 =\
+            ElectionBuilder('local', '2017-06-08')\
+                .with_organisation(self.org1)\
+                .with_division(self.org_div_2)\
+                .build_ballot(None)
 
     def test_one_ballot_with_org(self):
         folder = get_notice_directory([
-            election,
-            organisation,
-            ballot1,
+            self.election,
+            self.organisation,
+            self.ballot1,
         ])
-        self.assertEqual(ballot1.to_id(), folder)
+        self.assertEqual(self.ballot1.election_id, folder)
 
     def test_one_ballot_no_org(self):
         folder = get_notice_directory([
-            election,
-            ballot1,
+            self.election,
+            self.ballot1,
         ])
-        self.assertEqual(ballot1.to_id(), folder)
+        self.assertEqual(self.ballot1.election_id, folder)
 
     def test_two_ballots_with_org(self):
         folder = get_notice_directory([
-            election,
-            organisation,
-            ballot1,
-            ballot2,
+            self.election,
+            self.organisation,
+            self.ballot1,
+            self.ballot2,
         ])
-        self.assertEqual(organisation.to_id(), folder)
+        self.assertEqual(self.organisation.election_id, folder)
 
     def test_two_ballots_no_org(self):
         folder = get_notice_directory([
-            election,
-            ballot1,
-            ballot2,
+            self.election,
+            self.ballot1,
+            self.ballot2,
         ])
-        self.assertEqual(election.to_id(), folder)
+        self.assertEqual(self.election.election_id, folder)
 
     def test_group_only(self):
         folder = get_notice_directory([
-            election,
-            organisation,
+            self.election,
+            self.organisation,
         ])
-        self.assertEqual(organisation.to_id(), folder)
+        self.assertEqual(self.organisation.election_id, folder)
 
     def test_invalid_empty(self):
         with self.assertRaises(ValueError):
@@ -76,6 +76,6 @@ class TestCreateIds(TestCase):
     def test_invalid_two_ballots_no_groups(self):
         with self.assertRaises(ValueError):
             get_notice_directory([
-                ballot1,
-                ballot2,
+                self.ballot1,
+                self.ballot2,
             ])

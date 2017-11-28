@@ -3,7 +3,7 @@ import urllib.request
 
 from datetime import date, timedelta
 
-from django.db import models
+from django.db import models, transaction
 from django.core.files import File
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
@@ -137,10 +137,19 @@ class Election(SuggestedByPublicMixin, models.Model):
             pass
         return None
 
+    @transaction.atomic
     def save(self, *args, **kwargs):
         if not self.geography:
             self.geography = self.get_geography()
-        super().save(*args, **kwargs)
+
+        if not self.group_id and self.group:
+            try:
+                group_model = Election.objects.get(election_id=self.group.election_id)
+            except Election.DoesNotExist:
+                group_model = self.group.save(*args, **kwargs)
+            self.group = group_model
+
+        return super().save(*args, **kwargs)
 
 
 class VotingSystem(models.Model):
