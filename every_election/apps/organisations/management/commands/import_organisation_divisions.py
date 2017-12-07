@@ -66,7 +66,9 @@ class Command(BaseCommand):
         for generation_id, generation in self.mapit_generations.items():
             generation['uri'] = "{}/{}".format(url, generation_id)
 
-    def create_single_division(self, division_set, organisation, mapit_dict):
+    def create_single_division(self, division_set,
+                               organisation, mapit_dict,
+                               division_election_sub_type=''):
         all_codes = [
             ('gss', mapit_dict['codes'].get('gss')),
             ('ons', mapit_dict['codes'].get('ons')),
@@ -93,7 +95,6 @@ class Command(BaseCommand):
         if geography_curie.startswith('osni_oid'):
             territory_code = "NIR"
 
-
         OrganisationDivision.objects.update_or_create(
             official_identifier=geography_curie,
             organisation=organisation,
@@ -107,6 +108,7 @@ class Command(BaseCommand):
                 'mapit_generation_low': int(mapit_dict['generation_low']),
                 'mapit_generation_high': int(mapit_dict['generation_high']),
                 'territory_code': territory_code,
+                'division_election_sub_type': division_election_sub_type,
             }
         )
 
@@ -245,14 +247,20 @@ class Command(BaseCommand):
             self.create_single_division(division_set, organisation, division)
         self.carry_over_existing_divisions(organisation)
 
-    def _import_area(self, org_type, mapit_code):
+    def _import_area(self, org_type,
+                     mapit_code, division_election_sub_type=''):
         print("Importing {}".format(org_type))
         org = Organisation.objects.get(organisation_type=org_type)
         regions_req = requests.get(
             "http://mapit.mysociety.org/areas/{}".format(mapit_code))
         for mapit_id, region in regions_req.json().items():
             division_set = self.get_division_set(org, region)
-            self.create_single_division(division_set, org, region)
+            self.create_single_division(
+                division_set,
+                org,
+                region,
+                division_election_sub_type=division_election_sub_type,
+            )
         print("Finished importing {}".format(org_type))
 
     def import_ni_areas(self):
@@ -265,7 +273,7 @@ class Command(BaseCommand):
         self._import_area('parl', 'WMC')
 
     def import_gla_areas(self):
-        self._import_area('gla', 'LAC')
+        self._import_area('gla', 'LAC', division_election_sub_type='c')
 
     def import_welsh_areas(self):
         """
@@ -278,14 +286,24 @@ class Command(BaseCommand):
         regions_req = requests.get("http://mapit.mysociety.org/areas/WAE")
         for mapit_id, region in regions_req.json().items():
             division_set = self.get_division_set(org, region)
-            self.create_single_division(division_set, org, region)
+            self.create_single_division(
+                division_set,
+                org,
+                region,
+                division_election_sub_type='r'
+            )
             req = requests.get(
                 "http://mapit.mysociety.org/area/{}/children".format(
                     mapit_id
                 ))
             for const_id, const in req.json().items():
                 division_set = self.get_division_set(org, const)
-                self.create_single_division(division_set, org, region)
+                self.create_single_division(
+                    division_set,
+                    org,
+                    const,
+                    division_election_sub_type='c'
+                )
         self.carry_over_existing_divisions(org)
 
     def import_scottish_areas(self):
@@ -296,7 +314,12 @@ class Command(BaseCommand):
         regions_req = requests.get("http://mapit.mysociety.org/areas/SPE")
         for mapit_id, region in regions_req.json().items():
             division_set = self.get_division_set(org, region)
-            self.create_single_division(division_set, org, region)
+            self.create_single_division(
+                division_set,
+                org,
+                region,
+                division_election_sub_type='r'
+            )
 
             req = requests.get(
                 "http://mapit.mysociety.org/area/{}/children".format(
@@ -304,5 +327,10 @@ class Command(BaseCommand):
                 ))
             for const_id, const in req.json().items():
                 division_set = self.get_division_set(org, const)
-                self.create_single_division(division_set, org, region)
+                self.create_single_division(
+                    division_set,
+                    org,
+                    const,
+                    division_election_sub_type='c'
+                )
         self.carry_over_existing_divisions(org)
