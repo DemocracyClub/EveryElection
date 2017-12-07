@@ -32,7 +32,9 @@ def create_single(election_type, official_identifier,
     )
 
 
-def base_local_authority_importer(territory_code, url, code_field, org_type=None):
+def base_local_authority_importer(territory_code,
+                                  url, code_field, org_type=None,
+                                  official_name_field='official-name'):
     req = requests.get(url)
 
     data_file = csv.DictReader(
@@ -41,12 +43,13 @@ def base_local_authority_importer(territory_code, url, code_field, org_type=None
 
     for line in data_file:
         defaults = {
-            'official_name': line['official-name'],
+            'official_name': line[official_name_field],
             'common_name': line['name'],
             'slug': slugify(line['name']),
             'territory_code': territory_code.upper(),
             'elected_title': "Local Councillor",
-            'elected_role_name': "Councillor for {}".format(line['official-name']),
+            'elected_role_name': "Councillor for {}".format(
+                line[official_name_field]),
             'election_name': "{} local election".format(line['name']),
         }
         try:
@@ -73,7 +76,8 @@ def local_authority_wls_importer():
 
 def local_authority_nir_importer():
     base_local_authority_importer(
-        "nir", constants.NI_REGISTER_URL, 'local-authority-nir')
+        "nir", constants.NI_REGISTER_URL, 'local-authority-nir',
+        official_name_field='name')
     overload_gss_code = {
         'NIR-A': '95A',
         'NIR-B': '95B',
