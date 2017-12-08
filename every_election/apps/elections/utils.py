@@ -17,6 +17,8 @@ class ElectionBuilder:
 
         if type(date) == str:
             date = datetime.strptime(date, "%Y-%m-%d")
+        if type(date) == datetime:
+            date = date.date()
         self.date = date
 
         # Initialise an IdBuiler object.
@@ -76,6 +78,15 @@ class ElectionBuilder:
                 "'%s' is not a child of '%s'" %\
                 (division, self.organisation)
             )
+
+        divisionset = division.divisionset
+
+        if divisionset.start_date and divisionset.start_date > self.date:
+            raise ValueError(
+                'DivisionSet start date after election date')
+        if divisionset.end_date and divisionset.end_date < self.date:
+            raise ValueError(
+                'DivisionSet end date before election date')
 
         self.id = self.id.with_division(division.slug)
         self.division = division
@@ -189,9 +200,7 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
     all_ids = []
     for organisation in all_data.get('election_organisation', []):
         group_id = None
-        if type(organisation) == str:
-            organisation = Organisation.objects.get(
-                organisation_type=organisation)
+
         pk = str(organisation.pk)
         div_data = {
             k: v for k, v

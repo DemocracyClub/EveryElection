@@ -1,4 +1,5 @@
 from django import forms
+from django.db import models
 
 from organisations.models import Organisation
 from organisations.models import OrganisationDivisionSet
@@ -85,10 +86,34 @@ class ElectionOrganisationDivisionForm(forms.Form):
             self.fields[organisation.pk] = dc_forms.DCHeaderField(
                 label=organisation.common_name)
 
+
             div_set = OrganisationDivisionSet.objects.filter(
                 organisation=organisation,
                 start_date__lte=election_date
+                ).filter(
+                    models.Q(end_date__gte=election_date)
+                    | models.Q(end_date=None)
                 ).order_by('-start_date').first()
+            if not div_set:
+                # There is no active division set for this organisation
+                # on this date
+                no_divs_field = forms.CharField(
+                    widget=forms.TextInput(
+                        attrs={'class': 'hide',}
+                    ),
+                    required=False,
+                    label="""
+                        There is no active divisions for this organisation.
+                        This is normally because we know a boundary change
+                        is about to happen but it's not final yet.
+                        Please try again in future, or contact us if you think
+                        it's a mistake.
+                    """
+                )
+                self.fields[
+                        "{}_no_divs".format(organisation.pk)] = no_divs_field
+                continue
+
 
             if election_subtype:
                 for subtype in election_subtype:

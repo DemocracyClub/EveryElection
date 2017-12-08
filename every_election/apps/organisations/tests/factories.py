@@ -32,6 +32,11 @@ class OrganisationDivisionSetFactory(factory.django.DjangoModelFactory):
     short_title = "Made up boundary changes"
     notes = "This is just for testing."
 
+    @factory.post_generation
+    def fetch_from_db(self, *args, **kwargs):
+        self.refresh_from_db()
+
+
 
 class OrganisationDivisionFactory(factory.django.DjangoModelFactory):
     class Meta:

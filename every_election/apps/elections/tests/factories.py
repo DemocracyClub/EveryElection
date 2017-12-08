@@ -15,6 +15,7 @@ class ElectionTypeFactory(factory.django.DjangoModelFactory):
     election_type = "local"
     # default_voting_system
 
+
 class ElectedRoleFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ElectedRole
@@ -24,9 +25,6 @@ class ElectedRoleFactory(factory.django.DjangoModelFactory):
     organisation = factory.SubFactory(OrganisationFactory)
     elected_title = "Councillor"
     elected_role_name = "Councillor"
-
-
-
 
 
 class ElectionFactory(factory.django.DjangoModelFactory):

@@ -2,8 +2,8 @@ from django.test import TestCase
 
 from elections.models import (
     ElectedRole, Election, ElectionType, ElectionSubType)
-from organisations.models import (
-    Organisation, OrganisationDivision, DivisionGeography)
+from organisations.models import Organisation, DivisionGeography
+from organisations.tests.factories import OrganisationDivisionFactory
 
 from .base_tests import BaseElectionCreatorMixIn
 
@@ -33,21 +33,6 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         self.assertEqual(Election.objects.count(), 0)
         all_data = self.base_data
         all_data.update({self.make_div_id(): 'contested'})
-        expected_ids = [
-            'local.'+self.date_str,
-            'local.test.'+self.date_str,
-            'local.test.test-div.'+self.date_str,
-        ]
-
-        self.run_test_with_data(
-            all_data,
-            expected_ids
-        )
-
-    def test_organisation_str(self):
-        all_data = self.base_data
-        all_data.update({self.make_div_id(): 'contested'})
-        all_data['election_organisation'] = ['local-authority', ]
         expected_ids = [
             'local.'+self.date_str,
             'local.test.'+self.date_str,
@@ -208,12 +193,12 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             elected_title="Assembly Member",
             elected_role_name="Assembly Member for Foo",
         )
-        org_div_3 = OrganisationDivision.objects.create(
+        org_div_3 = OrganisationDivisionFactory(
             organisation=naw_org,
             name="Test Div 3",
             slug="test-div-3"
         )
-        org_div_4 = OrganisationDivision.objects.create(
+        org_div_4 = OrganisationDivisionFactory(
             organisation=naw_org,
             name="Test Div 4",
             slug="test-div-4"

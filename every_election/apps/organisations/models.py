@@ -69,7 +69,7 @@ class OrganisationDivision(models.Model):
     """
     organisation = models.ForeignKey(Organisation, related_name='divisions')
     divisionset = models.ForeignKey(
-        OrganisationDivisionSet, related_name='divisions', null=True)
+        OrganisationDivisionSet, related_name='divisions', null=False)
     name = models.CharField(blank=True, max_length=255)
     official_identifier = models.CharField(
         blank=True, max_length=255, db_index=True)
