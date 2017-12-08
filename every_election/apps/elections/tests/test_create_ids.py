@@ -2,8 +2,8 @@ from django.test import TestCase
 
 from elections.models import (
     ElectedRole, Election, ElectionType, ElectionSubType)
-from organisations.models import (
-    Organisation, OrganisationDivision, DivisionGeography)
+from organisations.models import Organisation, DivisionGeography
+from organisations.tests.factories import OrganisationDivisionFactory
 
 from .base_tests import BaseElectionCreatorMixIn
 
@@ -208,12 +208,12 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             elected_title="Assembly Member",
             elected_role_name="Assembly Member for Foo",
         )
-        org_div_3 = OrganisationDivision.objects.create(
+        org_div_3 = OrganisationDivisionFactory(
             organisation=naw_org,
             name="Test Div 3",
             slug="test-div-3"
         )
-        org_div_4 = OrganisationDivision.objects.create(
+        org_div_4 = OrganisationDivisionFactory(
             organisation=naw_org,
             name="Test Div 4",
             slug="test-div-4"
