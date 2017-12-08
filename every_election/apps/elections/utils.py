@@ -209,7 +209,7 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
         # Make a group ID for the date and election type
         date_id = ElectionBuilder(all_data['election_type'], all_data['date'])\
             .build_election_group()
-        if date_id not in all_ids:
+        if date_id.election_id not in [e.election_id for e in all_ids]:
             all_ids.append(date_id)
 
         # GROUP 2
@@ -220,7 +220,7 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                     all_data['election_type'], all_data['date'])\
                     .with_organisation(organisation)\
                     .build_organisation_group(date_id)
-                if group_id not in all_ids:
+                if group_id.election_id not in [e.election_id for e in all_ids]:
                     all_ids.append(group_id)
             else:
                 group_id = date_id
@@ -233,7 +233,7 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                 .with_source(all_data.get('source', ''))\
                 .with_snooped_election(all_data.get('radar_id', None))\
                 .build_ballot(group_id)
-            if mayor_id not in all_ids:
+            if mayor_id.election_id not in [e.election_id for e in all_ids]:
                 all_ids.append(mayor_id)
 
         if subtypes:
