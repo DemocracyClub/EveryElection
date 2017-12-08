@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 
 from organisations.models import Organisation, OrganisationDivision
 from elections.models import ElectionType, ElectedRole
@@ -18,7 +18,7 @@ class BaseElectionCreatorMixIn():
 
 
     def _create_models(self):
-        self.date = datetime.today()
+        self.date = date.today()
         self.date_str = self.date.strftime("%Y-%m-%d")
 
         self.election_type1 = ElectionType.objects.get(

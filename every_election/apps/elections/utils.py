@@ -17,6 +17,8 @@ class ElectionBuilder:
 
         if type(date) == str:
             date = datetime.strptime(date, "%Y-%m-%d")
+        if type(date) == datetime:
+            date = date.date()
         self.date = date
 
         # Initialise an IdBuiler object.
