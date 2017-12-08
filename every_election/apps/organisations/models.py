@@ -89,6 +89,11 @@ class OrganisationDivision(models.Model):
 
     class Meta:
         ordering = ('name',)
+        unique_together = (
+            'organisation',
+            'divisionset',
+            'official_identifier'
+        )
 
     def format_geography_link(self):
         code_type, code = self.geography_curie.split(':')

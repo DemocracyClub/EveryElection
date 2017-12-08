@@ -195,9 +195,12 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             all_data['radar_id'] = self.storage.extra_data.get('radar_id', None)
 
         context['all_data'] = all_data
-        all_ids = create_ids_for_each_ballot_paper(all_data, self.get_election_subtypes())
-        # all_ids = create_ids_grouped(all_data, self.get_election_subtypes())
-        context['all_ids'] = all_ids
+        if self.kwargs['step'] in ["review", self.done_step_name]:
+            all_ids = create_ids_for_each_ballot_paper(
+                all_data,
+                self.get_election_subtypes()
+            )
+            context['all_ids'] = all_ids
         return context
 
     def get_form_kwargs(self, step):
