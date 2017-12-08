@@ -189,6 +189,8 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         if not 'date' in all_data:
             all_data['date'] = None
 
+        all_data['election_organisation'] = self.get_organisations()
+
         if not all_data.get('election_organisation'):
             all_data.update(self.storage.extra_data)
         else:
