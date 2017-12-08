@@ -79,6 +79,15 @@ class ElectionBuilder:
                 (division, self.organisation)
             )
 
+        divisionset = division.divisionset
+
+        if divisionset.start_date and divisionset.start_date > self.date:
+            raise ValueError(
+                'DivisionSet start date after election date')
+        if divisionset.end_date and divisionset.end_date < self.date:
+            raise ValueError(
+                'DivisionSet end date before election date')
+
         self.id = self.id.with_division(division.slug)
         self.division = division
         return self
