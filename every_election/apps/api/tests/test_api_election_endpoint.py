@@ -94,7 +94,6 @@ class TestElectionAPIQueries(APITestCase):
 
         resp = self.client.get("/api/elections/")
 
-        print(json.dumps(resp.json(), indent=4))
         assert resp.json() == json.loads("""
         {
             "next": null,
