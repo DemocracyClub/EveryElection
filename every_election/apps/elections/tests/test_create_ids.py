@@ -44,21 +44,6 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             expected_ids
         )
 
-    def test_organisation_str(self):
-        all_data = self.base_data
-        all_data.update({self.make_div_id(): 'contested'})
-        all_data['election_organisation'] = ['local-authority', ]
-        expected_ids = [
-            'local.'+self.date_str,
-            'local.test.'+self.date_str,
-            'local.test.test-div.'+self.date_str,
-        ]
-
-        self.run_test_with_data(
-            all_data,
-            expected_ids
-        )
-
     def test_creates_div_data_ids_two_divs(self):
         all_data = self.base_data
 

@@ -191,9 +191,7 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
     all_ids = []
     for organisation in all_data.get('election_organisation', []):
         group_id = None
-        if type(organisation) == str:
-            organisation = Organisation.objects.get(
-                organisation_type=organisation)
+
         pk = str(organisation.pk)
         div_data = {
             k: v for k, v
