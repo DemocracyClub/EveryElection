@@ -41,7 +41,7 @@ class Organisation(models.Model):
 
 class OrganisationDivisionSet(models.Model):
     organisation = models.ForeignKey(Organisation, related_name='divisionset')
-    start_date = models.DateField(null=True)
+    start_date = models.DateField(null=False)
     end_date = models.DateField(null=True)
     legislation_url = models.CharField(blank=True, max_length=500, null=True)
     consultation_url = models.CharField(blank=True, max_length=500, null=True)
@@ -59,6 +59,7 @@ class OrganisationDivisionSet(models.Model):
 
     class Meta:
         ordering = ('-start_date',)
+        unique_together = ('organisation', 'start_date')
 
 
 class OrganisationDivision(models.Model):
