@@ -213,6 +213,15 @@ class TestIdBuilder(TestCase):
             IdBuilder('gla', date(2018, 5, 3))\
                 .with_subtype('x')
 
+    def test_gla_without_subtype(self):
+        id = IdBuilder('gla', date(2018, 5, 3))
+        election_id = id.election_group_id
+        self.assertEqual('gla.2018-05-03', election_id)
+        with self.assertRaises(ValueError):
+            id.organisation_group_id
+        with self.assertRaises(ValueError):
+            id.ballot_id
+
     def test_gla_with_org(self):
         for subtype in ('a', 'c'):
             with self.assertRaises(ValueError):
