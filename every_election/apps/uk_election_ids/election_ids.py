@@ -106,7 +106,6 @@ class IdBuilder:
         # validation checks necessary to create any id
         self._validate_election_type(self.election_type)
         self._validate_organisation(self.organisation)
-        self._validate_division(self.division)
         if self.spec.can_have_orgs and self._can_have_divs and not self.organisation and self.division:
             raise ValueError("election_type %s must have an organisation in order to have a division" % (self.election_type))
         self._validate_contest_type(self.contest_type)
@@ -158,6 +157,7 @@ class IdBuilder:
     @property
     def ballot_id(self):
         self._validate()
+        self._validate_division(self.division)
         self._validate_for_ballot_id()
 
         parts = []
