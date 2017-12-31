@@ -18,6 +18,7 @@ class Organisation(models.Model):
     election_types = models.ManyToManyField(
         'elections.ElectionType', through='elections.ElectedRole')
     election_name = models.CharField(blank=True, max_length=255)
+    ValidationError = ValueError
 
     def __str__(self):
         return "{}".format(self.name)
@@ -48,6 +49,7 @@ class OrganisationDivisionSet(models.Model):
     short_title = models.CharField(blank=True, max_length=200)
     mapit_generation_id = models.CharField(blank=True, max_length=255)
     notes = models.TextField(blank=True)
+    ValidationError = ValueError
 
     def __str__(self):
         return "{}:{} ({} to {})".format(
@@ -83,6 +85,7 @@ class OrganisationDivision(models.Model):
     mapit_generation_low = models.IntegerField(blank=True, null=True)
     mapit_generation_high = models.IntegerField(blank=True, null=True)
     territory_code = models.CharField(blank=True, max_length=10)
+    ValidationError = ValueError
 
 
     def __str__(self):

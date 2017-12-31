@@ -1,5 +1,5 @@
 from datetime import datetime
-from organisations.models import Organisation, OrganisationDivision
+from organisations.models import Organisation, OrganisationDivision, OrganisationDivisionSet
 from elections.models import (
     Election, ElectedRole, ElectionSubType, ElectionType, VotingSystem)
 from uk_election_ids.election_ids import IdBuilder
@@ -42,7 +42,7 @@ class ElectionBuilder:
         valid_subtypes = ElectionSubType.objects.filter(
             election_type=self.election_type)
         if subtype not in valid_subtypes:
-            raise ValueError(
+            raise ElectionSubType.ValidationError(
                 "'%s' is not a valid subtype for election type '%s'" %\
                 (subtype, self.election_type)
             )
@@ -54,7 +54,7 @@ class ElectionBuilder:
     def with_organisation(self, organisation):
         valid_election_types = organisation.election_types.all()
         if self.election_type not in valid_election_types:
-            raise ValueError(
+            raise Organisation.ValidationError(
                 "'%s' is not a valid organisation for election type '%s'" %\
                 (organisation, self.election_type)
             )
@@ -74,7 +74,7 @@ class ElectionBuilder:
 
     def with_division(self, division):
         if division.organisation != self.organisation:
-            raise ValueError(
+            raise OrganisationDivision.ValidationError(
                 "'%s' is not a child of '%s'" %\
                 (division, self.organisation)
             )
@@ -82,10 +82,10 @@ class ElectionBuilder:
         divisionset = division.divisionset
 
         if divisionset.start_date and divisionset.start_date > self.date:
-            raise ValueError(
+            raise OrganisationDivisionSet.ValidationError(
                 'DivisionSet start date after election date')
         if divisionset.end_date and divisionset.end_date < self.date:
-            raise ValueError(
+            raise OrganisationDivisionSet.ValidationError(
                 'DivisionSet end date before election date')
 
         self.id = self.id.with_division(division.slug)
