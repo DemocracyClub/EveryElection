@@ -27,6 +27,8 @@ class TestIdBuilder(TestCase):
             election_id = id.election_group_id
             self.assertEqual("%s.2018-05-03" % (election_type), election_id)
             with self.assertRaises(ValueError):
+                id.subtype_group_id
+            with self.assertRaises(ValueError):
                 id.organisation_group_id
             with self.assertRaises(ValueError):
                 id.ballot_id
@@ -44,12 +46,15 @@ class TestIdBuilder(TestCase):
                 .with_subtype('c')
             election_id = id.election_group_id
             self.assertEqual("%s.2018-05-03" % (election_type), election_id)
+            subtype_id = id.subtype_group_id
+            self.assertEqual("%s.c.2018-05-03" % (election_type), subtype_id)
             with self.assertRaises(ValueError):
                 id.organisation_group_id
             with self.assertRaises(ValueError):
                 id.ballot_id
             self.assertEqual([
                 "%s.2018-05-03" % (election_type),
+                "%s.c.2018-05-03" % (election_type),
             ], id.ids)
 
     def test_naw_sp_with_org(self):
@@ -65,12 +70,15 @@ class TestIdBuilder(TestCase):
                 .with_division('test-division')
             election_id = id.election_group_id
             self.assertEqual("%s.2018-05-03" % (election_type), election_id)
+            subtype_id = id.subtype_group_id
+            self.assertEqual("%s.r.2018-05-03" % (election_type), subtype_id)
             with self.assertRaises(ValueError):
                 id.organisation_group_id
             ballot_id = id.ballot_id
             self.assertEqual("%s.r.test-division.2018-05-03" % (election_type), ballot_id)
             self.assertEqual([
                 "%s.2018-05-03" % (election_type),
+                "%s.r.2018-05-03" % (election_type),
                 "%s.r.test-division.2018-05-03" % (election_type)
             ], id.ids)
 
@@ -92,6 +100,8 @@ class TestIdBuilder(TestCase):
             election_id = id.election_group_id
             self.assertEqual("%s.2018-05-03" % (election_type), election_id)
             with self.assertRaises(ValueError):
+                id.subtype_group_id
+            with self.assertRaises(ValueError):
                 id.organisation_group_id
             with self.assertRaises(ValueError):
                 id.ballot_id
@@ -103,6 +113,8 @@ class TestIdBuilder(TestCase):
                 .with_division('test-division')
             election_id = id.election_group_id
             self.assertEqual("%s.2018-05-03" % (election_type), election_id)
+            with self.assertRaises(ValueError):
+                id.subtype_group_id
             with self.assertRaises(ValueError):
                 id.organisation_group_id
             ballot_id = id.ballot_id
@@ -123,6 +135,8 @@ class TestIdBuilder(TestCase):
         with self.assertRaises(ValueError):
             id.election_group_id
         with self.assertRaises(ValueError):
+            id.subtype_group_id
+        with self.assertRaises(ValueError):
             id.organisation_group_id
         with self.assertRaises(ValueError):
             id.ballot_id
@@ -132,6 +146,8 @@ class TestIdBuilder(TestCase):
         id = IdBuilder('local', date(2018, 5, 3))
         election_id = id.election_group_id
         self.assertEqual("local.2018-05-03", election_id)
+        with self.assertRaises(ValueError):
+            id.subtype_group_id
         with self.assertRaises(ValueError):
             id.organisation_group_id
         with self.assertRaises(ValueError):
@@ -143,6 +159,8 @@ class TestIdBuilder(TestCase):
             .with_organisation('test-org')
         election_id = id.election_group_id
         self.assertEqual("local.2018-05-03", election_id)
+        with self.assertRaises(ValueError):
+            id.subtype_group_id
         organisation_id = id.organisation_group_id
         self.assertEqual("local.test-org.2018-05-03", organisation_id)
         with self.assertRaises(ValueError):
@@ -158,6 +176,8 @@ class TestIdBuilder(TestCase):
             .with_division('test-division')
         election_id = id.election_group_id
         self.assertEqual("local.2018-05-03", election_id)
+        with self.assertRaises(ValueError):
+            id.subtype_group_id
         organisation_id = id.organisation_group_id
         self.assertEqual("local.test-org.2018-05-03", organisation_id)
         ballot_id = id.ballot_id
@@ -186,6 +206,8 @@ class TestIdBuilder(TestCase):
                 .with_organisation('test-org')
             election_id = id.election_group_id
             self.assertEqual("%s.2018-05-03" % (election_type), election_id)
+            with self.assertRaises(ValueError):
+                id.subtype_group_id
             organisation_id = id.organisation_group_id
             ballot_id = id.ballot_id
             self.assertEqual("%s.test-org.2018-05-03" % (election_type), ballot_id)
@@ -200,6 +222,8 @@ class TestIdBuilder(TestCase):
             id = IdBuilder(election_type, date(2018, 5, 3))
             election_id = id.election_group_id
             self.assertEqual("%s.2018-05-03" % (election_type), election_id)
+            with self.assertRaises(ValueError):
+                id.subtype_group_id
             with self.assertRaises(ValueError):
                 id.organisation_group_id
             with self.assertRaises(ValueError):
@@ -217,6 +241,8 @@ class TestIdBuilder(TestCase):
         id = IdBuilder('gla', date(2018, 5, 3))
         election_id = id.election_group_id
         self.assertEqual('gla.2018-05-03', election_id)
+        with self.assertRaises(ValueError):
+            id.subtype_group_id
         with self.assertRaises(ValueError):
             id.organisation_group_id
         with self.assertRaises(ValueError):
@@ -245,6 +271,8 @@ class TestIdBuilder(TestCase):
             .with_subtype('a')
         election_id = id.election_group_id
         self.assertEqual("gla.2018-05-03", election_id)
+        subtype_id = id.subtype_group_id
+        self.assertEqual("gla.a.2018-05-03", subtype_id)
         with self.assertRaises(ValueError):
             id.organisation_group_id
         ballot_id = id.ballot_id
@@ -260,12 +288,15 @@ class TestIdBuilder(TestCase):
             .with_division('test-div')
         election_id = id.election_group_id
         self.assertEqual("gla.2018-05-03", election_id)
+        subtype_id = id.subtype_group_id
+        self.assertEqual("gla.c.2018-05-03", subtype_id)
         with self.assertRaises(ValueError):
             id.organisation_group_id
         ballot_id = id.ballot_id
         self.assertEqual("gla.c.test-div.2018-05-03", ballot_id)
         self.assertEqual([
             "gla.2018-05-03",
+            "gla.c.2018-05-03",
             "gla.c.test-div.2018-05-03"
         ], id.ids)
 

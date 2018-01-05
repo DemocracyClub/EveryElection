@@ -120,6 +120,25 @@ class IdBuilder:
         parts.append(self.date)
         return ".".join(parts)
 
+    def _validate_for_subtype_group_id(self):
+        if not isinstance(self.spec.subtypes, tuple):
+            raise ValueError("Can't create subtype id for election_type %s" % (self.election_type))
+        if isinstance(self.spec.subtypes, tuple) and not self.subtype:
+            raise ValueError("Subtype must be specified for election_type %s" % (self.election_type))
+        self._validate_subtype(self.subtype)
+        return True
+
+    @property
+    def subtype_group_id(self):
+        self._validate()
+        self._validate_for_subtype_group_id()
+
+        parts = []
+        parts.append(self.election_type)
+        parts.append(self.subtype)
+        parts.append(self.date)
+        return ".".join(parts)
+
     def _validate_for_organisation_group_id(self):
         # validation checks specifically relevant to creating an organisation group id
         if isinstance(self.spec.subtypes, tuple) and not self.subtype:
@@ -129,6 +148,7 @@ class IdBuilder:
             raise ValueError("election_type %s can not have an organisation group id" % (self.election_type))
         if self.spec.can_have_orgs and not self.organisation:
             raise ValueError("election_type %s must have an organisation in order to create an organisation group id" % (self.election_type))
+        return True
 
     @property
     def organisation_group_id(self):
@@ -181,6 +201,12 @@ class IdBuilder:
             ids.append(self.election_group_id)
         except ValueError:
             pass
+
+        if isinstance(self.spec.subtypes, tuple):
+            try:
+                ids.append(self.subtype_group_id)
+            except ValueError:
+                pass
 
         if self.spec.can_have_orgs:
             try:
