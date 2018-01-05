@@ -143,7 +143,7 @@ class ElectionSerializer(serializers.HyperlinkedModelSerializer):
         return obj.get_current
 
     def get_voting_system(self, obj):
-        if obj.group_type == 'organisation' or not obj.group_type:
+        if obj.group_type == 'organisation' or obj.group_type == 'subtype' or not obj.group_type:
             return VotingSystemSerializer(obj.voting_system).data
         return None
 

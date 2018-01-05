@@ -175,6 +175,16 @@ class ElectionBuilder:
             'snooped_election_id': None,
         })
 
+    def build_subtype_group(self, group):
+        return self._build({
+            'election_id': self.id.subtype_group_id,
+            'group': group,
+            'group_type': 'subtype',
+            'notice': None,
+            'source': '',
+            'snooped_election_id': None,
+        })
+
     def build_organisation_group(self, group):
         return self._build({
             'election_id': self.id.organisation_group_id,
@@ -247,6 +257,15 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
 
         if subtypes:
             for subtype in all_data.get('election_subtype', []):
+
+                subtype_id = ElectionBuilder(
+                    all_data['election_type'], all_data['date'])\
+                    .with_subtype(subtype)\
+                    .with_source(all_data.get('source', ''))\
+                    .with_snooped_election(all_data.get('radar_id', None))\
+                    .build_subtype_group(group_id)
+                all_ids.append(subtype_id)
+
                 for div, contest_type in div_data.items():
                     org_div = OrganisationDivision.objects.get(
                         pk=div.split('__')[1]
@@ -262,9 +281,9 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
 
                     if contest_type == 'by_election':
                         all_ids.append(
-                            builder.with_contest_type('by').build_ballot(group_id))
+                            builder.with_contest_type('by').build_ballot(subtype_id))
                     elif contest_type in ['contested', 'seats_contested']:
-                        all_ids.append(builder.build_ballot(group_id))
+                        all_ids.append(builder.build_ballot(subtype_id))
                     else:
                         raise ValueError("Unrecognised contest_type value '%s'" % contest_type)
         else:
