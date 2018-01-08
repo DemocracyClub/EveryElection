@@ -264,7 +264,8 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                     .with_source(all_data.get('source', ''))\
                     .with_snooped_election(all_data.get('radar_id', None))\
                     .build_subtype_group(group_id)
-                all_ids.append(subtype_id)
+                if subtype_id.election_id not in [e.election_id for e in all_ids]:
+                    all_ids.append(subtype_id)
 
                 for div, contest_type in div_data.items():
                     org_div = OrganisationDivision.objects.get(
