@@ -153,6 +153,12 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         parl_election_type = ElectionType.objects.get(
             election_type='parl',
         )
+        ElectedRole.objects.create(
+            election_type=parl_election_type,
+            organisation=parl_org,
+            elected_title="Member of Parliament",
+            elected_role_name="Member of Parliament",
+        )
 
 
         all_data =  {
