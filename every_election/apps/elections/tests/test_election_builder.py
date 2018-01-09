@@ -2,7 +2,7 @@ from django.test import TestCase
 from elections.models import ElectionType, ElectionSubType, ElectedRole
 from elections.utils import ElectionBuilder
 from election_snooper.models import SnoopedElection
-from organisations.models import Organisation
+from organisations.models import Organisation, OrganisationDivision
 from .base_tests import BaseElectionCreatorMixIn
 
 
@@ -44,7 +44,7 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
             election_type=self.election_type1,
         )
         builder = ElectionBuilder(naw_election_type, '2017-06-08')
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ElectionSubType.ValidationError):
             builder.with_subtype(invalid_sub_type)
 
     def test_invalid_organisation(self):
@@ -53,7 +53,7 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
         # delete the relationship between org1 and local elections
         self.elected_role1.delete()
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(Organisation.ValidationError):
             builder.with_organisation(self.org1)
 
     def test_invalid_division(self):
@@ -77,5 +77,5 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
 
         # self.org_div_1 is not a child of org2
         # its a child of self.org1
-        with self.assertRaises(ValueError):
+        with self.assertRaises(OrganisationDivision.ValidationError):
             builder.with_division(self.org_div_1)
