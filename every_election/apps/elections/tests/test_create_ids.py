@@ -63,6 +63,47 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             expected_ids
         )
 
+    def test_creates_ids_two_orgs(self):
+        org2 = Organisation.objects.create(
+            official_identifier='TEST2',
+            organisation_type='local-authority',
+            official_name="Test Council 2",
+            gss="X00000002",
+            slug="test2",
+            territory_code="ENG",
+            election_name="Test Council 2 Local Elections",
+        )
+        ElectedRole.objects.create(
+            election_type=self.election_type1,
+            organisation=org2,
+            elected_title="Local Councillor",
+            elected_role_name="Councillor for Test Council 2",
+        )
+        div3 = OrganisationDivisionFactory(
+            organisation=org2,
+            name="Test Div 3",
+            slug="test-div-3"
+        )
+
+        all_data = self.base_data
+        all_data['election_organisation'] = [self.org1, org2]
+        all_data.update({
+            self.make_div_id(): 'contested',
+            self.make_div_id(org=org2, div=div3): 'contested',
+        })
+        expected_ids = [
+            'local.'+self.date_str,
+            'local.test.'+self.date_str,
+            'local.test2.'+self.date_str,
+            'local.test.test-div.'+self.date_str,
+            'local.test2.test-div-3.'+self.date_str,
+        ]
+
+        self.run_test_with_data(
+            all_data,
+            expected_ids
+        )
+
     def test_creates_div_data_ids_blank_divs(self):
         all_data = self.base_data
 
