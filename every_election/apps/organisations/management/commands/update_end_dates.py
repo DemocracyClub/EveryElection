@@ -115,5 +115,5 @@ class Command(BaseCommand):
         we won't write any changes to the DB
         """
         for rec in updates:
-            self.stdout.write('Updating end_date for %s' % (str(ods)))
+            self.stdout.write('Updating end_date for %s' % (str(rec)))
             rec.save()
