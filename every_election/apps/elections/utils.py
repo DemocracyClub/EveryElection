@@ -117,10 +117,19 @@ class ElectionBuilder:
             return None
 
     def get_voting_system(self):
+        # Scottish council elections use Single Transferrable Vote
         if self._use_org:
             if self.organisation.territory_code == "SCT" and \
                     self.election_type.election_type == "local":
                 return VotingSystem.objects.get(slug="STV")
+
+        # The Constituency ballots in an Additional Member System
+        # election are essentially FPTP
+        if self.election_type.default_voting_system.slug == 'AMS' and\
+                self.subtype and self.subtype.election_subtype == 'c':
+            return VotingSystem.objects.get(slug="FPTP")
+
+        # otherwise we can rely on the election type
         return self.election_type.default_voting_system
 
     def __repr__(self):
