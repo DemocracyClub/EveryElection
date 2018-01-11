@@ -6,6 +6,7 @@ from .views import (
     IDCreatorWizard,
     FORMS,
     CONDITION_DICT,
+    ReferenceDefinitionView,
     SingleElection,
 )
 from elections.views.sync import get_election_fixture
@@ -22,6 +23,9 @@ urlpatterns = [
     url(r'^election_types$',
         ElectionTypesView.as_view(),
         name='election_types_view'),
+    url(r'^reference_definition$',
+        ReferenceDefinitionView.as_view(),
+        name='reference_definition_view'),
 
     url(r'^elections$',
         AllElectionsView.as_view(),
