@@ -17,16 +17,17 @@
 <script>
 fallback.ready(function() {
 
-    $("<button type=button class=button>Mark all seats as contested (can't be undone)</button>")
-    .insertAfter(".inline_radios .form-group h2").on('click', function() {
-        $('input[value=seats_contested]').prop("checked", true);
-        $('input[value=seats_contested]').parent().addClass("selected");
-        $('input[value=no_seats]').parent().removeClass("selected");
-        $('input[value=by_election]').parent().removeClass("selected");
-    });
-});
+    $("form").prepend(
+      $("<button type='button' class='button'>Mark all seats as contested (can't be undone)</button>")
+        .on('click', function() {
+          $('input[value=seats_contested]').prop("checked", true);
+          $('input[value=seats_contested]').parent().addClass("selected");
+          $('input[value=no_seats]').parent().removeClass("selected");
+          $('input[value=by_election]').parent().removeClass("selected");
+        })
+    );
 
-// });
+});
 
 </script>
 {% endblock extra_javascript %}
