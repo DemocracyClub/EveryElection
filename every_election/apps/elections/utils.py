@@ -135,7 +135,15 @@ class ElectionBuilder:
     def __repr__(self):
         return self.id.__repr__()
 
-    def to_title(self):
+    def to_title(self, id_type):
+        if id_type == 'election':
+            return self.election_type.name
+        if id_type == 'subtype':
+            return "{election} ({subtype})".format(
+                election=self.election_type.name,
+                subtype=self.subtype.name
+            )
+
         parts = []
         if self._use_org and self.organisation:
             parts.append(self.organisation.election_name)
@@ -166,7 +174,6 @@ class ElectionBuilder:
             return Election(**merge_dicts(record, {
                 'poll_open_date': self.date,
                 'election_type': self.election_type,
-                'election_title': self.to_title(),
                 'election_subtype': self.subtype,
                 'organisation': self.organisation,
                 'division': self.division,
@@ -177,6 +184,7 @@ class ElectionBuilder:
     def build_election_group(self):
         return self._build({
             'election_id': self.id.election_group_id,
+            'election_title': self.to_title('election'),
             'group': None,
             'group_type': 'election',
             'notice': None,
@@ -187,6 +195,7 @@ class ElectionBuilder:
     def build_subtype_group(self, group):
         return self._build({
             'election_id': self.id.subtype_group_id,
+            'election_title': self.to_title('subtype'),
             'group': group,
             'group_type': 'subtype',
             'notice': None,
@@ -197,6 +206,7 @@ class ElectionBuilder:
     def build_organisation_group(self, group):
         return self._build({
             'election_id': self.id.organisation_group_id,
+            'election_title': self.to_title('organisation'),
             'group': group,
             'group_type': 'organisation',
             'notice': None,
@@ -207,6 +217,7 @@ class ElectionBuilder:
     def build_ballot(self, group):
         return self._build({
             'election_id': self.id.ballot_id,
+            'election_title': self.to_title('ballot'),
             'group': group,
             'group_type': None,
             'notice': self.notice,

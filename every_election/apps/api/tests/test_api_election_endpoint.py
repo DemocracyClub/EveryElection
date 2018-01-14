@@ -128,7 +128,7 @@ class TestElectionAPIQueries(APITestCase):
                         "territory_code": "ENG"
                     },
                     "election_type": {
-                        "name": "Local elections",
+                        "name": "Local Elections",
                         "election_type": "local"
                     },
                     "explanation": null,
