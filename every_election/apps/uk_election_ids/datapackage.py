@@ -1,20 +1,20 @@
 ELECTION_TYPES = {
     'parl': {
-        'name': "UK Parliament Elections",
+        'name': "UK Parliament elections",
         'subtypes': [],
         'default_voting_system': 'FPTP',
         'can_have_orgs': False,
         'can_have_divs': True,
     },
     'nia': {
-        'name': "Northern Ireland Assembly Elections",
+        'name': "Northern Ireland Assembly elections",
         'subtypes': [],
         'default_voting_system': 'STV',
         'can_have_orgs': False,
         'can_have_divs': True,
     },
     'naw': {
-        'name': "Welsh Assembly Elections",
+        'name': "National Assembly for Wales elections",
         'subtypes': [
             {'name': 'Constituencies', 'election_subtype': 'c'},
             {'name': 'Regions', 'election_subtype': 'r'},
@@ -24,7 +24,7 @@ ELECTION_TYPES = {
         'can_have_divs': True,
     },
     'sp': {
-        'name': "Scottish Parliament Elections",
+        'name': "Scottish Parliament elections",
         'subtypes': [
             {'name': 'Constituencies', 'election_subtype': 'c'},
             {'name': 'Regions', 'election_subtype': 'r'},
@@ -34,7 +34,7 @@ ELECTION_TYPES = {
         'can_have_divs': True,
     },
     'gla': {
-        'name': "Greater London Assembly Elections",
+        'name': "Greater London Assembly elections",
         'subtypes': [
             {
                 'name': 'Constituencies',
@@ -51,21 +51,21 @@ ELECTION_TYPES = {
         'default_voting_system': 'AMS',
     },
     'local': {
-        'name': "Local Elections",
+        'name': "Local elections",
         'subtypes': [],
         'default_voting_system': 'FPTP',
         'can_have_orgs': True,
         'can_have_divs': True,
     },
     'pcc': {
-        'name': "Police and Crime Commissioner Elections",
+        'name': "Police and Crime Commissioner elections",
         'subtypes': [],
         'default_voting_system': 'sv',
         'can_have_orgs': True,
         'can_have_divs': False,
     },
     'mayor': {
-        'name': "Mayoral Elections",
+        'name': "Mayoral elections",
         'subtypes': [],
         'default_voting_system': 'sv',
         'can_have_orgs': True,
