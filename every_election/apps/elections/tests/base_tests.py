@@ -33,7 +33,7 @@ class BaseElectionCreatorMixIn():
             gss="X00000001",
             slug="test",
             territory_code="ENG",
-            election_name="Test Council Local Elections",
+            election_name="Test Council local elections",
         )
 
         self.elected_role1 = ElectedRole.objects.create(

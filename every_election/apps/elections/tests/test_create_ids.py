@@ -10,13 +10,17 @@ from .base_tests import BaseElectionCreatorMixIn
 
 class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
 
-    def run_test_with_data(self, all_data, expected_ids, **kwargs):
+    def run_test_with_data(self, all_data, expected_ids, expected_titles, **kwargs):
         self.create_ids(all_data, **kwargs)
         assert Election.objects.count() == len(expected_ids)
 
         # ensure the records created match the expected ids
         for expected_id in expected_ids:
             assert Election.objects.filter(election_id=expected_id).exists()
+
+        # ensure the records created match the expected titles
+        for expected_title in expected_titles:
+            assert Election.objects.filter(election_title=expected_title).exists()
 
         # ensure group relationships have been saved correctly
         for election in Election.objects.all():
@@ -26,7 +30,8 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
     def test_group_id(self):
         self.run_test_with_data(
             self.base_data,
-            ['local.'+self.date_str, ]
+            ['local.'+self.date_str, ],
+            ['Local elections',]
         )
 
     def test_creates_div_data_ids(self):
@@ -38,10 +43,16 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             'local.test.'+self.date_str,
             'local.test.test-div.'+self.date_str,
         ]
+        expected_titles = [
+            'Local elections',
+            'Test Council local elections',
+            'Test Council local elections Test Div 1',
+        ]
 
         self.run_test_with_data(
             all_data,
-            expected_ids
+            expected_ids,
+            expected_titles
         )
 
     def test_creates_div_data_ids_two_divs(self):
@@ -57,10 +68,17 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             'local.test.test-div.'+self.date_str,
             'local.test.test-div-2.'+self.date_str,
         ]
+        expected_titles = [
+            'Local elections',
+            'Test Council local elections',
+            'Test Council local elections Test Div 1',
+            'Test Council local elections Test Div 2',
+        ]
 
         self.run_test_with_data(
             all_data,
-            expected_ids
+            expected_ids,
+            expected_titles
         )
 
     def test_creates_ids_two_orgs(self):
@@ -71,7 +89,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             gss="X00000002",
             slug="test2",
             territory_code="ENG",
-            election_name="Test Council 2 Local Elections",
+            election_name="Test Council 2 local elections",
         )
         ElectedRole.objects.create(
             election_type=self.election_type1,
@@ -98,10 +116,18 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             'local.test.test-div.'+self.date_str,
             'local.test2.test-div-3.'+self.date_str,
         ]
+        expected_titles = [
+            'Local elections',
+            'Test Council local elections',
+            'Test Council 2 local elections',
+            'Test Council local elections Test Div 1',
+            'Test Council 2 local elections Test Div 3',
+        ]
 
         self.run_test_with_data(
             all_data,
-            expected_ids
+            expected_ids,
+            expected_titles
         )
 
     def test_creates_div_data_ids_blank_divs(self):
@@ -116,10 +142,16 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             'local.test.'+self.date_str,
             'local.test.test-div.'+self.date_str,
         ]
+        expected_titles = [
+            'Local elections',
+            'Test Council local elections',
+            'Test Council local elections Test Div 1',
+        ]
 
         self.run_test_with_data(
             all_data,
-            expected_ids
+            expected_ids,
+            expected_titles
         )
 
     def test_creates_by_election(self):
@@ -135,10 +167,17 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             'local.test.test-div.by.'+self.date_str,
             'local.test.test-div-2.by.'+self.date_str,
         ]
+        expected_titles = [
+            'Local elections',
+            'Test Council local elections',
+            'Test Council local elections Test Div 1 by-election',
+            'Test Council local elections Test Div 2 by-election',
+        ]
 
         self.run_test_with_data(
             all_data,
-            expected_ids
+            expected_ids,
+            expected_titles
         )
 
         for election in Election.objects.filter(group_type=None):
@@ -152,7 +191,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             gss="X10000001",
             slug="test-ca",
             territory_code="ENG",
-            election_name="Test Council Mayoral Elections",
+            election_name="Test Council Mayoral elections",
         )
         mayor_election_type = ElectionType.objects.get(
             election_type='mayor',
@@ -175,10 +214,15 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             'mayor.'+self.date_str,
             'mayor.test-ca.'+self.date_str,
         ]
+        expected_titles = [
+            'Mayoral elections',
+            'Test Council Mayoral elections',
+        ]
 
         self.run_test_with_data(
             all_data,
-            expected_ids
+            expected_ids,
+            expected_titles
         )
 
     def test_creates_parl_id(self):
@@ -211,10 +255,14 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         expected_ids = [
             'parl.'+self.date_str,
         ]
+        expected_titles = [
+            'UK Parliament elections',
+        ]
 
         self.run_test_with_data(
             all_data,
-            expected_ids
+            expected_ids,
+            expected_titles
         )
 
     def test_creates_naw_id(self):
@@ -225,7 +273,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             gss="W20000001",
             slug="naw",
             territory_code="WLS",
-            election_name="Welsh Assembly",
+            election_name="National Assembly for Wales elections",
         )
         naw_election_type = ElectionType.objects.get(
             election_type='naw',
@@ -272,10 +320,17 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             'naw.c.test-div-3.'+self.date_str,  # no 'by' suffix
             'naw.c.test-div-4.by.'+self.date_str,  # 'by' suffix
         ]
+        expected_titles = [
+            'National Assembly for Wales elections',
+            'National Assembly for Wales elections (Constituencies)',
+            'Test Div 3 (Constituencies)',
+            'Test Div 4 (Constituencies) by-election',
+        ]
 
         self.run_test_with_data(
             all_data,
             expected_ids,
+            expected_titles,
             subtypes=[naw_election_sub_type, ]
         )
 
@@ -297,10 +352,17 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             'local.test.test-div.'+self.date_str,
             'local.test.test-div-2.'+self.date_str,
         ]
+        expected_titles = [
+            'Local elections',
+            'Test Council local elections',
+            'Test Council local elections Test Div 1',
+            'Test Council local elections Test Div 2',
+        ]
 
         self.run_test_with_data(
             all_data,
-            expected_ids
+            expected_ids,
+            expected_titles
         )
 
         for election in Election.objects.all():
@@ -333,10 +395,17 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             'local.test.test-div.'+self.date_str,
             'local.test.test-div-2.'+self.date_str,
         ]
+        expected_titles = [
+            'Local elections',
+            'Test Council local elections',
+            'Test Council local elections Test Div 1',
+            'Test Council local elections Test Div 2',
+        ]
 
         self.run_test_with_data(
             all_data,
-            expected_ids
+            expected_ids,
+            expected_titles
         )
 
         for election in Election.objects.all():

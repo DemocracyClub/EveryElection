@@ -1,20 +1,20 @@
 ELECTION_TYPES = {
     'parl': {
-        'name': "UK Parliament",
+        'name': "UK Parliament elections",
         'subtypes': [],
         'default_voting_system': 'FPTP',
         'can_have_orgs': False,
         'can_have_divs': True,
     },
     'nia': {
-        'name': "Northern Ireland assembly",
+        'name': "Northern Ireland Assembly elections",
         'subtypes': [],
         'default_voting_system': 'STV',
         'can_have_orgs': False,
         'can_have_divs': True,
     },
     'naw': {
-        'name': "Welsh assembly",
+        'name': "National Assembly for Wales elections",
         'subtypes': [
             {'name': 'Constituencies', 'election_subtype': 'c'},
             {'name': 'Regions', 'election_subtype': 'r'},
@@ -24,7 +24,7 @@ ELECTION_TYPES = {
         'can_have_divs': True,
     },
     'sp': {
-        'name': "Scottish parliament",
+        'name': "Scottish Parliament elections",
         'subtypes': [
             {'name': 'Constituencies', 'election_subtype': 'c'},
             {'name': 'Regions', 'election_subtype': 'r'},
@@ -34,7 +34,7 @@ ELECTION_TYPES = {
         'can_have_divs': True,
     },
     'gla': {
-        'name': "Greater London assembly",
+        'name': "Greater London Assembly elections",
         'subtypes': [
             {
                 'name': 'Constituencies',
@@ -58,14 +58,14 @@ ELECTION_TYPES = {
         'can_have_divs': True,
     },
     'pcc': {
-        'name': "Police and crime commissioner",
+        'name': "Police and Crime Commissioner elections",
         'subtypes': [],
         'default_voting_system': 'sv',
         'can_have_orgs': True,
         'can_have_divs': False,
     },
     'mayor': {
-        'name': "Directly elected Mayor",
+        'name': "Mayoral elections",
         'subtypes': [],
         'default_voting_system': 'sv',
         'can_have_orgs': True,
