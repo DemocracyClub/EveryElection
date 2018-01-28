@@ -60,11 +60,25 @@
 
     <h4>Organisation</h4>
     <p>An administrative body which can hold an election.</p>
+    <p>Organisation segments must use official names. Organisation names are
+    sourced from
+    <a href="https://registers.cloudapps.digital/">gov.uk registers</a>.
+    Short form versions of names should be used i.e:
+    <code>local.birmingham.2018-05-03</code> not
+    <code>local.birmingham-city-council.2017-05-04</code>.
+    </p>
 
     <h4>Division</h4>
     <p>A sub-part of an organisation that a candidate can be elected
     to represent. This could be a ward in the case of a local election
     or a constituency in the case of a parliamentary election.</p>
+
+    <p>Division segments must use names as they appear in legislation.
+    For boundaries that are already in use, the names of parliamentary
+    constituencies, district wards and county electoral divisions are
+    sourced from
+    <a href="https://www.ordnancesurvey.co.uk/business-and-government/products/boundary-line.html">OS Boundary Line</a>.
+    Names of new boundaries are extracted from Electoral Change Orders.</p>
 
     <h4>By-election</h4>
     <p>By-elections are indicated with the segment <code>by</code>.</p>
@@ -111,6 +125,13 @@
     <code>parl.2015-12-03</code>. The group id does not include the
     <code>by</code> segment, even if all of its childen are by-elections.
     </p>
+
+    <h3>Implementations</h3>
+    <p><a href="https://github.com/DemocracyClub/uk-election-ids">uk-election-ids</a>
+    - A python package with includes a builder object, slugging algorithm and
+    validation rules for creating identifiers that conform to this specification.
+    </p>
+
   </div>
 
 </section>
