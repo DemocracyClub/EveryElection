@@ -246,9 +246,11 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
 
         # GROUP 1
         # Make a group ID for the date and election type
-        date_id = ElectionBuilder(all_data['election_type'], all_data['date'])\
-            .with_organisation(organisation)\
-            .build_election_group()
+        builder = ElectionBuilder(all_data['election_type'], all_data['date'])
+        if all_data['election_type'].election_type not in ["local", "mayor", "pcc"]:
+            builder.with_organisation(organisation)
+        date_id = builder.build_election_group()
+
         if date_id.election_id not in [e.election_id for e in all_ids]:
             all_ids.append(date_id)
 
