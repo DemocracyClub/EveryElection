@@ -115,21 +115,6 @@ class Command(BaseCommand):
             return identifier
 
     def get_division_type_from_registers(self, line):
-        if not getattr(self, 'register_gss_map', None):
-            req = requests.get("https://raw.githubusercontent.com/openregister/local-authority-data/master/maps/gss.tsv")
-            self.register_gss_map = {}
-            for map_line in req.text.splitlines():
-                map_line = map_line.split('\t')
-                if map_line[0] == "gss":
-                    continue
-                self.register_gss_map[map_line[1]] = map_line[0]
-                if 'principal-local-authority' in map_line[1]:
-                    wls_key = map_line[1].replace(
-                        'principal-local-authority',
-                        'local-authority-wls',
-                    )
-                    self.register_gss_map[wls_key] = map_line[0]
-
         curie = ":".join([
             line['Organisation ID type'],
             line['Organisation ID'],
