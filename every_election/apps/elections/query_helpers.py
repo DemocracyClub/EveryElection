@@ -55,10 +55,6 @@ class mySocietyMapitPostcodeLookup(BaseMaPitPostcodeLookup):
     mapit_base = "https://mapit.mysociety.org/"
 
 
-class DemocracyClubMapitPostcodeLookup(BaseMaPitPostcodeLookup):
-    mapit_base = "https://mapit.democracyclub.org.uk/"
-
-
 class ONSPDStaticJsonLookup(BasePostcodeLookup):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -88,7 +84,6 @@ def get_point_from_postcode(postcode):
     postcode = postcode.upper()
     methods = [
         ONSPDStaticJsonLookup,
-        DemocracyClubMapitPostcodeLookup,
         mySocietyMapitPostcodeLookup,
     ]
     for method in methods:
