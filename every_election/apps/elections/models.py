@@ -15,9 +15,6 @@ from .managers import ElectionManager
 
 
 class ElectionType(models.Model):
-    """
-    As defined at https://democracyclub.org.uk/projects/election-ids/reference/
-    """
 
     name = models.CharField(blank=True, max_length=100)
     election_type = models.CharField(blank=True, max_length=100, unique=True)
@@ -29,9 +26,6 @@ class ElectionType(models.Model):
 
 
 class ElectionSubType(models.Model):
-    """
-    As defined at https://democracyclub.org.uk/projects/election-ids/reference/
-    """
 
     name = models.CharField(blank=True, max_length=100)
     election_type = models.ForeignKey('ElectionType', related_name="subtype")

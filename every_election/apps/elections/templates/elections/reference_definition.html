@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<section class="columns large-6 large-centered">
+
+  <div class="card postcode_card">
+    <h2>Election Identifier Reference</h2>
+
+    <p>An election code starts with an election type string. It may optionally
+    contain descriptors for election subtype, organisation and division
+    The identifier is terminated with the date that the polls open
+    (in ISO 8601 format) for that particular election.
+    Each section is separated by a period character ('.').
+    Names are slugified with hyphens ('-') separating tokens.
+    An optional segment is used to indicate by-elections</p>
+
+    <p>All characters used are URL-friendly lowercase unreserved characters --
+    i.e. RFC3986 unreserved characters = ALPHA / DIGIT / "-" / "." / "_" / "~",
+    where ALPHA is [a-z] and DIGIT is [0-9].</p>
+
+    <p>Examples of this could be
+      <code>parl.2015-05-07</code> or
+      <code>local.ashfield.hucknall-north.by.2017-10-12</code>
+    </p>
+
+    <h3>Segments</h3>
+    <table>
+      <tr>
+        <td><strong>Election type</strong></td><td>Required, text</td>
+      </tr>
+      <tr>
+        <td><strong>Election subtype</strong></td><td>Optional, text</td>
+      </tr>
+      <tr>
+        <td><strong>Organisation</strong></td><td>Optional, text</td>
+      </tr>
+      <tr>
+        <td><strong>Division</strong></td><td>Optional, text</td>
+      </tr>
+      <tr>
+        <td><strong>By-election</strong></td><td>Optional, text</td>
+      </tr>
+      <tr>
+        <td><strong>Date polls open</strong></td>
+        <td>Required, (ISO 8601 format date)</td>
+      </tr>
+    </table>
+
+    <h4>Election type</h4>
+    <p>All election identifiers must include an election type.
+    This describes the type of elected office that will be held
+    by the winner(s) of this election.</p>
+
+    <h4>Election subtype</h4>
+    <p>Subtypes are used when an official body (Scottish Parliament,
+    National Assembly for Wales, Greater London Authority) elects members
+    by two different methods. In this case, elections are split into
+    sub-elections based on voting system.</p>
+
+    <h4>Organisation</h4>
+    <p>An administrative body which can hold an election.</p>
+
+    <p>When an election type only covers a single organisation the
+    organisation segment of the ID is excluded. This is to prevent
+    <code>parl.parl</code>, <code>naw.naw</code> and so on where the
+    organisation name and election type are the same.</p>
+
+    <p>Organisation segments must use official names. Organisation names are
+    sourced from
+    <a href="https://registers.cloudapps.digital/">gov.uk registers</a>.
+    Short form versions of names should be used i.e:
+    <code>local.birmingham.2018-05-03</code> not
+    <code>local.birmingham-city-council.2017-05-04</code>.
+    </p>
+
+    <h4>Division</h4>
+    <p>A sub-part of an organisation that a candidate can be elected
+    to represent. This could be a ward in the case of a local election
+    or a constituency in the case of a parliamentary election.</p>
+
+    <p>Division segments must use names as they appear in legislation.
+    For boundaries that are already in use, the names of parliamentary
+    constituencies, district wards and county electoral divisions are
+    sourced from
+    <a href="https://www.ordnancesurvey.co.uk/business-and-government/products/boundary-line.html">OS Boundary Line</a>.
+    Names of new boundaries are extracted from Electoral Change Orders.</p>
+
+    <h4>By-election</h4>
+    <p>By-elections are indicated with the segment <code>by</code>.</p>
+
+    <h3>Identifier Types</h3>
+    <table>
+        <tr>
+          <th>Type</th>
+          <th>Subtype</th>
+          <th>Slug</th>
+          <th>Organisations</th>
+          <th>Divisions</th>
+        </tr>
+      {% for record in election_types %}
+        <tr>
+          <td>{{ record.name }}</td>
+          <td>{{ record.subtype.name }}</td>
+          <td>
+            <code>{{ record.slug }}{% if record.subtype.election_subtype %}.{{ record.subtype.election_subtype }}{% endif %}</code>
+          </td>
+          <td align="center">{% if record.can_have_orgs %}✔️{% else %}&nbsp;{% endif %}</td>
+          <td align="center">{% if record.can_have_divs %}✔️{% else %}&nbsp;{% endif %}</td>
+        </tr>
+      {% endfor %}
+    </table>
+
+    <h3>Hierarchy</h3>
+    <p>Election ids are hierarchical. The lowest level (or most detailed)
+    identifer for an election type is called the ballot id and describes
+    a single ballot paper. Each level above this is a group id.</p>
+
+    <p>For example, the ballot id<br />
+    <code>naw.c.aberavon.2016-05-05</code> is a child of the (subtype) group<br />
+    <code>naw.c.2016-05-05</code> which is in turn a child of the (election) group<br />
+    <code>naw.2016-05-05</code></p>
+
+    <p>Similarly, the ballot id<br />
+    <code>local.worcestershire.bewdley.2017-05-04</code> is a child of the (organisation) group<br />
+    <code>local.worcestershire.2017-05-04</code> which is in turn a child of the (election) group<br />
+    <code>local.2017-05-04</code></p>
+
+    <p>The <code>by</code> segment only applies to a ballot id, so<br />
+    <code>parl.oldham-west-and-royton.by.2015-12-03</code> is a child of <br />
+    <code>parl.2015-12-03</code>. The group id does not include the
+    <code>by</code> segment, even if all of its childen are by-elections.
+    </p>
+
+    <h3>Implementations</h3>
+    <p><a href="https://github.com/DemocracyClub/uk-election-ids">uk-election-ids</a>
+    - A python package with includes a builder object, slugging algorithm and
+    validation rules for creating identifiers that conform to this specification.
+    </p>
+
+  </div>
+
+</section>
+{% endblock content %}
