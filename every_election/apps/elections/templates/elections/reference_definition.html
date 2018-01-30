@@ -60,6 +60,12 @@
 
     <h4>Organisation</h4>
     <p>An administrative body which can hold an election.</p>
+
+    <p>When an election type only covers a single organisation the
+    organisation segment of the ID is excluded. This is to prevent
+    <code>parl.parl</code>, <code>naw.naw</code> and so on where the
+    organisation name and election type are the same.</p>
+
     <p>Organisation segments must use official names. Organisation names are
     sourced from
     <a href="https://registers.cloudapps.digital/">gov.uk registers</a>.
