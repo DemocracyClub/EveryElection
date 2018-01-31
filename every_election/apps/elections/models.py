@@ -88,7 +88,7 @@ class Election(SuggestedByPublicMixin, models.Model):
 
     # optional FK to a SnoopedElection record
     snooped_election = models.ForeignKey('election_snooper.SnoopedElection',
-        null=True, on_delete=models.SET_NULL)
+        null=True, blank=True, on_delete=models.SET_NULL)
 
     objects = ElectionManager.as_manager()
 
