@@ -60,7 +60,7 @@ class Command(BaseCommand):
             errorstr += "\n\nTo specify fixes names, upload a file 'name_map.json' "
             errorstr += 'with the structure:\n'
             errorstr += '{\n  "oldname1": "newname1",\n  "oldname2": "newname2"\n}'
-            self.stdout.write(errorstr)
+            self.stderr.write(errorstr)
 
     def get_data(self, filepath):
         s3 = S3Wrapper(settings.LGBCE_BUCKET)
