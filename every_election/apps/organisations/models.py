@@ -61,6 +61,7 @@ class OrganisationDivisionSet(models.Model):
 
     class Meta:
         ordering = ('-start_date',)
+        get_latest_by = 'start_date'
         unique_together = ('organisation', 'start_date')
 
 
