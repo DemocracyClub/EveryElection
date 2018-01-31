@@ -65,14 +65,12 @@ class Command(BaseCommand):
     def get_start_date(self, org):
         # Given an org, work out the start date for a new division set
         # based on the end date of the most recent previous division set
-        divsets = OrganisationDivisionSet.objects\
-            .filter(organisation=org)\
-            .order_by('-start_date')
+        divsets = OrganisationDivisionSet.objects.filter(organisation=org)
         if not divsets:
             raise Exception('Could not find any previous DivisionSets for Organisation %s' % org)
-        if not divsets[0].end_date:
+        if not divsets.latest().end_date:
             raise Exception('End date for previous DivisionSets %s is NULL' % divsets[0])
-        return divsets[0].end_date + timedelta(days=1)
+        return divsets.latest().end_date + timedelta(days=1)
 
     def create_division_sets(self, csv_data):
         for line in csv_data:
