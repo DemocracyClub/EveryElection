@@ -93,6 +93,9 @@ class Command(BaseCommand):
             .filter(organisation=org)\
             .order_by('-start_date')
 
+        if not divsets:
+            raise OrganisationDivisionSet.DoesNotExist()
+
         # divsets[0] is the DivisionSet with the most recent start date
         if not divsets[0].divisions.all():
             error = "Candidate DivisionSet '%s' has no Divisions. Can not import boundaries" % (divsets[0])
