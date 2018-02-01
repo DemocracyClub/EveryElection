@@ -1,5 +1,10 @@
 from django.contrib.gis.gdal.error import GDALException
-from django.contrib.gis.geos import Polygon, MultiPolygon
+from django.contrib.gis.geos import (
+    GEOSGeometry,
+    MultiPolygon,
+    Polygon,
+    WKTWriter
+)
 
 
 def _remove_invalid_geometries(in_features):
@@ -20,6 +25,14 @@ def _add_multipolygons(features):
             feature.multipolygon = MultiPolygon(feature.geom.geos)
         else:
            feature.multipolygon = feature.geom.geos
+    return features
+
+
+def _strip_z_values(features):
+    for feature in features:
+        writer = WKTWriter()
+        writer.outdim = 2  # force features into 2 dimensions
+        feature.multipolygon = GEOSGeometry(writer.write(feature.multipolygon))
     return features
 
 
@@ -47,5 +60,6 @@ def pre_process_layer(layer, srid):
     # then tidy it up
     features = _remove_invalid_geometries(features)
     features = _add_multipolygons(features)
+    features = _strip_z_values(features)
     features = _convert_multipolygons_to_latlong(features, srid)
     return features
