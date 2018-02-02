@@ -59,11 +59,22 @@ class OrganisationDivisionSet(models.Model):
             self.end_date or "now"
         )
 
+    @property
+    def has_related_geographies(self):
+        found_geography = False
+        for d in self.divisions.all():
+            try:
+                d.geography
+                found_geography = True
+                break
+            except DivisionGeography.DoesNotExist:
+                pass
+        return found_geography
+
     class Meta:
         ordering = ('-start_date',)
         get_latest_by = 'start_date'
         unique_together = ('organisation', 'start_date')
-
 
 class OrganisationDivision(models.Model):
     """

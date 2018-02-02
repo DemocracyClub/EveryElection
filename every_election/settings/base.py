@@ -174,10 +174,15 @@ REST_FRAMEWORK = {
 UPSTREAM_SYNC_URL = 'https://elections.democracyclub.org.uk/sync/'
 
 
+NOTICE_OF_ELECTION_BUCKET = 'notice-of-election'
+LGBCE_BUCKET = 'lgbce-mirror'
+
 AWS_ACCESS_KEY_ID = ''
 AWS_SECRET_ACCESS_KEY = ''
-AWS_STORAGE_BUCKET_NAME = 'notice-of-election'
 AWS_S3_REGION_NAME = 'eu-west-1'
+
+# django-storages expects AWS_STORAGE_BUCKET_NAME
+AWS_STORAGE_BUCKET_NAME = NOTICE_OF_ELECTION_BUCKET
 # versioning is on so we can retreive old copies
 AWS_S3_FILE_OVERWRITE = True
 
