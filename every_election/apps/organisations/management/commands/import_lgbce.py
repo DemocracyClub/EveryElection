@@ -89,28 +89,25 @@ class Command(BaseCommand):
 
     def get_division_set(self, org_code):
         org = Organisation.objects.get(official_identifier=org_code)
-        divsets = OrganisationDivisionSet.objects\
+        divset = OrganisationDivisionSet.objects\
             .filter(organisation=org)\
-            .order_by('-start_date')
+            .latest()
 
-        if not divsets:
-            raise OrganisationDivisionSet.DoesNotExist()
-
-        # divsets[0] is the DivisionSet with the most recent start date
-        if not divsets[0].divisions.all():
-            error = "Candidate DivisionSet '%s' has no Divisions. Can not import boundaries" % (divsets[0])
+        # divset is the DivisionSet with the most recent start date
+        if not divset.divisions.all():
+            error = "Candidate DivisionSet '%s' has no Divisions. Can not import boundaries" % (divset)
             raise Exception(error)
 
-        if divsets[0].has_related_geographies:
-            error = "Candidate DivisionSet '%s' already has related Geographies. Can not import boundaries" % (divsets[0])
+        if divset.has_related_geographies:
+            error = "Candidate DivisionSet '%s' already has related Geographies. Can not import boundaries" % (divset)
             raise Exception(error)
 
-        if divsets[0].end_date:
-            error = "Candidate DivisionSet '%s' already has end_date %s. Expected NULL" % (divsets[0], divsets[0].end_date)
+        if divset.end_date:
+            error = "Candidate DivisionSet '%s' already has end_date %s. Expected NULL" % (divset, divset.end_date)
             raise Exception(error)
 
         """
-        If we got to here, divsets[0] satisfies the following criteria:
+        If we got to here, divset satisfies the following criteria:
         - It has the most recent start date
         - It has a NULL end date
         - It has related Divisions
@@ -122,7 +119,7 @@ class Command(BaseCommand):
         as a command line argument in case we wanted to override this logic
         (e.g: importing historic boundaries)
         """
-        return divsets[0]
+        return divset
 
     def cleanup(self, tempdir):
         # clean up the temp files we created
