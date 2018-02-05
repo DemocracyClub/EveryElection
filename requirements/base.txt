@@ -2,7 +2,7 @@
 # After the first "pip install -r", just run "pip freeze" and add the version
 # to each package in each requirements/*.txt.
 
-Django>=1.10,<1.11
+Django>=1.11,<2.0
 six
 
 django-model-utils==2.6.1
