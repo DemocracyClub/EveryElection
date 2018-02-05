@@ -309,7 +309,7 @@ def mayor_importer():
         {
          'org': "North Tyneside Council",
          'org_id': 'NTY',
-         'elected_role_name': "Mayor of Tees Valley Combined Authority",
+         'elected_role_name': "Mayor of North Tyneside Council",
          'slug': "north-tyneside",
          'territory_code': 'ENG',
          'organisation_type': 'local-authority',
