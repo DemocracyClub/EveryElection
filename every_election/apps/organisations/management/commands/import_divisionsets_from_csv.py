@@ -110,7 +110,7 @@ class Command(BaseCommand):
                 div_set.organisation.official_identifier,
                 self.name_to_id(line['Name'])
             ])
-            return identifier
+        return identifier
 
     def get_division_type_from_registers(self, line):
         curie = ":".join([
