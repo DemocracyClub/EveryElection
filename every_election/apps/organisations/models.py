@@ -75,6 +75,13 @@ class OrganisationDivisionSet(models.Model):
         ordering = ('-start_date',)
         get_latest_by = 'start_date'
         unique_together = ('organisation', 'start_date')
+        unique_together = ('organisation', 'end_date')
+        """
+        Note:
+        This model also has an additional constraint to prevent
+        overlapping start and end dates which is defined in
+        organisations/migrations/0030_end_date_constraint.py
+        """
 
 class OrganisationDivision(models.Model):
     """
