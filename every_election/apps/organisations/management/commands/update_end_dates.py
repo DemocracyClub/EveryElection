@@ -25,8 +25,10 @@ import csv
 import datetime
 from io import StringIO
 import requests
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from organisations.models import Organisation, OrganisationDivisionSet
+from storage.s3wrapper import S3Wrapper
 
 
 class Command(BaseCommand):
@@ -41,14 +43,20 @@ class Command(BaseCommand):
         group.add_argument(
             '-f',
             '--file',
-            nargs=1,
-            help='Path to import CSV from',
+            action='store',
+            help='Path to import e.g: /foo/bar/baz.csv',
         )
         group.add_argument(
             '-u',
             '--url',
-            nargs=1,
-            help='URL to import CSV from',
+            action='store',
+            help='URL to import e.g: http://foo.bar/baz.csv',
+        )
+        group.add_argument(
+            '-s',
+            '--s3',
+            action='store',
+            help='S3 key to import e.g: foo/bar/baz.csv'
         )
 
         parser.add_argument(
@@ -74,11 +82,16 @@ class Command(BaseCommand):
         reader = csv.reader(f, delimiter=self.DELIMITER)
         return reader
 
-    def read_remote_csv(self, url):
+    def read_csv_from_url(self, url):
         r = requests.get(url)
         r.raise_for_status()
         reader = csv.reader(StringIO(r.text), delimiter=self.DELIMITER)
         return reader
+
+    def read_csv_from_s3(self, filepath):
+        s3 = S3Wrapper(settings.LGBCE_BUCKET)
+        f = s3.get_file(filepath)
+        return self.read_local_csv(f.name)
 
     def prepare_data(self, data):
         # validate and enrich input data
@@ -90,9 +103,11 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         if options['file']:
-            data = self.parse_csv(self.read_local_csv(options['file'][0]))
+            data = self.parse_csv(self.read_local_csv(options['file']))
         if options['url']:
-            data = self.parse_csv(self.read_remote_csv(options['url'][0]))
+            data = self.parse_csv(self.read_csv_from_url(options['url']))
+        if options['s3']:
+            data = self.parse_csv(self.read_csv_from_s3(options['s3']))
         data = self.prepare_data(data)
 
         updates = []

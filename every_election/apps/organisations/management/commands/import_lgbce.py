@@ -14,10 +14,18 @@ from storage.zipfile import unzip
 class Command(BaseCommand):
 
     def add_arguments(self, parser):
-        parser.add_argument('org', action='store',
-            help='3-letter organisation code e.g: KHL')
-        parser.add_argument('file', action='store',
-            help='Filename/key (on S3) to import e.g: foo/bar/baz.zip')
+        parser.add_argument(
+            'org',
+            action='store',
+            help='3-letter organisation code e.g: KHL'
+        )
+        parser.add_argument(
+            '-s',
+            '--s3',
+            required=True,
+            action='store',
+            help='S3 key to import e.g: foo/bar/baz.zip'
+        )
         parser.add_argument(
             '-n',
             '--name-column',
@@ -25,7 +33,6 @@ class Command(BaseCommand):
             default='name'
         )
         parser.add_argument(
-            '-s',
             '--srid',
             help="SRID (co-ordinates system) used by the input file (default = 27700)",
             default="27700",
@@ -37,8 +44,8 @@ class Command(BaseCommand):
         divset = self.get_division_set(options['org'])
 
         try:
-            (tempdir, data) = self.get_data(options['file'])
-            name_map = self.get_name_map(options['file'])
+            (tempdir, data) = self.get_data(options['s3'])
+            name_map = self.get_name_map(options['s3'])
             self.import_data(data, divset, options['name_column'], name_map, srid)
         except Exception:
             # if anything throws an unhandled error,

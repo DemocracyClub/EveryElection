@@ -76,7 +76,7 @@ class ImportLgbceTests(TestCase):
         cmd.get_name_map = lambda x: name_map
         args = {
             'org': org,
-            'file': 'foo.bar/baz',
+            's3': 'foo.bar/baz',
             'name_column': 'Ward_name',
             'srid': '27700',
         }

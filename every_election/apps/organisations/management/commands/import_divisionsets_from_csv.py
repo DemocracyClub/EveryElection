@@ -3,6 +3,7 @@ import re
 import requests
 from datetime import timedelta
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils.text import slugify
@@ -14,6 +15,7 @@ from organisations.models import (
 )
 from organisations.constants import (
     ORG_CURIE_TO_MAPIT_AREA_TYPE, PARENT_TO_CHILD_AREAS)
+from storage.s3wrapper import S3Wrapper
 
 
 class Command(BaseCommand):
@@ -27,14 +29,39 @@ class Command(BaseCommand):
     division_sets = {}
     # list of divisions
     divisions = []
+    ENCODING = 'utf-8'
+    DELIMITER = ','
 
     def add_arguments(self, parser):
-        parser.add_argument('url', action='store')
+        group = parser.add_mutually_exclusive_group(required=True)
+        group.add_argument(
+            '-f',
+            '--file',
+            action='store',
+            help='Path to import e.g: /foo/bar/baz.csv',
+        )
+        group.add_argument(
+            '-u',
+            '--url',
+            action='store',
+            help='URL to import e.g: http://foo.bar/baz.csv',
+        )
+        group.add_argument(
+            '-s',
+            '--s3',
+            action='store',
+            help='S3 key to import e.g: foo/bar/baz.csv'
+        )
 
     def handle(self, *args, **options):
         self.org_curie_to_area_type = ORG_CURIE_TO_MAPIT_AREA_TYPE
 
-        csv_data = self.get_data(options['url'])
+        if options['file']:
+            csv_data = self.read_local_csv(options['file'])
+        if options['url']:
+            csv_data = self.read_csv_from_url(options['url'])
+        if options['s3']:
+            csv_data = self.read_csv_from_s3(options['s3'])
 
         # first pass over the csv builds the division sets
         self.create_division_sets(csv_data)
@@ -46,17 +73,27 @@ class Command(BaseCommand):
         # save them all inside a transaction
         self.save_all()
 
-    def get_data(self, url):
+    def read_local_csv(self, filename):
+        f = open(filename, 'rt', encoding=self.ENCODING)
+        reader = csv.DictReader(f, delimiter=self.DELIMITER)
+        return list(reader)
+
+    def read_csv_from_url(self, url):
         r = requests.get(url)
 
         # if CSV came from google docs
         # manually set the encoding
         gdocs_pattern = r'(.)+docs\.google(.)+\/ccc(.)+'
         if re.match(gdocs_pattern, url):
-            r.encoding = 'utf-8'
+            r.encoding = self.ENCODING
 
         csv_reader = csv.DictReader(r.text.splitlines())
         return list(csv_reader)
+
+    def read_csv_from_s3(self, filepath):
+        s3 = S3Wrapper(settings.LGBCE_BUCKET)
+        f = s3.get_file(filepath)
+        return self.read_local_csv(f.name)
 
     def get_org_from_line(self, line):
         return Organisation.objects.get(
