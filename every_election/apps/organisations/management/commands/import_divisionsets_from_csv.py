@@ -1,3 +1,17 @@
+"""
+manage.py import_divisionsets_from_csv
+  -f FILE, --file FILE  Path to import e.g: /foo/bar/baz.csv
+  -u URL, --url URL     URL to import e.g: http://foo.bar/baz.csv
+  -s S3, --s3 S3        S3 key to import e.g: foo/bar/baz.csv
+
+This command imports a CSV containing division names from an Electoral
+Change Order and attaches them to a new DivisionSet for each organisation.
+
+Usually we will import from S3:
+python manage.py import_divisionsets_from_csv -s "foo/bar/baz.csv"
+"""
+
+
 import csv
 import re
 import requests

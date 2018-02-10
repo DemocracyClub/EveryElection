@@ -1,7 +1,8 @@
 """
 manage.py update_end_dates
-  -f FILE, --file FILE  Path to import CSV from
-  -u URL, --url URL     URL to import CSV from
+  -f FILE, --file FILE  Path to import e.g: /foo/bar/baz.csv
+  -u URL, --url URL     URL to import e.g: http://foo.bar/baz.csv
+  -s S3, --s3 S3        S3 key to import e.g: foo/bar/baz.csv
   -o, --overwrite       <Optional> Overwrite existing end dates with new values
 
 This command imports a CSV file of the form
@@ -13,10 +14,8 @@ BBB,2017-01-01,2017-12-31
 and updates OrganisationDivisionSet end_date if NULL
 (or even if they aren't NULL when using the --overwrite flag)
 
-We can import from a local file
-python manage.py update_end_dates -f /foo/bar/baz/myfile.csv
-or from a url
-python manage.py update_end_dates -u "http://foo.bar/baz/myfile.csv"
+Usually we will import from S3:
+python manage.py update_end_dates -s "foo/bar/baz.csv"
 """
 
 

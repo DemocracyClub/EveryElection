@@ -1,3 +1,20 @@
+"""
+manage.py import_lgbce
+  -s S3, --s3 S3        S3 key to import e.g: foo/bar/baz.zip
+  -n NAME_COLUMN, --name-column NAME_COLUMN
+                        Column in the input file where we should look for
+                        division names (default = 'name')
+  --srid {27700,4326}   SRID (co-ordinates system) used by the input file
+                        (default = 27700)
+
+This command imports boundaries from a shapefile published by LGBCE
+and attaches them to Divisions (based on name match) from the most recent
+DivisionSet with a NULL end date.
+
+manage.py import_lgbce FOO -s "foo/bar/baz.zip"
+"""
+
+
 import json
 import os
 import shutil
