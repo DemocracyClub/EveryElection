@@ -14,7 +14,7 @@ git+https://github.com/DemocracyClub/dc_signup_form.git@1.0.0
 uk-election-ids==0.1.0
 django-formtools==2.0
 django-filter
-django-markdown-app
+django-markdown-app==0.9.3.1
 djangorestframework==3.5.4
 djangorestframework-gis==0.11
 django-storages
