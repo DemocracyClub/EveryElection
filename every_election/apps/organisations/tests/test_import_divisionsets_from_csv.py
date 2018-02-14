@@ -8,6 +8,13 @@ class ImportDivisionSetsFromCsvTests(TestCase):
 
     def setUp(self):
         # set up test data
+
+        self.opts = {
+            'url': 'foo.bar/baz',
+            's3': None,
+            'file': None,
+        }
+
         self.org1 = Organisation.objects.create(
             official_identifier='TEST1',
             organisation_type='local-authority',
@@ -96,17 +103,17 @@ class ImportDivisionSetsFromCsvTests(TestCase):
         # Organisation doesn't exist
         cmd = Command()
         self.base_record['Organisation ID'] = 'XXXX'  # this Org ID doesn't exist
-        cmd.get_data = lambda x: [self.base_record]
+        cmd.read_csv_from_url = lambda x: [self.base_record]
         with self.assertRaises(Organisation.DoesNotExist):
-            cmd.handle(**{'url': 'foo.bar/baz'})
+            cmd.handle(**self.opts)
 
     def test_divset_not_found(self):
         # Organisation does exist, but has no associated DivisionSets
         cmd = Command()
         self.base_record['Organisation ID'] = 'TEST1'
-        cmd.get_data = lambda x: [self.base_record]
+        cmd.read_csv_from_url = lambda x: [self.base_record]
         with self.assertRaises(Exception):
-            cmd.handle(**{'url': 'foo.bar/baz'})
+            cmd.handle(**self.opts)
 
     def test_divset_null_end_date(self):
         # Organisation does exist and has an associated DivisionSets
@@ -123,16 +130,16 @@ class ImportDivisionSetsFromCsvTests(TestCase):
         )
         cmd = Command()
         self.base_record['Organisation ID'] = 'TEST1'
-        cmd.get_data = lambda x: [self.base_record]
+        cmd.read_csv_from_url = lambda x: [self.base_record]
         with self.assertRaises(Exception):
-            cmd.handle(**{'url': 'foo.bar/baz'})
+            cmd.handle(**self.opts)
 
     def test_valid(self):
         # all data is valid - should import cleanly
         cmd = Command()
-        cmd.get_data = lambda x: self.valid_test_data
+        cmd.read_csv_from_url = lambda x: self.valid_test_data
         cmd.get_division_type_from_registers = lambda x: 'DIW'
-        cmd.handle(**{'url': 'foo.bar/baz'})
+        cmd.handle(**self.opts)
 
         # check it all imported correctly
         org3divset = OrganisationDivisionSet\
