@@ -7,7 +7,7 @@ six
 
 django-model-utils==2.6.1
 
-psycopg2
+psycopg2-binary==2.7.4
 
 git+https://github.com/mysociety/django-pipeline-csscompressor
 git+git://github.com/DemocracyClub/dc_base_theme.git@72f902ea6fbf1c3891ac279351d7d42a6f7eb216
