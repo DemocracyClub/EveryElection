@@ -300,9 +300,16 @@ def mayor_importer():
          'organisation_type': 'combined-authority',
         },
         {
+         'org': "Sheffield City Region Combined Authority",
+         'elected_role_name': "Mayor of the Barnsley, Doncaster, Rotherham and Sheffield Combined Authority",
+         'slug': "sheffield-city-ca",
+         'territory_code': 'ENG',
+         'organisation_type': 'combined-authority',
+        },
+        {
          'org': "North Tyneside Council",
          'org_id': 'NTY',
-         'elected_role_name': "Mayor of Tees Valley Combined Authority",
+         'elected_role_name': "Mayor of North Tyneside Council",
          'slug': "north-tyneside",
          'territory_code': 'ENG',
          'organisation_type': 'local-authority',
