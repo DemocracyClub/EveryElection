@@ -4,7 +4,6 @@ language: python
 python:
   - '3.6'
   - '3.5'
-  - '3.4'
 addons:
   postgresql: '9.3'
   apt:
@@ -26,7 +25,6 @@ script:
 after_success:
   - coveralls
 before_cache:
-    - rm -f .tox/py34-django111/log/*.log
     - rm -f .tox/py35-django111/log/*.log
     - rm -f .tox/py36-django111/log/*.log
     - rm -f .cache/pip/log/*.log
