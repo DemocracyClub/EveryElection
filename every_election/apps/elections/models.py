@@ -5,7 +5,7 @@ from datetime import date, timedelta
 
 from django.db import models, transaction
 from django.core.files import File
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django_markdown.models import MarkdownField
 

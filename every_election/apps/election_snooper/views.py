@@ -2,7 +2,7 @@ import urllib
 from django.views.generic import TemplateView
 from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from election_snooper.models import SnoopedElection
 from election_snooper.forms import ReviewElectionForm

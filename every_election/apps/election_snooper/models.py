@@ -1,7 +1,7 @@
 import datetime
 
 from django.db import models
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from model_utils.models import StatusModel
 from model_utils import Choices
