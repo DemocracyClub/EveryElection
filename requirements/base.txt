@@ -10,7 +10,7 @@ django-model-utils==2.6.1
 psycopg2
 
 git+https://github.com/mysociety/django-pipeline-csscompressor
-git+git://github.com/DemocracyClub/dc_base_theme.git@72f902ea6fbf1c3891ac279351d7d42a6f7eb216
+git+git://github.com/DemocracyClub/dc_base_theme.git@2ffca23e03549231eaaa23f0994c5b27e898fe43
 git+https://github.com/DemocracyClub/dc_signup_form.git@1.0.0
 uk-election-ids==0.1.0
 django-formtools==2.0
