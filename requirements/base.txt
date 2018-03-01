@@ -1,28 +1,22 @@
-# Versions are left out on purpose in order for you to use the latest ones.
-# After the first "pip install -r", just run "pip freeze" and add the version
-# to each package in each requirements/*.txt.
-
-Django>=1.11,<2.0
-six
-
+beautifulsoup4==4.6.0
+boto3==1.6.2
+django==1.11.10 # pyup: >=1.11,<2.0
+django-extensions==1.7.7
+django-filter==1.1.0
+django-formtools==2.0
+django-markdown-app==0.9.3.1
 django-model-utils==2.6.1
-
+django-storages==1.6.5
+djangorestframework==3.7.7
+djangorestframework-gis==0.12.0
+glob2==0.6
+markdown==2.6.11
 psycopg2-binary==2.7.4
+requests==2.18.4
+requests_cache==0.4.13
+six==1.11.0
+uk-election-ids==0.1.0
 
 git+https://github.com/mysociety/django-pipeline-csscompressor
 git+git://github.com/DemocracyClub/dc_base_theme.git@2ffca23e03549231eaaa23f0994c5b27e898fe43
 git+https://github.com/DemocracyClub/dc_signup_form.git@1.0.0
-uk-election-ids==0.1.0
-django-formtools==2.0
-django-filter
-django-markdown-app==0.9.3.1
-djangorestframework==3.7.7
-djangorestframework-gis==0.12
-django-storages
-django-extensions==1.7.7
-glob2
-markdown
-requests
-requests_cache
-bs4
-boto3
