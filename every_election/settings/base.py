@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'django_filters',
     'django_markdown',
     'dc_signup_form',
+    'corsheaders',
 ]
 
 PROJECT_APPS = [
@@ -82,6 +83,7 @@ LOGGING = {
 }
 
 MIDDLEWARE_CLASSES = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -210,6 +212,13 @@ REST_FRAMEWORK = {
         'rest_framework_jsonp.renderers.JSONPRenderer',
     ),
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^/api/.*$'
+CORS_ALLOW_METHODS = (
+    'GET',
+    'OPTIONS',
+)
 
 UPSTREAM_SYNC_URL = 'https://elections.democracyclub.org.uk/sync/'
 
