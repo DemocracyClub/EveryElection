@@ -64,6 +64,17 @@ class TestElectionAPIQueries(APITestCase):
         assert data['results'][0]['election_id'] == election_id
 
     @vcr.use_cassette(
+        'fixtures/vcr_cassettes/test_election_for_postcode.yaml')
+    def test_election_endpoint_for_postcode_jsonp(self):
+        election_id = "local.place-name.2017-03-23"
+        ElectionFactory(group=None, election_id=election_id)
+        ElectionFactory(group=None, geography=None)
+        url = "/api/elections/?postcode=SW1A1AA" + \
+              "&format=jsonp&callback=a_callback_string"
+        resp = self.client.get(url)
+        assert resp.content.decode('utf8').startswith("a_callback_string(")
+
+    @vcr.use_cassette(
         'fixtures/vcr_cassettes/test_election_for_bad_postcode.yaml')
     def test_election_endpoint_for_bad_postcode(self):
         election_id = "local.place-name.2017-03-23"
