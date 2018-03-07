@@ -123,11 +123,26 @@ class Election(SuggestedByPublicMixin, models.Model):
             return self.tmp_election_id
 
     def get_geography(self):
+        if self.geography:
+            return self.geography
+
         try:
-            if not self.group_type and not self.geography and self.division:
-                return self.division.geography
-            if self.group_type == "organisation" and not self.geography and not self.division:
+
+            # if the election is a 'ballot'
+            if not self.group_type:
+                # attach geography by division if possible
+                if self.division:
+                    return self.division.geography
+                # else try to attach geography by organisation
+                # (e.g: for Mayors, PCCs etc)
+                if not self.division and self.organisation:
+                    return self.organisation.geography
+
+            # if the election is an 'organisation group'
+            # attach geography by organisation
+            if self.group_type == "organisation" and not self.division:
                 return self.organisation.geography
+
         except ObjectDoesNotExist:
             pass
         return None
