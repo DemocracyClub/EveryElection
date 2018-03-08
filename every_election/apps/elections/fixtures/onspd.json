@@ -1,0 +1,9 @@
+[
+    {
+        "fields": {
+            "pcds": "SW1A 1AA",
+            "location": "SRID=4326;POINT(-0.141588 51.501009)"
+        },
+        "model": "uk_geo_utils.onspd"
+    }
+]
