@@ -19,45 +19,22 @@ python manage.py update_end_dates -s "foo/bar/baz.csv"
 """
 
 
-from collections import namedtuple
-import csv
 import datetime
-from io import StringIO
-import requests
-from django.conf import settings
+from collections import namedtuple
+
 from django.core.management.base import BaseCommand
+
+from core.mixins import ReadFromCSVMixin
 from organisations.models import Organisation, OrganisationDivisionSet
-from storage.s3wrapper import S3Wrapper
 
 
-class Command(BaseCommand):
+class Command(ReadFromCSVMixin, BaseCommand):
 
-    ENCODING = 'utf-8'
-    DELIMITER = ','
     EXPECTED_COLS = ['org', 'start_date', 'end_date']
     Record = namedtuple('Record', EXPECTED_COLS)
 
     def add_arguments(self, parser):
-        group = parser.add_mutually_exclusive_group(required=True)
-        group.add_argument(
-            '-f',
-            '--file',
-            action='store',
-            help='Path to import e.g: /foo/bar/baz.csv',
-        )
-        group.add_argument(
-            '-u',
-            '--url',
-            action='store',
-            help='URL to import e.g: http://foo.bar/baz.csv',
-        )
-        group.add_argument(
-            '-s',
-            '--s3',
-            action='store',
-            help='S3 key to import e.g: foo/bar/baz.csv'
-        )
-
+        super(Command, self).add_arguments(parser)
         parser.add_argument(
             '-o',
             '--overwrite',
@@ -67,46 +44,25 @@ class Command(BaseCommand):
             default=False
         )
 
-    def parse_csv(self, csv):
-        header = next(csv)
-        if self.EXPECTED_COLS != header:
+    def validate_csv(self, csv):
+        header = list(csv[0].keys())
+        if sorted(header) != sorted(self.EXPECTED_COLS):
             raise ValueError(
-                "Unexpected header. Found %s expected %s" %\
-                (str(header), str(self.EXPECTED_COLS))
+                "Unexpected header. Found {} expected {}".format(
+                    str(header), str(self.EXPECTED_COLS))
             )
-        return [self.Record(*row) for row in csv]
-
-    def read_local_csv(self, filename):
-        f = open(filename, 'rt', encoding=self.ENCODING)
-        reader = csv.reader(f, delimiter=self.DELIMITER)
-        return reader
-
-    def read_csv_from_url(self, url):
-        r = requests.get(url)
-        r.raise_for_status()
-        reader = csv.reader(StringIO(r.text), delimiter=self.DELIMITER)
-        return reader
-
-    def read_csv_from_s3(self, filepath):
-        s3 = S3Wrapper(settings.LGBCE_BUCKET)
-        f = s3.get_file(filepath)
-        return self.read_local_csv(f.name)
 
     def prepare_data(self, data):
         # validate and enrich input data
         return [self.Record(
-            Organisation.objects.get(official_identifier=rec.org),
-            datetime.datetime.strptime(rec.start_date, "%Y-%m-%d").date(),
-            datetime.datetime.strptime(rec.end_date, "%Y-%m-%d").date()
+            Organisation.objects.get(official_identifier=rec['org']),
+            datetime.datetime.strptime(rec['start_date'], "%Y-%m-%d").date(),
+            datetime.datetime.strptime(rec['end_date'], "%Y-%m-%d").date()
         ) for rec in data]
 
     def handle(self, **options):
-        if options['file']:
-            data = self.parse_csv(self.read_local_csv(options['file']))
-        if options['url']:
-            data = self.parse_csv(self.read_csv_from_url(options['url']))
-        if options['s3']:
-            data = self.parse_csv(self.read_csv_from_s3(options['s3']))
+        data = self.load_csv_data(options)
+        self.validate_csv(data)
         data = self.prepare_data(data)
 
         updates = []
