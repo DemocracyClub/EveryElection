@@ -30,6 +30,7 @@ class ElectedRoleFactory(factory.django.DjangoModelFactory):
 class ElectionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Election
+        django_get_or_create = ('election_id', )
 
     election_id = factory.Sequence(
         lambda n: 'local.place-name-%d.2017-03-23' % n)
@@ -45,7 +46,7 @@ class ElectionFactory(factory.django.DjangoModelFactory):
     group = factory.SubFactory(
         'elections.tests.factories.ElectionFactory',
         election_id="local.2017-03-23",
-        group=None)
+        group=None, group_type="election")
     group_type = None
 
 
