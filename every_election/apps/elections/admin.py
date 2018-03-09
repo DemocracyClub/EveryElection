@@ -7,6 +7,9 @@ from .models import Election, Explanation, MetaData
 
 
 class ElectionAdmin(admin.ModelAdmin):
+
+    search_fields = ('election_id',)
+
     def has_add_permission(self, request):
         return False
 
