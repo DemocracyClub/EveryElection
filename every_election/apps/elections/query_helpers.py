@@ -2,7 +2,9 @@ import abc
 import requests
 
 from django.contrib.gis.geos import Point
+from django.core.exceptions import ObjectDoesNotExist
 
+from uk_geo_utils.geocoders import OnspdGeocoder
 
 class PostcodeError(Exception):
     pass
@@ -58,35 +60,25 @@ class mySocietyMapitPostcodeLookup(BaseMaPitPostcodeLookup):
     mapit_base = "https://mapit.mysociety.org/"
 
 
-class ONSPDStaticJsonLookup(BasePostcodeLookup):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+class ONSPDPostcodeLookup(BasePostcodeLookup):
+    def __init__(self, postcode):
         try:
-            self.fetch()
-        except:
-            raise PostcodeError()
-
-    def fetch(self):
-        if hasattr(self, 'data'):
-            return self.data
-        url_fmt = "https://s3-eu-west-1.amazonaws.com/onspd-static-json/{}"
-        req = requests.get(url_fmt.format(self.postcode))
-        if req.status_code != 200:
-            raise PostcodeError
-        self.data = req.json()
-        return self.data
+            self.geocoder = OnspdGeocoder(postcode)
+        except ObjectDoesNotExist:
+            raise PostcodeError("No location information")
 
     @property
     def point(self):
-        return Point(
-            self.data['wgs84_lon'],
-            self.data['wgs84_lat']
-        )
+        centre = self.geocoder.centroid
+        if not centre:
+            raise PostcodeError("No location information")
+        return centre
+
 
 def get_point_from_postcode(postcode):
     postcode = postcode.upper()
     methods = [
-        ONSPDStaticJsonLookup,
+        ONSPDPostcodeLookup,
         mySocietyMapitPostcodeLookup,
     ]
     for method in methods:

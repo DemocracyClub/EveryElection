@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'django_markdown',
     'dc_signup_form',
     'corsheaders',
+    'uk_geo_utils',
 ]
 
 PROJECT_APPS = [
