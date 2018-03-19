@@ -161,6 +161,7 @@ class TestElectionAPIQueries(APITestCase):
                     },
                     "election_title": "Election 0",
                     "elected_role": "Councillor",
+                    "seats_contested": 1,
                     "tmp_election_id": null
                 }
             ],
