@@ -38,7 +38,10 @@ class BaseMaPitPostcodeLookup(BasePostcodeLookup, metaclass=abc.ABCMeta):
         ))
         if req.status_code != 200:
             raise PostcodeError
-        self.mapit_data = req.json()
+        try:
+            self.mapit_data = req.json()
+        except ValueError:
+            raise PostcodeError
         return self.mapit_data
 
     @property
