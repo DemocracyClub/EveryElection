@@ -161,6 +161,7 @@ class ElectionSerializer(serializers.HyperlinkedModelSerializer):
             'group_type',
             'children',
             'elected_role',
+            'seats_contested',
             'division',
             'voting_system',
             'current',
