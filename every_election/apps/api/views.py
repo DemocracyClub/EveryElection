@@ -18,6 +18,12 @@ class APIPostcodeException(APIException):
     default_code = 'invalid_postcode'
 
 
+class APICoordsException(APIException):
+    status_code = 400
+    default_detail = 'Invalid co-ordinates'
+    default_code = 'invalid_coords'
+
+
 class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Election.objects.all()
     serializer_class = ElectionSerializer
@@ -36,7 +42,10 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
 
         coords = self.request.query_params.get('coords', None)
         if coords is not None:
-            lat, lng = map(float, coords.split(','))
+            try:
+                lat, lng = map(float, coords.split(','))
+            except ValueError:
+                raise APICoordsException()
             queryset = queryset.for_lat_lng(lat=lat, lng=lng)
 
         current = self.request.query_params.get('current', None)
