@@ -7,6 +7,7 @@ from django.db import models, transaction
 from django.core.files import File
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.postgres.fields import JSONField
 from django_markdown.models import MarkdownField
 
 from storages.backends.s3boto3 import S3Boto3Storage
@@ -75,6 +76,8 @@ class Election(SuggestedByPublicMixin, models.Model):
     group_type = models.CharField(blank=True, max_length=100, null=True)
     voting_system = models.ForeignKey('elections.VotingSystem', null=True)
     explanation = models.ForeignKey('elections.Explanation',
+        null=True, blank=True, on_delete=models.SET_NULL)
+    metadata = models.ForeignKey('elections.MetaData',
         null=True, blank=True, on_delete=models.SET_NULL)
     current = models.NullBooleanField()
 
@@ -176,6 +179,17 @@ class VotingSystem(models.Model):
 class Explanation(models.Model):
     description = models.CharField(blank=False, max_length=100)
     explanation = MarkdownField(blank=False)
+
+    def __str__(self):
+        return self.description
+
+
+class MetaData(models.Model):
+    description = models.CharField(blank=False, max_length=100)
+    data = JSONField()
+
+    class Meta:
+        verbose_name_plural = "MetaData"
 
     def __str__(self):
         return self.description

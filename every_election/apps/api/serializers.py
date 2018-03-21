@@ -118,6 +118,11 @@ class ExplanationSerializer(serializers.RelatedField):
         return value.explanation
 
 
+class MetaDataSerializer(serializers.RelatedField):
+    def to_representation(self, value):
+        return value.data
+
+
 class ElectionSerializer(serializers.HyperlinkedModelSerializer):
     election_type = ElectionTypeSerializer()
     election_subtype = ElectionSubTypeSerializer()
@@ -135,6 +140,7 @@ class ElectionSerializer(serializers.HyperlinkedModelSerializer):
     elected_role = ElectedRoleField(read_only=True)
     voting_system = serializers.SerializerMethodField()
     explanation = ExplanationSerializer(read_only=True)
+    metadata = MetaDataSerializer(read_only=True)
 
     # Current
     current = serializers.SerializerMethodField()
@@ -166,6 +172,7 @@ class ElectionSerializer(serializers.HyperlinkedModelSerializer):
             'voting_system',
             'current',
             'explanation',
+            'metadata',
         )
         depth = 1
 
