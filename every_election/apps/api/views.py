@@ -56,6 +56,10 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
         if future is not None:
             queryset = queryset.future()
 
+        with_metadata = self.request.query_params.get('metadata', None)
+        if with_metadata is not None:
+            queryset = queryset.exclude(metadata=None)
+
         return queryset
 
 
