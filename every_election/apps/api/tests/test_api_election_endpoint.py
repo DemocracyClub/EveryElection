@@ -7,6 +7,7 @@ from rest_framework.test import APITestCase
 from elections.tests.factories import ElectionFactory
 from organisations.tests.factories import (
     OrganisationFactory, OrganisationDivisionFactory)
+from elections.models import MetaData
 
 
 class TestElectionAPIQueries(APITestCase):
@@ -94,6 +95,38 @@ class TestElectionAPIQueries(APITestCase):
 
         assert data['results'][0]['election_id'] == election_id
         assert len(data['results']) == 1
+
+    def test_metadata_filter(self):
+        election = ElectionFactory(group=None, poll_open_date=datetime.today())
+        resp = self.client.get(
+            "/api/elections/?metadata=1")
+        data = resp.json()
+        assert data['count'] == 0
+        metadata = MetaData.objects.create(
+            description="just a test",
+            data = """
+            {
+                "2018-05-03-id-pilot": {
+                  "title": "You need to show ID to vote at this election",
+                  "url": "https://www.woking.gov.uk/voterid",
+                  "detail": "
+                      Voters in Woking will be required to show photo
+                      ID before they can vote.
+                     "
+                }
+              }
+            """,
+        )
+
+        election.metadata = metadata
+        election.save()
+        resp = self.client.get(
+            "/api/elections/?metadata=1")
+        data = resp.json()
+        assert data['count'] == 1
+
+
+
 
     def test_all_expected_fields_returned(self):
         org = OrganisationFactory()
