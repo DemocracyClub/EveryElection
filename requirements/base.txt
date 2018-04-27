@@ -9,7 +9,7 @@ django-markdown-app==0.9.3.1 # pyup: >=0.9.3.1,<0.9.4
 django-model-utils==3.1.1
 django-storages==1.6.6
 djangorestframework==3.7.7
-djangorestframework-gis==0.12.0
+djangorestframework-gis==0.13
 djangorestframework-jsonp==1.0.2
 glob2==0.6
 markdown==2.6.11
