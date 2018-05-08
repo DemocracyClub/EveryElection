@@ -4,37 +4,49 @@
 {% block content %}
 <section class="columns large-6 large-centered">
 
-    <div class="card postcode_card">
-
-        <h1 style="font-size:1.6em">{{ object.election_id }}</h1>
-        <h2 style="font-size:1.4em">{{ object.election_title }}</h2>
-        <h2 style="font-size:1.4em">{{ object.election_type }}</h2>
+    <div class="card postcode_card election">
+        <h1>{% if object.election_title %}
+                {{ object.election_title }}
+            {% else %}
+                {{ object.election_id }}
+        {% endif %}</h1>
         {% if object.election_subtype %}
         <h3>{{ object.election_subtype }}</h3>
         {% endif %}
-
-        <p>Election date: <strong>{{ object.poll_open_date }}</strong></p>
-        <p>Election type: <code>{{ object.election_type.election_type }}</code></p>
+        <dl>
+            <dt>ID</dt> <dd>{{ object.election_id }}</dd>
+            <dt>Type</dt> <dd>{{ object.election_type }}</dd>
+            <dt>Date</dt> <dd>{{ object.poll_open_date }}</dd>
         {% if object.organisation %}
-        <p>Organisation: <a href="{{ object.organisation.get_absolute_url }}">
-            {{ object.organisation }}</a>.</p>
+            <dt>Organisation</dt><dd><a href="{{ object.organisation.get_absolute_url }}">
+            {{ object.organisation }}</a></dd>
+        {% endif %}
+        {% if object.division %}
+            <dt>Division</dt>
+        <dd>{% if object.division.geography_curie %}
+                        <a href="{{ object.division.format_geography_link }}.html">
+                            {{ object.division.geography_curie }}
+                        </a>
+                        {% else %}
+                        <strong>Missing</strong>
+                        {% endif %}
+            </dd>
         {% endif %}
 
         {% if object.group_type == 'organisation' or not object.group_type %}
             {% if object.voting_system %}
-            <p>Voting system: <a href="{{ object.voting_system.wikipedia_url }}">
-                {{ object.voting_system }}</a>.</p>
+            <dt>Voting system</dt><dd><a href="{{ object.voting_system.wikipedia_url }}">
+                {{ object.voting_system }}</a></dd>
             {% endif %}
-
-
             {# Only do this for non-group IDs #}
         {% endif %}
-
+        </dl>
         {% if object.group_type == 'organisation' %}
-        <p>View <a href="https://whocanivotefor.co.uk/elections/{{ object.election_id }}/{{ object.election_type|slugify }}">
-            this election on WhoCanIVoteFor</a>.</p>
-        <p>View <a href="https://candidates.democracyclub.org.uk/election/{{ object.election_id }}/constituencies">
-            this election on candidates.democracyclub.org.uk</a>.</p>
+            <p>View this election on:</p>
+            <ul>
+                <li><a href="https://whocanivotefor.co.uk/elections/{{ object.election_id }}/{{ object.election_type|slugify }}">WhoCanIVoteFor</a></li>
+                <li><a href="https://candidates.democracyclub.org.uk/election/{{ object.election_id }}/constituencies">candidates.democracyclub.org.uk</a></li>
+            </ul>
         {% endif %}
 
         {% if object.notice %}
@@ -53,20 +65,34 @@
             </form>
         {% endif %}
 
-        <h3>Related IDs</h3>
+        <h3>Related Elections</h3>
         {% if object.group %}
             <p>Part of the election group <a href="{{ object.group.get_absolute_url }}">
                 {{ object.group }}</a></p>
         {% endif %}
 
         {% if object.children.all.exists %}
-            <p>These are sub-IDs or IDs for each ballot paper</p>
+            <p>These are sub-IDs or IDs for each ballot paper:</p>
             <ul>
             {% for child in object.children.all %}
                 <li><a href="{{ child.get_absolute_url }}">{{ child }}</a></li>
             {% endfor %}
             </ul>
         {% endif %}
+
+        <h3>API</h3>
+        <ul>
+            <li><a href="{% url 'api:election-detail' election_id=object.election_id %}">
+                    Election detail (JSON)
+                </a>
+            </li>
+            {% if object.geography %}
+            <li><a href="{% url 'api:election-geo' election_id=object.election_id %}">
+                    Election boundary (GeoJSON)
+                </a>
+            </li>
+            {% endif %}
+        </ul>
     </div>
 </div>
 
