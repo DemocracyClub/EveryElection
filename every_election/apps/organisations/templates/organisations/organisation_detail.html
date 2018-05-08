@@ -68,6 +68,17 @@
         </table>
         {% endfor %}
         </ul>
+        <h3>API</h3>
+        <ul>
+            <li><a href="{% url 'api:organisation-detail' official_identifier=object.official_identifier %}">
+                Organisation detail (JSON)
+                </a></li>
+        {% if object.geography %}
+             <li><a href="{% url 'api:organisation-geo' official_identifier=object.official_identifier %}">
+                Organisation boundary (GeoJSON)
+                </a></li>
+        {% endif %}
+        </ul>
     </div>
 </div>
 
