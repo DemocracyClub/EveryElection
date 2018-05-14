@@ -1,4 +1,4 @@
 -r base.txt
 
-gunicorn==19.7.1
+gunicorn==19.8.1
 jsmin==2.2.2
