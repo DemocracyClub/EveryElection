@@ -1,13 +1,15 @@
 import os
 import os.path
 import subprocess
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import geojson
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from elections.models import Election
+
+TOPOJSON_BIN = os.path.join(settings.BASE_DIR, '..', 'node_modules', 'topojson', 'node_modules', '.bin')
 
 
 def set_precision(coords, precision):
@@ -71,13 +73,14 @@ class Command(BaseCommand):
 
     def topojson_convert(self, source, dest):
         " Convert GeoJSON to TopoJSON by calling out to the topojson package "
-        subprocess.check_call(['geo2topo', '-o', dest, source])
+        subprocess.check_call([os.path.join(TOPOJSON_BIN, 'geo2topo'), '-o', dest, source])
 
     def topojson_simplify(self, source, dest):
         " Simplify a TopoJSON file "
         # The toposimplify settings here were arrived at by trial and error to keep the
         # simplified 2018-05-03 local elections topojson below 2.5MB.
-        subprocess.check_call(['toposimplify', '-S', '0.2', '-F', '-o', dest, source])
+        subprocess.check_call([os.path.join(TOPOJSON_BIN, 'toposimplify'),
+                               '-S', '0.2', '-F', '-o', dest, source])
 
     def export_election(self, parent):
         " Return GeoJSON containing all leaf elections below this parent "
