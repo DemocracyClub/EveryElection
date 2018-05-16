@@ -31,12 +31,10 @@ class Command(BaseCommand):
         output_dir = os.path.join(settings.BASE_DIR, 'static', 'exports')
         parser.add_argument('--from', dest='from',
                             help='Export elections from this date',
-                            type=parse_date,
-                            default=datetime.now().date())
+                            type=parse_date)
         parser.add_argument('--to', dest='to',
                             help='Export elections until this date',
-                            type=parse_date,
-                            default=(datetime.now() + timedelta(days=180)).date())
+                            type=parse_date)
         parser.add_argument('--output', dest='output',
                             help='Output directory (default every_election/static/exports)',
                             default=output_dir)
@@ -47,9 +45,16 @@ class Command(BaseCommand):
         except FileExistsError:
             pass
 
-        elections = Election.objects.all().filter(group_type='election')\
-            .filter(poll_open_date__gte=options['from'])\
-            .filter(poll_open_date__lte=options['to'])
+        if not (options['from'] or options['to']):
+            elections = Election.objects.future().filter(group_type='election')
+        else:
+            elections = Election.objects.all().filter(group_type='election')
+
+            if options['from']:
+                elections = elections.filter(poll_open_date__gte=options['from'])
+
+            if options['to']:
+                elections = elections.filter(poll_open_date__lte=options['to'])
 
         for election in elections:
             self.stdout.write("Exporting elections for group %s" % election)
@@ -77,31 +82,32 @@ class Command(BaseCommand):
     def export_election(self, parent):
         " Return GeoJSON containing all leaf elections below this parent "
         features = []
-        elections = self.get_leaf_elections(parent)
+        elections = self.get_ballots(parent)
         for election in elections:
-            if not election.geography:
+            if election.geography:
+                gj = geojson.loads(election.geography.geography.json)
+
+                # Round coordinates to 6 decimal places (~10cm) precision to reduce
+                # output size. This is probably as good as the source data accuracy.
+                gj['coordinates'] = set_precision(gj['coordinates'], 6)
+
+            else:
                 self.stderr.write("Election %s has no geography" % election)
-                continue
-
-            gj = geojson.loads(election.geography.geography.json)
-
-            # Round coordinates to 6 decimal places (~10cm) precision to reduce
-            # output size. This is probably as good as the source data accuracy.
-            gj['coordinates'] = set_precision(gj['coordinates'], 6)
+                gj = None
 
             feat = geojson.Feature(geometry=gj,
                                    id=election.election_id,
                                    properties={
                                         'name': election.election_title,
-                                        'division': election.division.name,
+                                        'division': election.division.name if election.division else None,
                                         'organisation': election.organisation.official_name
                                    })
             features.append(feat)
         return geojson.FeatureCollection(features,
                                          election_group=parent.election_id)
 
-    def get_leaf_elections(self, group):
-        " Return the leaf-level elections for a group. "
+    def get_ballots(self, group):
+        " Return the leaf-level ballots for a group of elections. "
         to_visit = [group]
         leaf_nodes = []
         while len(to_visit) > 0:
