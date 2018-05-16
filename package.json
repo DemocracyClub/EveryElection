@@ -13,7 +13,7 @@
     "url": "git+https://github.com/DemocracyClub/EveryElection.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/DemocracyClub/EveryElection/issues"
   },
