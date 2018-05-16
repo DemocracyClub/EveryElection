@@ -1,0 +1,24 @@
+{
+  "name": "everyelection",
+  "version": "1.0.0",
+  "description": "[![Build Status](https://travis-ci.org/DemocracyClub/EveryElection.svg?branch=master)](https://travis-ci.org/DemocracyClub/EveryElection) [![Coverage Status](https://coveralls.io/repos/github/DemocracyClub/EveryElection/badge.svg?branch=master)](https://coveralls.io/github/DemocracyClub/EveryElection?branch=master)",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DemocracyClub/EveryElection.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DemocracyClub/EveryElection/issues"
+  },
+  "homepage": "https://github.com/DemocracyClub/EveryElection#readme",
+  "dependencies": {
+    "topojson": "^3.0.2"
+  }
+}
