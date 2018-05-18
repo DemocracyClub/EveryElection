@@ -382,10 +382,7 @@ class Command(BaseCommand):
             )
 
     def check_shp(self, div_set, data_path, name_field="Name"):
-        try:
-            data = DataSource(data_path)
-        except:
-            data = DataSource(data_path)
+        data = DataSource(data_path)
 
         # Check some things
         if len(data[0]) != div_set.divisions.count():
@@ -441,10 +438,7 @@ class Command(BaseCommand):
             if data_type == "shp":
                 self.check_shp(div_set, data_path, name_field=name_field)
 
-            try:
-                geo_data = DataSource(data_path)
-            except:
-                geo_data = DataSource(data_path)
+            geo_data = DataSource(data_path)
 
             for feat in geo_data[0]:
 

@@ -8,7 +8,7 @@ import glob2
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.contrib.gis import geos
-from django.contrib.gis.gdal import DataSource, GDALException
+from django.contrib.gis.gdal import DataSource
 
 
 from organisations.models import (
@@ -48,13 +48,7 @@ class Command(BaseCommand):
             if file_path.split('/')[-1] in ignore:
                 continue
 
-            try:
-                ds = DataSource(file_path)
-            except GDALException:
-                # This is very strange – sometimes the above will fail the
-                # first time, but not the second. Seen on OS X with GDAL
-                # 2.2.0
-                ds = DataSource(file_path)
+            ds = DataSource(file_path)
 
             for layer in ds[0]:
                 code = None
@@ -225,10 +219,7 @@ class Command(BaseCommand):
         data_file = open(os.path.join(
             os.path.abspath('ad_hoc_boundaries'),
             "GB.geojson")).read()
-        try:
-            GB_geojson = DataSource(data_file)
-        except:
-            GB_geojson = DataSource(data_file)
+        GB_geojson = DataSource(data_file)
 
         poly = self.clean_poly(GB_geojson[0][0].geom.geos)
 
@@ -247,10 +238,7 @@ class Command(BaseCommand):
         data_file = open(os.path.join(
             os.path.abspath('ad_hoc_boundaries'),
             "Scotland.geojson")).read()
-        try:
-            Scotland_geojson = DataSource(data_file)
-        except:
-            Scotland_geojson = DataSource(data_file)
+        Scotland_geojson = DataSource(data_file)
 
         poly = self.clean_poly(Scotland_geojson[0][0].geom.geos)
 
