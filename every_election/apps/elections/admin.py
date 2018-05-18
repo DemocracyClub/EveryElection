@@ -22,8 +22,6 @@ class ElectionAdmin(admin.ModelAdmin):
         'organisation',
         'elected_role',
         'division',
-        'seats_contested',
-        'seats_total',
         'group',
     )
     exclude = (
