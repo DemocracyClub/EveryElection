@@ -18,7 +18,7 @@ requests==2.18.4
 requests_cache==0.4.13
 six==1.11.0
 uk-election-ids==0.1.0
-geojson==2.3.0
+geojson==2.4.0
 
 git+https://github.com/mysociety/django-pipeline-csscompressor
 git+git://github.com/DemocracyClub/dc_base_theme.git@2ffca23e03549231eaaa23f0994c5b27e898fe43
