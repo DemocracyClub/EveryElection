@@ -38,7 +38,7 @@ class ElectionTypeForm(forms.Form):
 class ElectionSubTypeForm(forms.Form):
     def __init__(self, *args, **kwargs):
         election_type = kwargs.pop('election_type', None)
-        election_date = kwargs.pop('election_date', None)
+        kwargs.pop('election_date', None)
         super().__init__(*args, **kwargs)
         if election_type:
             qs = self.fields['election_subtype'].queryset
