@@ -82,7 +82,7 @@ class OrganisationDivisionSet(models.Model):
         Note:
         This model also has an additional constraint to prevent
         overlapping start and end dates which is defined in
-        organisations/migrations/0030_end_date_constraint.py
+        organisations/migrations/0031_end_date_constraint.py
         """
 
 class OrganisationDivision(models.Model):
