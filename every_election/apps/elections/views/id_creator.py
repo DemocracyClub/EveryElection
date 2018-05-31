@@ -210,7 +210,8 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             election_type = self.get_election_type()
             if election_type:
                 return {
-                    'election_type': election_type.election_type
+                    'election_type': election_type.election_type,
+                    'election_date': self.get_election_date(),
                 }
         if step == "election_organisation_division":
             organisations = self.get_organisations()

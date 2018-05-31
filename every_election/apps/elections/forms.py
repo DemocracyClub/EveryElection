@@ -38,6 +38,7 @@ class ElectionTypeForm(forms.Form):
 class ElectionSubTypeForm(forms.Form):
     def __init__(self, *args, **kwargs):
         election_type = kwargs.pop('election_type', None)
+        election_date = kwargs.pop('election_date', None)
         super().__init__(*args, **kwargs)
         if election_type:
             qs = self.fields['election_subtype'].queryset
@@ -53,12 +54,29 @@ class ElectionSubTypeForm(forms.Form):
 class ElectionOrganisationForm(forms.Form):
     def __init__(self, *args, **kwargs):
         election_type = kwargs.pop('election_type', None)
+        election_date = kwargs.pop('election_date', None)
         super().__init__(*args, **kwargs)
         if election_type:
             qs = self.fields['election_organisation'].queryset
-            qs = qs.filter(
-                election_types__election_type=election_type)
-            self.fields['election_organisation'].queryset = qs
+            qs = qs\
+                .filter(election_types__election_type=election_type)\
+                .filter(
+                    start_date__lte=election_date
+                ).filter(
+                    models.Q(end_date__gte=election_date)
+                    | models.Q(end_date=None)
+                )
+
+            if len(qs) == 0:
+                self.fields['election_organisation'] = forms.CharField(
+                    widget=forms.TextInput(
+                        attrs={'class': 'hide',}
+                    ),
+                    required=False,
+                    label="No organisations available for this poll date."
+                )
+            else:
+                self.fields['election_organisation'].queryset = qs
 
     election_organisation = forms.ModelMultipleChoiceField(
         queryset=Organisation.objects.all(),
