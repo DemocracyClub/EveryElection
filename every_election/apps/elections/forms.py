@@ -121,7 +121,7 @@ class ElectionOrganisationDivisionForm(forms.Form):
                     ),
                     required=False,
                     label="""
-                        There is no active divisions for this organisation.
+                        There are no active divisions for this organisation.
                         This is normally because we know a boundary change
                         is about to happen but it's not final yet.
                         Please try again in future, or contact us if you think
