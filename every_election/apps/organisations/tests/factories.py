@@ -1,3 +1,4 @@
+from datetime import date
 import factory
 
 from organisations.models import (Organisation, OrganisationDivisionSet,
@@ -18,7 +19,7 @@ class OrganisationFactory(factory.django.DjangoModelFactory):
     territory_code = "ENG"
     # election_types
     # election_name
-    start_date = "2016-10-01"
+    start_date = date(2016, 10, 1)
 
 
 class OrganisationDivisionSetFactory(factory.django.DjangoModelFactory):

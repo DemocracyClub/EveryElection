@@ -57,6 +57,15 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
         with self.assertRaises(Organisation.ValidationError):
             builder.with_organisation(self.org1)
 
+    def test_organisation_date_range_invalid(self):
+        builder = ElectionBuilder('local', '2001-01-01')
+
+        # delete the relationship between org1 and local elections
+        self.elected_role1.delete()
+
+        with self.assertRaises(Organisation.ValidationError):
+            builder.with_organisation(self.org1)
+
     def test_invalid_division(self):
         org2 = Organisation.objects.create(
             official_identifier='TEST2',

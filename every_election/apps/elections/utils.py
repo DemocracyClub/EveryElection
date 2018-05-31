@@ -59,6 +59,13 @@ class ElectionBuilder:
                 (organisation, self.election_type)
             )
 
+        if organisation.start_date and organisation.start_date > self.date:
+            raise Organisation.ValidationError(
+                'Organisation start date after election date')
+        if organisation.end_date and organisation.end_date < self.date:
+            raise Organisation.ValidationError(
+                'Organisation end date before election date')
+
         # if this is a top-level group id
         # we associate the election object with an organisation
         # but the organisation doesn't form part of the id
