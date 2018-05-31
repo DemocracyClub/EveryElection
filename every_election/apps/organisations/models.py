@@ -18,6 +18,8 @@ class Organisation(models.Model):
     election_types = models.ManyToManyField(
         'elections.ElectionType', through='elections.ElectedRole')
     election_name = models.CharField(blank=True, max_length=255)
+    start_date = models.DateField(null=False)
+    end_date = models.DateField(null=True)
     ValidationError = ValueError
 
     def __str__(self):
