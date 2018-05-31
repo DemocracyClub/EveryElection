@@ -1,3 +1,4 @@
+from datetime import date
 from django.test import TestCase
 from organisations.models import (
     Organisation, OrganisationDivisionSet)
@@ -23,6 +24,7 @@ class ImportDivisionSetsFromCsvTests(TestCase):
             slug="test1",
             territory_code="ENG",
             election_name="Test Council 1 Local Elections",
+            start_date=date(2016, 10, 1),
         )
         self.base_record = {
             'Start Date': '',
@@ -48,6 +50,7 @@ class ImportDivisionSetsFromCsvTests(TestCase):
             slug="test3",
             territory_code="ENG",
             election_name="Test Council 3 Local Elections",
+            start_date=date(2016, 10, 1),
         )
         self.org4 = Organisation.objects.create(
             official_identifier='TEST4',
@@ -57,6 +60,7 @@ class ImportDivisionSetsFromCsvTests(TestCase):
             slug="test4",
             territory_code="ENG",
             election_name="Test Council 4 Local Elections",
+            start_date=date(2016, 10, 1),
         )
         OrganisationDivisionSet.objects.create(
             organisation=self.org3,

@@ -1,3 +1,4 @@
+from datetime import date
 from django.test import TestCase
 
 from elections.models import (
@@ -90,6 +91,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             slug="test2",
             territory_code="ENG",
             election_name="Test Council 2 local elections",
+            start_date=date(2016, 10, 1),
         )
         ElectedRole.objects.create(
             election_type=self.election_type1,
@@ -192,6 +194,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             slug="test-ca",
             territory_code="ENG",
             election_name="Test Council Mayoral elections",
+            start_date=date(2016, 10, 1),
         )
         mayor_election_type = ElectionType.objects.get(
             election_type='mayor',
@@ -234,6 +237,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             slug="parl",
             territory_code="ENG",
             election_name="General Election",
+            start_date=date(2016, 10, 1),
         )
         parl_election_type = ElectionType.objects.get(
             election_type='parl',
@@ -274,6 +278,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             slug="naw",
             territory_code="WLS",
             election_name="National Assembly for Wales elections",
+            start_date=date(2016, 10, 1),
         )
         naw_election_type = ElectionType.objects.get(
             election_type='naw',

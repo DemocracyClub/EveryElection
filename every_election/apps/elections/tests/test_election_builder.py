@@ -1,3 +1,4 @@
+from datetime import date
 from django.test import TestCase
 from elections.models import ElectionType, ElectionSubType, ElectedRole
 from elections.utils import ElectionBuilder
@@ -65,6 +66,7 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
             slug="test2",
             territory_code="ENG",
             election_name="Test2 Council Local Elections",
+            start_date=date(2016, 10, 1),
         )
         ElectedRole.objects.create(
             election_type=self.election_type1,

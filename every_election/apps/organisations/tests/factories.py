@@ -18,6 +18,7 @@ class OrganisationFactory(factory.django.DjangoModelFactory):
     territory_code = "ENG"
     # election_types
     # election_name
+    start_date = "2016-10-01"
 
 
 class OrganisationDivisionSetFactory(factory.django.DjangoModelFactory):

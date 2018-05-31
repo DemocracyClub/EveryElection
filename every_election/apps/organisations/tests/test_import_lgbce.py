@@ -1,3 +1,4 @@
+from datetime import date
 import os
 import tempfile
 from io import StringIO
@@ -28,6 +29,7 @@ class ImportLgbceTests(TestCase):
             slug="test1",
             territory_code="ENG",
             election_name="Test Council 1 Local Elections",
+            start_date=date(2016, 10, 1),
         )
 
         # valid org/div
@@ -40,6 +42,7 @@ class ImportLgbceTests(TestCase):
             slug="test2",
             territory_code="ENG",
             election_name="Test Council 2 Local Elections",
+            start_date=date(2016, 10, 1),
         )
         self.valid_divset = OrganisationDivisionSet.objects.create(
             organisation=valid_org,

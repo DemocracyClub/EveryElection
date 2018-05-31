@@ -34,6 +34,7 @@ class BaseElectionCreatorMixIn():
             slug="test",
             territory_code="ENG",
             election_name="Test Council local elections",
+            start_date=date(2016, 10, 1),
         )
 
         self.elected_role1 = ElectedRole.objects.create(
