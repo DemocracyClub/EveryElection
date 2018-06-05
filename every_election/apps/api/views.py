@@ -77,14 +77,23 @@ class ElectionSubTypeViewSet(viewsets.ReadOnlyModelViewSet):
 class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Organisation.objects.all()
     serializer_class = OrganisationSerializer
-    lookup_field = 'official_identifier'
 
     @detail_route(url_path='geo')
-    def geo(self, request, official_identifier=None, format=None):
-        org = Organisation.objects.get(official_identifier=official_identifier)
+    def geo(self, request, **kwargs):
+        kwargs.pop('format', None)
+        org = Organisation.objects.all().get(**kwargs)
+        serializer = OrganisationGeoSerializer(
+            org, read_only=True, context={'request': request}
+        )
+        return Response(serializer.data)
 
-        return Response(
-            OrganisationGeoSerializer(org, context={'request': request}).data)
+    def retrieve(self, request, **kwargs):
+        kwargs.pop('format', None)
+        org = Organisation.objects.all().get(**kwargs)
+        serializer = OrganisationSerializer(
+            org, read_only=True, context={'request': request}
+        )
+        return Response(serializer.data)
 
 
 class OrganisationDivisionViewSet(viewsets.ReadOnlyModelViewSet):
