@@ -41,7 +41,9 @@ class Organisation(models.Model):
         """
 
     def get_absolute_url(self):
-        return reverse("organisation_view", args=(self.official_identifier,))
+        return reverse("organisation_view",
+            args=(self.organisation_type, self.official_identifier, self.start_date)
+        )
 
     def format_geography_link(self):
         return "https://mapit.mysociety.org/area/{}".format(
