@@ -1,3 +1,4 @@
+from django.db import models
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import ListView, TemplateView, View
@@ -9,6 +10,7 @@ class SupportedOrganisationsView(ListView):
     template_name = "organisations/supported_organisations.html"
     queryset = Organisation.objects.all().order_by('organisation_type', 'common_name')
 
+
 class OrganisationsFilterView(TemplateView):
     template_name = "organisations/organisation_filter.html"
     def get_context_data(self, **kwargs):
@@ -17,13 +19,30 @@ class OrganisationsFilterView(TemplateView):
             'context_object_name': 'organisation',
         }
 
+
 class OrganisationDetailView(TemplateView):
     template_name = "organisations/organisation_detail.html"
     def get_context_data(self, **kwargs):
+
+        orgs = Organisation.objects.all().filter(
+            organisation_type=kwargs['organisation_type']
+        ).filter(
+            official_identifier=kwargs['official_identifier']
+        ).filter(
+            start_date__lte=kwargs['start_date']
+        ).filter(
+            models.Q(end_date__gte=kwargs['start_date'])
+            | models.Q(end_date=None)
+        )
+        if len(orgs) != 1:
+            raise Organisation.DoesNotExist('Organisation matching query does not exist.')
+        org = orgs[0]
+
         return {
-            'object': Organisation.objects.all().get(**kwargs),
+            'object': org,
             'context_object_name': 'organisation',
         }
+
 
 class OrganisationCompatibilityView(View):
 
