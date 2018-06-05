@@ -33,6 +33,12 @@ class Organisation(models.Model):
         ordering = ('official_name', '-start_date')
         unique_together = ('official_identifier', 'organisation_type', 'start_date')
         unique_together = ('official_identifier', 'organisation_type', 'end_date')
+        """
+        Note:
+        This model also has an additional constraint to prevent
+        overlapping start and end dates which is defined in
+        organisations/migrations/0034_end_date_constraint.py
+        """
 
     def get_absolute_url(self):
         return reverse("organisation_view", args=(self.official_identifier,))
