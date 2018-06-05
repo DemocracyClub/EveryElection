@@ -30,7 +30,9 @@ class Organisation(models.Model):
         return self.official_name or self.common_name or self.official_identifier
 
     class Meta:
-        ordering = ('official_name',)
+        ordering = ('official_name', '-start_date')
+        unique_together = ('official_identifier', 'organisation_type', 'start_date')
+        unique_together = ('official_identifier', 'organisation_type', 'end_date')
 
     def get_absolute_url(self):
         return reverse("organisation_view", args=(self.official_identifier,))
