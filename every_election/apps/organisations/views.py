@@ -23,23 +23,8 @@ class OrganisationsFilterView(TemplateView):
 class OrganisationDetailView(TemplateView):
     template_name = "organisations/organisation_detail.html"
     def get_context_data(self, **kwargs):
-
-        orgs = Organisation.objects.all().filter(
-            organisation_type=kwargs['organisation_type']
-        ).filter(
-            official_identifier=kwargs['official_identifier']
-        ).filter(
-            start_date__lte=kwargs['start_date']
-        ).filter(
-            models.Q(end_date__gte=kwargs['start_date'])
-            | models.Q(end_date=None)
-        )
-        if len(orgs) != 1:
-            raise Organisation.DoesNotExist('Organisation matching query does not exist.')
-        org = orgs[0]
-
         return {
-            'object': org,
+            'object': Organisation.objects.all().get_by_date(**kwargs),
             'context_object_name': 'organisation',
         }
 

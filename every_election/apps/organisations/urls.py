@@ -16,7 +16,7 @@ urlpatterns = [
 
     # canonical URL for a single organisation record
     url(
-        r'^(?P<organisation_type>[-\w]+)/(?P<official_identifier>[-\w]+)/(?P<start_date>\d{4}-\d{2}-\d{2})/$',
+        r'^(?P<organisation_type>[-\w]+)/(?P<official_identifier>[-\w]+)/(?P<date>\d{4}-\d{2}-\d{2})/$',
         OrganisationDetailView.as_view(),
         name='organisation_view'),
 

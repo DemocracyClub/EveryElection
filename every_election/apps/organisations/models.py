@@ -2,6 +2,28 @@ from django.contrib.gis.db import models
 from django.urls import reverse
 
 
+class OrganisationManager(models.QuerySet):
+
+    def filter_by_date(self, date):
+        return self.filter(
+            start_date__lte=date
+        ).filter(
+            models.Q(end_date__gte=date) | models.Q(end_date=None)
+        )
+
+    def get_by_date(self, organisation_type, official_identifier, date):
+        orgs = self.filter(
+            organisation_type=organisation_type
+        ).filter(
+            official_identifier=official_identifier
+        ).filter_by_date(date)
+
+        if len(orgs) != 1:
+            raise Organisation.DoesNotExist('Organisation matching query does not exist.')
+        org = orgs[0]
+        return org
+
+
 class Organisation(models.Model):
     """
     An organisation that can hold an election in the UK
@@ -21,6 +43,7 @@ class Organisation(models.Model):
     start_date = models.DateField(null=False)
     end_date = models.DateField(null=True)
     ValidationError = ValueError
+    objects = OrganisationManager().as_manager()
 
     def __str__(self):
         return "{}".format(self.name)

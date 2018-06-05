@@ -60,12 +60,7 @@ class ElectionOrganisationForm(forms.Form):
             qs = self.fields['election_organisation'].queryset
             qs = qs\
                 .filter(election_types__election_type=election_type)\
-                .filter(
-                    start_date__lte=election_date
-                ).filter(
-                    models.Q(end_date__gte=election_date)
-                    | models.Q(end_date=None)
-                )
+                .filter_by_date(election_date)
 
             if len(qs) == 0:
                 self.fields['election_organisation'] = forms.CharField(
