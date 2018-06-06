@@ -1,3 +1,4 @@
+from django.http import Http404
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
@@ -81,10 +82,13 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
     @detail_route(url_path='geo')
     def geo(self, request, **kwargs):
         kwargs.pop('format', None)
-        if 'pk' in kwargs:
-            org = Organisation.objects.all().get(**kwargs)
-        else:
-            org = Organisation.objects.all().get_by_date(**kwargs)
+        try:
+            if 'pk' in kwargs:
+                org = Organisation.objects.all().get(**kwargs)
+            else:
+                org = Organisation.objects.all().get_by_date(**kwargs)
+        except Organisation.DoesNotExist:
+            raise Http404()
         serializer = OrganisationGeoSerializer(
             org, read_only=True, context={'request': request}
         )
@@ -92,10 +96,13 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
 
     def retrieve(self, request, **kwargs):
         kwargs.pop('format', None)
-        if 'pk' in kwargs:
-            org = Organisation.objects.all().get(**kwargs)
-        else:
-            org = Organisation.objects.all().get_by_date(**kwargs)
+        try:
+            if 'pk' in kwargs:
+                org = Organisation.objects.all().get(**kwargs)
+            else:
+                org = Organisation.objects.all().get_by_date(**kwargs)
+        except Organisation.DoesNotExist:
+            raise Http404()
         serializer = OrganisationSerializer(
             org, read_only=True, context={'request': request}
         )
