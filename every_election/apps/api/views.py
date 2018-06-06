@@ -101,6 +101,15 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
         )
         return Response(serializer.data)
 
+    def filter(self, request, **kwargs):
+        kwargs.pop('format', None)
+        orgs = Organisation.objects.all().filter(**kwargs)
+        return Response([
+            OrganisationSerializer(
+                org, read_only=True, context={'request': request}).data
+            for org in orgs
+        ])
+
 
 class OrganisationDivisionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = OrganisationDivision.objects.all()
