@@ -79,16 +79,19 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Organisation.objects.all()
     serializer_class = OrganisationSerializer
 
+    def get_object(self, **kwargs):
+        try:
+            if 'pk' in kwargs:
+                return Organisation.objects.all().get(**kwargs)
+            else:
+                return Organisation.objects.all().get_by_date(**kwargs)
+        except Organisation.DoesNotExist:
+            raise Http404()
+
     @detail_route(url_path='geo')
     def geo(self, request, **kwargs):
         kwargs.pop('format', None)
-        try:
-            if 'pk' in kwargs:
-                org = Organisation.objects.all().get(**kwargs)
-            else:
-                org = Organisation.objects.all().get_by_date(**kwargs)
-        except Organisation.DoesNotExist:
-            raise Http404()
+        org = self.get_object(**kwargs)
         serializer = OrganisationGeoSerializer(
             org, read_only=True, context={'request': request}
         )
@@ -96,13 +99,7 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
 
     def retrieve(self, request, **kwargs):
         kwargs.pop('format', None)
-        try:
-            if 'pk' in kwargs:
-                org = Organisation.objects.all().get(**kwargs)
-            else:
-                org = Organisation.objects.all().get_by_date(**kwargs)
-        except Organisation.DoesNotExist:
-            raise Http404()
+        org = self.get_object(**kwargs)
         serializer = OrganisationSerializer(
             org, read_only=True, context={'request': request}
         )
