@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse
 from django.views.generic import ListView, TemplateView, View
 
@@ -22,10 +22,13 @@ class OrganisationsFilterView(TemplateView):
 class OrganisationDetailView(TemplateView):
     template_name = "organisations/organisation_detail.html"
     def get_context_data(self, **kwargs):
-        return {
-            'object': Organisation.objects.all().get_by_date(**kwargs),
-            'context_object_name': 'organisation',
-        }
+        try:
+            return {
+                'object': Organisation.objects.all().get_by_date(**kwargs),
+                'context_object_name': 'organisation',
+            }
+        except Organisation.DoesNotExist:
+            raise Http404()
 
 
 class OrganisationCompatibilityView(View):
