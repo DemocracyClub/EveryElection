@@ -12,7 +12,7 @@ python manage.py import_divisionsets_from_csv -s "foo/bar/baz.csv"
 """
 
 
-from datetime import timedelta
+import datetime
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -58,8 +58,21 @@ class Command(ReadFromCSVMixin, BaseCommand):
         self.save_all()
 
     def get_org_from_line(self, line):
-        return Organisation.objects.get(
-            official_identifier=line['Organisation ID'])
+        if line['Start Date']:
+            return Organisation.objects.all().get_by_date(
+                organisation_type='local-authority',
+                official_identifier=line['Organisation ID'],
+                date=datetime.datetime.strptime(line['Start Date'], "%Y-%m-%d").date()
+            )
+        else:
+            # If we haven't got a start date for the divisionset, see if we can
+            # work out the org without needing one (mostly we can).
+            # If we throw an exception here, we will need to call this again
+            # with a start date on this divisionset
+            return Organisation.objects.get(
+                organisation_type='local-authority',
+                official_identifier=line['Organisation ID']
+            )
 
     def get_start_date(self, org):
         # Given an org, work out the start date for a new division set
@@ -69,7 +82,7 @@ class Command(ReadFromCSVMixin, BaseCommand):
             raise Exception('Could not find any previous DivisionSets for Organisation %s' % org)
         if not divsets.latest().end_date:
             raise Exception('End date for previous DivisionSets %s is NULL' % divsets[0])
-        return divsets.latest().end_date + timedelta(days=1)
+        return divsets.latest().end_date + datetime.timedelta(days=1)
 
     def create_division_sets(self, csv_data):
         for line in csv_data:

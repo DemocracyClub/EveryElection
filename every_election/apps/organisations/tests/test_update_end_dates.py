@@ -18,7 +18,7 @@ class UpdateEndDatesTests(TestCase):
             slug="test1",
             territory_code="ENG",
             election_name="Test Council 1 Local Elections",
-            start_date=date(2016, 10, 1),
+            start_date=date(2004, 12, 2),
         )
         self.org2 = Organisation.objects.create(
             official_identifier='TEST2',
@@ -28,7 +28,7 @@ class UpdateEndDatesTests(TestCase):
             slug="test2",
             territory_code="ENG",
             election_name="Test Council 2 Local Elections",
-            start_date=date(2016, 10, 1),
+            start_date=date(2004, 12, 2),
         )
         self.org3 = Organisation.objects.create(
             official_identifier='TEST3',
@@ -38,7 +38,7 @@ class UpdateEndDatesTests(TestCase):
             slug="test3",
             territory_code="ENG",
             election_name="Test Council 3 Local Elections",
-            start_date=date(2016, 10, 1),
+            start_date=date(2004, 12, 2),
         )
         OrganisationDivisionSet.objects.create(
             organisation=self.org1,

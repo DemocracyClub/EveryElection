@@ -112,7 +112,10 @@ class Command(BaseCommand):
                 raise
 
     def get_division_set(self, org_code):
-        org = Organisation.objects.get(official_identifier=org_code)
+        org = Organisation.objects\
+            .filter(organisation_type='local-authority')\
+            .filter(official_identifier=org_code)\
+            .latest()
         divset = OrganisationDivisionSet.objects\
             .filter(organisation=org)\
             .latest()

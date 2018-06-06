@@ -54,6 +54,7 @@ class Organisation(models.Model):
 
     class Meta:
         ordering = ('official_name', '-start_date')
+        get_latest_by = 'start_date'
         unique_together = ('official_identifier', 'organisation_type', 'start_date')
         unique_together = ('official_identifier', 'organisation_type', 'end_date')
         """
