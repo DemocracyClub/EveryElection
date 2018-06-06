@@ -33,9 +33,10 @@ class Command(BaseCommand):
         return os.path.join(self.base_path, year, filename)
 
     def _get_div_set(self, official_identifier, date, org_type):
-        org = Organisation.objects.get(
+        org = Organisation.objects.get_by_date(
             official_identifier=official_identifier,
-            organisation_type=org_type
+            organisation_type=org_type,
+            date=date
         )
         return OrganisationDivisionSet.objects.get(
             organisation=org, start_date=date)
