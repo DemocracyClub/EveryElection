@@ -28,9 +28,10 @@ class Command(BaseCommand):
         print("Organisations")
         for org in Organisation.objects.filter(geography=None
                 ).order_by('official_name'):
-            print("\t {} {}:{} ({})".format(
+            print("\t {} {}, {}: {} ({})".format(
                 org.territory_code,
                 org.official_identifier,
+                org.start_date.isoformat(),
                 org,
                 org.official_identifier,
                 ))
