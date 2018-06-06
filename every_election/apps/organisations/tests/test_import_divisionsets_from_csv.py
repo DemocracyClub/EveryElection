@@ -103,10 +103,19 @@ class ImportDivisionSetsFromCsvTests(TestCase):
         records[3]['Organisation ID'] = 'TEST4'
         self.valid_test_data = records
 
-    def test_org_not_found(self):
+    def test_org_not_found_bad_code(self):
         # Organisation doesn't exist
         cmd = Command()
         self.base_record['Organisation ID'] = 'XXXX'  # this Org ID doesn't exist
+        cmd.read_csv_from_url = lambda x: [self.base_record]
+        with self.assertRaises(Organisation.DoesNotExist):
+            cmd.handle(**self.opts)
+
+    def test_org_not_found_bad_date(self):
+        # Organisation code exists, but not valid for this date
+        cmd = Command()
+        self.base_record['Organisation ID'] = 'TEST1'
+        self.base_record['Start Date'] = '2016-09-01'  # before TEST1 org start date
         cmd.read_csv_from_url = lambda x: [self.base_record]
         with self.assertRaises(Organisation.DoesNotExist):
             cmd.handle(**self.opts)
