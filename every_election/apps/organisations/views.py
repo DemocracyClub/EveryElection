@@ -1,4 +1,3 @@
-from django.db import models
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import ListView, TemplateView, View
