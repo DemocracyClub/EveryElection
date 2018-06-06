@@ -16,7 +16,7 @@ class OrganisationRouter(routers.DefaultRouter):
         # but DRF doesn't do composite keys
         # (much like the rest of django)
         # so it needs a bit of... gentle persuasion
-        return r'(?P<organisation_type>[-\w]+)/(?P<official_identifier>[-\w]+)/(?P<start_date>\d{4}-\d{2}-\d{2})'
+        return r'(?P<organisation_type>[-\w]+)/(?P<official_identifier>[-\w]+)/(?P<date>\d{4}-\d{2}-\d{2})'
 
 
 default_router = routers.DefaultRouter()

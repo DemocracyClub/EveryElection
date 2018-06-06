@@ -81,7 +81,10 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
     @detail_route(url_path='geo')
     def geo(self, request, **kwargs):
         kwargs.pop('format', None)
-        org = Organisation.objects.all().get(**kwargs)
+        if 'pk' in kwargs:
+            org = Organisation.objects.all().get(**kwargs)
+        else:
+            org = Organisation.objects.all().get_by_date(**kwargs)
         serializer = OrganisationGeoSerializer(
             org, read_only=True, context={'request': request}
         )
@@ -89,7 +92,10 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
 
     def retrieve(self, request, **kwargs):
         kwargs.pop('format', None)
-        org = Organisation.objects.all().get(**kwargs)
+        if 'pk' in kwargs:
+            org = Organisation.objects.all().get(**kwargs)
+        else:
+            org = Organisation.objects.all().get_by_date(**kwargs)
         serializer = OrganisationSerializer(
             org, read_only=True, context={'request': request}
         )
