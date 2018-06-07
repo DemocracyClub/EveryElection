@@ -74,6 +74,21 @@ class Organisation(models.Model):
             self.gss
         )
 
+    def get_geography(self, date):
+        if len(self.geographies.all()) == 0:
+            return None
+        elif len(self.geographies.all()) == 1:
+            return self.geographies.all()[0]
+        else:
+            geogs = self.geographies.filter(
+                models.Q(start_date__lte=date) | models.Q(start_date=None)
+            ).filter(
+                models.Q(end_date__gte=date) | models.Q(end_date=None)
+            )
+            if len(geogs) != 1:
+                return None
+            return geogs[0]
+
 
 class OrganisationGeography(models.Model):
     organisation = models.ForeignKey(Organisation, related_name='geographies')

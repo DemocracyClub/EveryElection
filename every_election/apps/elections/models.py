@@ -68,7 +68,9 @@ class Election(SuggestedByPublicMixin, models.Model):
     organisation = models.ForeignKey('organisations.Organisation', null=True)
     elected_role = models.ForeignKey(ElectedRole, null=True)
     division = models.ForeignKey('organisations.OrganisationDivision', null=True)
-    geography = models.ForeignKey('organisations.DivisionGeography',
+    division_geography = models.ForeignKey('organisations.DivisionGeography',
+        null=True, blank=True)
+    organisation_geography = models.ForeignKey('organisations.OrganisationGeography',
         null=True, blank=True)
     seats_contested = models.IntegerField(blank=True, null=True)
     seats_total = models.IntegerField(blank=True, null=True)
@@ -125,26 +127,40 @@ class Election(SuggestedByPublicMixin, models.Model):
         else:
             return self.tmp_election_id
 
-    def get_geography(self):
-        if self.geography:
-            return self.geography
+    def get_division_geography(self):
+        if self.division_geography:
+            return self.division_geography
 
         try:
-
             # if the election is a 'ballot'
             if not self.group_type:
                 # attach geography by division if possible
                 if self.division:
                     return self.division.geography
-                # else try to attach geography by organisation
+        except ObjectDoesNotExist:
+            pass
+        return None
+
+    def get_organisation_geography(self):
+        if self.organisation_geography:
+            return self.organisation_geography
+
+        try:
+            # if the election is a 'ballot'
+            if not self.group_type:
+
+                if self.division:
+                    return None
+
+                # Try to attach geography by organisation
                 # (e.g: for Mayors, PCCs etc)
                 if not self.division and self.organisation:
-                    return self.organisation.geography
+                    return self.organisation.get_geography(self.poll_open_date)
 
             # if the election is an 'organisation group'
             # attach geography by organisation
             if self.group_type == "organisation" and not self.division:
-                return self.organisation.geography
+                return self.organisation.get_geography(self.poll_open_date)
 
         except ObjectDoesNotExist:
             pass
@@ -152,8 +168,10 @@ class Election(SuggestedByPublicMixin, models.Model):
 
     @transaction.atomic
     def save(self, *args, **kwargs):
-        if not self.geography:
-            self.geography = self.get_geography()
+        if not self.division_geography:
+            self.division_geography = self.get_division_geography()
+        if not self.organisation_geography:
+            self.organisation_geography = self.get_organisation_geography()
 
         if not self.group_id and self.group:
             try:
