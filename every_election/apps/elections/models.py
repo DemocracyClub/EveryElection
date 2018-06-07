@@ -168,10 +168,8 @@ class Election(SuggestedByPublicMixin, models.Model):
 
     @transaction.atomic
     def save(self, *args, **kwargs):
-        if not self.division_geography:
-            self.division_geography = self.get_division_geography()
-        if not self.organisation_geography:
-            self.organisation_geography = self.get_organisation_geography()
+        self.division_geography = self.get_division_geography()
+        self.organisation_geography = self.get_organisation_geography()
 
         if not self.group_id and self.group:
             try:
