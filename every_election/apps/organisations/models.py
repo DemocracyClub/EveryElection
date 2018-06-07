@@ -83,6 +83,19 @@ class OrganisationGeography(models.Model):
     legislation_url = models.CharField(blank=True, max_length=500, null=True)
     geography = models.MultiPolygonField()
 
+    class Meta:
+        ordering = ('-start_date',)
+        get_latest_by = 'start_date'
+        unique_together = ('organisation', 'start_date')
+        unique_together = ('organisation', 'end_date')
+        """
+        Note:
+        This model also has an additional constraint to prevent
+        overlapping start and end dates (but allows both to be NULL).
+        This is defined in
+        organisations/migrations/0040_end_date_constraint.py
+        """
+
 
 class OrganisationDivisionSet(models.Model):
     organisation = models.ForeignKey(Organisation, related_name='divisionset')
