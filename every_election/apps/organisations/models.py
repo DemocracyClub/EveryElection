@@ -75,6 +75,14 @@ class Organisation(models.Model):
         )
 
 
+class OrganisationGeography(models.Model):
+    organisation = models.ForeignKey(Organisation, related_name='geographies')
+    start_date = models.DateField(null=True)
+    end_date = models.DateField(null=True)
+    gss = models.CharField(blank=True, max_length=20)
+    legislation_url = models.CharField(blank=True, max_length=500, null=True)
+    geography = models.MultiPolygonField()
+
 
 class OrganisationDivisionSet(models.Model):
     organisation = models.ForeignKey(Organisation, related_name='divisionset')
