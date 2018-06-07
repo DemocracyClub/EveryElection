@@ -34,7 +34,6 @@ class Organisation(models.Model):
     organisation_subtype = models.CharField(blank=True, max_length=255)
     official_name = models.CharField(blank=True, max_length=255)
     common_name = models.CharField(blank=True, max_length=255)
-    gss = models.CharField(blank=True, max_length=20)
     slug = models.CharField(blank=True, max_length=100)
     territory_code = models.CharField(blank=True, max_length=10)
     election_types = models.ManyToManyField(
@@ -71,7 +70,7 @@ class Organisation(models.Model):
 
     def format_geography_link(self):
         return "https://mapit.mysociety.org/area/{}".format(
-            self.gss
+            self.geographies.latest().gss
         )
 
     def get_geography(self, date):
@@ -199,7 +198,5 @@ class OrganisationDivision(models.Model):
 class DivisionGeography(models.Model):
     division = models.OneToOneField(
         OrganisationDivision, related_name="geography", null=True)
-    organisation = models.OneToOneField(
-        Organisation, related_name="geography", null=True)
     geography = models.MultiPolygonField()
 
