@@ -127,6 +127,12 @@ class Election(SuggestedByPublicMixin, models.Model):
         else:
             return self.tmp_election_id
 
+    @property
+    def geography(self):
+        if not self.group_type and self.division:
+            return self.division_geography
+        return self.organisation_geography
+
     def get_division_geography(self):
         if self.division_geography:
             return self.division_geography
