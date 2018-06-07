@@ -197,6 +197,5 @@ class OrganisationDivision(models.Model):
 
 class DivisionGeography(models.Model):
     division = models.OneToOneField(
-        OrganisationDivision, related_name="geography", null=True)
+        OrganisationDivision, related_name="geography")
     geography = models.MultiPolygonField()
-
