@@ -71,7 +71,6 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
             official_identifier='TEST2',
             organisation_type='local-authority',
             official_name="Test Council",
-            gss="X00000003",
             slug="test2",
             territory_code="ENG",
             election_name="Test2 Council Local Elections",

@@ -18,7 +18,6 @@ class OrganisationSerializer(serializers.ModelSerializer):
             'organisation_subtype',
             'official_name',
             'common_name',
-            'gss',
             'slug',
             'territory_code',
             'election_name'
@@ -48,7 +47,6 @@ class OrganisationGeoSerializer(GeoFeatureModelSerializer):
             'organisation_subtype',
             'official_name',
             'common_name',
-            'gss',
             'slug',
             'territory_code',
             'election_name'

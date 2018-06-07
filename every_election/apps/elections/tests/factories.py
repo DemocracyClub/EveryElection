@@ -40,7 +40,8 @@ class ElectionFactory(factory.django.DjangoModelFactory):
     organisation = factory.SubFactory(OrganisationFactory)
     elected_role = factory.SubFactory(ElectedRoleFactory)
     division = factory.SubFactory(OrganisationDivisionFactory)
-    geography = factory.SubFactory(DivisionGeographyFactory)
+    division_geography = factory.SubFactory(DivisionGeographyFactory)
+    organisation_geography = None
     seats_contested = 1
     seats_total = 1
     group = factory.SubFactory(

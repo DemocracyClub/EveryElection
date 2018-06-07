@@ -73,7 +73,6 @@ class DivisionSetGeographyImporter:
             div_geogs.append(
                 DivisionGeography(
                     division=division,
-                    organisation=None,
                     geography=feature.multipolygon
                 )
             )

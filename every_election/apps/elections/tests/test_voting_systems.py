@@ -21,7 +21,6 @@ class TestElectoralSystems(BaseElectionCreatorMixIn, TestCase):
 
         scot_org = OrganisationFactory(
             territory_code="SCT",
-            gss="S0000001"
         )
 
         ElectedRole.objects.create(

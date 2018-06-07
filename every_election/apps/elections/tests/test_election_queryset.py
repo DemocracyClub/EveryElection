@@ -60,7 +60,7 @@ class TestElectionGeoQueries(TestCase):
     def test_current_elections_for_postcode(self):
         ElectionFactory(group=None, poll_open_date=datetime.today())
         ElectionFactory(
-            group=None, poll_open_date=datetime.today(), geography=None)
+            group=None, poll_open_date=datetime.today(), division_geography=None)
         ElectionFactory(
             group=None, poll_open_date=datetime.today() - timedelta(days=60) )
         assert Election.objects.current().for_postcode('SW1A1AA').count() == 1
