@@ -1,5 +1,30 @@
+from django.core.exceptions import ValidationError
 from django.contrib.gis.db import models
 from django.urls import reverse
+from django.utils.dateparse import parse_date
+
+
+class DateConstraintMixin:
+
+    def save(self, *args, **kwargs):
+
+        if type(self.start_date) == str:
+            self.start_date = parse_date(self.start_date)
+        if type(self.end_date) == str:
+            self.end_date = parse_date(self.end_date)
+
+        if self.start_date and self.organisation.start_date and self.start_date < self.organisation.start_date:
+            raise ValidationError(
+                'start_date (%s) must be on or after parent organisation start_date (%s)' %\
+                (self.start_date.isoformat(), self.organisation.start_date.isoformat())
+            )
+        if self.end_date and self.organisation.end_date and self.end_date > self.organisation.end_date:
+            raise ValidationError(
+                'end_date (%s) must be on or before parent organisation end_date (%s)' %\
+                (self.end_date.isoformat(), self.organisation.end_date.isoformat())
+            )
+
+        return super().save(*args, **kwargs)
 
 
 class OrganisationManager(models.QuerySet):
@@ -83,6 +108,16 @@ class Organisation(models.Model):
         elif len(self.geographies.all()) == 1:
             return self.geographies.all()[0]
         else:
+            if date < self.start_date:
+                raise ValueError(
+                    'date %s is before organisation start_date (%s)' %\
+                    (date.isoformat(), self.start_date.isoformat())
+                )
+            if self.end_date and date > self.end_date:
+                raise ValueError(
+                    'date %s is after organisation end_date (%s)' %\
+                    (date.isoformat(), self.end_date.isoformat())
+                )
             geogs = self.geographies.filter(
                 models.Q(start_date__lte=date) | models.Q(start_date=None)
             ).filter(
@@ -93,7 +128,7 @@ class Organisation(models.Model):
             return geogs[0]
 
 
-class OrganisationGeography(models.Model):
+class OrganisationGeography(DateConstraintMixin, models.Model):
     organisation = models.ForeignKey(Organisation, related_name='geographies')
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)
@@ -115,7 +150,7 @@ class OrganisationGeography(models.Model):
         """
 
 
-class OrganisationDivisionSet(models.Model):
+class OrganisationDivisionSet(DateConstraintMixin, models.Model):
     organisation = models.ForeignKey(Organisation, related_name='divisionset')
     start_date = models.DateField(null=False)
     end_date = models.DateField(null=True)
@@ -157,6 +192,7 @@ class OrganisationDivisionSet(models.Model):
         overlapping start and end dates which is defined in
         organisations/migrations/0031_end_date_constraint.py
         """
+
 
 class OrganisationDivision(models.Model):
     """

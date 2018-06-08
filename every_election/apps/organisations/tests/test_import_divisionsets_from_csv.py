@@ -61,7 +61,7 @@ class ImportDivisionSetsFromCsvTests(TestCase):
         )
         OrganisationDivisionSet.objects.create(
             organisation=self.org3,
-            start_date='2004-12-02',
+            start_date='2016-10-01',
             end_date='2017-05-03',
             legislation_url='',
             consultation_url='',
@@ -71,7 +71,7 @@ class ImportDivisionSetsFromCsvTests(TestCase):
         )
         OrganisationDivisionSet.objects.create(
             organisation=self.org4,
-            start_date='2004-12-02',
+            start_date='2016-10-01',
             end_date='2018-05-02',
             legislation_url='',
             consultation_url='',
@@ -130,7 +130,7 @@ class ImportDivisionSetsFromCsvTests(TestCase):
         # but the DivisionSet has a NULL end date
         OrganisationDivisionSet.objects.create(
             organisation=self.org1,
-            start_date='2004-12-02',
+            start_date='2016-10-01',
             end_date=None,
             legislation_url='',
             consultation_url='',

@@ -1,10 +1,12 @@
 from datetime import date
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from organisations.models import Organisation
 from organisations.tests.factories import (
     OrganisationFactory,
     OrganisationGeographyFactory,
     OrganisationDivisionFactory,
+    OrganisationDivisionSetFactory,
 )
 
 
@@ -105,7 +107,10 @@ class TestOrganisationGeographies(TestCase):
         self.assertEqual(None, org.format_geography_link())
 
     def test_multiple_geographies(self):
-        org = OrganisationFactory()
+        org = OrganisationFactory(
+            start_date=date(2001, 1, 1),
+            end_date=None
+        )
         OrganisationGeographyFactory(
             organisation=org,
             gss='X01000001',
@@ -124,9 +129,11 @@ class TestOrganisationGeographies(TestCase):
             start_date='2002-01-02',
             end_date=None
         )
-        self.assertEqual('X01000001', org.get_geography(date(1900, 1, 1)).gss)
+        self.assertEqual('X01000001', org.get_geography(date(2001, 1, 1)).gss)
         self.assertEqual('X01000002', org.get_geography(date(2001, 7, 20)).gss)
         self.assertEqual('X01000003', org.get_geography(date(2099, 1, 1)).gss)
+        with self.assertRaises(ValueError):
+            org.get_geography(date(1900, 1, 1))  # before the org start date
 
 
 class TestOrganisationDivision(TestCase):
@@ -151,3 +158,63 @@ class TestOrganisationDivision(TestCase):
             'https://mapit.mysociety.org/code/gss/X01000001',
             OrganisationDivisionFactory(geography_curie='gss:X01000001').format_geography_link()
         )
+
+
+class TestDateConstraints(TestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.org = OrganisationFactory(
+            start_date=date(2001, 1, 1),
+            end_date=date(2002, 1, 1),
+        )
+
+    def test_save_divisionset_before_start(self):
+        with self.assertRaises(ValidationError):
+            OrganisationDivisionSetFactory(
+                organisation=self.org,
+                start_date=date(2000, 1, 1),
+            )
+
+    def test_save_divisionset_after_end(self):
+        with self.assertRaises(ValidationError):
+            OrganisationDivisionSetFactory(
+                organisation=self.org,
+                start_date=date(2001, 1, 1),
+                end_date=date(2003, 1, 1),
+            )
+
+    def test_save_divisionset_valid(self):
+        try:
+            OrganisationDivisionSetFactory(
+                organisation=self.org,
+                start_date=date(2001, 1, 1),
+                end_date=date(2002, 1, 1),
+            )
+        except ValidationError:
+            self.fail("ValidationError raised unexpectedly!")
+
+    def test_save_organisationgeography_before_start(self):
+        with self.assertRaises(ValidationError):
+            OrganisationGeographyFactory(
+                organisation=self.org,
+                start_date=date(2000, 1, 1),
+            )
+
+    def test_save_organisationgeography_after_end(self):
+        with self.assertRaises(ValidationError):
+            OrganisationGeographyFactory(
+                organisation=self.org,
+                start_date=date(2001, 1, 1),
+                end_date=date(2003, 1, 1),
+            )
+
+    def test_save_organisationgeography_valid(self):
+        try:
+            OrganisationGeographyFactory(
+                organisation=self.org,
+                start_date=date(2001, 1, 1),
+                end_date=date(2002, 1, 1),
+            )
+        except ValidationError:
+            self.fail("ValidationError raised unexpectedly!")

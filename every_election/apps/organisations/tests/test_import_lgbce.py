@@ -44,7 +44,7 @@ class ImportLgbceTests(TestCase):
         )
         self.valid_divset = OrganisationDivisionSet.objects.create(
             organisation=valid_org,
-            start_date='2004-12-02',
+            start_date='2016-10-01',
             end_date=None,
             legislation_url='',
             consultation_url='',
@@ -99,7 +99,7 @@ class ImportLgbceTests(TestCase):
         # add an empty division set to org1
         OrganisationDivisionSet.objects.create(
             organisation=self.org1,
-            start_date='2004-12-02',
+            start_date='2016-10-01',
             end_date=None,
             legislation_url='',
             consultation_url='',
