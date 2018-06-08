@@ -1,7 +1,11 @@
 from datetime import date
 from django.test import TestCase
 from organisations.models import Organisation
-from organisations.tests.factories import OrganisationFactory
+from organisations.tests.factories import (
+    OrganisationFactory,
+    OrganisationGeographyFactory,
+    OrganisationDivisionFactory,
+)
 
 
 class TestOrganisationManager(TestCase):
@@ -69,3 +73,81 @@ class TestOrganisationManager(TestCase):
             date=date(2018, 12, 1)
         )
         self.assertEqual('Bar with Foo District Council', o.official_name)
+
+
+class TestOrganisationGeographies(TestCase):
+
+    def test_no_geographies(self):
+        org = OrganisationFactory()
+        self.assertEqual(None, org.get_geography(date.today()))
+        self.assertEqual(None, org.format_geography_link())
+
+    def test_one_geography_with_gss(self):
+        org = OrganisationFactory()
+        geo = OrganisationGeographyFactory(
+            organisation=org,
+            gss='X01000001'
+        )
+        self.assertEqual(geo, org.get_geography(date.today()))
+        self.assertEqual(geo, org.get_geography("doesn't even need to be a date"))
+        self.assertEqual('https://mapit.mysociety.org/area/X01000001', org.format_geography_link())
+        geo.gss = ''
+        geo.save()
+        self.assertEqual(None, org.format_geography_link())
+
+    def test_one_geography_no_gss(self):
+        org = OrganisationFactory()
+        geo = OrganisationGeographyFactory(
+            organisation=org,
+            gss=''
+        )
+        self.assertEqual(geo, org.get_geography(date.today()))
+        self.assertEqual(None, org.format_geography_link())
+
+    def test_multiple_geographies(self):
+        org = OrganisationFactory()
+        OrganisationGeographyFactory(
+            organisation=org,
+            gss='X01000001',
+            start_date=None,
+            end_date='2001-01-01'
+        )
+        OrganisationGeographyFactory(
+            organisation=org,
+            gss='X01000002',
+            start_date='2001-01-02',
+            end_date='2002-01-01'
+        )
+        OrganisationGeographyFactory(
+            organisation=org,
+            gss='X01000003',
+            start_date='2002-01-02',
+            end_date=None
+        )
+        self.assertEqual('X01000001', org.get_geography(date(1900, 1, 1)).gss)
+        self.assertEqual('X01000002', org.get_geography(date(2001, 7, 20)).gss)
+        self.assertEqual('X01000003', org.get_geography(date(2099, 1, 1)).gss)
+
+
+class TestOrganisationDivision(TestCase):
+
+    def test_format_geography_invalid(self):
+        self.assertIsNone(
+            OrganisationDivisionFactory(geography_curie='foo').format_geography_link()
+        )
+
+    def test_format_geography_empty(self):
+        self.assertIsNone(
+            OrganisationDivisionFactory(geography_curie='').format_geography_link()
+        )
+
+    def test_format_geography_not_gss(self):
+        self.assertIsNone(
+            OrganisationDivisionFactory(geography_curie='foo:X01000001').format_geography_link()
+        )
+
+    def test_format_geography_valid(self):
+        self.assertEqual(
+            'https://mapit.mysociety.org/code/gss/X01000001',
+            OrganisationDivisionFactory(geography_curie='gss:X01000001').format_geography_link()
+        )
