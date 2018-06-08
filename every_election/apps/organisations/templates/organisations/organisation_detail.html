@@ -43,7 +43,7 @@
                     <td>{{ division.seats_total|default_if_none:"Unknown" }}</td>
                     <td>{{ division.division_subtype }}</td>
                     <td>
-                        {% if division.geography_curie %}
+                        {% if division.format_geography_link %}
                         <a href="{{ division.format_geography_link }}.html">
                             {{ division.geography_curie }}
                         </a>

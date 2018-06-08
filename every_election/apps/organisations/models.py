@@ -69,6 +69,10 @@ class Organisation(models.Model):
         )
 
     def format_geography_link(self):
+        if len(self.geographies.all()) == 0:
+            return None
+        if not self.geographies.latest().gss:
+            return None
         return "https://mapit.mysociety.org/area/{}".format(
             self.geographies.latest().gss
         )
@@ -190,7 +194,14 @@ class OrganisationDivision(models.Model):
         )
 
     def format_geography_link(self):
-        code_type, code = self.geography_curie.split(':')
+        try:
+            code_type, code = self.geography_curie.split(':')
+        except (ValueError, AttributeError):
+            return None
+
+        if code_type.lower() != 'gss':
+            return None
+
         return "https://mapit.mysociety.org/code/{}/{}".format(
             code_type, code
         )
