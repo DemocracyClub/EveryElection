@@ -28,7 +28,7 @@ class OrganisationGeoSerializer(GeoFeatureModelSerializer):
     geography_model = GeometrySerializerMethodField()
 
     def get_geography_model(self, obj):
-        return obj.geography.geography.simplify(0.0009)
+        return obj.geographies.latest().geography.simplify(0.0009)
 
     class Meta:
         model = Organisation
