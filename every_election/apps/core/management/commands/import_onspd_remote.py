@@ -18,7 +18,7 @@ class Command(BaseCommand):
         tmp = tempfile.NamedTemporaryFile()
         urllib.request.urlretrieve(url, tmp.name)
         tempdir = unzip(tmp.name)
-        data_path = os.path.join(tempdir, 'Data', 'New Order')
+        data_path = os.path.join(tempdir, 'Data')
         try:
             cmd = LocalImporter()
             cmd.handle(**{ 'path': data_path })
