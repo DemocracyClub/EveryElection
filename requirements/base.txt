@@ -14,7 +14,7 @@ djangorestframework-jsonp==1.0.2
 glob2==0.6
 markdown==2.6.11
 psycopg2-binary==2.7.4
-requests==2.19.0
+requests==2.19.1
 requests_cache==0.4.13
 six==1.11.0
 uk-election-ids==0.1.0
