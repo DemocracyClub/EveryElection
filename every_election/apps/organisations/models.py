@@ -29,24 +29,20 @@ class DateConstraintMixin:
 
 class OrganisationManager(models.QuerySet):
 
-    def filter_by_date(self, date):
-        return self.filter(
-            start_date__lte=date
-        ).filter(
+    def get_date_filter(self, date):
+        return models.Q(start_date__lte=date) & (
             models.Q(end_date__gte=date) | models.Q(end_date=None)
         )
 
-    def get_by_date(self, organisation_type, official_identifier, date):
-        orgs = self.filter(
-            organisation_type=organisation_type
-        ).filter(
-            official_identifier=official_identifier
-        ).filter_by_date(date)
+    def filter_by_date(self, date):
+        return self.filter(self.get_date_filter(date))
 
-        if len(orgs) != 1:
-            raise Organisation.DoesNotExist('Organisation matching query does not exist.')
-        org = orgs[0]
-        return org
+    def get_by_date(self, organisation_type, official_identifier, date):
+        return self.get(
+            models.Q(organisation_type=organisation_type) &\
+            models.Q(official_identifier=official_identifier) &\
+            self.get_date_filter(date)
+        )
 
 
 class Organisation(models.Model):
@@ -121,14 +117,13 @@ class Organisation(models.Model):
                     'date %s is after organisation end_date (%s)' %\
                     (date.isoformat(), self.end_date.isoformat())
                 )
-            geogs = self.geographies.filter(
-                models.Q(start_date__lte=date) | models.Q(start_date=None)
-            ).filter(
-                models.Q(end_date__gte=date) | models.Q(end_date=None)
-            )
-            if len(geogs) != 1:
+            try:
+                return self.geographies.get(
+                    (models.Q(start_date__lte=date) | models.Q(start_date=None)) &\
+                    (models.Q(end_date__gte=date) | models.Q(end_date=None))
+                )
+            except OrganisationGeography.DoesNotExist:
                 return None
-            return geogs[0]
 
 
 class OrganisationGeography(DateConstraintMixin, models.Model):
