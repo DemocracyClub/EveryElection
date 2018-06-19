@@ -66,6 +66,7 @@ class Organisation(models.Model):
     election_name = models.CharField(blank=True, max_length=255)
     start_date = models.DateField(null=False)
     end_date = models.DateField(null=True)
+    legislation_url = models.CharField(blank=True, max_length=500, null=True)
     ValidationError = ValueError
     objects = OrganisationManager().as_manager()
 
