@@ -79,8 +79,10 @@ class Organisation(models.Model):
     class Meta:
         ordering = ('official_name', '-start_date')
         get_latest_by = 'start_date'
-        unique_together = ('official_identifier', 'organisation_type', 'start_date')
-        unique_together = ('official_identifier', 'organisation_type', 'end_date')
+        unique_together = (
+            ('official_identifier', 'organisation_type', 'start_date'),
+            ('official_identifier', 'organisation_type', 'end_date')
+        )
         """
         Note:
         This model also has an additional constraint to prevent
@@ -139,8 +141,10 @@ class OrganisationGeography(DateConstraintMixin, models.Model):
     class Meta:
         ordering = ('-start_date',)
         get_latest_by = 'start_date'
-        unique_together = ('organisation', 'start_date')
-        unique_together = ('organisation', 'end_date')
+        unique_together = (
+            ('organisation', 'start_date'),
+            ('organisation', 'end_date')
+        )
         """
         Note:
         This model also has an additional constraint to prevent
