@@ -31,6 +31,15 @@ urlpatterns = [
     url(r'^', include(routes)),
 
     url(
+        r'^organisations/(?P<organisation_type>[-\w]+)/$',
+        OrganisationViewSet.as_view({'get': 'filter'})
+    ),
+    url(
+        r'^organisations/(?P<organisation_type>[-\w]+)\.(?P<format>[a-z0-9]+)/?$',
+        OrganisationViewSet.as_view({'get': 'filter'})
+    ),
+
+    url(
         r'^organisations/(?P<organisation_type>[-\w]+)/(?P<official_identifier>[-\w]+)/$',
         OrganisationViewSet.as_view({'get': 'filter'})
     ),
