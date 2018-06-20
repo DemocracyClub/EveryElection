@@ -6,9 +6,7 @@ from .views import (ElectionViewSet, ElectionTypeViewSet,
                     ElectionSubTypeViewSet, OrganisationViewSet)
 
 
-class OrganisationRouter(routers.DefaultRouter):
-
-    include_root_view = False
+class EERouter(routers.DefaultRouter):
 
     def get_lookup_regex(self, viewset, lookup_prefix=''):
         # we identify organisations by
@@ -16,19 +14,18 @@ class OrganisationRouter(routers.DefaultRouter):
         # but DRF doesn't do composite keys
         # (much like the rest of django)
         # so it needs a bit of... gentle persuasion
-        return r'(?P<organisation_type>[-\w]+)/(?P<official_identifier>[-\w]+)/(?P<date>\d{4}-\d{2}-\d{2})'
+        if viewset == OrganisationViewSet:
+            return r'(?P<organisation_type>[-\w]+)/(?P<official_identifier>[-\w]+)/(?P<date>\d{4}-\d{2}-\d{2})'
+        return super().get_lookup_regex(viewset, lookup_prefix)
 
 
-default_router = routers.DefaultRouter()
-default_router.register(r'elections', ElectionViewSet)
-default_router.register(r'election_types', ElectionTypeViewSet)
-default_router.register(r'election_subtypes', ElectionSubTypeViewSet)
-default_router.register(r'organisations', OrganisationViewSet)
+router = EERouter()
+router.register(r'elections', ElectionViewSet)
+router.register(r'election_types', ElectionTypeViewSet)
+router.register(r'election_subtypes', ElectionSubTypeViewSet)
+router.register(r'organisations', OrganisationViewSet)
 
-org_router = OrganisationRouter()
-org_router.register(r'organisations', OrganisationViewSet)
-
-routes = default_router.get_urls() + org_router.get_urls()
+routes = router.get_urls()
 
 urlpatterns = [
     url(r'^', include(routes)),

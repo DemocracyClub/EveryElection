@@ -182,6 +182,7 @@ class TestElectionAPIQueries(APITestCase):
                     "children": [],
                     "election_subtype": null,
                     "organisation": {
+                        "url": "http://testserver/api/organisations/local-authority/0/2016-10-01/",
                         "slug": "org-0",
                         "territory_code": "ENG",
                         "organisation_subtype": "",
@@ -189,7 +190,9 @@ class TestElectionAPIQueries(APITestCase):
                         "official_name": "The Organisation 0 Council",
                         "organisation_type": "local-authority",
                         "election_name": "",
-                        "official_identifier": "0"
+                        "official_identifier": "0",
+                        "start_date": "2016-10-01",
+                        "end_date": null
                     },
                     "election_title": "Election 0",
                     "elected_role": "Councillor",

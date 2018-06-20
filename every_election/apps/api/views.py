@@ -81,10 +81,7 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_object(self, **kwargs):
         try:
-            if 'pk' in kwargs:
-                return Organisation.objects.all().get(**kwargs)
-            else:
-                return Organisation.objects.all().get_by_date(**kwargs)
+            return Organisation.objects.all().get_by_date(**kwargs)
         except Organisation.DoesNotExist:
             raise Http404()
 
