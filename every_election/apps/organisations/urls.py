@@ -2,7 +2,6 @@ from django.conf.urls import url
 
 from .views import (
     SupportedOrganisationsView,
-    OrganisationCompatibilityView,
     OrganisationDetailView,
     OrganisationsFilterView,
 )
@@ -24,11 +23,11 @@ urlpatterns = [
     url(
         r'^(?P<organisation_type>[-\w]+)/(?P<official_identifier>[-\w]+)/$',
         OrganisationsFilterView.as_view(),
-        name='organisations_filter_view'),
+        name='organisations_filter_by_identifier'),
 
-    # attempt to redirect for backwards-compatibility
+    # list of organisations of a given type
     url(
-        r'^(?P<official_identifier>[-\w]+)/$',
-        OrganisationCompatibilityView.as_view(),
-        name='organisation_compatibility_view'),
+        r'^(?P<organisation_type>[-\w]+)/$',
+        OrganisationsFilterView.as_view(),
+        name='organisations_filter_by_type'),
 ]

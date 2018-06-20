@@ -1,6 +1,5 @@
-from django.http import HttpResponseRedirect, Http404
-from django.urls import reverse
-from django.views.generic import ListView, TemplateView, View
+from django.http import Http404
+from django.views.generic import ListView, TemplateView
 
 from .models import Organisation
 
@@ -13,8 +12,11 @@ class SupportedOrganisationsView(ListView):
 class OrganisationsFilterView(TemplateView):
     template_name = "organisations/organisation_filter.html"
     def get_context_data(self, **kwargs):
+        orgs = Organisation.objects.all().filter(**kwargs)
+        if not orgs.exists():
+            raise Http404()
         return {
-            'objects': Organisation.objects.all().filter(**kwargs),
+            'objects': orgs,
             'context_object_name': 'organisation',
         }
 
@@ -29,21 +31,3 @@ class OrganisationDetailView(TemplateView):
             }
         except Organisation.DoesNotExist:
             raise Http404()
-
-
-class OrganisationCompatibilityView(View):
-
-    def get(self, request, *args, **kwargs):
-
-        org = Organisation.objects.all().get(**kwargs)
-        # if get() returns more than one Organisation
-        # don't attempt to handle it, just throw a 500
-
-        return HttpResponseRedirect(
-            reverse('organisation_view', args=(
-                    org.organisation_type,
-                    org.official_identifier,
-                    org.start_date
-                )
-            )
-        )
