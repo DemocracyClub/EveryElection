@@ -105,11 +105,22 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
     def filter(self, request, **kwargs):
         kwargs.pop('format', None)
         orgs = Organisation.objects.all().filter(**kwargs)
-        return Response([
+
+        page = self.paginate_queryset(orgs)
+        if page is not None:
+            return self.get_paginated_response(
+                OrganisationSerializer(
+                    page, many=True, read_only=True,
+                    context={'request': request}
+                ).data
+            )
+
+        return Response(
             OrganisationSerializer(
-                org, read_only=True, context={'request': request}).data
-            for org in orgs
-        ])
+                orgs, many=True, read_only=True,
+                context={'request': request}
+            ).data
+        )
 
 
 class OrganisationDivisionViewSet(viewsets.ReadOnlyModelViewSet):

@@ -45,10 +45,10 @@ class TestOrganisationAPIEndpoint(APITestCase):
         resp = self.client.get("/api/organisations/local-authority/TEST1.json")
         data = resp.json()
         self.assertEqual(200, resp.status_code)
-        self.assertEqual(2, len(data))
+        self.assertEqual(2, data['count'])
 
     def test_filter_orgs_not_found(self):
         resp = self.client.get("/api/organisations/local-authority/TEST3.json")
         data = resp.json()
         self.assertEqual(200, resp.status_code)
-        self.assertEqual([], data)
+        self.assertEqual([], data['results'])
