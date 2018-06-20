@@ -21,22 +21,22 @@ class SnoopedElectionView(TemplateView):
         if 'pk' in self.request.GET:
             queryset = queryset.filter(pk=self.request.GET['pk'])
 
-        object_list = []
+        objects = []
         for item in queryset:
-            object_list.append(
+            objects.append(
                 ReviewElectionForm(instance=item, prefix=item.pk)
             )
 
-        paginator = Paginator(object_list, 25) # Show 25 records per page
+        paginator = Paginator(objects, 25) # Show 25 records per page
         page = self.request.GET.get('page')
         try:
-            context['object_list'] = paginator.page(page)
+            context['objects'] = paginator.page(page)
         except PageNotAnInteger:
             # If page is not an integer, deliver first page.
-            context['object_list'] = paginator.page(1)
+            context['objects'] = paginator.page(1)
         except EmptyPage:
             # If page is out of range, deliver last page of results.
-            context['object_list'] = paginator.page(paginator.num_pages)
+            context['objects'] = paginator.page(paginator.num_pages)
 
         return context
 

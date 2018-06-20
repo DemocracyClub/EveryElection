@@ -1,6 +1,6 @@
 from django.http import Http404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView, TemplateView
-
 from .models import Organisation
 
 
@@ -15,10 +15,22 @@ class OrganisationsFilterView(TemplateView):
         orgs = Organisation.objects.all().filter(**kwargs)
         if not orgs.exists():
             raise Http404()
-        return {
-            'objects': orgs,
+
+        paginator = Paginator(orgs, 100) # Show 100 records per page
+        page = self.request.GET.get('page')
+        context = {
             'context_object_name': 'organisation',
         }
+        try:
+            context['objects'] = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            context['objects'] = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range, deliver last page of results.
+            context['objects'] = paginator.page(paginator.num_pages)
+
+        return context
 
 
 class OrganisationDetailView(TemplateView):
