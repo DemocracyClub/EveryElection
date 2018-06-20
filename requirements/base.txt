@@ -1,5 +1,5 @@
 beautifulsoup4==4.6.0
-boto3==1.7.37
+boto3==1.7.42
 django==1.11.13 # pyup: >=1.11,<2.0
 django-cors-headers==2.2.0
 django-extensions==2.0.7
