@@ -41,13 +41,25 @@ class TestOrganisationAPIEndpoint(APITestCase):
         resp = self.client.get("/api/organisations/local-authority/TEST1/2001-10-01.json")
         self.assertEqual(404, resp.status_code)
 
-    def test_filter_orgs_valid(self):
+    def test_filter_orgs_type_valid(self):
+        resp = self.client.get("/api/organisations/local-authority.json")
+        data = resp.json()
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(3, data['count'])
+
+    def test_filter_orgs_type_not_found(self):
+        resp = self.client.get("/api/organisations/not-a-thing.json")
+        data = resp.json()
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual([], data['results'])
+
+    def test_filter_orgs_type_id_valid(self):
         resp = self.client.get("/api/organisations/local-authority/TEST1.json")
         data = resp.json()
         self.assertEqual(200, resp.status_code)
         self.assertEqual(2, data['count'])
 
-    def test_filter_orgs_not_found(self):
+    def test_filter_orgs_type_id_not_found(self):
         resp = self.client.get("/api/organisations/local-authority/TEST3.json")
         data = resp.json()
         self.assertEqual(200, resp.status_code)
