@@ -8,51 +8,60 @@ from organisations.models import (Organisation, OrganisationDivision,
                                   OrganisationDivisionSet)
 
 
+class OrganisationHyperlinkedIdentityField(
+    serializers.HyperlinkedIdentityField):
+
+    def get_url(self, obj, view_name, request, format):
+        # Unsaved objects will not yet have a valid URL.
+        if obj.pk is None:
+            return None
+
+        return self.reverse(view_name,
+            kwargs={
+                'organisation_type': obj.organisation_type,
+                'official_identifier': obj.official_identifier,
+                'date': obj.start_date,
+            },
+            request=request,
+            format=format,
+        )
+
+org_fields = (
+    'url',
+    'official_identifier',
+    'organisation_type',
+    'organisation_subtype',
+    'official_name',
+    'common_name',
+    'slug',
+    'territory_code',
+    'election_name',
+    'start_date',
+    'end_date',
+)
+
 class OrganisationSerializer(serializers.ModelSerializer):
+
+    url = OrganisationHyperlinkedIdentityField(
+        view_name='organisation-detail', read_only=True)
+
     class Meta:
         model = Organisation
-        lookup_field = 'official_identifier'
-        fields = (
-            'official_identifier',
-            'organisation_type',
-            'organisation_subtype',
-            'official_name',
-            'common_name',
-            'gss',
-            'slug',
-            'territory_code',
-            'election_name'
-        )
+        fields = org_fields
 
 class OrganisationGeoSerializer(GeoFeatureModelSerializer):
 
     geography_model = GeometrySerializerMethodField()
+    url = OrganisationHyperlinkedIdentityField(
+        view_name='organisation-geo', read_only=True)
 
     def get_geography_model(self, obj):
-        return obj.geography.geography.simplify(0.0009)
+        return obj.geographies.latest().geography.simplify(0.0009)
 
     class Meta:
         model = Organisation
-        extra_kwargs = {
-            'url': {
-                'view_name': 'organisation-geo',
-                'lookup_field': 'pk'
-            }
-        }
-
         geo_field = 'geography_model'
-
-        fields = (
-            'official_identifier',
-            'organisation_type',
-            'organisation_subtype',
-            'official_name',
-            'common_name',
-            'gss',
-            'slug',
-            'territory_code',
-            'election_name'
-        )
+        fields = org_fields
 
 
 class OrganisationDivisionSetSerializer(serializers.ModelSerializer):

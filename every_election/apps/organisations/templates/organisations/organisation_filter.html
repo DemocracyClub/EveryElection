@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<section class="columns large-6 large-centered">
+
+{% for object in objects %}
+  <div class="card postcode_card">
+    {% include "organisations/organisation_summary.html" %}
+  </div>
+{% endfor %}
+
+{% include "core/pagination_links.html" %}
+
+</section>
+{% endblock content %}

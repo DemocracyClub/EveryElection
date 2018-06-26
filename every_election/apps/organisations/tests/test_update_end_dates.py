@@ -1,3 +1,4 @@
+from datetime import date
 from io import StringIO
 import os
 from django.test import TestCase
@@ -13,28 +14,29 @@ class UpdateEndDatesTests(TestCase):
             official_identifier='TEST1',
             organisation_type='local-authority',
             official_name="Test Council 1",
-            gss="X00000001",
             slug="test1",
             territory_code="ENG",
             election_name="Test Council 1 Local Elections",
+            start_date=date(2004, 12, 2),
         )
         self.org2 = Organisation.objects.create(
             official_identifier='TEST2',
             organisation_type='local-authority',
             official_name="Test Council 2",
-            gss="X00000002",
             slug="test2",
             territory_code="ENG",
             election_name="Test Council 2 Local Elections",
+            start_date=date(2004, 12, 2),
         )
         self.org3 = Organisation.objects.create(
             official_identifier='TEST3',
             organisation_type='local-authority',
             official_name="Test Council 3",
-            gss="X00000003",
             slug="test3",
             territory_code="ENG",
             election_name="Test Council 3 Local Elections",
+            start_date=date(2004, 12, 2),
+            end_date=date(2020, 4, 4),
         )
         OrganisationDivisionSet.objects.create(
             organisation=self.org1,
@@ -138,7 +140,7 @@ class UpdateEndDatesTests(TestCase):
         self.assertNoChanges()
 
     def test_invalid_division_set(self):
-        # org is valid but start date not found
+        # org is valid but divset start_date not found
         dirname = os.path.dirname(os.path.abspath(__file__))
         filename = os.path.abspath(os.path.join(dirname, 'test_data/invalid_division_set.csv'))
         cmd = Command()
@@ -183,3 +185,35 @@ class UpdateEndDatesTests(TestCase):
         # this time it should have been ovewrwritten with the new value
         ods = OrganisationDivisionSet.objects.get(organisation=self.org1, start_date='2004-12-02')
         self.assertEqual('2018-04-02', ods.end_date.strftime("%Y-%m-%d"))
+
+    def test_invalid_start_date(self):
+        # org code is valid but divset start_date before org start_date
+        dirname = os.path.dirname(os.path.abspath(__file__))
+        filename = os.path.abspath(os.path.join(dirname, 'test_data/invalid_start_date.csv'))
+        cmd = Command()
+
+        # supress output
+        out = StringIO()
+        cmd.stdout = out
+
+        with self.assertRaises(Organisation.DoesNotExist):
+            cmd.handle(**{'file': filename, 'url': None, 's3': None, 'overwrite': False})
+
+        # no end dates should have changed
+        self.assertNoChanges()
+
+    def test_invalid_end_date(self):
+        # org is valid but divset end_date after org end_date
+        dirname = os.path.dirname(os.path.abspath(__file__))
+        filename = os.path.abspath(os.path.join(dirname, 'test_data/invalid_end_date.csv'))
+        cmd = Command()
+
+        # supress output
+        out = StringIO()
+        cmd.stdout = out
+
+        with self.assertRaises(ValueError):
+            cmd.handle(**{'file': filename, 'url': None, 's3': None, 'overwrite': False})
+
+        # no end dates should have changed
+        self.assertNoChanges()

@@ -1,3 +1,4 @@
+from datetime import date
 import os
 import tempfile
 from io import StringIO
@@ -24,10 +25,10 @@ class ImportLgbceTests(TestCase):
             official_identifier='TEST1',
             organisation_type='local-authority',
             official_name="Test Council 1",
-            gss="X00000001",
             slug="test1",
             territory_code="ENG",
             election_name="Test Council 1 Local Elections",
+            start_date=date(2016, 10, 1),
         )
 
         # valid org/div
@@ -36,14 +37,14 @@ class ImportLgbceTests(TestCase):
             official_identifier=self.valid_org_code,
             organisation_type='local-authority',
             official_name="Test Council 2",
-            gss="X00000006",
             slug="test2",
             territory_code="ENG",
             election_name="Test Council 2 Local Elections",
+            start_date=date(2016, 10, 1),
         )
         self.valid_divset = OrganisationDivisionSet.objects.create(
             organisation=valid_org,
-            start_date='2004-12-02',
+            start_date='2016-10-01',
             end_date=None,
             legislation_url='',
             consultation_url='',
@@ -98,7 +99,7 @@ class ImportLgbceTests(TestCase):
         # add an empty division set to org1
         OrganisationDivisionSet.objects.create(
             organisation=self.org1,
-            start_date='2004-12-02',
+            start_date='2016-10-01',
             end_date=None,
             legislation_url='',
             consultation_url='',

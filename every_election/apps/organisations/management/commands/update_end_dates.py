@@ -54,11 +54,27 @@ class Command(ReadFromCSVMixin, BaseCommand):
 
     def prepare_data(self, data):
         # validate and enrich input data
-        return [self.Record(
-            Organisation.objects.get(official_identifier=rec['org']),
-            datetime.datetime.strptime(rec['start_date'], "%Y-%m-%d").date(),
-            datetime.datetime.strptime(rec['end_date'], "%Y-%m-%d").date()
-        ) for rec in data]
+
+        ret = []
+        for rec in data:
+            divset_start_date = datetime.datetime.strptime(rec['start_date'], "%Y-%m-%d").date()
+            divset_end_date = datetime.datetime.strptime(rec['end_date'], "%Y-%m-%d").date()
+            org = Organisation.objects.all().get_by_date(
+                organisation_type='local-authority',
+                official_identifier=rec['org'],
+                date=divset_start_date,
+            )
+            if org.end_date and divset_end_date > org.end_date:
+                raise ValueError('Organisation end_date is %s but supplied '
+                    'end_date for DivisionSet is %s. DivisionSet end date '
+                    'must be on or before %s.' % (
+                        org.end_date.isoformat(),
+                        divset_end_date.isoformat(),
+                        org.end_date.isoformat(),
+                    )
+                )
+            ret.append(self.Record(org, divset_start_date, divset_end_date))
+        return ret
 
     def handle(self, **options):
         data = self.load_csv_data(options)

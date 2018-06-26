@@ -1,12 +1,45 @@
-from django.views.generic import ListView, DetailView
-
+from django.http import Http404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.views.generic import ListView, TemplateView
 from .models import Organisation
+
 
 class SupportedOrganisationsView(ListView):
     template_name = "organisations/supported_organisations.html"
     queryset = Organisation.objects.all().order_by('organisation_type', 'common_name')
 
-class OrganisationsView(DetailView):
-    queryset = Organisation.objects.all()
-    slug_url_kwarg = 'official_identifier'
-    slug_field = 'official_identifier'
+
+class OrganisationsFilterView(TemplateView):
+    template_name = "organisations/organisation_filter.html"
+    def get_context_data(self, **kwargs):
+        orgs = Organisation.objects.all().filter(**kwargs)
+        if not orgs.exists():
+            raise Http404()
+
+        paginator = Paginator(orgs, 100) # Show 100 records per page
+        page = self.request.GET.get('page')
+        context = {
+            'context_object_name': 'organisation',
+        }
+        try:
+            context['objects'] = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            context['objects'] = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range, deliver last page of results.
+            context['objects'] = paginator.page(paginator.num_pages)
+
+        return context
+
+
+class OrganisationDetailView(TemplateView):
+    template_name = "organisations/organisation_detail.html"
+    def get_context_data(self, **kwargs):
+        try:
+            return {
+                'object': Organisation.objects.all().get_by_date(**kwargs),
+                'context_object_name': 'organisation',
+            }
+        except Organisation.DoesNotExist:
+            raise Http404()

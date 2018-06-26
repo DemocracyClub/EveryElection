@@ -57,7 +57,7 @@ class TestElectionAPIQueries(APITestCase):
     def test_election_endpoint_for_postcode(self):
         election_id = "local.place-name.2017-03-23"
         ElectionFactory(group=None, election_id=election_id)
-        ElectionFactory(group=None, geography=None)
+        ElectionFactory(group=None, division_geography=None)
         resp = self.client.get("/api/elections/?postcode=SW1A1AA")
         data = resp.json()
 
@@ -67,7 +67,7 @@ class TestElectionAPIQueries(APITestCase):
     def test_election_endpoint_for_postcode_jsonp(self):
         election_id = "local.place-name.2017-03-23"
         ElectionFactory(group=None, election_id=election_id)
-        ElectionFactory(group=None, geography=None)
+        ElectionFactory(group=None, division_geography=None)
         url = "/api/elections/?postcode=SW1A1AA" + \
               "&format=jsonp&callback=a_callback_string"
         resp = self.client.get(url)
@@ -78,7 +78,7 @@ class TestElectionAPIQueries(APITestCase):
     def test_election_endpoint_for_bad_postcode(self):
         election_id = "local.place-name.2017-03-23"
         ElectionFactory(group=None, election_id=election_id)
-        ElectionFactory(group=None, geography=None)
+        ElectionFactory(group=None, division_geography=None)
         resp = self.client.get("/api/elections/?postcode=SW1A1AX")
         data = resp.json()
 
@@ -87,7 +87,7 @@ class TestElectionAPIQueries(APITestCase):
     def test_election_endpoint_for_lat_lng(self):
         election_id = "local.place-name.2017-03-23"
         ElectionFactory(group=None, election_id=election_id)
-        ElectionFactory(group=None, geography=None)
+        ElectionFactory(group=None, division_geography=None)
 
         resp = self.client.get(
             "/api/elections/?coords=51.5010089365,-0.141587600123")
@@ -182,6 +182,7 @@ class TestElectionAPIQueries(APITestCase):
                     "children": [],
                     "election_subtype": null,
                     "organisation": {
+                        "url": "http://testserver/api/organisations/local-authority/0/2016-10-01/",
                         "slug": "org-0",
                         "territory_code": "ENG",
                         "organisation_subtype": "",
@@ -190,7 +191,8 @@ class TestElectionAPIQueries(APITestCase):
                         "organisation_type": "local-authority",
                         "election_name": "",
                         "official_identifier": "0",
-                        "gss": "E000000"
+                        "start_date": "2016-10-01",
+                        "end_date": null
                     },
                     "election_title": "Election 0",
                     "elected_role": "Councillor",

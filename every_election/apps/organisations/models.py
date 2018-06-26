@@ -1,5 +1,48 @@
+from django.core.exceptions import ValidationError
 from django.contrib.gis.db import models
 from django.urls import reverse
+from django.utils.dateparse import parse_date
+
+
+class DateConstraintMixin:
+
+    def save(self, *args, **kwargs):
+
+        if type(self.start_date) == str:
+            self.start_date = parse_date(self.start_date)
+        if type(self.end_date) == str:
+            self.end_date = parse_date(self.end_date)
+
+        if self.start_date and self.organisation.start_date and self.start_date < self.organisation.start_date:
+            raise ValidationError(
+                'start_date (%s) must be on or after parent organisation start_date (%s)' %\
+                (self.start_date.isoformat(), self.organisation.start_date.isoformat())
+            )
+        if self.end_date and self.organisation.end_date and self.end_date > self.organisation.end_date:
+            raise ValidationError(
+                'end_date (%s) must be on or before parent organisation end_date (%s)' %\
+                (self.end_date.isoformat(), self.organisation.end_date.isoformat())
+            )
+
+        return super().save(*args, **kwargs)
+
+
+class OrganisationManager(models.QuerySet):
+
+    def get_date_filter(self, date):
+        return models.Q(start_date__lte=date) & (
+            models.Q(end_date__gte=date) | models.Q(end_date=None)
+        )
+
+    def filter_by_date(self, date):
+        return self.filter(self.get_date_filter(date))
+
+    def get_by_date(self, organisation_type, official_identifier, date):
+        return self.get(
+            models.Q(organisation_type=organisation_type) &\
+            models.Q(official_identifier=official_identifier) &\
+            self.get_date_filter(date)
+        )
 
 
 class Organisation(models.Model):
@@ -12,13 +55,16 @@ class Organisation(models.Model):
     organisation_subtype = models.CharField(blank=True, max_length=255)
     official_name = models.CharField(blank=True, max_length=255)
     common_name = models.CharField(blank=True, max_length=255)
-    gss = models.CharField(blank=True, max_length=20)
     slug = models.CharField(blank=True, max_length=100)
     territory_code = models.CharField(blank=True, max_length=10)
     election_types = models.ManyToManyField(
         'elections.ElectionType', through='elections.ElectedRole')
     election_name = models.CharField(blank=True, max_length=255)
+    start_date = models.DateField(null=False)
+    end_date = models.DateField(null=True)
+    legislation_url = models.CharField(blank=True, max_length=500, null=True)
     ValidationError = ValueError
+    objects = OrganisationManager().as_manager()
 
     def __str__(self):
         return "{}".format(self.name)
@@ -28,19 +74,83 @@ class Organisation(models.Model):
         return self.official_name or self.common_name or self.official_identifier
 
     class Meta:
-        ordering = ('official_name',)
+        ordering = ('official_name', '-start_date')
+        get_latest_by = 'start_date'
+        unique_together = (
+            ('official_identifier', 'organisation_type', 'start_date'),
+            ('official_identifier', 'organisation_type', 'end_date')
+        )
+        """
+        Note:
+        This model also has an additional constraint to prevent
+        overlapping start and end dates which is defined in
+        organisations/migrations/0034_end_date_constraint.py
+        """
 
     def get_absolute_url(self):
-        return reverse("organisation_view", args=(self.official_identifier,))
-
-    def format_geography_link(self):
-        return "https://mapit.mysociety.org/area/{}".format(
-            self.gss
+        return reverse("organisation_view",
+            args=(self.organisation_type, self.official_identifier, self.start_date)
         )
 
+    def format_geography_link(self):
+        if len(self.geographies.all()) == 0:
+            return None
+        if not self.geographies.latest().gss:
+            return None
+        return "https://mapit.mysociety.org/area/{}".format(
+            self.geographies.latest().gss
+        )
+
+    def get_geography(self, date):
+        if len(self.geographies.all()) == 0:
+            return None
+        elif len(self.geographies.all()) == 1:
+            return self.geographies.all()[0]
+        else:
+            if date < self.start_date:
+                raise ValueError(
+                    'date %s is before organisation start_date (%s)' %\
+                    (date.isoformat(), self.start_date.isoformat())
+                )
+            if self.end_date and date > self.end_date:
+                raise ValueError(
+                    'date %s is after organisation end_date (%s)' %\
+                    (date.isoformat(), self.end_date.isoformat())
+                )
+            try:
+                return self.geographies.get(
+                    (models.Q(start_date__lte=date) | models.Q(start_date=None)) &\
+                    (models.Q(end_date__gte=date) | models.Q(end_date=None))
+                )
+            except OrganisationGeography.DoesNotExist:
+                return None
 
 
-class OrganisationDivisionSet(models.Model):
+class OrganisationGeography(DateConstraintMixin, models.Model):
+    organisation = models.ForeignKey(Organisation, related_name='geographies')
+    start_date = models.DateField(null=True)
+    end_date = models.DateField(null=True)
+    gss = models.CharField(blank=True, max_length=20)
+    legislation_url = models.CharField(blank=True, max_length=500, null=True)
+    geography = models.MultiPolygonField()
+
+    class Meta:
+        ordering = ('-start_date',)
+        get_latest_by = 'start_date'
+        unique_together = (
+            ('organisation', 'start_date'),
+            ('organisation', 'end_date')
+        )
+        """
+        Note:
+        This model also has an additional constraint to prevent
+        overlapping start and end dates (but allows both to be NULL).
+        This is defined in
+        organisations/migrations/0040_end_date_constraint.py
+        """
+
+
+class OrganisationDivisionSet(DateConstraintMixin, models.Model):
     organisation = models.ForeignKey(Organisation, related_name='divisionset')
     start_date = models.DateField(null=False)
     end_date = models.DateField(null=True)
@@ -80,8 +190,9 @@ class OrganisationDivisionSet(models.Model):
         Note:
         This model also has an additional constraint to prevent
         overlapping start and end dates which is defined in
-        organisations/migrations/0030_end_date_constraint.py
+        organisations/migrations/0031_end_date_constraint.py
         """
+
 
 class OrganisationDivision(models.Model):
     """
@@ -119,15 +230,19 @@ class OrganisationDivision(models.Model):
         )
 
     def format_geography_link(self):
-        code_type, code = self.geography_curie.split(':')
+        try:
+            code_type, code = self.geography_curie.split(':')
+        except (ValueError, AttributeError):
+            return None
+
+        if code_type.lower() != 'gss':
+            return None
+
         return "https://mapit.mysociety.org/code/{}/{}".format(
             code_type, code
         )
 
 class DivisionGeography(models.Model):
     division = models.OneToOneField(
-        OrganisationDivision, related_name="geography", null=True)
-    organisation = models.OneToOneField(
-        Organisation, related_name="geography", null=True)
+        OrganisationDivision, related_name="geography")
     geography = models.MultiPolygonField()
-

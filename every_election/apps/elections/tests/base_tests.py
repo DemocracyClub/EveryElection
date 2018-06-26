@@ -30,10 +30,10 @@ class BaseElectionCreatorMixIn():
             official_identifier='TEST1',
             organisation_type='local-authority',
             official_name="Test Council",
-            gss="X00000001",
             slug="test",
             territory_code="ENG",
             election_name="Test Council local elections",
+            start_date=date(2016, 10, 1),
         )
 
         self.elected_role1 = ElectedRole.objects.create(

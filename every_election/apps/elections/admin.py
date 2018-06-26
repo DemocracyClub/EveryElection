@@ -26,6 +26,8 @@ class ElectionAdmin(admin.ModelAdmin):
     )
     exclude = (
         'geography',
+        'division_geography',
+        'organisation_geography',
     )
 
 

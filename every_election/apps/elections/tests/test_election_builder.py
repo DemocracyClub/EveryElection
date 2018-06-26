@@ -1,3 +1,4 @@
+from datetime import date
 from django.test import TestCase
 from elections.models import ElectionType, ElectionSubType, ElectedRole
 from elections.utils import ElectionBuilder
@@ -56,15 +57,24 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
         with self.assertRaises(Organisation.ValidationError):
             builder.with_organisation(self.org1)
 
+    def test_organisation_date_range_invalid(self):
+        builder = ElectionBuilder('local', '2001-01-01')
+
+        # delete the relationship between org1 and local elections
+        self.elected_role1.delete()
+
+        with self.assertRaises(Organisation.ValidationError):
+            builder.with_organisation(self.org1)
+
     def test_invalid_division(self):
         org2 = Organisation.objects.create(
             official_identifier='TEST2',
             organisation_type='local-authority',
             official_name="Test Council",
-            gss="X00000003",
             slug="test2",
             territory_code="ENG",
             election_name="Test2 Council Local Elections",
+            start_date=date(2016, 10, 1),
         )
         ElectedRole.objects.create(
             election_type=self.election_type1,

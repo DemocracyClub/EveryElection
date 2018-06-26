@@ -1,3 +1,4 @@
+from datetime import date
 from django.test import TestCase
 from organisations.models import (
     Organisation, OrganisationDivisionSet)
@@ -19,10 +20,10 @@ class ImportDivisionSetsFromCsvTests(TestCase):
             official_identifier='TEST1',
             organisation_type='local-authority',
             official_name="Test Council 1",
-            gss="X00000001",
             slug="test1",
             territory_code="ENG",
             election_name="Test Council 1 Local Elections",
+            start_date=date(2016, 10, 1),
         )
         self.base_record = {
             'Start Date': '',
@@ -44,23 +45,23 @@ class ImportDivisionSetsFromCsvTests(TestCase):
             official_identifier='TEST3',
             organisation_type='local-authority',
             official_name="Test Council 3",
-            gss="X00000003",
             slug="test3",
             territory_code="ENG",
             election_name="Test Council 3 Local Elections",
+            start_date=date(2016, 10, 1),
         )
         self.org4 = Organisation.objects.create(
             official_identifier='TEST4',
             organisation_type='local-authority',
             official_name="Test Council 4",
-            gss="X00000004",
             slug="test4",
             territory_code="ENG",
             election_name="Test Council 4 Local Elections",
+            start_date=date(2016, 10, 1),
         )
         OrganisationDivisionSet.objects.create(
             organisation=self.org3,
-            start_date='2004-12-02',
+            start_date='2016-10-01',
             end_date='2017-05-03',
             legislation_url='',
             consultation_url='',
@@ -70,7 +71,7 @@ class ImportDivisionSetsFromCsvTests(TestCase):
         )
         OrganisationDivisionSet.objects.create(
             organisation=self.org4,
-            start_date='2004-12-02',
+            start_date='2016-10-01',
             end_date='2018-05-02',
             legislation_url='',
             consultation_url='',
@@ -99,10 +100,19 @@ class ImportDivisionSetsFromCsvTests(TestCase):
         records[3]['Organisation ID'] = 'TEST4'
         self.valid_test_data = records
 
-    def test_org_not_found(self):
+    def test_org_not_found_bad_code(self):
         # Organisation doesn't exist
         cmd = Command()
         self.base_record['Organisation ID'] = 'XXXX'  # this Org ID doesn't exist
+        cmd.read_csv_from_url = lambda x: [self.base_record]
+        with self.assertRaises(Organisation.DoesNotExist):
+            cmd.handle(**self.opts)
+
+    def test_org_not_found_bad_date(self):
+        # Organisation code exists, but not valid for this date
+        cmd = Command()
+        self.base_record['Organisation ID'] = 'TEST1'
+        self.base_record['Start Date'] = '2016-09-01'  # before TEST1 org start date
         cmd.read_csv_from_url = lambda x: [self.base_record]
         with self.assertRaises(Organisation.DoesNotExist):
             cmd.handle(**self.opts)
@@ -120,7 +130,7 @@ class ImportDivisionSetsFromCsvTests(TestCase):
         # but the DivisionSet has a NULL end date
         OrganisationDivisionSet.objects.create(
             organisation=self.org1,
-            start_date='2004-12-02',
+            start_date='2016-10-01',
             end_date=None,
             legislation_url='',
             consultation_url='',

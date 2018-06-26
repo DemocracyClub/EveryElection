@@ -12,7 +12,7 @@
     <li {% if request.GET.status == 'duplicate' %}class="active"{% endif %} ><a href="{% url "snooped_election_view" %}?status=duplicate">Duplicate</a></li>
   </ul>
 
-    {% for form in object_list %}
+    {% for form in objects %}
     <div class="card postcode_card">
         <h3>{{ form.instance.title }}</h3>
         <div class="row">
@@ -51,27 +51,7 @@
     </div>
     {% endfor %}
 
-    <div class="card">
-      <ul class="pagination" role="navigation" aria-label="Pagination">
-        <span class="step-links">
-          {% if object_list.has_previous %}
-            <li class="pagination-previous">
-              <a href="?page={{ object_list.previous_page_number }}">previous</a>
-            </li>
-          {% endif %}
-
-          <li class="current">
-            Page {{ object_list.number }} of {{ object_list.paginator.num_pages }}.
-          </li>
-
-          {% if object_list.has_next %}
-            <li class="pagination-next">
-              <a href="?page={{ object_list.next_page_number }}">next</a>
-            </li>
-          {% endif %}
-        </span>
-      </ul>
-    </div>
+    {% include "core/pagination_links.html" %}
 
 </section>
 {% endblock content %}

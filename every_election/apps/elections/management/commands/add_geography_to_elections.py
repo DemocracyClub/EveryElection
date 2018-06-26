@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+from django.db import models
 
 from elections.models import Election
 
@@ -6,19 +7,24 @@ from elections.models import Election
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        def _process_qs(qs, geography_type="division"):
-            for election in qs:
-                geography = getattr(election, geography_type).geography
-                election.geography = geography
-                election.save()
 
         # divisions first
-        _process_qs(Election.objects.filter(
-            group_type=None, geography=None).exclude(division=None))
+        elections = Election.objects.filter(
+                group_type=None,
+                division_geography=None
+            ).exclude(division=None)
+        for election in elections:
+            self.stdout.write(str(election))
+            election.division_geography = election.get_division_geography()
+            election.save()
 
         # Direct Organisation elections
-        _process_qs(Election.objects.filter(
-            group_type="organisation",
-            geography=None,
-            division=None),
-            geography_type="organisation")
+        elections = Election.objects.filter(
+                models.Q(group_type="organisation") | models.Q(group_type=None),
+                organisation_geography=None,
+                division=None
+            ).exclude(organisation=None)
+        for election in elections:
+            self.stdout.write(str(election))
+            election.organisation_geography = election.get_organisation_geography()
+            election.save()

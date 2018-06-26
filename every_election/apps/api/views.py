@@ -1,3 +1,4 @@
+from django.http import Http404
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
@@ -77,14 +78,49 @@ class ElectionSubTypeViewSet(viewsets.ReadOnlyModelViewSet):
 class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Organisation.objects.all()
     serializer_class = OrganisationSerializer
-    lookup_field = 'official_identifier'
+
+    def get_object(self, **kwargs):
+        try:
+            return Organisation.objects.all().get_by_date(**kwargs)
+        except Organisation.DoesNotExist:
+            raise Http404()
 
     @detail_route(url_path='geo')
-    def geo(self, request, official_identifier=None, format=None):
-        org = Organisation.objects.get(official_identifier=official_identifier)
+    def geo(self, request, **kwargs):
+        kwargs.pop('format', None)
+        org = self.get_object(**kwargs)
+        serializer = OrganisationGeoSerializer(
+            org, read_only=True, context={'request': request}
+        )
+        return Response(serializer.data)
+
+    def retrieve(self, request, **kwargs):
+        kwargs.pop('format', None)
+        org = self.get_object(**kwargs)
+        serializer = OrganisationSerializer(
+            org, read_only=True, context={'request': request}
+        )
+        return Response(serializer.data)
+
+    def filter(self, request, **kwargs):
+        kwargs.pop('format', None)
+        orgs = Organisation.objects.all().filter(**kwargs)
+
+        page = self.paginate_queryset(orgs)
+        if page is not None:
+            return self.get_paginated_response(
+                OrganisationSerializer(
+                    page, many=True, read_only=True,
+                    context={'request': request}
+                ).data
+            )
 
         return Response(
-            OrganisationGeoSerializer(org, context={'request': request}).data)
+            OrganisationSerializer(
+                orgs, many=True, read_only=True,
+                context={'request': request}
+            ).data
+        )
 
 
 class OrganisationDivisionViewSet(viewsets.ReadOnlyModelViewSet):

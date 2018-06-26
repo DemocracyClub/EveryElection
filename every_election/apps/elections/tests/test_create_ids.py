@@ -1,8 +1,9 @@
+from datetime import date
 from django.test import TestCase
 
 from elections.models import (
     ElectedRole, Election, ElectionType, ElectionSubType)
-from organisations.models import Organisation, DivisionGeography
+from organisations.models import Organisation, DivisionGeography, OrganisationGeography
 from organisations.tests.factories import OrganisationDivisionFactory
 
 from .base_tests import BaseElectionCreatorMixIn
@@ -86,10 +87,10 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             official_identifier='TEST2',
             organisation_type='local-authority',
             official_name="Test Council 2",
-            gss="X00000002",
             slug="test2",
             territory_code="ENG",
             election_name="Test Council 2 local elections",
+            start_date=date(2016, 10, 1),
         )
         ElectedRole.objects.create(
             election_type=self.election_type1,
@@ -188,10 +189,10 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             official_identifier='MAYORTEST1',
             organisation_type='combined-authority',
             official_name="Test authority",
-            gss="X10000001",
             slug="test-ca",
             territory_code="ENG",
             election_name="Test Council Mayoral elections",
+            start_date=date(2016, 10, 1),
         )
         mayor_election_type = ElectionType.objects.get(
             election_type='mayor',
@@ -230,10 +231,10 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             official_identifier='parl',
             organisation_type='parl',
             official_name="Parl",
-            gss="X20000001",
             slug="parl",
             territory_code="ENG",
             election_name="General Election",
+            start_date=date(2016, 10, 1),
         )
         parl_election_type = ElectionType.objects.get(
             election_type='parl',
@@ -270,10 +271,10 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             official_identifier='naw',
             organisation_type='naw',
             official_name="naw",
-            gss="W20000001",
             slug="naw",
             territory_code="WLS",
             election_name="National Assembly for Wales elections",
+            start_date=date(2016, 10, 1),
         )
         naw_election_type = ElectionType.objects.get(
             election_type='naw',
@@ -337,7 +338,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
     def test_election_with_organisation_geography(self):
         all_data = self.base_data
 
-        geog = DivisionGeography()
+        geog = OrganisationGeography()
         geog.organisation = all_data['election_organisation'][0]
         geog.geography = self.test_polygon
         geog.save()
