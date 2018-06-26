@@ -10,7 +10,7 @@ from organisations.models import Organisation, OrganisationDivision
 from .serializers import (ElectionSerializer, ElectionTypeSerializer,
                           ElectionSubTypeSerializer, OrganisationSerializer,
                           OrganisationDivisionSerializer,
-                          OrganisationGeoSerializer)
+                          OrganisationGeoSerializer, ElectionGeoSerializer)
 
 
 class APIPostcodeException(APIException):
@@ -29,8 +29,14 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Election.objects.all()
     serializer_class = ElectionSerializer
     lookup_field = 'election_id'
-    lookup_value_regex="(?!\.json$)[^/]+"
+    lookup_value_regex = "(?!\.json$)[^/]+"
     filter_fields = ('group_type', 'poll_open_date')
+
+    @detail_route(url_path='geo')
+    def geo(self, request, election_id=None, format=None):
+        election = Election.objects.get(election_id=election_id)
+        return Response(ElectionGeoSerializer(election,
+                        context={'request': request}).data)
 
     def get_queryset(self):
         queryset = Election.objects.all()

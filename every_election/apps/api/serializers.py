@@ -105,6 +105,7 @@ class ElectionTypeSerializer(serializers.HyperlinkedModelSerializer):
         depth = 1
 
 
+
 class ElectionSubTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ElectionSubType
@@ -185,3 +186,27 @@ class ElectionSerializer(serializers.HyperlinkedModelSerializer):
         )
         depth = 1
 
+
+class ElectionGeoSerializer(GeoFeatureModelSerializer):
+    geography_model = GeometrySerializerMethodField()
+
+    def get_geography_model(self, obj):
+        if obj.geography is None:
+            return None
+        return obj.geography.geography.simplify(0.0009)
+
+    class Meta:
+        model = Election
+        extra_kwargs = {
+            'url': {
+                'view_name': 'election-geo',
+                'lookup_field': 'pk'
+            }
+        }
+
+        geo_field = 'geography_model'
+
+        fields = (
+            'election_id',
+            'election_title'
+        )
