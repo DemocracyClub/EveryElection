@@ -142,13 +142,23 @@ class Organisation(models.Model):
 
 class OrganisationGeography(DateConstraintMixin, models.Model):
     organisation = models.ForeignKey(Organisation, related_name='geographies')
-    start_date = models.DateField(null=True)
-    end_date = models.DateField(null=True)
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
     gss = models.CharField(blank=True, max_length=20)
     legislation_url = models.CharField(blank=True, max_length=500, null=True)
-    geography = models.MultiPolygonField()
+    geography = models.MultiPolygonField(null=True)
+
+    def __str__(self):
+        if self.gss:
+            return self.gss
+        return "{name} ({start} - {end})".format(
+            name=self.organisation.name,
+            start=self.start_date,
+            end=self.end_date
+        )
 
     class Meta:
+        verbose_name_plural = "Organisation Geographies"
         ordering = ('-start_date',)
         get_latest_by = 'start_date'
         unique_together = (
