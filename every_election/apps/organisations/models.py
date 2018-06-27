@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.gis.db import models
 from django.urls import reverse
 from django.utils.dateparse import parse_date
+from model_utils import Choices
 
 
 class DateConstraintMixin:
@@ -49,9 +50,22 @@ class Organisation(models.Model):
     """
     An organisation that can hold an election in the UK
     """
+    ORGTYPES = Choices(
+        ("combined-authority", "combined-authority"),
+        ('sp', 'sp'),
+        ("gla", "gla"),
+        ("local-authority", "local-authority"),
+        ("naw", "naw"),
+        ("nia", "nia"),
+        ("parl", "parl"),
+        ("police-area", "police-area"),
+        ("sp", "sp"),
+    )
+
     official_identifier = models.CharField(
-        blank=True, max_length=255, db_index=True)
-    organisation_type = models.CharField(blank=True, max_length=255)
+        blank=False, max_length=255, db_index=True)
+    organisation_type = models.CharField(blank=False, max_length=255,
+        choices=ORGTYPES, default='local-authority')
     organisation_subtype = models.CharField(blank=True, max_length=255)
     official_name = models.CharField(blank=True, max_length=255)
     common_name = models.CharField(blank=True, max_length=255)
@@ -61,7 +75,7 @@ class Organisation(models.Model):
         'elections.ElectionType', through='elections.ElectedRole')
     election_name = models.CharField(blank=True, max_length=255)
     start_date = models.DateField(null=False)
-    end_date = models.DateField(null=True)
+    end_date = models.DateField(blank=True, null=True)
     legislation_url = models.CharField(blank=True, max_length=500, null=True)
     ValidationError = ValueError
     objects = OrganisationManager().as_manager()
