@@ -1,9 +1,12 @@
 import json
 from copy import deepcopy
+from django import forms
 from django.contrib import admin
 from django.forms.widgets import Textarea
 from django_markdown.admin import MarkdownModelAdmin
-from .models import Election, Explanation, MetaData
+from .models import ElectedRole, Election, Explanation, MetaData
+from organisations.admin import CustomOrganisationChoiceField
+from organisations.models import Organisation
 
 
 class ElectionAdmin(admin.ModelAdmin):
@@ -50,6 +53,19 @@ class MetaDataAdmin(admin.ModelAdmin):
         return form
 
 
+class ElectedRoleAdminForm(forms.ModelForm):
+    organisation = CustomOrganisationChoiceField(
+        queryset=Organisation.objects.all())
+
+    class Meta:
+        model = ElectedRole
+        fields = '__all__'
+
+class ElectedRoleAdmin(admin.ModelAdmin):
+    form = ElectedRoleAdminForm
+
+
+admin.site.register(ElectedRole, ElectedRoleAdmin)
 admin.site.register(Election, ElectionAdmin)
 admin.site.register(Explanation, MarkdownModelAdmin)
 admin.site.register(MetaData, MetaDataAdmin)
