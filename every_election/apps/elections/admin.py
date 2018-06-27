@@ -62,6 +62,13 @@ class ElectedRoleAdminForm(forms.ModelForm):
         fields = '__all__'
 
 class ElectedRoleAdmin(admin.ModelAdmin):
+    search_fields = (
+        'elected_title',
+        'elected_role_name',
+        'organisation__official_name',
+        'organisation__common_name',
+        'organisation__official_identifier'
+    )
     form = ElectedRoleAdminForm
 
 
