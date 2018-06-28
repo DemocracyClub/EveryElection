@@ -59,11 +59,11 @@
         </ul>
         <h3>API</h3>
         <ul>
-            <li><a href="{% url 'api:organisation-detail' official_identifier=object.official_identifier %}">
+            <li><a href="{{ api_detail }}">
                 Organisation detail (JSON)
                 </a></li>
-        {% if object.geography %}
-             <li><a href="{% url 'api:organisation-geo' official_identifier=object.official_identifier %}">
+        {% if api_detail_geo %}
+             <li><a href="{{ api_detail_geo }}">
                 Organisation boundary (GeoJSON)
                 </a></li>
         {% endif %}
