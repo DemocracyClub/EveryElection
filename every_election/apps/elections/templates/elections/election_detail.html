@@ -23,14 +23,14 @@
         {% endif %}
         {% if object.division %}
             <dt>Division</dt>
-        <dd>{% if object.division.geography_curie %}
-                        <a href="{{ object.division.format_geography_link }}.html">
-                            {{ object.division.geography_curie }}
-                        </a>
-                        {% else %}
-                        <strong>Missing</strong>
-                        {% endif %}
-            </dd>
+              <dd>{% if object.division.format_geography_link %}
+                    <a href="{{ object.division.format_geography_link }}.html">
+                      {{ object.division.geography_curie }}
+                    </a>
+                  {% else %}
+                    <strong>Missing</strong>
+                  {% endif %}
+              </dd>
         {% endif %}
 
         {% if object.group_type == 'organisation' or not object.group_type %}
