@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /api/*/geo$
+Disallow: /api/*/geo.json$
+Disallow: /admin/
+Disallow: /election_radar/
+Disallow: /id_creator/
+Disallow: /markdown/
+Disallow: /static/
+Disallow: /sync/
