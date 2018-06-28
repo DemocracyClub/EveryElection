@@ -43,7 +43,7 @@ org_fields = (
 class OrganisationSerializer(serializers.ModelSerializer):
 
     url = OrganisationHyperlinkedIdentityField(
-        view_name='organisation-detail', read_only=True)
+        view_name='api:organisation-detail', read_only=True)
 
     class Meta:
         model = Organisation
@@ -53,7 +53,7 @@ class OrganisationGeoSerializer(GeoFeatureModelSerializer):
 
     geography_model = GeometrySerializerMethodField()
     url = OrganisationHyperlinkedIdentityField(
-        view_name='organisation-geo', read_only=True)
+        view_name='api:organisation-geo', read_only=True)
 
     def get_geography_model(self, obj):
         return obj.geographies.latest().geography.simplify(0.0009)
