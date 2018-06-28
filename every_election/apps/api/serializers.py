@@ -56,7 +56,7 @@ class OrganisationGeoSerializer(GeoFeatureModelSerializer):
         view_name='api:organisation-geo', read_only=True)
 
     def get_geography_model(self, obj):
-        return obj.geographies.latest().geography.simplify(0.0009)
+        return obj.geographies.latest().geography
 
     class Meta:
         model = Organisation
@@ -195,7 +195,7 @@ class ElectionGeoSerializer(GeoFeatureModelSerializer, BaseElectionSerializer):
     def get_geography_model(self, obj):
         if obj.geography is None:
             return None
-        return obj.geography.geography.simplify(0.0009)
+        return obj.geography.geography
 
     class Meta:
         model = Election
