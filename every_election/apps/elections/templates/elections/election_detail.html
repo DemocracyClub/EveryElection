@@ -85,7 +85,7 @@
                 </a>
             </li>
             {% if object.geography %}
-                <li><a href="{% url 'api:election-geo' election_id=object.election_id %}">
+                <li><a href="{% url 'api:election-geo' election_id=object.election_id format='json' %}">
                         Election boundary (GeoJSON)
                     </a>
                 </li>

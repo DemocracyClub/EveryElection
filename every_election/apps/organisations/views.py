@@ -47,5 +47,5 @@ class OrganisationDetailView(TemplateView):
             'context_object_name': 'organisation',
         }
         if obj.get_geography(kwargs['date']):
-            context['api_detail_geo'] = obj.get_url('api:organisation-geo')
+            context['api_detail_geo'] = obj.get_url('api:organisation-geo', 'json')
         return context
