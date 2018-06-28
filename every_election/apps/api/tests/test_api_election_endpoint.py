@@ -73,6 +73,14 @@ class TestElectionAPIQueries(APITestCase):
         resp = self.client.get(url)
         assert resp.content.decode('utf8').startswith("a_callback_string(")
 
+    def test_election_endpoint_for_postcode_cors(self):
+        election_id = "local.place-name.2017-03-23"
+        ElectionFactory(group=None, election_id=election_id)
+        ElectionFactory(group=None, division_geography=None)
+        url = "/api/elections/?postcode=SW1A1AA"
+        resp = self.client.get(url, HTTP_ORIGIN='foo.bar/baz')
+        self.assertEqual(resp.get('Access-Control-Allow-Origin'), '*')
+
     @vcr.use_cassette(
         'fixtures/vcr_cassettes/test_election_for_bad_postcode.yaml')
     def test_election_endpoint_for_bad_postcode(self):
