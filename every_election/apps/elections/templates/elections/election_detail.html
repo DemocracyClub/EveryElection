@@ -40,20 +40,16 @@
             {% endif %}
             {# Only do this for non-group IDs #}
         {% endif %}
-        </dl>
-        {% if object.group_type == 'organisation' %}
-            <p>View this election on:</p>
-            <ul>
-                <li><a href="https://whocanivotefor.co.uk/elections/{{ object.election_id }}/{{ object.election_type|slugify }}">WhoCanIVoteFor</a></li>
-                <li><a href="https://candidates.democracyclub.org.uk/election/{{ object.election_id }}/constituencies">candidates.democracyclub.org.uk</a></li>
-            </ul>
-        {% endif %}
 
         {% if object.notice %}
             {% include './notice_doc.html' with object=object only %}
         {% elif object.group.notice %}
             {% include './notice_doc.html' with object=object.group only %}
-        {% else %}
+        {% endif %}
+        </dl>
+
+        {% if not object.notice and not object.group.notice %}
+            <hr />
             <form action="" method="post">
                 {% csrf_token %}
                 <div class="form-group">
@@ -64,7 +60,9 @@
                 </div>
             </form>
         {% endif %}
+    </div>
 
+    <div class="card postcode_card related">
         <h3>Related Elections</h3>
         {% if object.group %}
             <p>Part of the election group <a href="{{ object.group.get_absolute_url }}">
@@ -93,6 +91,16 @@
                 </li>
             {% endif %}
         </ul>
+
+        {% if object.group_type == 'organisation' %}
+            <h3>Candidates</h3>
+            <p>View this election on:</p>
+            <ul>
+                <li><a href="https://whocanivotefor.co.uk/elections/{{ object.election_id }}/{{ object.election_type|slugify }}">WhoCanIVoteFor</a></li>
+                <li><a href="https://candidates.democracyclub.org.uk/election/{{ object.election_id }}/constituencies">candidates.democracyclub.org.uk</a></li>
+            </ul>
+        {% endif %}
+
     </div>
 </div>
 
