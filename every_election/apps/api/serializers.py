@@ -133,7 +133,27 @@ class MetaDataSerializer(serializers.RelatedField):
         return value.data
 
 
-class ElectionSerializer(serializers.HyperlinkedModelSerializer):
+election_fields = (
+    'election_id',
+    'tmp_election_id',
+    'election_title',
+    'poll_open_date',
+    'election_type',
+    'election_subtype',
+    'organisation',
+    'group',
+    'group_type',
+    'children',
+    'elected_role',
+    'seats_contested',
+    'division',
+    'voting_system',
+    'current',
+    'explanation',
+    'metadata',
+)
+
+class BaseElectionSerializer(serializers.ModelSerializer):
     election_type = ElectionTypeSerializer()
     election_subtype = ElectionSubTypeSerializer()
     organisation = OrganisationSerializer()
@@ -141,7 +161,7 @@ class ElectionSerializer(serializers.HyperlinkedModelSerializer):
     group = serializers.SlugRelatedField(
         slug_field='election_id',
         read_only=True
-        )
+    )
     children = serializers.SlugRelatedField(
         slug_field='election_id',
         read_only=True,
@@ -163,31 +183,13 @@ class ElectionSerializer(serializers.HyperlinkedModelSerializer):
             return VotingSystemSerializer(obj.voting_system).data
         return None
 
+class ElectionSerializer(serializers.HyperlinkedModelSerializer, BaseElectionSerializer):
     class Meta:
         model = Election
-        fields = (
-            'election_id',
-            'tmp_election_id',
-            'election_title',
-            'poll_open_date',
-            'election_type',
-            'election_subtype',
-            'organisation',
-            'group',
-            'group_type',
-            'children',
-            'elected_role',
-            'seats_contested',
-            'division',
-            'voting_system',
-            'current',
-            'explanation',
-            'metadata',
-        )
+        fields = election_fields
         depth = 1
 
-
-class ElectionGeoSerializer(GeoFeatureModelSerializer):
+class ElectionGeoSerializer(GeoFeatureModelSerializer, BaseElectionSerializer):
     geography_model = GeometrySerializerMethodField()
 
     def get_geography_model(self, obj):
@@ -206,7 +208,5 @@ class ElectionGeoSerializer(GeoFeatureModelSerializer):
 
         geo_field = 'geography_model'
 
-        fields = (
-            'election_id',
-            'election_title'
-        )
+        fields = election_fields
+        depth = 1
