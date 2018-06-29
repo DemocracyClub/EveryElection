@@ -14,6 +14,7 @@ python manage.py import_divisionsets_from_csv -s "foo/bar/baz.csv"
 
 import datetime
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils.text import slugify
@@ -39,13 +40,12 @@ class Command(ReadFromCSVMixin, BaseCommand):
     division_sets = {}
     # list of divisions
     divisions = []
-    ENCODING = 'utf-8'
-    DELIMITER = ','
+    S3_BUCKET_NAME = settings.LGBCE_BUCKET
 
     def handle(self, *args, **options):
         self.org_curie_to_area_type = ORG_CURIE_TO_MAPIT_AREA_TYPE
 
-        csv_data = self.load_csv_data(options)
+        csv_data = self.load_data(options)
 
         # first pass over the csv builds the division sets
         self.create_division_sets(csv_data)

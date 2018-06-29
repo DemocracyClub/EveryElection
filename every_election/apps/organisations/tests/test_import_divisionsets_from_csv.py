@@ -104,7 +104,7 @@ class ImportDivisionSetsFromCsvTests(TestCase):
         # Organisation doesn't exist
         cmd = Command()
         self.base_record['Organisation ID'] = 'XXXX'  # this Org ID doesn't exist
-        cmd.read_csv_from_url = lambda x: [self.base_record]
+        cmd.read_from_url = lambda x: [self.base_record]
         with self.assertRaises(Organisation.DoesNotExist):
             cmd.handle(**self.opts)
 
@@ -113,7 +113,7 @@ class ImportDivisionSetsFromCsvTests(TestCase):
         cmd = Command()
         self.base_record['Organisation ID'] = 'TEST1'
         self.base_record['Start Date'] = '2016-09-01'  # before TEST1 org start date
-        cmd.read_csv_from_url = lambda x: [self.base_record]
+        cmd.read_from_url = lambda x: [self.base_record]
         with self.assertRaises(Organisation.DoesNotExist):
             cmd.handle(**self.opts)
 
@@ -121,7 +121,7 @@ class ImportDivisionSetsFromCsvTests(TestCase):
         # Organisation does exist, but has no associated DivisionSets
         cmd = Command()
         self.base_record['Organisation ID'] = 'TEST1'
-        cmd.read_csv_from_url = lambda x: [self.base_record]
+        cmd.read_from_url = lambda x: [self.base_record]
         with self.assertRaises(Exception):
             cmd.handle(**self.opts)
 
@@ -140,14 +140,14 @@ class ImportDivisionSetsFromCsvTests(TestCase):
         )
         cmd = Command()
         self.base_record['Organisation ID'] = 'TEST1'
-        cmd.read_csv_from_url = lambda x: [self.base_record]
+        cmd.read_from_url = lambda x: [self.base_record]
         with self.assertRaises(Exception):
             cmd.handle(**self.opts)
 
     def test_valid(self):
         # all data is valid - should import cleanly
         cmd = Command()
-        cmd.read_csv_from_url = lambda x: self.valid_test_data
+        cmd.read_from_url = lambda x: self.valid_test_data
         cmd.get_division_type_from_registers = lambda x: 'DIW'
         cmd.handle(**self.opts)
 

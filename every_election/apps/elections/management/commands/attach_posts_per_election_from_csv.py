@@ -84,7 +84,7 @@ class Command(ReadFromCSVMixin, BaseCommand):
             election.save()
 
     def handle(self, *args, **options):
-        data = self.load_csv_data(options)
+        data = self.load_data(options)
         trust_csv = options['replace_seats_total']
         updated_elections = []
         for line in data:
