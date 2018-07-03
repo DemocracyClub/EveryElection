@@ -133,82 +133,85 @@ class TestElectionAPIQueries(APITestCase):
         data = resp.json()
         assert data['count'] == 1
 
-
-
-
     def test_all_expected_fields_returned(self):
+
         org = OrganisationFactory()
         org_div = OrganisationDivisionFactory(
             organisation=org, territory_code="ENG")
         ElectionFactory(group=None, organisation=org, division=org_div)
 
-        resp = self.client.get("/api/elections/")
-
-        assert resp.json() == json.loads("""
+        self.expected_object = json.loads("""
         {
-            "next": null,
-            "previous": null,
-            "results": [
-                {
-                    "group_type": null,
-                    "current": false,
-                    "poll_open_date": "2017-03-23",
-                    "election_id": "local.place-name-0.2017-03-23",
-                    "group": null,
-                    "division": {
-                        "name": "Division 0",
-                        "slug": "0",
-                        "geography_curie": "test:0",
-                        "divisionset": {
-                            "start_date": "2017-05-04",
-                            "legislation_url": "https://example.com/the-law",
-                            "short_title": "Made up boundary changes",
-                            "notes": "This is just for testing.",
-                            "end_date": "2025-05-03",
-                            "consultation_url": "https://example.com/consultation",
-                            "mapit_generation_id": ""
-                        },
-                        "mapit_generation_high": null,
-                        "seats_total": null,
-                        "division_election_sub_type": "",
-                        "division_subtype": "",
-                        "mapit_generation_low": null,
-                        "division_type": "test",
-                        "official_identifier": "0",
-                        "territory_code": "ENG"
-                    },
-                    "election_type": {
-                        "name": "Local elections",
-                        "election_type": "local"
-                    },
-                    "explanation": null,
-                    "voting_system": {
-                        "slug": "",
-                        "name": "",
-                        "uses_party_lists": false
-                    },
-                    "children": [],
-                    "election_subtype": null,
-                    "organisation": {
-                        "url": "http://testserver/api/organisations/local-authority/0/2016-10-01/",
-                        "slug": "org-0",
-                        "territory_code": "ENG",
-                        "organisation_subtype": "",
-                        "common_name": "Organisation 0",
-                        "official_name": "The Organisation 0 Council",
-                        "organisation_type": "local-authority",
-                        "election_name": "",
-                        "official_identifier": "0",
-                        "start_date": "2016-10-01",
-                        "end_date": null
-                    },
-                    "election_title": "Election 0",
-                    "elected_role": "Councillor",
-                    "seats_contested": 1,
-                    "tmp_election_id": null,
-                    "metadata": null
-                }
-            ],
-            "count": 1
+            "group_type": null,
+            "current": false,
+            "poll_open_date": "2017-03-23",
+            "election_id": "local.place-name-0.2017-03-23",
+            "group": null,
+            "division": {
+                "name": "Division 0",
+                "slug": "0",
+                "geography_curie": "test:0",
+                "divisionset": {
+                    "start_date": "2017-05-04",
+                    "legislation_url": "https://example.com/the-law",
+                    "short_title": "Made up boundary changes",
+                    "notes": "This is just for testing.",
+                    "end_date": "2025-05-03",
+                    "consultation_url": "https://example.com/consultation",
+                    "mapit_generation_id": ""
+                },
+                "mapit_generation_high": null,
+                "seats_total": null,
+                "division_election_sub_type": "",
+                "division_subtype": "",
+                "mapit_generation_low": null,
+                "division_type": "test",
+                "official_identifier": "0",
+                "territory_code": "ENG"
+            },
+            "election_type": {
+                "name": "Local elections",
+                "election_type": "local"
+            },
+            "explanation": null,
+            "voting_system": {
+                "slug": "",
+                "name": "",
+                "uses_party_lists": false
+            },
+            "children": [],
+            "election_subtype": null,
+            "organisation": {
+                "url": "http://testserver/api/organisations/local-authority/0/2016-10-01/",
+                "slug": "org-0",
+                "territory_code": "ENG",
+                "organisation_subtype": "",
+                "common_name": "Organisation 0",
+                "official_name": "The Organisation 0 Council",
+                "organisation_type": "local-authority",
+                "election_name": "",
+                "official_identifier": "0",
+                "start_date": "2016-10-01",
+                "end_date": null
+            },
+            "election_title": "Election 0",
+            "elected_role": "Councillor",
+            "seats_contested": 1,
+            "tmp_election_id": null,
+            "metadata": null
         }
         """)
+
+        resp = self.client.get("/api/elections/")
+        data = resp.json()
+        self.assertEqual(data['results'][0], self.expected_object)
+
+        resp = self.client.get("/api/elections/local.place-name-0.2017-03-23/")
+        data = resp.json()
+        self.assertEqual(data, self.expected_object)
+
+        resp = self.client.get(
+            "/api/elections/local.place-name-0.2017-03-23/geo/",
+            content_type="application/json")
+        data = resp.json()
+        self.assertEqual(data['properties'], self.expected_object)

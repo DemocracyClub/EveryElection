@@ -43,7 +43,7 @@ org_fields = (
 class OrganisationSerializer(serializers.ModelSerializer):
 
     url = OrganisationHyperlinkedIdentityField(
-        view_name='organisation-detail', read_only=True)
+        view_name='api:organisation-detail', read_only=True)
 
     class Meta:
         model = Organisation
@@ -53,10 +53,10 @@ class OrganisationGeoSerializer(GeoFeatureModelSerializer):
 
     geography_model = GeometrySerializerMethodField()
     url = OrganisationHyperlinkedIdentityField(
-        view_name='organisation-geo', read_only=True)
+        view_name='api:organisation-geo', read_only=True)
 
     def get_geography_model(self, obj):
-        return obj.geographies.latest().geography.simplify(0.0009)
+        return obj.geographies.latest().geography
 
     class Meta:
         model = Organisation
@@ -105,6 +105,7 @@ class ElectionTypeSerializer(serializers.HyperlinkedModelSerializer):
         depth = 1
 
 
+
 class ElectionSubTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ElectionSubType
@@ -132,7 +133,27 @@ class MetaDataSerializer(serializers.RelatedField):
         return value.data
 
 
-class ElectionSerializer(serializers.HyperlinkedModelSerializer):
+election_fields = (
+    'election_id',
+    'tmp_election_id',
+    'election_title',
+    'poll_open_date',
+    'election_type',
+    'election_subtype',
+    'organisation',
+    'group',
+    'group_type',
+    'children',
+    'elected_role',
+    'seats_contested',
+    'division',
+    'voting_system',
+    'current',
+    'explanation',
+    'metadata',
+)
+
+class BaseElectionSerializer(serializers.ModelSerializer):
     election_type = ElectionTypeSerializer()
     election_subtype = ElectionSubTypeSerializer()
     organisation = OrganisationSerializer()
@@ -140,7 +161,7 @@ class ElectionSerializer(serializers.HyperlinkedModelSerializer):
     group = serializers.SlugRelatedField(
         slug_field='election_id',
         read_only=True
-        )
+    )
     children = serializers.SlugRelatedField(
         slug_field='election_id',
         read_only=True,
@@ -162,26 +183,30 @@ class ElectionSerializer(serializers.HyperlinkedModelSerializer):
             return VotingSystemSerializer(obj.voting_system).data
         return None
 
+class ElectionSerializer(serializers.HyperlinkedModelSerializer, BaseElectionSerializer):
     class Meta:
         model = Election
-        fields = (
-            'election_id',
-            'tmp_election_id',
-            'election_title',
-            'poll_open_date',
-            'election_type',
-            'election_subtype',
-            'organisation',
-            'group',
-            'group_type',
-            'children',
-            'elected_role',
-            'seats_contested',
-            'division',
-            'voting_system',
-            'current',
-            'explanation',
-            'metadata',
-        )
+        fields = election_fields
         depth = 1
 
+class ElectionGeoSerializer(GeoFeatureModelSerializer, BaseElectionSerializer):
+    geography_model = GeometrySerializerMethodField()
+
+    def get_geography_model(self, obj):
+        if obj.geography is None:
+            return None
+        return obj.geography.geography
+
+    class Meta:
+        model = Election
+        extra_kwargs = {
+            'url': {
+                'view_name': 'election-geo',
+                'lookup_field': 'pk'
+            }
+        }
+
+        geo_field = 'geography_model'
+
+        fields = election_fields
+        depth = 1

@@ -87,10 +87,13 @@ class Organisation(models.Model):
         organisations/migrations/0034_end_date_constraint.py
         """
 
+    def get_url(self, view, ext=None):
+        args = (self.organisation_type, self.official_identifier, self.start_date)
+        args = args + (ext,) if ext else args
+        return reverse(view, args=args)
+
     def get_absolute_url(self):
-        return reverse("organisation_view",
-            args=(self.organisation_type, self.official_identifier, self.start_date)
-        )
+        return self.get_url("organisation_view")
 
     def format_geography_link(self):
         if len(self.geographies.all()) == 0:

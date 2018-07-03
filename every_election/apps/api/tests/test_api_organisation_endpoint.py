@@ -1,18 +1,20 @@
 from datetime import date
 from rest_framework.test import APITestCase
-from organisations.tests.factories import OrganisationFactory
+from organisations.tests.factories import OrganisationFactory, OrganisationGeographyFactory
 
 
 class TestOrganisationAPIEndpoint(APITestCase):
 
     def setUp(self):
         super().setUp()
-        OrganisationFactory(
-            official_identifier='TEST1',
-            official_name='Foo & Bar District Council',
-            organisation_type = "local-authority",
-            start_date=date(2016, 10, 1),
-            end_date=date(2017, 10, 1)
+        OrganisationGeographyFactory(
+            organisation=OrganisationFactory(
+                official_identifier='TEST1',
+                official_name='Foo & Bar District Council',
+                organisation_type = "local-authority",
+                start_date=date(2016, 10, 1),
+                end_date=date(2017, 10, 1)
+            )
         )
         OrganisationFactory(
             official_identifier='TEST1',
@@ -39,6 +41,16 @@ class TestOrganisationAPIEndpoint(APITestCase):
 
     def test_get_org_not_found(self):
         resp = self.client.get("/api/organisations/local-authority/TEST1/2001-10-01.json")
+        self.assertEqual(404, resp.status_code)
+
+    def test_get_org_geo_valid(self):
+        resp = self.client.get("/api/organisations/local-authority/TEST1/2016-10-01/geo.json")
+        data = resp.json()
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual('Foo & Bar District Council', data['properties']['official_name'])
+
+    def test_get_org_geo_not_found(self):
+        resp = self.client.get("/api/organisations/local-authority/TEST1/2001-10-01/geo.json")
         self.assertEqual(404, resp.status_code)
 
     def test_filter_orgs_type_valid(self):

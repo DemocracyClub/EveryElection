@@ -37,9 +37,15 @@ class OrganisationDetailView(TemplateView):
     template_name = "organisations/organisation_detail.html"
     def get_context_data(self, **kwargs):
         try:
-            return {
-                'object': Organisation.objects.all().get_by_date(**kwargs),
-                'context_object_name': 'organisation',
-            }
+            obj = Organisation.objects.all().get_by_date(**kwargs)
         except Organisation.DoesNotExist:
             raise Http404()
+
+        context = {
+            'object': obj,
+            'api_detail': obj.get_url('api:organisation-detail'),
+            'context_object_name': 'organisation',
+        }
+        if obj.get_geography(kwargs['date']):
+            context['api_detail_geo'] = obj.get_url('api:organisation-geo', 'json')
+        return context
