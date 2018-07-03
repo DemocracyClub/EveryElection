@@ -25,7 +25,7 @@
             <dt>Division</dt>
               <dd>{% if object.division.format_geography_link %}
                     <a href="{{ object.division.format_geography_link }}.html">
-                      {{ object.division.geography_curie }}
+                      {{ object.division.official_identifier }}
                     </a>
                   {% else %}
                     <strong>Missing</strong>

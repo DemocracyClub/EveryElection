@@ -31,7 +31,7 @@ from core.mixins import ReadFromCSVMixin
 
 class Command(ReadFromCSVMixin, BaseCommand):
     help = """Import from CSV at URL with the headers:
-        Start Date, End Date, Name, official_identifier, geography_curie,
+        Start Date, End Date, Name, official_identifier,
         seats_total, Boundary Commission Consultation URL, Legislation URL,
         Short Title, Notes, Mapit Generation URI, Organisation ID"""
 
@@ -132,10 +132,11 @@ class Command(ReadFromCSVMixin, BaseCommand):
         return PARENT_TO_CHILD_AREAS[self.org_curie_to_area_type[curie]][0]
 
     def create_div_from_line(self, org, identifier, line):
-        if line['geography_curie']:
-            geography_curie = line['geography_curie']
-        else:
-            geography_curie = identifier
+
+        # just in case...
+        if 'geography_curie' in line and line['geography_curie']:
+            raise ValueError(
+                "Found content in 'geography_curie' column, but geography_curie is a virtual model field.")
 
         seats_total = line['seats_total']
         if not seats_total:
@@ -144,7 +145,6 @@ class Command(ReadFromCSVMixin, BaseCommand):
         div = OrganisationDivision(
             official_identifier=identifier,
             organisation=org,
-            geography_curie=geography_curie,
             name=line['Name'],
             slug=slugify(line['Name']),
             division_type=self.get_division_type_from_registers(line),

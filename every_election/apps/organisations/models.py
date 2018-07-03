@@ -233,7 +233,6 @@ class OrganisationDivision(models.Model):
     name = models.CharField(blank=True, max_length=255)
     official_identifier = models.CharField(
         blank=True, max_length=255, db_index=True)
-    geography_curie = models.CharField(blank=True, max_length=100)
     slug = models.CharField(blank=True, max_length=100)
     division_type = models.CharField(blank=True, max_length=255)
     division_subtype = models.CharField(blank=True, max_length=255)
@@ -268,6 +267,10 @@ class OrganisationDivision(models.Model):
         return "https://mapit.mysociety.org/code/{}/{}".format(
             code_type, code
         )
+
+    @property
+    def geography_curie(self):
+        return self.official_identifier
 
 class DivisionGeography(models.Model):
     division = models.OneToOneField(

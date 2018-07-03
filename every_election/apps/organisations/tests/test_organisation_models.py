@@ -140,23 +140,23 @@ class TestOrganisationDivision(TestCase):
 
     def test_format_geography_invalid(self):
         self.assertIsNone(
-            OrganisationDivisionFactory(geography_curie='foo').format_geography_link()
+            OrganisationDivisionFactory(official_identifier='foo').format_geography_link()
         )
 
     def test_format_geography_empty(self):
         self.assertIsNone(
-            OrganisationDivisionFactory(geography_curie='').format_geography_link()
+            OrganisationDivisionFactory(official_identifier='').format_geography_link()
         )
 
     def test_format_geography_not_gss(self):
         self.assertIsNone(
-            OrganisationDivisionFactory(geography_curie='foo:X01000001').format_geography_link()
+            OrganisationDivisionFactory(official_identifier='foo:X01000001').format_geography_link()
         )
 
     def test_format_geography_valid(self):
         self.assertEqual(
             'https://mapit.mysociety.org/code/gss/X01000001',
-            OrganisationDivisionFactory(geography_curie='gss:X01000001').format_geography_link()
+            OrganisationDivisionFactory(official_identifier='gss:X01000001').format_geography_link()
         )
 
 

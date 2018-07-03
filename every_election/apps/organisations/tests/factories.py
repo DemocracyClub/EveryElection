@@ -52,7 +52,6 @@ class OrganisationDivisionFactory(factory.django.DjangoModelFactory):
     divisionset = factory.SubFactory(OrganisationDivisionSetFactory)
     name = factory.Sequence(lambda n: 'Division %d' % n)
     official_identifier = factory.Sequence(lambda n: n)
-    geography_curie = factory.Sequence(lambda n: 'test:%d' % n)
     slug = factory.Sequence(lambda n: '%d' % n)
     division_type = "test"
     # division_election_sub_type

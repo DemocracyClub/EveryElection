@@ -150,7 +150,7 @@ class TestElectionAPIQueries(APITestCase):
             "division": {
                 "name": "Division 0",
                 "slug": "0",
-                "geography_curie": "test:0",
+                "geography_curie": "0",
                 "divisionset": {
                     "start_date": "2017-05-04",
                     "legislation_url": "https://example.com/the-law",
