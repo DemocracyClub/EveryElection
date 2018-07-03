@@ -6,6 +6,7 @@ from datetime import date, timedelta
 from django.db import models, transaction
 from django.core.files import File
 from django.urls import reverse
+from django.utils.text import slugify
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.postgres.fields import JSONField
 from django_markdown.models import MarkdownField
@@ -145,6 +146,20 @@ class Election(SuggestedByPublicMixin, models.Model):
                     return self.division.geography
         except ObjectDoesNotExist:
             pass
+        return None
+
+    @property
+    def ynr_link(self):
+        if self.group_type == 'organisation':
+            return 'https://candidates.democracyclub.org.uk/election/{}/constituencies'.format(
+                self.election_id)
+        return None
+
+    @property
+    def whocivf_link(self):
+        if self.group_type == 'organisation':
+            return 'https://whocanivotefor.co.uk/elections/{id}/{type}'.format(
+                id=self.election_id, type=slugify(self.election_type))
         return None
 
     def get_organisation_geography(self):
