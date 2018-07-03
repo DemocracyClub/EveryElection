@@ -233,6 +233,8 @@ class OrganisationDivision(models.Model):
     name = models.CharField(blank=True, max_length=255)
     official_identifier = models.CharField(
         blank=True, max_length=255, db_index=True)
+    temp_id = models.CharField(
+        blank=True, max_length=255, db_index=True)
     slug = models.CharField(blank=True, max_length=100)
     division_type = models.CharField(blank=True, max_length=255)
     division_subtype = models.CharField(blank=True, max_length=255)

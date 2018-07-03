@@ -144,6 +144,7 @@ class Command(ReadFromCSVMixin, BaseCommand):
 
         div = OrganisationDivision(
             official_identifier=identifier,
+            temp_id=identifier,
             organisation=org,
             name=line['Name'],
             slug=slugify(line['Name']),
