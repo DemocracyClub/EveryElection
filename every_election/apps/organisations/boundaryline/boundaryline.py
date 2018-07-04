@@ -1,17 +1,10 @@
 from django.contrib.gis.gdal import DataSource, OGRGeometry
-from django.utils.text import slugify
+from organisations.boundaryline.helpers import normalize_name_for_matching, overlap_percent
 
 
 # Percentage overlap required for us to consider 2 divisions
 # 'the same' without manual investigation
 SANITY_CHECK_TOLERANCE = 97
-
-
-def overlap_percent(geom1, geom2):
-    g1 = geom1.transform(27700, clone=True)
-    g2 = geom2.transform(27700, clone=True)
-    intersection = g1.intersection(g2)
-    return (intersection.area/g1.area)*100
 
 
 class BoundaryLine:
@@ -21,14 +14,6 @@ class BoundaryLine:
         if len(ds) != 1:
             raise ValueError("Expected 1 layer, found %i" % (len(ds)))
         self.layer = ds[0]
-
-    def normalize_name(self, name):
-        slug = slugify(name)
-        if slug.endswith('-ed'):
-            return slug[:-3]
-        if slug.endswith('-ward'):
-            return slug[:-5]
-        return slug
 
     def get_code_from_feature(self, feature):
         if feature.get('area_code') == 'CED':
@@ -76,12 +61,12 @@ class BoundaryLine:
         # slugging names to compare them
         # will help reduce some ambiguity
         # e.g: St Helen's vs St. Helens
-        division_name = self.normalize_name(div.name)
+        division_name = normalize_name_for_matching(div.name)
 
         matches = 0
         match = None
         for feature in self.layer:
-            if self.normalize_name(feature.get('name')) == division_name:
+            if normalize_name_for_matching(feature.get('name')) == division_name:
                 match = feature
                 matches = matches + 1
             if matches > 1:
