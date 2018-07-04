@@ -1,6 +1,7 @@
 import csv
 import re
 import tempfile
+import urllib
 
 import requests
 
@@ -44,13 +45,7 @@ class ReadFromFileMixin:
 
     def read_from_url(self, url):
         tmp = tempfile.NamedTemporaryFile()
-        r = requests.get(url, stream=True)
-        r.raise_for_status()
-        for chunk in r.iter_content(chunk_size=1024):
-            if chunk:
-                tmp.write(chunk)
-        tmp.flush()
-        tmp.seek(0)
+        urllib.request.urlretrieve(url, tmp.name)
         return tmp
 
     def read_from_s3(self, filepath):
