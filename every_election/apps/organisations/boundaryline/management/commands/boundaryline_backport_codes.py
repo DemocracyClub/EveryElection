@@ -23,7 +23,7 @@ from core.mixins import ReadFromFileMixin
 from storage.zipfile import unzip
 from organisations.models import Organisation, OrganisationDivision
 from organisations.boundaryline.constants import ORG_TYPES
-from organisations.boundaryline.boundaryline import BoundaryLine
+from organisations.boundaryline import BoundaryLine
 
 
 class Command(ReadFromFileMixin, BaseCommand):
