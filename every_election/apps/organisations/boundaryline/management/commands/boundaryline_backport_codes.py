@@ -12,21 +12,18 @@ are all valid calls.
 
 import argparse
 import os
-import shutil
 from collections import namedtuple
 from datetime import datetime
 
-from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from core.mixins import ReadFromFileMixin
-from storage.zipfile import unzip
 from organisations.models import Organisation, OrganisationDivision
-from organisations.boundaryline.constants import get_area_type_lookup
 from organisations.boundaryline import BoundaryLine
+from organisations.boundaryline.constants import get_area_type_lookup
+from organisations.boundaryline.management.base import BaseBoundaryLineCommand
 
 
-class Command(ReadFromFileMixin, BaseCommand):
+class Command(BaseBoundaryLineCommand):
 
     help = """
     Use BoundaryLine to try and retrospectively attach codes
@@ -95,29 +92,6 @@ class Command(ReadFromFileMixin, BaseCommand):
         )
         self.org_boundaries[(div.organisation_id, div.divisionset.start_date)] = org
         return org
-
-    def get_base_dir(self, **options):
-        try:
-            if options['url']:
-                self.stdout.write('Downloading data from %s ...' % (options['url']))
-            fh = self.load_data(options)
-            self.stdout.write('Extracting archive...')
-            path = unzip(fh.name)
-            self.stdout.write('...done')
-
-            # if we've extracted a zip file to a temp location
-            # we want to delete the temp files when we're done
-            self.cleanup_required = True
-            return path
-        except IsADirectoryError:
-            return options['file']
-
-    def cleanup(self, tempdir):
-        # clean up the temp files we created
-        try:
-            shutil.rmtree(tempdir)
-        except OSError:
-            self.stdout.write("Failed to clean up temp files.")
 
     @transaction.atomic
     def save_all(self):
