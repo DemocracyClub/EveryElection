@@ -22,7 +22,7 @@ from django.db import transaction
 from core.mixins import ReadFromFileMixin
 from storage.zipfile import unzip
 from organisations.models import Organisation, OrganisationDivision
-from organisations.boundaryline.constants import ORG_TYPES
+from organisations.boundaryline.constants import get_area_type_lookup
 from organisations.boundaryline import BoundaryLine
 
 
@@ -33,6 +33,7 @@ class Command(ReadFromFileMixin, BaseCommand):
     to divisions imported from LGBCE with pseudo-identifiers.
     """
 
+    WARD_TYPES = ('CED', 'UTE', 'DIW', 'LBW', 'MTW', 'UTW')
     cleanup_required = False
     found = []
     not_found = []
@@ -156,7 +157,9 @@ class Command(ReadFromFileMixin, BaseCommand):
         base_dir = self.get_base_dir(**options)
 
         self.stdout.write('Searching...')
-        for org_type, filename in ORG_TYPES.items():
+        lookup = get_area_type_lookup(
+            filter=lambda x: x in self.WARD_TYPES, group=True)
+        for org_type, filename in lookup.items():
             bl = BoundaryLine(os.path.join(base_dir, 'Data', 'GB', filename))
             divs = self.get_divisions(org_type, options['date'])
             for div in divs:
