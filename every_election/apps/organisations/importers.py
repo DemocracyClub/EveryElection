@@ -20,7 +20,7 @@ class DiffException(Exception):
 
 class DivisionSetGeographyImporter:
 
-    def __init__(self, data, division_set, name_column='name', name_map={}, srid=27700):
+    def __init__(self, data, division_set, name_column='name', name_map={}, srid=27700, source='unknown'):
         if not isinstance(data, DataSource):
             error = "param 'data' must be an instance of django.contrib.gis.gdal.DataSource"
             raise TypeError(error)
@@ -29,6 +29,7 @@ class DivisionSetGeographyImporter:
         self.data = data[0]
 
         self.name_column = name_column
+        self.source = source
 
         if not isinstance(division_set, OrganisationDivisionSet):
             error = "param 'division_set' must be an instance of organisations.models.OrganisationDivisionSet"
@@ -73,7 +74,8 @@ class DivisionSetGeographyImporter:
             div_geogs.append(
                 DivisionGeography(
                     division=division,
-                    geography=feature.multipolygon
+                    geography=feature.multipolygon,
+                    source=self.source
                 )
             )
         return div_geogs

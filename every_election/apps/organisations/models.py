@@ -150,6 +150,7 @@ class OrganisationGeography(DateConstraintMixin, models.Model):
     gss = models.CharField(blank=True, max_length=20)
     legislation_url = models.CharField(blank=True, max_length=500, null=True)
     geography = models.MultiPolygonField(null=True)
+    source = models.CharField(blank=True, max_length=255)
 
     def __str__(self):
         if self.gss:
@@ -278,3 +279,4 @@ class DivisionGeography(models.Model):
     division = models.OneToOneField(
         OrganisationDivision, related_name="geography")
     geography = models.MultiPolygonField()
+    source = models.CharField(blank=True, max_length=255)
