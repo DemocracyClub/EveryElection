@@ -36,7 +36,10 @@ class Command(BaseBoundaryLineCommand):
         code_type, code = split_code(identifier)
 
         if code_type == 'unit_id' and re.match(r'^\d+$', code):
-            return OrganisationDivision.objects.all().get(official_identifier=identifier)
+            # FIXME before 2021
+            error = "Importing boundaries from BoundaryLine against CEDs is " +\
+            "not yet available because unit_id is not a stable identifier"
+            raise Exception(error)
 
         if code_type == 'gss' and re.match(r'^[A-Z][0-9]{8}$', code):
             try:

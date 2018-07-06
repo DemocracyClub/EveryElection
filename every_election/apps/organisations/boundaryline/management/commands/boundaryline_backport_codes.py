@@ -30,7 +30,7 @@ class Command(BaseBoundaryLineCommand):
     to divisions imported from LGBCE with pseudo-identifiers.
     """
 
-    WARD_TYPES = ('CED', 'UTE', 'DIW', 'LBW', 'MTW', 'UTW')
+    WARD_TYPES = ('UTE', 'DIW', 'LBW', 'MTW', 'UTW')
     cleanup_required = False
     found = []
     not_found = []
