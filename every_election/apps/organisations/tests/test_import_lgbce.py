@@ -64,7 +64,6 @@ class ImportLgbceTests(TestCase):
                 official_identifier=division_name,
                 organisation=valid_org,
                 divisionset=self.valid_divset,
-                geography_curie=division_name,
                 name=division_name,
                 slug=slugify(division_name),
                 division_type='DIW',

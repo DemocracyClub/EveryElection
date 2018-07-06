@@ -22,6 +22,7 @@ python manage.py update_end_dates -s "foo/bar/baz.csv"
 import datetime
 from collections import namedtuple
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from core.mixins import ReadFromCSVMixin
@@ -32,6 +33,7 @@ class Command(ReadFromCSVMixin, BaseCommand):
 
     EXPECTED_COLS = ['org', 'start_date', 'end_date']
     Record = namedtuple('Record', EXPECTED_COLS)
+    S3_BUCKET_NAME = settings.LGBCE_BUCKET
 
     def add_arguments(self, parser):
         super(Command, self).add_arguments(parser)
@@ -77,7 +79,7 @@ class Command(ReadFromCSVMixin, BaseCommand):
         return ret
 
     def handle(self, **options):
-        data = self.load_csv_data(options)
+        data = self.load_data(options)
         self.validate_csv(data)
         data = self.prepare_data(data)
 

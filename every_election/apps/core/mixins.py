@@ -1,24 +1,23 @@
 import csv
 import re
+import tempfile
+import urllib
 
 import requests
-from django.conf import settings
 
 from storage.s3wrapper import S3Wrapper
 
 
-class ReadFromCSVMixin(object):
-    """
-    A generic mixin for for a reading from a CSV file in a Django
-    management command.
+"""
+Generic mixins for reading from files in a Django management command.
+The files can be a local file, a URL or on an S3 bucket.
+`self.S3_BUCKET_NAME` needs to be set when using S3.
+"""
 
-    The CSV file can be a local file, a URL or on an S3 bucket.
 
-    `self.S3_BUCKET_NAME` needs to be set when using S3.
-    """
-    ENCODING = 'utf-8'
-    DELIMITER = ','
-    S3_BUCKET_NAME = settings.LGBCE_BUCKET
+class ReadFromFileMixin:
+
+    S3_BUCKET_NAME = None
 
     def add_arguments(self, parser):
         group = parser.add_mutually_exclusive_group(required=True)
@@ -41,13 +40,40 @@ class ReadFromCSVMixin(object):
             help='S3 key to import e.g: foo/bar/baz.csv'
         )
 
-    def read_local_csv(self, filename):
+    def read_from_local(self, filename):
+        return open(filename, 'rt')
+
+    def read_from_url(self, url):
+        tmp = tempfile.NamedTemporaryFile()
+        urllib.request.urlretrieve(url, tmp.name)
+        return tmp
+
+    def read_from_s3(self, filepath):
+        s3 = S3Wrapper(self.S3_BUCKET_NAME)
+        return s3.get_file(filepath)
+
+    def load_data(self, options):
+        if options['file']:
+            return self.read_from_local(options['file'])
+        if options['url']:
+            return self.read_from_url(options['url'])
+        if options['s3']:
+            return self.read_from_s3(options['s3'])
+
+
+class ReadFromCSVMixin(ReadFromFileMixin):
+
+    ENCODING = 'utf-8'
+    DELIMITER = ','
+
+    def read_from_local(self, filename):
         f = open(filename, 'rt', encoding=self.ENCODING)
         reader = csv.DictReader(f, delimiter=self.DELIMITER)
         return list(reader)
 
-    def read_csv_from_url(self, url):
+    def read_from_url(self, url):
         r = requests.get(url)
+        r.raise_for_status()
 
         # if CSV came from google docs
         # manually set the encoding
@@ -58,15 +84,6 @@ class ReadFromCSVMixin(object):
         csv_reader = csv.DictReader(r.text.splitlines())
         return list(csv_reader)
 
-    def read_csv_from_s3(self, filepath):
-        s3 = S3Wrapper(self.S3_BUCKET_NAME)
-        f = s3.get_file(filepath)
-        return self.read_local_csv(f.name)
-
-    def load_csv_data(self, options):
-        if options['file']:
-            return self.read_local_csv(options['file'])
-        if options['url']:
-            return self.read_csv_from_url(options['url'])
-        if options['s3']:
-            return self.read_csv_from_s3(options['s3'])
+    def read_from_s3(self, filepath):
+        f = super().read_from_s3(filepath)
+        return self.read_from_local(f.name)

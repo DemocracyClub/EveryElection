@@ -14,6 +14,7 @@ python manage.py import_divisionsets_from_csv -s "foo/bar/baz.csv"
 
 import datetime
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils.text import slugify
@@ -30,7 +31,7 @@ from core.mixins import ReadFromCSVMixin
 
 class Command(ReadFromCSVMixin, BaseCommand):
     help = """Import from CSV at URL with the headers:
-        Start Date, End Date, Name, official_identifier, geography_curie,
+        Start Date, End Date, Name, official_identifier,
         seats_total, Boundary Commission Consultation URL, Legislation URL,
         Short Title, Notes, Mapit Generation URI, Organisation ID"""
 
@@ -39,13 +40,12 @@ class Command(ReadFromCSVMixin, BaseCommand):
     division_sets = {}
     # list of divisions
     divisions = []
-    ENCODING = 'utf-8'
-    DELIMITER = ','
+    S3_BUCKET_NAME = settings.LGBCE_BUCKET
 
     def handle(self, *args, **options):
         self.org_curie_to_area_type = ORG_CURIE_TO_MAPIT_AREA_TYPE
 
-        csv_data = self.load_csv_data(options)
+        csv_data = self.load_data(options)
 
         # first pass over the csv builds the division sets
         self.create_division_sets(csv_data)
@@ -132,10 +132,11 @@ class Command(ReadFromCSVMixin, BaseCommand):
         return PARENT_TO_CHILD_AREAS[self.org_curie_to_area_type[curie]][0]
 
     def create_div_from_line(self, org, identifier, line):
-        if line['geography_curie']:
-            geography_curie = line['geography_curie']
-        else:
-            geography_curie = identifier
+
+        # just in case...
+        if 'geography_curie' in line and line['geography_curie']:
+            raise ValueError(
+                "Found content in 'geography_curie' column, but geography_curie is a virtual model field.")
 
         seats_total = line['seats_total']
         if not seats_total:
@@ -143,8 +144,8 @@ class Command(ReadFromCSVMixin, BaseCommand):
 
         div = OrganisationDivision(
             official_identifier=identifier,
+            temp_id=identifier,
             organisation=org,
-            geography_curie=geography_curie,
             name=line['Name'],
             slug=slugify(line['Name']),
             division_type=self.get_division_type_from_registers(line),

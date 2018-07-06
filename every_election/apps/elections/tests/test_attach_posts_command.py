@@ -35,7 +35,7 @@ class TestAttachPostsPerWard(TestCase):
             'skip_unknown': False,
         }
 
-    @mock.patch(COMMAND_PATH + '.load_csv_data')
+    @mock.patch(COMMAND_PATH + '.load_data')
     def test_set_seats_total(self, fake_load_csv_data):
         fake_load_csv_data.return_value = self.fake_csv_data
         command_class = attach_posts_per_election_from_csv.Command
@@ -47,7 +47,7 @@ class TestAttachPostsPerWard(TestCase):
         command.handle(**options)
         self.assertTrue(command.stdout.getvalue().startswith('Taking '))
 
-    @mock.patch(COMMAND_PATH + '.load_csv_data')
+    @mock.patch(COMMAND_PATH + '.load_data')
     def test_raise_on_seats_total(self, fake_load_csv_data):
         fake_load_csv_data.return_value = self.fake_csv_data
         command_class = attach_posts_per_election_from_csv.Command
@@ -59,7 +59,7 @@ class TestAttachPostsPerWard(TestCase):
             command.handle(**options)
         self.assertEqual(command.stdout.getvalue(), '')
 
-    @mock.patch(COMMAND_PATH + '.load_csv_data')
+    @mock.patch(COMMAND_PATH + '.load_data')
     def test_too_many_contested_seats(self, fake_load_csv_data):
         election = ElectionFactory.create(seats_total=1)
         election.division.seats_total = 1
@@ -83,7 +83,7 @@ class TestAttachPostsPerWard(TestCase):
             command.handle(**options)
 
 
-    @mock.patch(COMMAND_PATH + '.load_csv_data')
+    @mock.patch(COMMAND_PATH + '.load_data')
     def test_skip_unknown(self, fake_load_csv_data):
         election = ElectionFactory.create(seats_total=None)
         fake_data = [
