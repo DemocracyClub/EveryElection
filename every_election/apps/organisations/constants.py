@@ -509,3 +509,15 @@ ORG_CURIE_TO_MAPIT_AREA_TYPE = {
     "local-authority-wls:BGE": "UTA",
     "local-authority-wls:AGY": "UTA",
 }
+
+
+REGISTER_SUBTYPE_TO_BOUNDARYLINE_TYPE = {
+    'CA': 'UTA',   # Scottish Unitary
+    'CC': 'LBO',   # City of London Corporation
+    'CTY': 'CTY',  # English County
+    'LBO': 'LBO',  # London Borough
+    'MD': 'MTD',   # Metropolitan District
+    'NMD': 'DIS',  # Non-Metropolitan District
+    'SRA': 'GLA',  # Greater London Authority
+    'UA': 'UTA',   # English or Welsh Unitary
+}

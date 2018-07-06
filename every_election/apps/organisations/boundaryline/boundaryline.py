@@ -1,4 +1,5 @@
 from django.contrib.gis.gdal import DataSource, OGRGeometry
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from organisations.boundaryline.helpers import normalize_name_for_matching, overlap_percent
 
 
@@ -14,6 +15,28 @@ class BoundaryLine:
         if len(ds) != 1:
             raise ValueError("Expected 1 layer, found %i" % (len(ds)))
         self.layer = ds[0]
+
+    def get_feature_by_field(self, fieldname, code):
+        matches = 0
+        match = None
+        for feature in self.layer:
+            if str(feature.get(fieldname)) == code:
+                match = feature
+                matches = matches + 1
+
+        if matches == 0:
+            raise ObjectDoesNotExist(
+                "Expected one match for {code}, found 0".format(code=code)
+            )
+        if matches == 1:
+            return match
+
+        raise MultipleObjectsReturned(
+            "Expected one match for {code}, found {matches}".format(
+                code=code,
+                matches=matches
+            )
+        )
 
     def get_code_from_feature(self, feature):
         if feature.get('area_code') == 'CED':

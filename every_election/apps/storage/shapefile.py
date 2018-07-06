@@ -7,6 +7,13 @@ from django.contrib.gis.geos import (
 )
 
 
+def convert_geom_to_multipolygon(geom):
+    if isinstance(geom, Polygon):
+        return MultiPolygon(geom)
+    else:
+        return geom
+
+
 def _remove_invalid_geometries(in_features):
     out_features = []
     for feature in in_features:
@@ -21,10 +28,7 @@ def _remove_invalid_geometries(in_features):
 def _add_multipolygons(features):
     # 'enrich' feature objects with a handy .multipolygon property
     for feature in features:
-        if isinstance(feature.geom.geos, Polygon):
-            feature.multipolygon = MultiPolygon(feature.geom.geos)
-        else:
-           feature.multipolygon = feature.geom.geos
+        feature.multipolygon = convert_geom_to_multipolygon(feature.geom.geos)
     return features
 
 
