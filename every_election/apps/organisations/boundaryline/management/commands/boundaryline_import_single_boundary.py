@@ -162,4 +162,8 @@ class Command(BaseBoundaryLineCommand):
         self.stdout.write("Importing boundary for area {}...".format(code))
         for rec in records:
             self.import_record(rec)
+
+        if self.cleanup_required:
+            self.cleanup(self.base_dir)
+
         self.stdout.write("...done!")

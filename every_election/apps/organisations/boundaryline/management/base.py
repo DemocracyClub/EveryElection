@@ -8,6 +8,7 @@ from storage.zipfile import unzip
 class BaseBoundaryLineCommand(ReadFromFileMixin, BaseCommand):
 
     def get_base_dir(self, **options):
+        self.cleanup_required = False
         try:
             if options['url']:
                 self.stdout.write('Downloading data from %s ...' % (options['url']))
