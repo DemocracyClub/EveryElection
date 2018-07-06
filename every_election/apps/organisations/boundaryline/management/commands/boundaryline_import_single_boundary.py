@@ -1,5 +1,6 @@
 import os
 import re
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from organisations.models import (
     DivisionGeography,
     OrganisationGeography,
@@ -27,32 +28,63 @@ class Command(BaseBoundaryLineCommand):
             help='where did this boundary come from? e.g: bdline_gb-2018-05',
             required=True,
         )
+        parser.add_argument(
+            '--all',
+            action='store_true',
+            dest='all',
+            help='import this boundary against multiple GSS codes if found',
+        )
         super().add_arguments(parser)
+
+    def validate_identifier(self, identifier):
+        # throw an exception if we're going to have a bad time with this id
+        # return True if it looks good
+        code_type, code = split_code(identifier)
+
+        if code_type == 'unit_id' and re.match(r'^\d+$', code):
+            # FIXME before 2021
+            error = ("Importing boundaries from BoundaryLine against CEDs is "
+            "not yet available because unit_id is not a stable identifier")
+            raise ValueError(error)
+
+        if code_type == 'gss' and re.match(r'^[A-Z][0-9]{8}$', code):
+            return True
+
+        raise ValueError("Unknown code type. Expected 'gss:X01000001' or 'unit_id:12345'")
+
+    def filter_records(self, identifier):
+        # use code to find matching OrganisationGeography
+        # or OrganisationDivision records
+
+        self.validate_identifier(identifier)
+        _, code = split_code(identifier)
+
+        orgs = OrganisationGeography.objects.all().filter(gss=code)
+        if orgs.exists():
+            return orgs
+
+        divs = OrganisationDivision.objects.all().filter(
+            official_identifier=identifier)
+        if divs.exists():
+            return divs
+
+        raise ObjectDoesNotExist(
+            ("Couldn't find any OrganisationGeography or OrganisationDivision "
+            "objects matching {}".format(identifier))
+        )
 
     def get_record(self, identifier):
         # use code to find a matching OrganisationGeography
         # or OrganisationDivision record
 
-        code_type, code = split_code(identifier)
-
-        if code_type == 'unit_id' and re.match(r'^\d+$', code):
-            # FIXME before 2021
-            error = "Importing boundaries from BoundaryLine against CEDs is " +\
-            "not yet available because unit_id is not a stable identifier"
-            raise Exception(error)
-
-        if code_type == 'gss' and re.match(r'^[A-Z][0-9]{8}$', code):
-            try:
-                return OrganisationGeography.objects.all().get(
-                    gss=code)
-            except OrganisationGeography.DoesNotExist:
-                return OrganisationDivision.objects.all().get(
-                    official_identifier=identifier)
-            except (OrganisationGeography.MultipleObjectsReturned,
-                        OrganisationDivision.MultipleObjectsReturned):
-                raise
-
-        raise ValueError("Unknown code type. Expected 'gss:X01000001' or 'unit_id:12345'")
+        self.validate_identifier(identifier)
+        _, code = split_code(identifier)
+        try:
+            return OrganisationGeography.objects.all().get(
+                gss=code)
+        except OrganisationGeography.DoesNotExist:
+            return OrganisationDivision.objects.all().get(
+                official_identifier=identifier)
 
     def get_geography_from_feature(self, feature):
         # extract a geography object we can safely save to
@@ -76,6 +108,7 @@ class Command(BaseBoundaryLineCommand):
         org_geo.geography = geom
         org_geo.source = self.source
         org_geo.save()
+        self.stdout.write('..saved {}'.format(str(org_geo)))
 
     def import_div_geography(self, div):
         area_type = div.division_type
@@ -95,18 +128,38 @@ class Command(BaseBoundaryLineCommand):
                 source=self.source
             )
             dg.save()
+        self.stdout.write('..saved {}'.format(str(div)))
+
+    def import_record(self, record):
+        if type(record) == OrganisationDivision:
+            self.import_div_geography(record)
+
+        if type(record) == OrganisationGeography:
+            self.import_org_geography(record)
 
     def handle(self, *args, **options):
         code = options['code']
         self.source = options['source']
 
         self.base_dir = self.get_base_dir(**options)
-        rec = self.get_record(code)
+
+        if options['all']:
+            records = self.filter_records(code)
+        else:
+            try:
+                records = [self.get_record(code)]
+            except (OrganisationGeography.MultipleObjectsReturned,
+                        OrganisationDivision.MultipleObjectsReturned) as e:
+                message = str(e) + "\n\n" + (
+                    "This might indicate a problem which needs to be fixed, "
+                    "but it can also be valid for the same GSS code to appear "
+                    "in more than one DivisionSet.\n\n"
+                    "To import this boundary against all occurrences "
+                    "of this code, re-run the command with the --all flag"
+                )
+                raise MultipleObjectsReturned(message)
 
         self.stdout.write("Importing boundary for area {}...".format(code))
-        if type(rec) == OrganisationDivision:
-            self.import_div_geography(rec)
-
-        if type(rec) == OrganisationGeography:
-            self.import_org_geography(rec)
+        for rec in records:
+            self.import_record(rec)
         self.stdout.write("...done!")
