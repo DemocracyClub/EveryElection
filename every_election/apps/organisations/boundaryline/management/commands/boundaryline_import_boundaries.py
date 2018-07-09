@@ -6,10 +6,12 @@ The --all flag may also optionally be passed if a code exists in multiple
 DivisionSets and we want to import the boundary against all occurrences.
 
 Example calls:
-manage.py boundaryline_import_single_boundary gss:W09000043 --source bdline_gb-2018-05 -f /foo/bar/bdline_gb-2018-05
-manage.py boundaryline_import_single_boundary gss:W09000019 --source bdline_gb-2018-05 --all -u "http://parlvid.mysociety.org/os/bdline_gb-2018-05.zip"
+manage.py boundaryline_boundaries --code gss:W09000043 --source bdline_gb-2018-05 -f /foo/bar/bdline_gb-2018-05
+manage.py boundaryline_boundaries --code gss:W09000019 --source bdline_gb-2018-05 --all -u "http://parlvid.mysociety.org/os/bdline_gb-2018-05.zip"
+manage.py boundaryline_boundaries --codes /foo/bar/codes.json --source bdline_gb-2018-05 -f /foo/bar/bdline_gb-2018-05
 """
 
+import json
 import os
 import re
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
@@ -31,11 +33,18 @@ class Command(BaseBoundaryLineCommand):
     errors = []
 
     def add_arguments(self, parser):
-        parser.add_argument(
-            'code',
+        group = parser.add_mutually_exclusive_group(required=True)
+        group.add_argument(
+            '--code',
             action='store',
             help='code in the form gss:X01000001 or unit_id:12345',
         )
+        group.add_argument(
+            '--codes',
+            action='store',
+            help='local path to a JSON file containing an array of codes',
+        )
+
         parser.add_argument(
             '--source',
             action='store',
@@ -46,7 +55,7 @@ class Command(BaseBoundaryLineCommand):
             '--all',
             action='store_true',
             dest='all',
-            help='import this boundary against multiple GSS codes if found',
+            help='import boundaries against multiple GSS codes if found',
         )
         super().add_arguments(parser)
 
@@ -183,8 +192,16 @@ class Command(BaseBoundaryLineCommand):
                 raise MultipleObjectsReturned(message)
         return records
 
+    def get_identifiers(self, options):
+        if options['code']:
+            return [options['code']]
+        codes = json.load(open(options['codes']))
+        if not isinstance(codes, (list,)):
+            raise ValueError('Root JSON element must be array []')
+        return codes
+
     def handle(self, *args, **options):
-        identifiers = [options['code']]
+        identifiers = self.get_identifiers(options)
         self.source = options['source']
         self.base_dir = self.get_base_dir(**options)
 
