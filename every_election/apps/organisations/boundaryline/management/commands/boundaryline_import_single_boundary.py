@@ -1,3 +1,15 @@
+"""
+Import a single boundary based on identifier
+Also pass a --source flag indicating where the boundary came from
+
+The --all flag may also optionally be passed if a code exists in multiple
+DivisionSets and we want to import the boundary against all occurrences.
+
+Example calls:
+manage.py boundaryline_import_single_boundary gss:W09000043 --source bdline_gb-2018-05 -f /foo/bar/bdline_gb-2018-05
+manage.py boundaryline_import_single_boundary gss:W09000019 --source bdline_gb-2018-05 --all -u "http://parlvid.mysociety.org/os/bdline_gb-2018-05.zip"
+"""
+
 import os
 import re
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
