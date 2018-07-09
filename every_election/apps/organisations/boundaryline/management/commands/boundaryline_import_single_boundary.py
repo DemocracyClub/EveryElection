@@ -28,6 +28,8 @@ from storage.shapefile import convert_geom_to_multipolygon
 
 class Command(BaseBoundaryLineCommand):
 
+    errors = []
+
     def add_arguments(self, parser):
         parser.add_argument(
             'code',
@@ -68,7 +70,6 @@ class Command(BaseBoundaryLineCommand):
         # use code to find matching OrganisationGeography
         # or OrganisationDivision records
 
-        self.validate_identifier(identifier)
         _, code = split_code(identifier)
 
         orgs = OrganisationGeography.objects.all().filter(gss=code)
@@ -89,7 +90,6 @@ class Command(BaseBoundaryLineCommand):
         # use code to find a matching OrganisationGeography
         # or OrganisationDivision record
 
-        self.validate_identifier(identifier)
         _, code = split_code(identifier)
         try:
             return OrganisationGeography.objects.all().get(
@@ -149,31 +149,54 @@ class Command(BaseBoundaryLineCommand):
         if type(record) == OrganisationGeography:
             self.import_org_geography(record)
 
-    def handle(self, *args, **options):
-        code = options['code']
-        self.source = options['source']
+    def import_all(self, identifiers, allow_multiple):
+        for identifier in identifiers:
+            self.validate_identifier(identifier)
 
-        self.base_dir = self.get_base_dir(**options)
+        for identifier in identifiers:
+            self.stdout.write("Importing boundary for area {}...".format(identifier))
 
-        if options['all']:
-            records = self.filter_records(code)
+            try:
+                records = self.get_records(identifier, allow_multiple)
+                for rec in records:
+                    self.import_record(rec)
+            except (ObjectDoesNotExist, MultipleObjectsReturned) as e:
+                self.stdout.write('..FAILED!')
+                self.errors.append((identifier, e))
+                continue
+
+    def get_records(self, identifier, allow_multiple):
+        if allow_multiple:
+            records = self.filter_records(identifier)
         else:
             try:
-                records = [self.get_record(code)]
+                records = [self.get_record(identifier)]
             except (OrganisationGeography.MultipleObjectsReturned,
                         OrganisationDivision.MultipleObjectsReturned) as e:
-                message = str(e) + "\n\n" + (
-                    "This might indicate a problem which needs to be fixed, "
+                message = str(e) + (
+                    " This might indicate a problem which needs to be fixed, "
                     "but it can also be valid for the same GSS code to appear "
-                    "in more than one DivisionSet.\n\n"
+                    "in more than one DivisionSet. "
                     "To import this boundary against all occurrences "
                     "of this code, re-run the command with the --all flag"
                 )
                 raise MultipleObjectsReturned(message)
+        return records
 
-        self.stdout.write("Importing boundary for area {}...".format(code))
-        for rec in records:
-            self.import_record(rec)
+    def handle(self, *args, **options):
+        identifiers = [options['code']]
+        self.source = options['source']
+        self.base_dir = self.get_base_dir(**options)
+
+        self.import_all(identifiers, options['all'])
+
+        self.stdout.write("\n\n")
+        self.stdout.write("Imported {} boundaries.\n\n".format(len(identifiers)-len(self.errors)))
+        self.stdout.write("{} Failures:".format(len(self.errors)))
+        for identifier, e in self.errors:
+            self.stdout.write("{id}: {error}".format(
+                id=identifier, error=str(e))
+            )
 
         if self.cleanup_required:
             self.cleanup(self.base_dir)
