@@ -15,6 +15,7 @@ import os
 from collections import namedtuple
 from datetime import datetime
 
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.db import transaction
 
 from organisations.models import Organisation, OrganisationDivision
@@ -137,7 +138,11 @@ class Command(BaseBoundaryLineCommand):
             divs = self.get_divisions(org_type, options['date'])
             for div in divs:
                 org = self.get_parent_org_boundary(div)
-                code = bl.get_division_code(div, org)
+                try:
+                    code = bl.get_division_code(div, org)
+                except (MultipleObjectsReturned, ObjectDoesNotExist) as e:
+                    self.stdout.write(str(e))
+                    code = None
                 if code:
                     self.found.append(self.Record(div, code))
                 else:

@@ -94,16 +94,19 @@ class BoundaryLine:
                 matches = matches + 1
             if matches > 1:
                 # ...but we also need to be a little bit careful
-                print('Found >1 matches for division {div}'.format(
-                    div=div.official_identifier))
-                return None
+                raise MultipleObjectsReturned(
+                    'Found >1 matches for division {div}'.format(
+                        div=div.official_identifier)
+                )
 
         if matches == 0:
-            return None
+            raise ObjectDoesNotExist(
+                'Found 0 matches for division {div}'.format(
+                    div=div.official_identifier)
+            )
 
         warning = self.get_match_warning(div, match)
         if warning:
-            print(warning)
-            return None
+            raise ObjectDoesNotExist(warning)
 
         return self.get_code_from_feature(match)
