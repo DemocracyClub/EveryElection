@@ -33,10 +33,13 @@ class Command(BaseBoundaryLineCommand):
     """
 
     WARD_TYPES = ('UTE', 'DIW', 'LBW', 'MTW', 'UTW')
-    found = []
-    not_found = []
     Record = namedtuple('Record', ['division', 'code'])
-    org_boundaries = {}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.found = []
+        self.not_found = []
+        self.org_boundaries = {}
 
     def add_arguments(self, parser):
 

@@ -30,7 +30,9 @@ from storage.shapefile import convert_geom_to_multipolygon
 
 class Command(BaseBoundaryLineCommand):
 
-    errors = []
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.errors = []
 
     def add_arguments(self, parser):
         group = parser.add_mutually_exclusive_group(required=True)
