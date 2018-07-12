@@ -17,24 +17,22 @@ class BoundaryLine:
         self.layer = ds[0]
 
     def get_feature_by_field(self, fieldname, code):
-        matches = 0
-        match = None
+        matches = []
         for feature in self.layer:
             if str(feature.get(fieldname)) == code:
-                match = feature
-                matches = matches + 1
+                matches.append(feature)
 
-        if matches == 0:
+        if len(matches) == 0:
             raise ObjectDoesNotExist(
                 "Expected one match for {code}, found 0".format(code=code)
             )
-        if matches == 1:
-            return match
+        if len(matches) == 1:
+            return matches[0]
 
         raise MultipleObjectsReturned(
             "Expected one match for {code}, found {matches}".format(
                 code=code,
-                matches=matches
+                matches=len(matches)
             )
         )
 
@@ -86,27 +84,25 @@ class BoundaryLine:
         # e.g: St Helen's vs St. Helens
         division_name = normalize_name_for_matching(div.name)
 
-        matches = 0
-        match = None
+        matches = []
         for feature in self.layer:
             if normalize_name_for_matching(feature.get('name')) == division_name:
-                match = feature
-                matches = matches + 1
-            if matches > 1:
+                matches.append(feature)
+            if len(matches) > 1:
                 # ...but we also need to be a little bit careful
                 raise MultipleObjectsReturned(
                     'Found >1 matches for division {div}'.format(
                         div=div.official_identifier)
                 )
 
-        if matches == 0:
+        if len(matches) == 0:
             raise ObjectDoesNotExist(
                 'Found 0 matches for division {div}'.format(
                     div=div.official_identifier)
             )
 
-        warning = self.get_match_warning(div, match)
+        warning = self.get_match_warning(div, matches[0])
         if warning:
             raise ObjectDoesNotExist(warning)
 
-        return self.get_code_from_feature(match)
+        return self.get_code_from_feature(matches[0])
