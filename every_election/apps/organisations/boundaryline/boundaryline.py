@@ -1,4 +1,5 @@
 from django.contrib.gis.gdal import DataSource, OGRGeometry
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from organisations.boundaryline.helpers import normalize_name_for_matching, overlap_percent
 
 
@@ -14,6 +15,26 @@ class BoundaryLine:
         if len(ds) != 1:
             raise ValueError("Expected 1 layer, found %i" % (len(ds)))
         self.layer = ds[0]
+
+    def get_feature_by_field(self, fieldname, code):
+        matches = []
+        for feature in self.layer:
+            if str(feature.get(fieldname)) == code:
+                matches.append(feature)
+
+        if len(matches) == 0:
+            raise ObjectDoesNotExist(
+                "Expected one match for {code}, found 0".format(code=code)
+            )
+        if len(matches) == 1:
+            return matches[0]
+
+        raise MultipleObjectsReturned(
+            "Expected one match for {code}, found {matches}".format(
+                code=code,
+                matches=len(matches)
+            )
+        )
 
     def get_code_from_feature(self, feature):
         if feature.get('area_code') == 'CED':
@@ -63,24 +84,25 @@ class BoundaryLine:
         # e.g: St Helen's vs St. Helens
         division_name = normalize_name_for_matching(div.name)
 
-        matches = 0
-        match = None
+        matches = []
         for feature in self.layer:
             if normalize_name_for_matching(feature.get('name')) == division_name:
-                match = feature
-                matches = matches + 1
-            if matches > 1:
+                matches.append(feature)
+            if len(matches) > 1:
                 # ...but we also need to be a little bit careful
-                print('Found >1 matches for division {div}'.format(
-                    div=div.official_identifier))
-                return None
+                raise MultipleObjectsReturned(
+                    'Found >1 matches for division {div}'.format(
+                        div=div.official_identifier)
+                )
 
-        if matches == 0:
-            return None
+        if len(matches) == 0:
+            raise ObjectDoesNotExist(
+                'Found 0 matches for division {div}'.format(
+                    div=div.official_identifier)
+            )
 
-        warning = self.get_match_warning(div, match)
+        warning = self.get_match_warning(div, matches[0])
         if warning:
-            print(warning)
-            return None
+            raise ObjectDoesNotExist(warning)
 
-        return self.get_code_from_feature(match)
+        return self.get_code_from_feature(matches[0])

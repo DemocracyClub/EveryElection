@@ -1,0 +1,1035 @@
+[
+    {
+        "model": "organisations.organisation",
+        "pk": 246,
+        "fields": {
+            "official_identifier": "CRY",
+            "organisation_type": "local-authority",
+            "organisation_subtype": "LBO",
+            "official_name": "London Borough of Croydon",
+            "common_name": "Croydon",
+            "slug": "croydon",
+            "territory_code": "ENG",
+            "election_name": "Croydon local election",
+            "start_date": "1965-04-01",
+            "end_date": null,
+            "legislation_url": null
+        }
+    },
+    {
+        "model": "organisations.organisationdivisionset",
+        "pk": 236,
+        "fields": {
+            "organisation": 246,
+            "start_date": "2004-12-02",
+            "end_date": "2018-05-02",
+            "legislation_url": null,
+            "consultation_url": null,
+            "short_title": "2004 Boundaries",
+            "mapit_generation_id": "http://mapit.mysociety.org/generations/1",
+            "notes": "Auto imported from http://mapit.mysociety.org"
+        }
+    },
+    {
+        "model": "organisations.organisationdivisionset",
+        "pk": 532,
+        "fields": {
+            "organisation": 246,
+            "start_date": "2018-05-03",
+            "end_date": null,
+            "legislation_url": "http://www.legislation.gov.uk/uksi/2017/1125/contents/made",
+            "consultation_url": "http://www.lgbce.org.uk/current-reviews/greater-london/croydon",
+            "short_title": "London Borough of Croydon (Electoral Changes) Order 2017",
+            "mapit_generation_id": "",
+            "notes": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18291,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "Fairfield",
+            "official_identifier": "gss:E05000153",
+            "temp_id": "",
+            "slug": "fairfield",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18292,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "Addiscombe",
+            "official_identifier": "gss:E05000146",
+            "temp_id": "",
+            "slug": "addiscombe",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18293,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "Purley",
+            "official_identifier": "gss:E05000159",
+            "temp_id": "",
+            "slug": "purley",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18294,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "Bensham Manor",
+            "official_identifier": "gss:E05000148",
+            "temp_id": "",
+            "slug": "bensham-manor",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18295,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "New Addington",
+            "official_identifier": "gss:E05000157",
+            "temp_id": "",
+            "slug": "new-addington",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18296,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "Norbury",
+            "official_identifier": "gss:E05000158",
+            "temp_id": "",
+            "slug": "norbury",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18297,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "Selsdon and Ballards",
+            "official_identifier": "gss:E05000162",
+            "temp_id": "",
+            "slug": "selsdon-and-ballards",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18298,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "Woodside",
+            "official_identifier": "gss:E05000169",
+            "temp_id": "",
+            "slug": "woodside",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18299,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "Coulsdon East",
+            "official_identifier": "gss:E05000150",
+            "temp_id": "",
+            "slug": "coulsdon-east",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18300,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "Waddon",
+            "official_identifier": "gss:E05000167",
+            "temp_id": "",
+            "slug": "waddon",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18301,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "Sanderstead",
+            "official_identifier": "gss:E05000160",
+            "temp_id": "",
+            "slug": "sanderstead",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18302,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "Selhurst",
+            "official_identifier": "gss:E05000161",
+            "temp_id": "",
+            "slug": "selhurst",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18303,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "Croham",
+            "official_identifier": "gss:E05000152",
+            "temp_id": "",
+            "slug": "croham",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18304,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "Coulsdon West",
+            "official_identifier": "gss:E05000151",
+            "temp_id": "",
+            "slug": "coulsdon-west",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18305,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "Heathfield",
+            "official_identifier": "gss:E05000155",
+            "temp_id": "",
+            "slug": "heathfield",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18306,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "Ashburton",
+            "official_identifier": "gss:E05000147",
+            "temp_id": "",
+            "slug": "ashburton",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18307,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "West Thornton",
+            "official_identifier": "gss:E05000168",
+            "temp_id": "",
+            "slug": "west-thornton",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18308,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "South Norwood",
+            "official_identifier": "gss:E05000164",
+            "temp_id": "",
+            "slug": "south-norwood",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18309,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "Kenley",
+            "official_identifier": "gss:E05000156",
+            "temp_id": "",
+            "slug": "kenley",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18310,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "Shirley",
+            "official_identifier": "gss:E05000163",
+            "temp_id": "",
+            "slug": "shirley",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18311,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "Upper Norwood",
+            "official_identifier": "gss:E05000166",
+            "temp_id": "",
+            "slug": "upper-norwood",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18312,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "Fieldway",
+            "official_identifier": "gss:E05000154",
+            "temp_id": "",
+            "slug": "fieldway",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18313,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "Broad Green",
+            "official_identifier": "gss:E05000149",
+            "temp_id": "",
+            "slug": "broad-green",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 18314,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 236,
+            "name": "Thornton Heath",
+            "official_identifier": "gss:E05000165",
+            "temp_id": "",
+            "slug": "thornton-heath",
+            "division_type": "LBW",
+            "division_subtype": "London borough ward",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 1,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26289,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Addiscombe East",
+            "official_identifier": "CRY:addiscombe-east",
+            "temp_id": "CRY:addiscombe-east",
+            "slug": "addiscombe-east",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 2,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26290,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Addiscombe West",
+            "official_identifier": "CRY:addiscombe-west",
+            "temp_id": "CRY:addiscombe-west",
+            "slug": "addiscombe-west",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 3,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26291,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Bensham Manor",
+            "official_identifier": "CRY:bensham-manor",
+            "temp_id": "CRY:bensham-manor",
+            "slug": "bensham-manor",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 3,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26292,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Broad Green",
+            "official_identifier": "CRY:broad-green",
+            "temp_id": "CRY:broad-green",
+            "slug": "broad-green",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 3,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26293,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Coulsdon Town",
+            "official_identifier": "CRY:coulsdon-town",
+            "temp_id": "CRY:coulsdon-town",
+            "slug": "coulsdon-town",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 3,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26294,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Crystal Palace & Upper Norwood",
+            "official_identifier": "CRY:crystal-palace-and-upper-norwood",
+            "temp_id": "CRY:crystal-palace-and-upper-norwood",
+            "slug": "crystal-palace-upper-norwood",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 3,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26295,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Fairfield",
+            "official_identifier": "CRY:fairfield",
+            "temp_id": "CRY:fairfield",
+            "slug": "fairfield",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 3,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26296,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Kenley",
+            "official_identifier": "CRY:kenley",
+            "temp_id": "CRY:kenley",
+            "slug": "kenley",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 2,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26297,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "New Addington North",
+            "official_identifier": "CRY:new-addington-north",
+            "temp_id": "CRY:new-addington-north",
+            "slug": "new-addington-north",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 2,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26298,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "New Addington South",
+            "official_identifier": "CRY:new-addington-south",
+            "temp_id": "CRY:new-addington-south",
+            "slug": "new-addington-south",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 2,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26299,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Norbury & Pollards Hill",
+            "official_identifier": "CRY:norbury-and-pollards-hill",
+            "temp_id": "CRY:norbury-and-pollards-hill",
+            "slug": "norbury-pollards-hill",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 2,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26300,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Norbury Park",
+            "official_identifier": "CRY:norbury-park",
+            "temp_id": "CRY:norbury-park",
+            "slug": "norbury-park",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 2,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26301,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Old Coulsdon",
+            "official_identifier": "CRY:old-coulsdon",
+            "temp_id": "CRY:old-coulsdon",
+            "slug": "old-coulsdon",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 2,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26302,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Park Hill & Whitgift",
+            "official_identifier": "CRY:park-hill-and-whitgift",
+            "temp_id": "CRY:park-hill-and-whitgift",
+            "slug": "park-hill-whitgift",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 1,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26303,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Purley & Woodcote",
+            "official_identifier": "CRY:purley-and-woodcote",
+            "temp_id": "CRY:purley-and-woodcote",
+            "slug": "purley-woodcote",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 3,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26304,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Purley Oaks & Riddlesdown",
+            "official_identifier": "CRY:purley-oaks-and-riddlesdown",
+            "temp_id": "CRY:purley-oaks-and-riddlesdown",
+            "slug": "purley-oaks-riddlesdown",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 2,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26305,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Sanderstead",
+            "official_identifier": "CRY:sanderstead",
+            "temp_id": "CRY:sanderstead",
+            "slug": "sanderstead",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 3,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26306,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Selhurst",
+            "official_identifier": "CRY:selhurst",
+            "temp_id": "CRY:selhurst",
+            "slug": "selhurst",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 2,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26307,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Selsdon & Addington Village",
+            "official_identifier": "CRY:selsdon-and-addington-village",
+            "temp_id": "CRY:selsdon-and-addington-village",
+            "slug": "selsdon-addington-village",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 2,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26308,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Selsdon Vale & Forestdale",
+            "official_identifier": "CRY:selsdon-vale-and-forestdale",
+            "temp_id": "CRY:selsdon-vale-and-forestdale",
+            "slug": "selsdon-vale-forestdale",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 2,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26309,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Shirley North",
+            "official_identifier": "CRY:shirley-north",
+            "temp_id": "CRY:shirley-north",
+            "slug": "shirley-north",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 3,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26310,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Shirley South",
+            "official_identifier": "CRY:shirley-south",
+            "temp_id": "CRY:shirley-south",
+            "slug": "shirley-south",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 2,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26311,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "South Croydon",
+            "official_identifier": "CRY:south-croydon",
+            "temp_id": "CRY:south-croydon",
+            "slug": "south-croydon",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 3,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26312,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "South Norwood",
+            "official_identifier": "CRY:south-norwood",
+            "temp_id": "CRY:south-norwood",
+            "slug": "south-norwood",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 3,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26313,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Thornton Heath",
+            "official_identifier": "CRY:thornton-heath",
+            "temp_id": "CRY:thornton-heath",
+            "slug": "thornton-heath",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 3,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26314,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Waddon",
+            "official_identifier": "CRY:waddon",
+            "temp_id": "CRY:waddon",
+            "slug": "waddon",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 3,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26315,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "West Thornton",
+            "official_identifier": "CRY:west-thornton",
+            "temp_id": "CRY:west-thornton",
+            "slug": "west-thornton",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 3,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 26316,
+        "fields": {
+            "organisation": 246,
+            "divisionset": 532,
+            "name": "Woodside",
+            "official_identifier": "CRY:woodside",
+            "temp_id": "CRY:woodside",
+            "slug": "woodside",
+            "division_type": "LBW",
+            "division_subtype": "",
+            "division_election_sub_type": "",
+            "seats_total": 3,
+            "mapit_generation_low": null,
+            "mapit_generation_high": null,
+            "territory_code": ""
+        }
+    }
+]

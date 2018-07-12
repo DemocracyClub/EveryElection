@@ -12,32 +12,34 @@ are all valid calls.
 
 import argparse
 import os
-import shutil
 from collections import namedtuple
 from datetime import datetime
 
-from django.core.management.base import BaseCommand
+from django.contrib.gis.db.models import Q
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.db import transaction
 
-from core.mixins import ReadFromFileMixin
-from storage.zipfile import unzip
 from organisations.models import Organisation, OrganisationDivision
-from organisations.boundaryline.constants import ORG_TYPES
-from organisations.boundaryline.boundaryline import BoundaryLine
+from organisations.boundaryline import BoundaryLine
+from organisations.boundaryline.constants import get_area_type_lookup
+from organisations.boundaryline.management.base import BaseBoundaryLineCommand
 
 
-class Command(ReadFromFileMixin, BaseCommand):
+class Command(BaseBoundaryLineCommand):
 
     help = """
     Use BoundaryLine to try and retrospectively attach codes
     to divisions imported from LGBCE with pseudo-identifiers.
     """
 
-    cleanup_required = False
-    found = []
-    not_found = []
+    WARD_TYPES = ('UTE', 'DIW', 'LBW', 'MTW', 'UTW')
     Record = namedtuple('Record', ['division', 'code'])
-    org_boundaries = {}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.found = []
+        self.not_found = []
+        self.org_boundaries = {}
 
     def add_arguments(self, parser):
 
@@ -65,8 +67,9 @@ class Command(ReadFromFileMixin, BaseCommand):
 
     def get_divisions(self, types, date):
         return OrganisationDivision.objects.filter(
-            division_type__in=types,
-            divisionset__start_date__lte=date
+            Q(division_type__in=types) &
+            Q(divisionset__start_date__lte=date) &
+            (Q(divisionset__end_date__gte=date) | Q(divisionset__end_date=None))
         ).extra(where=[
             "LEFT(organisations_organisationdivision.official_identifier,4) != 'gss:'",
             "LEFT(organisations_organisationdivision.official_identifier,8) != 'unit_id:'",
@@ -94,29 +97,6 @@ class Command(ReadFromFileMixin, BaseCommand):
         )
         self.org_boundaries[(div.organisation_id, div.divisionset.start_date)] = org
         return org
-
-    def get_base_dir(self, **options):
-        try:
-            if options['url']:
-                self.stdout.write('Downloading data from %s ...' % (options['url']))
-            fh = self.load_data(options)
-            self.stdout.write('Extracting archive...')
-            path = unzip(fh.name)
-            self.stdout.write('...done')
-
-            # if we've extracted a zip file to a temp location
-            # we want to delete the temp files when we're done
-            self.cleanup_required = True
-            return path
-        except IsADirectoryError:
-            return options['file']
-
-    def cleanup(self, tempdir):
-        # clean up the temp files we created
-        try:
-            shutil.rmtree(tempdir)
-        except OSError:
-            self.stdout.write("Failed to clean up temp files.")
 
     @transaction.atomic
     def save_all(self):
@@ -156,12 +136,18 @@ class Command(ReadFromFileMixin, BaseCommand):
         base_dir = self.get_base_dir(**options)
 
         self.stdout.write('Searching...')
-        for org_type, filename in ORG_TYPES.items():
+        lookup = get_area_type_lookup(
+            filter=lambda x: x in self.WARD_TYPES, group=True)
+        for org_type, filename in lookup.items():
             bl = BoundaryLine(os.path.join(base_dir, 'Data', 'GB', filename))
             divs = self.get_divisions(org_type, options['date'])
             for div in divs:
                 org = self.get_parent_org_boundary(div)
-                code = bl.get_division_code(div, org)
+                try:
+                    code = bl.get_division_code(div, org)
+                except (MultipleObjectsReturned, ObjectDoesNotExist) as e:
+                    self.stdout.write(str(e))
+                    code = None
                 if code:
                     self.found.append(self.Record(div, code))
                 else:

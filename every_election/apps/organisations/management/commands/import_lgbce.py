@@ -74,7 +74,7 @@ class Command(BaseCommand):
         self.cleanup(tempdir)
 
     def import_data(self, data, divset, name_column, name_map, srid):
-        importer = DivisionSetGeographyImporter(data, divset, name_column, name_map, srid)
+        importer = DivisionSetGeographyImporter(data, divset, name_column, name_map, srid, 'lgbce')
         try:
             importer.import_data()
         except DiffException as e:

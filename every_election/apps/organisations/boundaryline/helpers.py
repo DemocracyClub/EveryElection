@@ -21,3 +21,7 @@ def normalize_name_for_matching(name):
     if slug.endswith('-ward'):
         return slug[:-5]
     return slug
+
+
+def split_code(code):
+    return tuple(code.split(':'))
