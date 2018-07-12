@@ -268,6 +268,7 @@ class OrganisationDivision(models.Model):
         return "{}".format(self.name)
 
     class Meta:
+        verbose_name_plural = "Organisation Divisions"
         ordering = ('name',)
         unique_together = (
             'organisation',
