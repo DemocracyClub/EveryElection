@@ -15,7 +15,6 @@ import os
 from collections import namedtuple
 from datetime import datetime
 
-from django.contrib.gis.db.models import Q
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.db import transaction
 
@@ -66,19 +65,11 @@ class Command(BaseBoundaryLineCommand):
         super().add_arguments(parser)
 
     def get_divisions(self, types, date):
-        return OrganisationDivision.objects.filter(
-            Q(division_type__in=types) &
-            Q(divisionset__start_date__lte=date) &
-            (Q(divisionset__end_date__gte=date) | Q(divisionset__end_date=None))
-        ).extra(where=[
-            "LEFT(organisations_organisationdivision.official_identifier,4) != 'gss:'",
-            "LEFT(organisations_organisationdivision.official_identifier,8) != 'unit_id:'",
-            "LEFT(organisations_organisationdivision.official_identifier,9) != 'osni_oid:'",
-        ]).order_by(
-            'official_identifier'
-        ).select_related(
-            'divisionset'
-        )
+        return OrganisationDivision.objects.filter(division_type__in=types)\
+            .filter_by_date(date)\
+            .filter_with_temp_id()\
+            .order_by('official_identifier')\
+            .select_related('divisionset')
 
     def get_parent_org_boundary(self, div):
         """

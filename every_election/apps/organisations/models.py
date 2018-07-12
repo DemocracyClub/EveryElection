@@ -222,6 +222,22 @@ class OrganisationDivisionSet(DateConstraintMixin, models.Model):
         """
 
 
+class DivisionManager(models.QuerySet):
+
+    def filter_by_date(self, date):
+        return self.filter(
+            models.Q(divisionset__start_date__lte=date) &
+            (models.Q(divisionset__end_date__gte=date) | models.Q(divisionset__end_date=None))
+        )
+
+    def filter_with_temp_id(self):
+        return self.extra(where=[
+            "LEFT(organisations_organisationdivision.official_identifier,4) != 'gss:'",
+            "LEFT(organisations_organisationdivision.official_identifier,8) != 'unit_id:'",
+            "LEFT(organisations_organisationdivision.official_identifier,9) != 'osni_oid:'",
+        ])
+
+
 class OrganisationDivision(models.Model):
     """
     Sub parts of an organisation that people can be elected to.
@@ -245,12 +261,14 @@ class OrganisationDivision(models.Model):
     mapit_generation_high = models.IntegerField(blank=True, null=True)
     territory_code = models.CharField(blank=True, max_length=10)
     ValidationError = ValueError
+    objects = DivisionManager().as_manager()
 
 
     def __str__(self):
         return "{}".format(self.name)
 
     class Meta:
+        verbose_name_plural = "Organisation Divisions"
         ordering = ('name',)
         unique_together = (
             'organisation',
@@ -274,6 +292,7 @@ class OrganisationDivision(models.Model):
     @property
     def geography_curie(self):
         return self.official_identifier
+
 
 class DivisionGeography(models.Model):
     division = models.OneToOneField(
