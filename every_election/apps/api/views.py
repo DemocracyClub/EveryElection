@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.http import Http404
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
@@ -86,6 +87,7 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = OrganisationSerializer
 
     def get_object(self, **kwargs):
+        kwargs['date'] = datetime.strptime(kwargs['date'], "%Y-%m-%d").date()
         try:
             return Organisation.objects.all().get_by_date(**kwargs)
         except Organisation.DoesNotExist:
