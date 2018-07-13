@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.http import Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView, TemplateView
@@ -36,6 +37,7 @@ class OrganisationsFilterView(TemplateView):
 class OrganisationDetailView(TemplateView):
     template_name = "organisations/organisation_detail.html"
     def get_context_data(self, **kwargs):
+        kwargs['date'] = datetime.strptime(kwargs['date'], "%Y-%m-%d").date()
         try:
             obj = Organisation.objects.all().get_by_date(**kwargs)
         except Organisation.DoesNotExist:
