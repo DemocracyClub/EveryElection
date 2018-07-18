@@ -1,6 +1,7 @@
 import os
 import tempfile
 from io import StringIO
+from django.contrib.gis.geos import MultiPolygon
 from django.test import TestCase
 from organisations.boundaryline.management.commands.boundaryline_import_boundaries import Command
 from organisations.models import (
@@ -18,7 +19,8 @@ class ImportBoundariesTests(TestCase):
 
     fixtures = [
         'croydon-metadata-gsscodes.json',
-        'croydon-geographies.json'
+        'croydon-geographies.json',
+        'tintagel-metadata.json',
     ]
 
     def setUp(self):
@@ -105,7 +107,6 @@ class ImportBoundariesTests(TestCase):
         OrganisationDivision.objects.all().get(
             official_identifier='gss:E05011464'
         ).geography.delete()
-        self.assertTrue(True)
 
         # importing from BoundaryLine should create a new record
         self.opts['code'] = 'gss:E05011464'
@@ -118,6 +119,24 @@ class ImportBoundariesTests(TestCase):
                 official_identifier='gss:E05011464'
             ).geography.source
         )
+
+    def test_import_boundary_with_detached_parts(self):
+        self.opts['code'] = 'gss:E05009271'
+        output = self.run_command_with_test_data()
+
+        self.assertIn('0 Failures', output)
+        imported_geo = OrganisationDivision.objects.all().get(
+            official_identifier='gss:E05009271'
+        ).geography.geography
+
+        # In our input fixture, E05009271 matches 2 records:
+        # one is a MultiPolygon with 3 polygons in it
+        # the other is a single polygon object
+
+        # Importing this should have consolidated that into
+        # a single MultiPolygon object with 4 polygons in it
+        self.assertIsInstance(imported_geo, MultiPolygon)
+        self.assertEqual(4, len(imported_geo))
 
     def test_import_multiple_boundaries(self):
         # import 3 boundaries by passing a list of 3 codes
