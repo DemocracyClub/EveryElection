@@ -112,7 +112,7 @@ class Command(BaseBoundaryLineCommand):
     def get_geography_from_feature(self, feature):
         # extract a geography object we can safely save to
         # our database from a BoundaryLine feature record
-        geom = convert_geom_to_multipolygon(feature.geom.geos)
+        geom = convert_geom_to_multipolygon(feature)
         geom.srid=27700
         geom.transform(4326)
         return geom
@@ -128,7 +128,7 @@ class Command(BaseBoundaryLineCommand):
         area_type = REGISTER_SUBTYPE_TO_BOUNDARYLINE_TYPE[org_geo.organisation.organisation_subtype]
         bl = self.open_boundaryline(area_type)
         geom = self.get_geography_from_feature(bl.get_feature_by_field('code', org_geo.gss))
-        org_geo.geography = geom
+        org_geo.geography = geom.ewkb
         org_geo.source = self.source
         org_geo.save()
         self.stdout.write('..saved {}'.format(str(org_geo)))

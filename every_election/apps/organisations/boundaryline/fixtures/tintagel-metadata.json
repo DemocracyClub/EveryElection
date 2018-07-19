@@ -1,0 +1,52 @@
+[
+    {
+        "model": "organisations.organisation",
+        "pk": 387,
+        "fields": {
+            "official_identifier": "CON",
+            "organisation_type": "local-authority",
+            "organisation_subtype": "UA",
+            "official_name": "Cornwall Council",
+            "common_name": "Cornwall",
+            "slug": "cornwall",
+            "territory_code": "ENG",
+            "election_name": "Cornwall local election",
+            "start_date": "2009-04-01",
+            "end_date": null,
+            "legislation_url": null
+        }
+    },
+    {
+        "model": "organisations.organisationdivisionset",
+        "pk": 115,
+        "fields": {
+            "organisation": 387,
+            "start_date": "2013-05-20",
+            "end_date": null,
+            "legislation_url": null,
+            "consultation_url": null,
+            "short_title": "2013 Boundaries",
+            "mapit_generation_id": "http://mapit.mysociety.org/generations/20",
+            "notes": "Auto imported from http://mapit.mysociety.org"
+        }
+    },
+    {
+        "model": "organisations.organisationdivision",
+        "pk": 15096,
+        "fields": {
+            "organisation": 387,
+            "divisionset": 115,
+            "name": "Tintagel",
+            "official_identifier": "gss:E05009271",
+            "temp_id": "",
+            "slug": "tintagel",
+            "division_type": "UTE",
+            "division_subtype": "Unitary Authority electoral division (UTE)",
+            "division_election_sub_type": "",
+            "seats_total": null,
+            "mapit_generation_low": 20,
+            "mapit_generation_high": 30,
+            "territory_code": "ENG"
+        }
+    }
+]

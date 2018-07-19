@@ -1,4 +1,5 @@
 from django.contrib.gis.gdal import DataSource, OGRGeometry
+from django.contrib.gis.geos import MultiPolygon
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from organisations.boundaryline.helpers import normalize_name_for_matching, overlap_percent
 
@@ -16,6 +17,17 @@ class BoundaryLine:
             raise ValueError("Expected 1 layer, found %i" % (len(ds)))
         self.layer = ds[0]
 
+    def merge_features(self, features):
+        polygons = []
+        for feat in features:
+            if isinstance(feat.geom.geos, MultiPolygon):
+                multipoly = feat.geom.geos
+                polygons = polygons + [poly for poly in multipoly]
+            else:
+                polygons.append(feat.geom.geos)
+
+        return MultiPolygon(polygons)
+
     def get_feature_by_field(self, fieldname, code):
         matches = []
         for feature in self.layer:
@@ -27,14 +39,22 @@ class BoundaryLine:
                 "Expected one match for {code}, found 0".format(code=code)
             )
         if len(matches) == 1:
-            return matches[0]
+            return matches[0].geom.geos
 
-        raise MultipleObjectsReturned(
-            "Expected one match for {code}, found {matches}".format(
-                code=code,
-                matches=len(matches)
-            )
-        )
+        """
+        When we have geographies with 'Detached parts', these are
+        represented in BoundaryLine as multiple records with the same code.
+
+        For example, an area like this
+        https://mapit.mysociety.org/area/12701.html
+
+        is represented as 2 Polygons.
+
+        We just want to represent this as a single MultiPolygon feature,
+        so if we've matched >1 records with the same code
+        merge them into a single MultiPolygon feature.
+        """
+        return self.merge_features(matches)
 
     def get_code_from_feature(self, feature):
         if feature.get('area_code') == 'CED':
