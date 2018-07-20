@@ -1,5 +1,8 @@
 from django.contrib import admin
+from django import forms
 from datetime import datetime
+from organisations.models import Organisation, OrganisationDivision
+from .common import CustomOrganisationChoiceField
 
 
 class CurrentDivisionFilter(admin.SimpleListFilter):
@@ -34,8 +37,18 @@ class TempIdFilter(admin.SimpleListFilter):
           return queryset
 
 
+class OrganisationDivisionAdminForm(forms.ModelForm):
+    organisation = CustomOrganisationChoiceField(
+        queryset=Organisation.objects.all())
+
+    class Meta:
+        model = OrganisationDivision
+        fields = '__all__'
+
+
 class OrganisationDivisionAdmin(admin.ModelAdmin):
     list_display = ('official_identifier', 'name', 'organisation', 'divisionset')
     ordering = ('organisation', 'divisionset', 'name')
     search_fields = ('official_identifier', 'name')
     list_filter = [CurrentDivisionFilter, TempIdFilter, 'division_type']
+    form = OrganisationDivisionAdminForm
