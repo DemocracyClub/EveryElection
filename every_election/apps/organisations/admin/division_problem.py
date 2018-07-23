@@ -2,11 +2,46 @@ from datetime import datetime
 from django import forms
 from django.contrib import admin
 from django.contrib.gis.db.models import Q
+from django.db.models import Manager
 from organisations.models import Organisation, OrganisationDivision
 from .common import CustomOrganisationChoiceField, invalid_sources
 
 
+class DivisionProblemManager(Manager):
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+
+        # some of these conditions are OK in forward-dated division(set)s
+        # they only become an issue once they are current/past
+        # so we'll ignore DivisionSets with a future start_date in this report
+        qs = qs.filter(divisionset__start_date__lte=datetime.today())
+
+        qs = qs.filter(
+            (
+                # we always want divisions to have
+                # an associated geography record
+                Q(geography=None)
+            ) | (
+                # if the division has a GSS code,
+                # the boundary source should be BoundaryLine
+                Q(geography__source__in=invalid_sources) &
+                Q(official_identifier__startswith='gss:')
+            ) | (
+                # once a division is current (or past)
+                # it should have a GSS code
+                # ... mostly
+                ~Q(official_identifier__startswith='gss:') &
+                ~Q(division_type='CED') &
+                ~Q(division_type='NIE')
+            )
+        )
+        return qs
+
+
 class DivisionProblem(OrganisationDivision):
+
+    objects = DivisionProblemManager()
 
     @property
     def no_gss_code(self):
@@ -75,32 +110,3 @@ class DivisionProblemAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
-
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-
-        # some of these conditions are OK in forward-dated division(set)s
-        # they only become an issue once they are current/past
-        # so we'll ignore DivisionSets with a future start_date in this report
-        qs = qs.filter(divisionset__start_date__lte=datetime.today())
-
-        qs = qs.filter(
-            (
-                # we always want divisions to have
-                # an associated geography record
-                Q(geography=None)
-            ) | (
-                # if the division has a GSS code,
-                # the boundary source should be BoundaryLine
-                Q(geography__source__in=invalid_sources) &
-                Q(official_identifier__startswith='gss:')
-            ) | (
-                # once a division is current (or past)
-                # it should have a GSS code
-                # ... mostly
-                ~Q(official_identifier__startswith='gss:') &
-                ~Q(division_type='CED') &
-                ~Q(division_type='NIE')
-            )
-        )
-        return qs

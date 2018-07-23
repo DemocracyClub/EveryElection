@@ -1,9 +1,43 @@
 from django.contrib import admin
 from django.contrib.gis.db.models import Q
+from django.db.models import Manager
 from organisations.models import Organisation
 
 
+class OrganisationProblemManager(Manager):
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+
+        qs = qs.filter(
+            (
+                # we always want Organisations to have at least
+                # one related OrganisationGeography record
+                Q(geographies=None)
+            ) | (
+                # usually if an Organisation has no related
+                # DivsionSet records this is a problem
+                Q(divisionset=None) &
+                # although (as always), there are some exceptions to this..
+                ~Q(organisation_type='combined-authority') &
+                ~Q(organisation_type='police-area') &
+                ~(
+                    Q(organisation_type='local-authority') &
+                    Q(official_name='Greater London Authority')
+                )
+            ) | (
+                # we always want Organisations to have at least
+                # one related ElectedRole record
+                Q(electedrole=None)
+            )
+        )
+
+        return qs
+
+
 class OrganisationProblem(Organisation):
+
+    objects = OrganisationProblemManager()
 
     @property
     def no_geography(self):
@@ -55,31 +89,3 @@ class OrganisationProblemAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
-
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-
-        qs = qs.filter(
-            (
-                # we always want Organisations to have at least
-                # one related OrganisationGeography record
-                Q(geographies=None)
-            ) | (
-                # usually if an Organisation has no related
-                # DivsionSet records this is a problem
-                Q(divisionset=None) &
-                # although (as always), there are some exceptions to this..
-                ~Q(organisation_type='combined-authority') &
-                ~Q(organisation_type='police-area') &
-                ~(
-                    Q(organisation_type='local-authority') &
-                    Q(official_name='Greater London Authority')
-                )
-            ) | (
-                # we always want Organisations to have at least
-                # one related ElectedRole record
-                Q(electedrole=None)
-            )
-        )
-
-        return qs

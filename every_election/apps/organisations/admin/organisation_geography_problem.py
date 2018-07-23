@@ -1,11 +1,36 @@
 from django import forms
 from django.contrib import admin
 from django.contrib.gis.db.models import Q
+from django.db.models import Manager
 from organisations.models import Organisation, OrganisationGeography
 from .common import CustomOrganisationChoiceField, invalid_sources
 
 
+class OrganisationGeographyProblemManager(Manager):
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+
+        qs = qs.filter(
+            (
+                # OrganisationGeographies should have a GSS code...mostly
+                Q(gss='') & ~Q(organisation__organisation_type='police-area')
+            ) | (
+                # OrganisationGeography with NULL
+                # geography field is always a problem
+                Q(geography=None)
+            ) | (
+                # so is OrganisationGeography with source != BoundaryLine
+                Q(source__in=invalid_sources)
+            )
+        )
+
+        return qs
+
+
 class OrganisationGeographyProblem(OrganisationGeography):
+
+    objects = OrganisationGeographyProblemManager()
 
     @property
     def no_gss_code(self):
@@ -66,22 +91,3 @@ class OrganisationGeographyProblemAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
-
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-
-        qs = qs.filter(
-            (
-                # OrganisationGeographies should have a GSS code...mostly
-                Q(gss='') & ~Q(organisation__organisation_type='police-area')
-            ) | (
-                # OrganisationGeography with NULL
-                # geography field is always a problem
-                Q(geography=None)
-            ) | (
-                # so is OrganisationGeography with source != BoundaryLine
-                Q(source__in=invalid_sources)
-            )
-        )
-
-        return qs
