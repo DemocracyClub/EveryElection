@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib.gis.db.models import Q
 from django.db.models import Manager
 from organisations.models import Organisation, OrganisationDivision
-from .common import CustomOrganisationChoiceField, invalid_sources
+from .common import CustomOrganisationChoiceField, INVALID_SOURCES
 
 
 class DivisionProblemManager(Manager):
@@ -25,7 +25,7 @@ class DivisionProblemManager(Manager):
             ) | (
                 # if the division has a GSS code,
                 # the boundary source should be BoundaryLine
-                Q(geography__source__in=invalid_sources) &
+                Q(geography__source__in=INVALID_SOURCES) &
                 Q(official_identifier__startswith='gss:')
             ) | (
                 # once a division is current (or past)
@@ -50,7 +50,7 @@ class DivisionProblem(OrganisationDivision):
     @property
     def invalid_source(self):
         try:
-            return self.geography.source in invalid_sources
+            return self.geography.source in INVALID_SOURCES
         except OrganisationDivision.geography.RelatedObjectDoesNotExist:
             return True
 

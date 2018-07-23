@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.gis.db.models import Q
 from django.db.models import Manager
 from organisations.models import Organisation, OrganisationGeography
-from .common import CustomOrganisationChoiceField, invalid_sources
+from .common import CustomOrganisationChoiceField, INVALID_SOURCES
 
 
 class OrganisationGeographyProblemManager(Manager):
@@ -21,7 +21,7 @@ class OrganisationGeographyProblemManager(Manager):
                 Q(geography=None)
             ) | (
                 # so is OrganisationGeography with source != BoundaryLine
-                Q(source__in=invalid_sources)
+                Q(source__in=INVALID_SOURCES)
             )
         )
 
@@ -42,7 +42,7 @@ class OrganisationGeographyProblem(OrganisationGeography):
 
     @property
     def invalid_source(self):
-        return self.source in invalid_sources
+        return self.source in INVALID_SOURCES
 
     @property
     def problem_text(self):

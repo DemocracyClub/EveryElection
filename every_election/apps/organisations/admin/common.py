@@ -7,4 +7,4 @@ class CustomOrganisationChoiceField(forms.ModelChoiceField):
             name=obj.name, start=obj.start_date, end=obj.end_date)
 
 
-invalid_sources = ('unknown', 'lgbce', '')
+INVALID_SOURCES = ('unknown', 'lgbce', '')
