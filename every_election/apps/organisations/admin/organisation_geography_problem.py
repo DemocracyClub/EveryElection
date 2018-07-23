@@ -1,7 +1,8 @@
+from django import forms
 from django.contrib import admin
 from django.contrib.gis.db.models import Q
-from organisations.models import OrganisationGeography
-from .common import invalid_sources
+from organisations.models import Organisation, OrganisationGeography
+from .common import CustomOrganisationChoiceField, invalid_sources
 
 
 class OrganisationGeographyProblem(OrganisationGeography):
@@ -33,6 +34,15 @@ class OrganisationGeographyProblem(OrganisationGeography):
         proxy = True
 
 
+class OrganisationGeographyProblemAdminForm(forms.ModelForm):
+    organisation = CustomOrganisationChoiceField(
+        queryset=Organisation.objects.all())
+
+    class Meta:
+        model = OrganisationGeographyProblem
+        fields = '__all__'
+
+
 class OrganisationGeographyProblemAdmin(admin.ModelAdmin):
 
     actions = None
@@ -49,6 +59,7 @@ class OrganisationGeographyProblemAdmin(admin.ModelAdmin):
         'no_geography',
     )
     exclude = ('geography',)
+    form = OrganisationGeographyProblemAdminForm
 
     def has_add_permission(self, request):
         return False

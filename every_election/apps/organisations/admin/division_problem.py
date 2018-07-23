@@ -1,8 +1,9 @@
 from datetime import datetime
+from django import forms
 from django.contrib import admin
 from django.contrib.gis.db.models import Q
-from organisations.models import OrganisationDivision
-from .common import invalid_sources
+from organisations.models import Organisation, OrganisationDivision
+from .common import CustomOrganisationChoiceField, invalid_sources
 
 
 class DivisionProblem(OrganisationDivision):
@@ -40,6 +41,15 @@ class DivisionProblem(OrganisationDivision):
         proxy = True
 
 
+class DivisionProblemForm(forms.ModelForm):
+    organisation = CustomOrganisationChoiceField(
+        queryset=Organisation.objects.all())
+
+    class Meta:
+        model = DivisionProblem
+        fields = '__all__'
+
+
 class DivisionProblemAdmin(admin.ModelAdmin):
 
     actions = None
@@ -58,6 +68,7 @@ class DivisionProblemAdmin(admin.ModelAdmin):
         'invalid_source',
         'no_geography',
     )
+    form = DivisionProblemForm
 
     def has_add_permission(self, request):
         return False
