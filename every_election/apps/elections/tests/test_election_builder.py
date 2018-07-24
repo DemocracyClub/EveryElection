@@ -89,3 +89,22 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
         # its a child of self.org1
         with self.assertRaises(OrganisationDivision.ValidationError):
             builder.with_division(self.org_div_1)
+
+    def test_seats_contested_local_election(self):
+        builder = ElectionBuilder('local', '2017-06-08')\
+            .with_organisation(self.org1)\
+            .with_division(self.org_div_1)
+        election = builder.build_ballot(None)
+        election.save()
+        self.assertIsNone(election.seats_contested)
+        self.assertEqual(3, election.seats_total)
+
+    def test_seats_contested_local_by_election(self):
+        builder = ElectionBuilder('local', '2017-06-08')\
+            .with_organisation(self.org1)\
+            .with_division(self.org_div_1)\
+            .with_contest_type('by')
+        election = builder.build_ballot(None)
+        election.save()
+        self.assertEqual(1, election.seats_contested)
+        self.assertEqual(3, election.seats_total)

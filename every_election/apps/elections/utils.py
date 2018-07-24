@@ -139,6 +139,38 @@ class ElectionBuilder:
         # otherwise we can rely on the election type
         return self.election_type.default_voting_system
 
+    def get_seats_contested(self):
+        if self.contest_type == "by":
+            # Assume any by-election always elects one representative.
+            # There may be edge cases where we need to edit this via /admin
+            # but this is the best assumption we can make
+            return 1
+
+        if self.election_type.election_type != "local":
+            return 1
+
+        """
+        If this is an all-up local election, we can fairly safely
+        return self.division.seats_total
+        but at the moment we have no way to know if this is 'all-up' or not
+        so doing this is likely to generate a lot of confusing wrong data
+
+        TODO: Add an 'all-up' tickbox to the wizard for local elections
+        Then we can either return
+        self.division.seats_total  or  1
+        here, which will mostly be right
+        ..except for when it isn't
+        ..which will be sometimes
+        """
+
+        # otherwise don't attempt to guess
+        return None
+
+    def get_seats_total(self):
+        if not self.division:
+            return None
+        return self.division.seats_total
+
     def __repr__(self):
         return self.id.__repr__()
 
@@ -230,6 +262,8 @@ class ElectionBuilder:
             'notice': self.notice,
             'source': self.source,
             'snooped_election_id': self.snooped_election_id,
+            'seats_contested': self.get_seats_contested(),
+            'seats_total': self.get_seats_total(),
         })
 
 
