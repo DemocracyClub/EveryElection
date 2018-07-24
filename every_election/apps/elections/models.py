@@ -45,7 +45,7 @@ class ElectedRole(models.Model):
     "Councillor for Trumpton" or "Mayor of London"
     """
     election_type = models.ForeignKey('ElectionType')
-    organisation = models.ForeignKey('organisations.Organisation')
+    organisation = models.ForeignKey('organisations.Organisation', related_name='electedrole')
     elected_title = models.CharField(blank=True, max_length=255)
     elected_role_name = models.CharField(blank=True, max_length=255)
 

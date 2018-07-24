@@ -181,7 +181,7 @@ class OrganisationGeography(DateConstraintMixin, models.Model):
 class OrganisationDivisionSet(DateConstraintMixin, models.Model):
     organisation = models.ForeignKey(Organisation, related_name='divisionset')
     start_date = models.DateField(null=False)
-    end_date = models.DateField(null=True)
+    end_date = models.DateField(null=True, blank=True)
     legislation_url = models.CharField(blank=True, max_length=500, null=True)
     consultation_url = models.CharField(blank=True, max_length=500, null=True)
     short_title = models.CharField(blank=True, max_length=200)
@@ -210,6 +210,7 @@ class OrganisationDivisionSet(DateConstraintMixin, models.Model):
         return found_geography
 
     class Meta:
+        verbose_name_plural = "Organisation Division Sets"
         ordering = ('-start_date',)
         get_latest_by = 'start_date'
         unique_together = ('organisation', 'start_date')
