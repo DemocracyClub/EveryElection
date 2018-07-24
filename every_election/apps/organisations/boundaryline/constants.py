@@ -36,3 +36,31 @@ def get_area_type_lookup(filter=lambda x: True, group=False):
     return {
         a[0] : a[1] for a in filtered
     }
+
+
+"""
+There are some organisations
+(e.g: GLA, Scottish Parliament, Welsh Assembly)
+which we want to assign a boundary to
+but which don't appear directly in BoundaryLine.
+
+For convenience we'll just map them to a
+European Region (E15) as a proxy.
+"""
+SPECIAL_CASES = {
+    # London
+    'E12000007': {
+        'file': 'european_region_region.shp',
+        'code': 'E15000007'
+    },
+    # Scotland
+    'S92000003': {
+        'file': 'european_region_region.shp',
+        'code': 'S15000001'
+    },
+    # Wales
+    'W92000004': {
+        'file': 'european_region_region.shp',
+        'code': 'W08000001'
+    },
+}

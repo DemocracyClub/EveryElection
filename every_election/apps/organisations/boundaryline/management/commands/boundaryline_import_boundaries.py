@@ -21,7 +21,7 @@ from organisations.models import (
     OrganisationDivision
 )
 from organisations.boundaryline import BoundaryLine
-from organisations.boundaryline.constants import get_area_type_lookup
+from organisations.boundaryline.constants import get_area_type_lookup, SPECIAL_CASES
 from organisations.boundaryline.management.base import BaseBoundaryLineCommand
 from organisations.boundaryline.helpers import split_code
 from organisations.constants import REGISTER_SUBTYPE_TO_BOUNDARYLINE_TYPE
@@ -125,9 +125,16 @@ class Command(BaseBoundaryLineCommand):
         return BoundaryLine(os.path.join(self.base_dir, 'Data', 'GB', filename))
 
     def import_org_geography(self, org_geo):
-        area_type = REGISTER_SUBTYPE_TO_BOUNDARYLINE_TYPE[org_geo.organisation.organisation_subtype]
-        bl = self.open_boundaryline(area_type)
-        geom = self.get_geography_from_feature(bl.get_feature_by_field('code', org_geo.gss))
+        if org_geo.gss in SPECIAL_CASES:
+            filename = SPECIAL_CASES[org_geo.gss]['file']
+            proxy_code = SPECIAL_CASES[org_geo.gss]['code']
+            bl = BoundaryLine(os.path.join(self.base_dir, 'Data', 'GB', filename))
+            geom = self.get_geography_from_feature(bl.get_feature_by_field('code', proxy_code))
+        else:
+            area_type = REGISTER_SUBTYPE_TO_BOUNDARYLINE_TYPE[org_geo.organisation.organisation_subtype]
+            bl = self.open_boundaryline(area_type)
+            geom = self.get_geography_from_feature(bl.get_feature_by_field('code', org_geo.gss))
+
         org_geo.geography = geom.ewkb
         org_geo.source = self.source
         org_geo.save()
