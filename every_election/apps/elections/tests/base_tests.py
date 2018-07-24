@@ -45,7 +45,8 @@ class BaseElectionCreatorMixIn():
         self.org_div_1 = OrganisationDivisionFactory(
             organisation=self.org1,
             name="Test Div 1",
-            slug="test-div"
+            slug="test-div",
+            seats_total=3,
         )
         self.org_div_2 = OrganisationDivisionFactory(
             organisation=self.org1,
