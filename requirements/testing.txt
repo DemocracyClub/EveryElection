@@ -3,7 +3,7 @@
 mock
 model-mommy
 tox
-pytest
+pytest<=3.6.4
 pytest-django
 pytest-pep8
 pytest-flakes
