@@ -84,7 +84,7 @@ LOGGING = {
     }
 }
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -94,6 +94,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'basicauth.middleware.BasicAuthMiddleware',
 ]
 
 ROOT_URLCONF = 'every_election.urls'
@@ -240,6 +241,11 @@ AWS_S3_FILE_OVERWRITE = True
 
 EMAIL_SIGNUP_ENDPOINT = 'https://democracyclub.org.uk/mailing_list/api_signup/v1/'
 EMAIL_SIGNUP_API_KEY = ''
+
+
+# Disable Basic Auth by default
+# We only want to use this on staging deploys
+BASICAUTH_DISABLE = True
 
 
 # .local.py overrides all the common settings.
