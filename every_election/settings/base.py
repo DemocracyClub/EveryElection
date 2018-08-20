@@ -94,7 +94,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'basicauth.middleware.BasicAuthMiddleware',
+    'core.middleware.BasicAuthMiddleware',
 ]
 
 ROOT_URLCONF = 'every_election.urls'
