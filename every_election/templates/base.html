@@ -14,9 +14,11 @@
 
 {% block top_banner %}
 
-{# <div class="callout warning"> #}
-{#   <p class="text-center">This is an alpha site, so please don't expect anything to work just yet! <a href="https://democracyclub.org.uk/contact/">Get in touch</a> if you'd like to know more.</p> #}
-{# </div> #}
+{% if SERVER_ENVIRONMENT == 'test' or SERVER_ENVIRONMENT == 'staging' %}
+<div class="callout warning">
+  <p class="text-center">This is a staging site.</p>
+</div>
+{% endif %}
 
 <nav class="top-bar">
     <div class="columns large-8 large-centered">

@@ -174,6 +174,7 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
                 'dc_signup_form.context_processors.signup_form',
+                'core.context_processors.global_settings',
             ],
         },
     }
