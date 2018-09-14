@@ -1,10 +1,15 @@
 import abc
+import logging
 import requests
 
 from django.contrib.gis.geos import Point
 from django.core.exceptions import ObjectDoesNotExist
 
 from uk_geo_utils.geocoders import OnspdGeocoder
+
+
+logger = logging.getLogger(__name__)
+
 
 class PostcodeError(Exception):
     pass
@@ -31,6 +36,9 @@ class BaseMaPitPostcodeLookup(BasePostcodeLookup, metaclass=abc.ABCMeta):
         pass
 
     def fetch_from_mapit(self):
+        logger.warning(
+            'Querying mySociety mapit for postcode {}'.format(self.postcode)
+        )
         if hasattr(self, 'mapit_data'):
             return self.mapit_data
 
