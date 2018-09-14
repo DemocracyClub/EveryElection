@@ -21,7 +21,7 @@ class Command(BaseCommand):
         data_path = os.path.join(tempdir, 'Data')
         try:
             cmd = LocalImporter()
-            cmd.handle(**{ 'path': data_path })
+            cmd.handle(**{ 'path': data_path, 'transaction': False })
         finally:
             self.cleanup(tempdir)
 
