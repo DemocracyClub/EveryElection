@@ -170,11 +170,27 @@ class TestDateConstraints(TestCase):
         )
 
     def test_save_divisionset_before_start(self):
-        with self.assertRaises(ValidationError):
+        """
+        This seems strange on the face of it, but it does legitimately happen.
+
+        For example, the Local Government Act 1972 reformed local
+        government in England and Wales on 1 April 1974
+        but Elections were held to the new authorities in 1973,
+        and they acted as "shadow authorities" until the handover date.
+
+        Similarly, when Northern Ireland was re-organised from 26
+        local authorities into 11, they held elections using the new
+        electoral divisions in 2014 even though the new local authorities
+        weren't officially created until April 2015.
+        """
+        try:
             OrganisationDivisionSetFactory(
                 organisation=self.org,
                 start_date=date(2000, 1, 1),
+                end_date=None,
             )
+        except ValidationError:
+            self.fail("ValidationError raised unexpectedly!")
 
     def test_save_divisionset_after_end(self):
         with self.assertRaises(ValidationError):
@@ -199,6 +215,7 @@ class TestDateConstraints(TestCase):
             OrganisationGeographyFactory(
                 organisation=self.org,
                 start_date=date(2000, 1, 1),
+                end_date=None,
             )
 
     def test_save_organisationgeography_after_end(self):
