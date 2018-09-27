@@ -238,6 +238,7 @@ AWS_S3_REGION_NAME = 'eu-west-1'
 AWS_STORAGE_BUCKET_NAME = NOTICE_OF_ELECTION_BUCKET
 # versioning is on so we can retreive old copies
 AWS_S3_FILE_OVERWRITE = True
+AWS_DEFAULT_ACL = None
 
 
 EMAIL_SIGNUP_ENDPOINT = 'https://democracyclub.org.uk/mailing_list/api_signup/v1/'
