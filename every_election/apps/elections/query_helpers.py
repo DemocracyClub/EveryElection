@@ -4,7 +4,9 @@ import requests
 
 from django.contrib.gis.geos import Point
 from django.core.exceptions import ObjectDoesNotExist
+from django.forms import ValidationError
 
+from localflavor.gb.forms import GBPostcodeField
 from uk_geo_utils.geocoders import OnspdGeocoder
 
 
@@ -84,7 +86,13 @@ class ONSPDPostcodeLookup(BasePostcodeLookup):
 
 
 def get_point_from_postcode(postcode):
-    postcode = postcode.upper()
+
+    validator = GBPostcodeField()
+    try:
+        postcode = validator.clean(postcode)
+    except ValidationError:
+        raise PostcodeError("Invalid Postcode")
+
     methods = [
         ONSPDPostcodeLookup,
         mySocietyMapitPostcodeLookup,
