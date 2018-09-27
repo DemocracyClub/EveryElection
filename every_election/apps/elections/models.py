@@ -234,6 +234,7 @@ class MetaData(models.Model):
 
 class PdfS3Storage(S3Boto3Storage):
     default_content_type = 'application/pdf'
+    default_acl = 'public-read'
 
 
 class Document(models.Model):
