@@ -81,12 +81,23 @@ class TestElectionAPIQueries(APITestCase):
         resp = self.client.get(url, HTTP_ORIGIN='foo.bar/baz')
         self.assertEqual(resp.get('Access-Control-Allow-Origin'), '*')
 
+    def test_election_endpoint_for_invalid_postcode(self):
+        election_id = "local.place-name.2017-03-23"
+        ElectionFactory(group=None, election_id=election_id)
+        ElectionFactory(group=None, division_geography=None)
+        # this input should fail the validation check
+        resp = self.client.get("/api/elections/?postcode=not-a-postcode")
+        data = resp.json()
+        assert data['detail'] == "Invalid postcode"
+
     @vcr.use_cassette(
         'fixtures/vcr_cassettes/test_election_for_bad_postcode.yaml')
     def test_election_endpoint_for_bad_postcode(self):
         election_id = "local.place-name.2017-03-23"
         ElectionFactory(group=None, election_id=election_id)
         ElectionFactory(group=None, division_geography=None)
+        # this input passes the validation check
+        # but when we call out to mapit we can't find it
         resp = self.client.get("/api/elections/?postcode=SW1A1AX")
         data = resp.json()
 
