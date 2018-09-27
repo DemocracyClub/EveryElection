@@ -2,7 +2,7 @@ import os
 from datetime import date
 from io import StringIO
 from django.test import TestCase
-from organisations.boundaryline.management.commands.boundaryline_backport_codes import Command
+from organisations.boundaries.management.commands.boundaryline_backport_codes import Command
 from organisations.models import OrganisationDivision
 
 
@@ -24,7 +24,7 @@ class BackportCodesTests(TestCase):
             'url': None,
             's3': None,
             'file': os.path.abspath(
-                'every_election/apps/organisations/boundaryline/fixtures/boundaryline_subset'
+                'every_election/apps/organisations/boundaries/fixtures/boundaryline_subset'
             ),
             'dry-run': None,
             'verbosity': 1,

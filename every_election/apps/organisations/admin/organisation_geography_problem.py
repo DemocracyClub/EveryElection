@@ -20,7 +20,8 @@ class OrganisationGeographyProblemManager(Manager):
                 # geography field is always a problem
                 Q(geography=None)
             ) | (
-                # so is OrganisationGeography with source != BoundaryLine
+                # so is OrganisationGeography with
+                # source != BoundaryLine/OSNI, etc
                 Q(source__in=INVALID_SOURCES)
             )
         )

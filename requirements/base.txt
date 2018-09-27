@@ -19,6 +19,7 @@ psutil==5.4.7
 psycopg2-binary==2.7.5
 requests==2.19.1
 requests_cache==0.4.13
+retry==0.9.2
 six==1.11.0
 uk-election-ids==0.1.0
 uk-geo-utils==0.6.0

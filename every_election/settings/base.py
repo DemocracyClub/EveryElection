@@ -40,7 +40,7 @@ PROJECT_APPS = [
     'dc_theme',
     'elections',
     'organisations',
-    'organisations.boundaryline',
+    'organisations.boundaries',
     'rest_framework',
     # 'static_precompiler',
     'pipeline',

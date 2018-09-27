@@ -1,6 +1,6 @@
 from django.contrib.gis.gdal import OGRGeometry
 from django.test import TestCase
-from organisations.boundaryline.helpers import normalize_name_for_matching, overlap_percent
+from organisations.boundaries.helpers import normalize_name_for_matching, overlap_percent
 
 
 class NormalizeNamesTest(TestCase):

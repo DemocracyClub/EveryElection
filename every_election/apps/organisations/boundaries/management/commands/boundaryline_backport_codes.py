@@ -19,9 +19,9 @@ from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.db import transaction
 
 from organisations.models import Organisation, OrganisationDivision
-from organisations.boundaryline import BoundaryLine
-from organisations.boundaryline.constants import get_area_type_lookup
-from organisations.boundaryline.management.base import BaseBoundaryLineCommand
+from organisations.boundaries.boundaryline import BoundaryLine
+from organisations.boundaries.constants import get_area_type_lookup
+from organisations.boundaries.management.base import BaseBoundaryLineCommand
 
 
 class Command(BaseBoundaryLineCommand):

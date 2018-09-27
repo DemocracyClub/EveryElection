@@ -7,25 +7,23 @@ from model_utils import Choices
 
 class DateConstraintMixin:
 
-    def save(self, *args, **kwargs):
-
+    def check_start_date(self):
         if type(self.start_date) == str:
             self.start_date = parse_date(self.start_date)
-        if type(self.end_date) == str:
-            self.end_date = parse_date(self.end_date)
-
         if self.start_date and self.organisation.start_date and self.start_date < self.organisation.start_date:
             raise ValidationError(
                 'start_date (%s) must be on or after parent organisation start_date (%s)' %\
                 (self.start_date.isoformat(), self.organisation.start_date.isoformat())
             )
+
+    def check_end_date(self):
+        if type(self.end_date) == str:
+            self.end_date = parse_date(self.end_date)
         if self.end_date and self.organisation.end_date and self.end_date > self.organisation.end_date:
             raise ValidationError(
                 'end_date (%s) must be on or before parent organisation end_date (%s)' %\
                 (self.end_date.isoformat(), self.organisation.end_date.isoformat())
             )
-
-        return super().save(*args, **kwargs)
 
 
 class OrganisationManager(models.QuerySet):
@@ -161,6 +159,11 @@ class OrganisationGeography(DateConstraintMixin, models.Model):
             end=self.end_date
         )
 
+    def save(self, *args, **kwargs):
+        self.check_start_date()
+        self.check_end_date()
+        return super().save(*args, **kwargs)
+
     class Meta:
         verbose_name_plural = "Organisation Geographies"
         ordering = ('-start_date',)
@@ -208,6 +211,10 @@ class OrganisationDivisionSet(DateConstraintMixin, models.Model):
             except DivisionGeography.DoesNotExist:
                 pass
         return found_geography
+
+    def save(self, *args, **kwargs):
+        self.check_end_date()
+        return super().save(*args, **kwargs)
 
     class Meta:
         verbose_name_plural = "Organisation Division Sets"

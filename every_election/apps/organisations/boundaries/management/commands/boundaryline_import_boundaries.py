@@ -20,10 +20,10 @@ from organisations.models import (
     OrganisationGeography,
     OrganisationDivision
 )
-from organisations.boundaryline import BoundaryLine
-from organisations.boundaryline.constants import get_area_type_lookup, SPECIAL_CASES
-from organisations.boundaryline.management.base import BaseBoundaryLineCommand
-from organisations.boundaryline.helpers import split_code
+from organisations.boundaries.boundaryline import BoundaryLine
+from organisations.boundaries.constants import get_area_type_lookup, SPECIAL_CASES
+from organisations.boundaries.management.base import BaseBoundaryLineCommand
+from organisations.boundaries.helpers import split_code
 from organisations.constants import REGISTER_SUBTYPE_TO_BOUNDARYLINE_TYPE
 from storage.shapefile import convert_geom_to_multipolygon
 

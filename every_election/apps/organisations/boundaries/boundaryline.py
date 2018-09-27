@@ -1,7 +1,7 @@
 from django.contrib.gis.gdal import DataSource, OGRGeometry
 from django.contrib.gis.geos import MultiPolygon
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
-from organisations.boundaryline.helpers import normalize_name_for_matching, overlap_percent
+from organisations.boundaries.helpers import normalize_name_for_matching, overlap_percent
 
 
 # Percentage overlap required for us to consider 2 divisions

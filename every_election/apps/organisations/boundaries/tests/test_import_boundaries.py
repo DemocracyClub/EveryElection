@@ -3,7 +3,7 @@ import tempfile
 from io import StringIO
 from django.contrib.gis.geos import MultiPolygon
 from django.test import TestCase
-from organisations.boundaryline.management.commands.boundaryline_import_boundaries import Command
+from organisations.boundaries.management.commands.boundaryline_import_boundaries import Command
 from organisations.models import (
     DivisionGeography,
     OrganisationGeography,
@@ -30,7 +30,7 @@ class ImportBoundariesTests(TestCase):
             'url': None,
             's3': None,
             'file': os.path.abspath(
-                'every_election/apps/organisations/boundaryline/fixtures/boundaryline_subset'
+                'every_election/apps/organisations/boundaries/fixtures/boundaryline_subset'
             ),
             'verbosity': 1,
             'source': 'imported in unit test',

@@ -24,7 +24,7 @@ class DivisionProblemManager(Manager):
                 Q(geography=None)
             ) | (
                 # if the division has a GSS code,
-                # the boundary source should be BoundaryLine
+                # the boundary source should be BoundaryLine/OSNI
                 Q(geography__source__in=INVALID_SOURCES) &
                 Q(official_identifier__startswith='gss:')
             ) | (
