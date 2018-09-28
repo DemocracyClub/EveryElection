@@ -34,7 +34,7 @@ class OsniLayer:
             return data
 
     def __init__(self, url, gss_field, name_field):
-        ds = json.loads(self.get_data_from_url(url))
+        ds = json.loads(self.get_data_from_url(url).decode('utf-8'))
         self.features = []
 
         for feature in ds['features']:
