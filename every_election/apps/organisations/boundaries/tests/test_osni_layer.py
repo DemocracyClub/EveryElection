@@ -1,11 +1,10 @@
-import json
 import mock
 from django.contrib.gis.geos import MultiPolygon
 from django.test import TestCase
 from organisations.boundaries.osni import OsniLayer
 
 
-fake_data = json.dumps({
+fake_data = b'''{
   "type": "FeatureCollection",
   "features": [
     {
@@ -52,7 +51,7 @@ fake_data = json.dumps({
       }
     }
   ]
-})
+}'''
 
 
 class OsniLayerTest(TestCase):
