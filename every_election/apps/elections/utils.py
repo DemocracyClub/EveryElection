@@ -218,6 +218,10 @@ class ElectionBuilder:
                 'division': self.division,
                 'elected_role': self.get_elected_role(),
                 'voting_system': self.get_voting_system(),
+
+                # TODO: remove this once we have moderation features
+                # so new elections are 'suggested' by default
+                'suggested_status': 'approved',
             }))
 
     def build_election_group(self):
