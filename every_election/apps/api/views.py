@@ -35,12 +35,16 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
 
     @detail_route(url_path='geo')
     def geo(self, request, election_id=None, format=None):
-        election = Election.public_objects.get(election_id=election_id)
+        election = self.get_queryset().get(election_id=election_id)
         return Response(ElectionGeoSerializer(election,
                         context={'request': request}).data)
 
     def get_queryset(self):
         queryset = Election.public_objects.all()
+        if self.request.query_params.get('deleted', None):
+            queryset = Election.private_objects.all().filter(
+                suggested_status='deleted')
+
         postcode = self.request.query_params.get('postcode', None)
         if postcode is not None:
             try:
