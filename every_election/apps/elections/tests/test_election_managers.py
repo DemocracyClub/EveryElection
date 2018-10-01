@@ -64,3 +64,11 @@ class TestElectionGeoQueries(TestCase):
         ElectionFactory(
             group=None, poll_open_date=datetime.today() - timedelta(days=60) )
         assert Election.public_objects.current().for_postcode('SW1A1AA').count() == 1
+
+    def test_public_private_filter(self):
+        ElectionFactory(suggested_status='suggested', group=None)
+        ElectionFactory(suggested_status='approved', group=None)
+        ElectionFactory(suggested_status='rejected', group=None)
+        ElectionFactory(suggested_status='deleted', group=None)
+        self.assertEqual(1, Election.public_objects.count())
+        self.assertEqual(4, Election.private_objects.count())
