@@ -5,7 +5,7 @@ from django.contrib.gis.geos import Point
 from elections.query_helpers import get_point_from_postcode
 
 
-class ElectionManager(models.QuerySet):
+class ElectionQuerySet(models.QuerySet):
 
     def for_point(self, point):
         return self.filter(
@@ -36,3 +36,26 @@ class ElectionManager(models.QuerySet):
 
     def future(self):
         return self.filter(poll_open_date__gte=datetime.today())
+
+
+class PublicElectionsManager(models.Manager):
+
+    """
+    In most cases, we want to expose elections which are approved
+    and hide any which are suggested/rejected/deleted
+    Instead of remembering to pass .filter(suggested_status='approved')
+    into every front-end query we can use this manager.
+    """
+    def get_queryset(self):
+        return super().get_queryset().filter(suggested_status='approved')
+
+
+class PrivateElectionsManager(models.Manager):
+    """
+    In a some contexts
+    (some API outputs, moderation queue code, /admin, unit tests, etc)
+    we do also need to reference suggested/rejected/deleted elections.
+    In these situations we can explicitly use this manager to
+    query all election objects.
+    """
+    pass

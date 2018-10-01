@@ -20,7 +20,7 @@ class TestAttachPostsPerWard(TestCase):
         ElectionFactory.create_batch(5, seats_contested=None)
 
         self.fake_csv_data = []
-        for election in Election.objects.filter(group_type=None):
+        for election in Election.public_objects.filter(group_type=None):
             self.fake_csv_data.append(
                 {
                     'created': 'yes',

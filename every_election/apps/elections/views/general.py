@@ -81,7 +81,7 @@ class SingleElection(DetailView):
             doc.archive_document(document_url, kwargs['election_id'])
             doc.save()
 
-            e = Election.objects.get(election_id=kwargs['election_id'])
+            e = Election.public_objects.get(election_id=kwargs['election_id'])
             e.notice = doc
             e.save()
 

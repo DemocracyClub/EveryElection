@@ -48,9 +48,9 @@ class Command(BaseCommand):
             pass
 
         if not (options['from'] or options['to']):
-            elections = Election.objects.future().filter(group_type='election')
+            elections = Election.public_objects.future().filter(group_type='election')
         else:
-            elections = Election.objects.all().filter(group_type='election')
+            elections = Election.public_objects.all().filter(group_type='election')
 
             if options['from']:
                 elections = elections.filter(poll_open_date__gte=options['from'])

@@ -13,18 +13,18 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
 
     def run_test_with_data(self, all_data, expected_ids, expected_titles, **kwargs):
         self.create_ids(all_data, **kwargs)
-        assert Election.objects.count() == len(expected_ids)
+        assert Election.private_objects.count() == len(expected_ids)
 
         # ensure the records created match the expected ids
         for expected_id in expected_ids:
-            assert Election.objects.filter(election_id=expected_id).exists()
+            assert Election.private_objects.filter(election_id=expected_id).exists()
 
         # ensure the records created match the expected titles
         for expected_title in expected_titles:
-            assert Election.objects.filter(election_title=expected_title).exists()
+            assert Election.private_objects.filter(election_title=expected_title).exists()
 
         # ensure group relationships have been saved correctly
-        for election in Election.objects.all():
+        for election in Election.private_objects.all():
             if election.group_type != 'election':
                 assert isinstance(election.group_id, int)
 
@@ -36,7 +36,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         )
 
     def test_creates_div_data_ids(self):
-        self.assertEqual(Election.objects.count(), 0)
+        self.assertEqual(Election.private_objects.count(), 0)
         all_data = self.base_data
         all_data.update({self.make_div_id(): 'contested'})
         expected_ids = [
@@ -181,7 +181,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             expected_titles
         )
 
-        for election in Election.objects.filter(group_type=None):
+        for election in Election.private_objects.filter(group_type=None):
             assert 'by-election' in election.election_title
 
     def test_creates_mayor_id(self):
@@ -366,13 +366,13 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             expected_titles
         )
 
-        for election in Election.objects.all():
+        for election in Election.private_objects.all():
             if election.group_type == 'organisation':
                 self.assertTrue(election.geography != None)
             else:
                 self.assertTrue(election.geography == None)
 
-        result = Election.objects.for_lat_lng(
+        result = Election.private_objects.for_lat_lng(
             51.50124158773981, -0.13715744018554688)
         self.assertEqual(1, len(result))
         self.assertEqual('local.test.'+self.date_str, result[0].election_id)
@@ -409,13 +409,13 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             expected_titles
         )
 
-        for election in Election.objects.all():
+        for election in Election.private_objects.all():
             if election.election_id == 'local.test.test-div-2.'+self.date_str:
                 self.assertTrue(election.geography != None)
             else:
                 self.assertTrue(election.geography == None)
 
-        result = Election.objects.for_lat_lng(
+        result = Election.private_objects.for_lat_lng(
             51.50124158773981, -0.13715744018554688)
         self.assertEqual(1, len(result))
         self.assertEqual('local.test.test-div-2.'+self.date_str, result[0].election_id)

@@ -205,7 +205,7 @@ class ElectionBuilder:
             return d3
 
         try:
-            return Election.objects.get(election_id=record['election_id'])
+            return Election.private_objects.get(election_id=record['election_id'])
         except Election.DoesNotExist:
             # return an instance of elections.models.Election
             # but don't persist it to the DB yet.

@@ -49,3 +49,4 @@ class ElectionFactory(factory.django.DjangoModelFactory):
         election_id="local.2017-03-23",
         group=None, group_type="election")
     group_type = None
+    suggested_status = 'approved'

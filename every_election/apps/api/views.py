@@ -27,7 +27,7 @@ class APICoordsException(APIException):
 
 
 class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Election.objects.all()
+    queryset = Election.public_objects.all()
     serializer_class = ElectionSerializer
     lookup_field = 'election_id'
     lookup_value_regex = "(?!\.json$)[^/]+"
@@ -35,12 +35,12 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
 
     @detail_route(url_path='geo')
     def geo(self, request, election_id=None, format=None):
-        election = Election.objects.get(election_id=election_id)
+        election = Election.public_objects.get(election_id=election_id)
         return Response(ElectionGeoSerializer(election,
                         context={'request': request}).data)
 
     def get_queryset(self):
-        queryset = Election.objects.all()
+        queryset = Election.public_objects.all()
         postcode = self.request.query_params.get('postcode', None)
         if postcode is not None:
             try:
