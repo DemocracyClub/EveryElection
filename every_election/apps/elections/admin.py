@@ -13,6 +13,9 @@ class ElectionAdmin(admin.ModelAdmin):
 
     search_fields = ('election_id',)
 
+    def get_queryset(self, request):
+        return self.model.private_objects.all()
+
     def has_add_permission(self, request):
         return False
 
