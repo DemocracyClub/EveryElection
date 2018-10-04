@@ -205,7 +205,7 @@ class ElectionBuilder:
             return d3
 
         try:
-            return Election.objects.get(election_id=record['election_id'])
+            return Election.private_objects.get(election_id=record['election_id'])
         except Election.DoesNotExist:
             # return an instance of elections.models.Election
             # but don't persist it to the DB yet.
@@ -218,6 +218,10 @@ class ElectionBuilder:
                 'division': self.division,
                 'elected_role': self.get_elected_role(),
                 'voting_system': self.get_voting_system(),
+
+                # TODO: remove this once we have moderation features
+                # so new elections are 'suggested' by default
+                'suggested_status': 'approved',
             }))
 
     def build_election_group(self):

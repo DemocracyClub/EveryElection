@@ -11,7 +11,7 @@ class HomeView(TemplateView):
         context = super().get_context_data(**kwargs)
 
 
-        election_qs = Election.objects.all()
+        election_qs = Election.public_objects.all()
         election_qs = election_qs.filter(group_type='election')
         election_qs = election_qs.filter(poll_open_date__gte=datetime.today())
         election_qs = election_qs.order_by(

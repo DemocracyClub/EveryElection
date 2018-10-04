@@ -90,7 +90,7 @@ class Command(ReadFromCSVMixin, BaseCommand):
         for line in data:
             if line['created'] == "yes":
 
-                election = Election.objects.get(
+                election = Election.public_objects.get(
                     election_id=line['id']
                 )
                 seats_contested = self.get_seats_contested(line)

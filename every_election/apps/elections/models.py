@@ -13,7 +13,7 @@ from django_markdown.models import MarkdownField
 
 from storages.backends.s3boto3 import S3Boto3Storage
 from suggested_content.models import SuggestedByPublicMixin
-from .managers import ElectionManager
+from .managers import PublicElectionsManager, PrivateElectionsManager, ElectionQuerySet
 
 
 class ElectionType(models.Model):
@@ -96,7 +96,9 @@ class Election(SuggestedByPublicMixin, models.Model):
     snooped_election = models.ForeignKey('election_snooper.SnoopedElection',
         null=True, blank=True, on_delete=models.SET_NULL)
 
-    objects = ElectionManager.as_manager()
+
+    public_objects = PublicElectionsManager.from_queryset(ElectionQuerySet)()
+    private_objects = PrivateElectionsManager.from_queryset(ElectionQuerySet)()
 
     class Meta:
         ordering = ('election_id',)
@@ -194,7 +196,7 @@ class Election(SuggestedByPublicMixin, models.Model):
 
         if not self.group_id and self.group:
             try:
-                group_model = Election.objects.get(election_id=self.group.election_id)
+                group_model = Election.private_objects.get(election_id=self.group.election_id)
             except Election.DoesNotExist:
                 group_model = self.group.save(*args, **kwargs)
             self.group = group_model

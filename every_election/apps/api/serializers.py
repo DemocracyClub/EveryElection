@@ -151,6 +151,7 @@ election_fields = (
     'current',
     'explanation',
     'metadata',
+    'deleted',
 )
 
 class BaseElectionSerializer(serializers.ModelSerializer):
@@ -171,9 +172,11 @@ class BaseElectionSerializer(serializers.ModelSerializer):
     voting_system = serializers.SerializerMethodField()
     explanation = ExplanationSerializer(read_only=True)
     metadata = MetaDataSerializer(read_only=True)
-
-    # Current
     current = serializers.SerializerMethodField()
+    deleted = serializers.SerializerMethodField()
+
+    def get_deleted(self, obj):
+        return obj.suggested_status == 'deleted'
 
     def get_current(self, obj):
         return obj.get_current
