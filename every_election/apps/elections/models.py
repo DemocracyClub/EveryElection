@@ -282,6 +282,11 @@ class ModerationHistory(TimeStampedModel):
     status = models.ForeignKey(ModerationStatus, on_delete=models.CASCADE)
     # TODO: add more fields when we add moderation data entry features
 
+    class Meta:
+        verbose_name_plural = "Moderation History"
+        get_latest_by = 'modified'
+        ordering = ('election', '-modified')
+
 
 class VotingSystem(models.Model):
     slug = models.SlugField(primary_key=True)
