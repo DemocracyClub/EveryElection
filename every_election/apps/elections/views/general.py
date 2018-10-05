@@ -56,11 +56,16 @@ class AllElectionsView(ListView):
     model = Election
     paginate_by = 50
 
+    def get_queryset(self):
+        return Election.public_objects.all()
 
 class SingleElection(DetailView):
     model = Election
     slug_url_kwarg = 'election_id'
     slug_field = 'election_id'
+
+    def get_queryset(self):
+        return Election.public_objects.all()
 
     def get_context_data(self, **kwargs):
         if self.request.POST:
