@@ -17,12 +17,12 @@ class TestElectionAPIQueries(APITestCase):
     fixtures = ['onspd.json']
 
     def test_election_endpoint(self):
-        id = ElectionWithStatusFactory(group=None).election_id
+        id_ = ElectionWithStatusFactory(group=None).election_id
         resp = self.client.get("/api/elections/")
         data = resp.json()
 
         assert len(data['results']) == 1
-        assert data['results'][0]['election_id'] == id
+        assert data['results'][0]['election_id'] == id_
 
     def test_election_endpoint_current(self):
         id_current = ElectionWithStatusFactory(
