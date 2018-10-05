@@ -45,7 +45,6 @@ PROJECT_APPS = [
     # 'static_precompiler',
     'pipeline',
     'storages',
-    'suggested_content',
     'django_extensions',
     'election_snooper',
 ]

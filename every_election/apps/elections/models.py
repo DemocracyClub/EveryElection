@@ -16,7 +16,6 @@ from django_extensions.db.models import TimeStampedModel
 from django_markdown.models import MarkdownField
 
 from storages.backends.s3boto3 import S3Boto3Storage
-from suggested_content.models import SuggestedByPublicMixin
 from .managers import PublicElectionsManager, PrivateElectionsManager
 
 
@@ -78,7 +77,7 @@ class ModerationStatus(models.Model):
         return self.short_label
 
 
-class Election(SuggestedByPublicMixin, models.Model):
+class Election(models.Model):
     """
     An election.
     This model should contain everything needed to make the election ID,
