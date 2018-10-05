@@ -1,5 +1,5 @@
 from django.test import TestCase
-from elections.models import Election
+from elections.models import Election, ModerationHistory
 from elections.utils import ElectionBuilder
 from .base_tests import BaseElectionCreatorMixIn
 
@@ -56,3 +56,18 @@ class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
         # the exception should have prevented both the
         # parent and child records from being saved
         self.assertEqual(0, Election.private_objects.count())
+
+    def test_related_object_save(self):
+        # table should be empty before we start
+        self.assertEqual(0, ModerationHistory.objects.count())
+
+        # the first time we save a record, we should create
+        # a corresponding moderation status event
+        self.parent_election.save()
+        self.assertEqual(1, ModerationHistory.objects.count())
+
+        # saving the same record again shouldn't though
+        self.parent_election.seats_contests = 7
+        self.parent_election.source = 'some bloke down the pub told me'
+        self.parent_election.save()
+        self.assertEqual(1, ModerationHistory.objects.count())

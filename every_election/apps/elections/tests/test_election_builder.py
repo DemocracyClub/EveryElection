@@ -129,3 +129,23 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
         self.assertIsNotNone(election_group.id)
         self.assertIsNotNone(org_group.id)
         self.assertIsNotNone(ballot.id)
+
+    def test_created_with_status(self):
+        builder = ElectionBuilder('local', '2017-06-08')\
+            .with_organisation(self.org1)\
+            .with_division(self.org_div_1)
+        election_group = builder.build_election_group()
+        org_group = builder.build_organisation_group(election_group)
+        ballot = builder.build_ballot(org_group)
+        ballot.save()
+
+        # TODO: update this to 'Suggested' once
+        # we have moderation data entry features
+        default_status = 'Approved'
+
+        self.assertEqual(
+            default_status, ballot.moderation_status.short_label)
+        self.assertEqual(
+            default_status, org_group.moderation_status.short_label)
+        self.assertEqual(
+            default_status, election_group.moderation_status.short_label)

@@ -78,3 +78,38 @@ class TestElectionGeoQueries(TestCase):
         ElectionWithStatusFactory(group=None, moderation_status=related_status('Deleted'))
         self.assertEqual(1, Election.public_objects.count())
         self.assertEqual(4, Election.private_objects.count())
+
+    def test_public_private_filter_complex(self):
+        # set up 2 ballot objects
+        e1 = ElectionFactory(group=None)
+        e2 = ElectionFactory(group=None)
+
+        # to start off with they're both 'suggested'
+        ModerationHistoryFactory(
+            election=e1,
+            status=ModerationStatusFactory(short_label='Suggested')
+        )
+        ModerationHistoryFactory(
+            election=e2,
+            status=ModerationStatusFactory(short_label='Suggested')
+        )
+        self.assertEqual(0, Election.public_objects.count())
+        self.assertEqual(2, Election.private_objects.count())
+
+        # approve one of them
+        ModerationHistoryFactory(
+            election=e1,
+            status=ModerationStatusFactory(short_label='Approved')
+        )
+        self.assertEqual(1, Election.public_objects.count())
+        self.assertEqual(
+            e1.election_id, Election.public_objects.all()[0].election_id)
+        self.assertEqual(2, Election.private_objects.count())
+
+        # and then delete it again
+        ModerationHistoryFactory(
+            election=e1,
+            status=ModerationStatusFactory(short_label='Deleted')
+        )
+        self.assertEqual(0, Election.public_objects.count())
+        self.assertEqual(2, Election.private_objects.count())
