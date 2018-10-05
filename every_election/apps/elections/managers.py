@@ -38,7 +38,7 @@ class ElectionQuerySet(models.QuerySet):
         return self.filter(poll_open_date__gte=datetime.today())
 
 
-class PublicElectionsManager(models.Manager):
+class PublicElectionsManager(models.Manager.from_queryset(ElectionQuerySet)):
 
     """
     In most cases, we want to expose elections which are approved
@@ -50,7 +50,8 @@ class PublicElectionsManager(models.Manager):
         return super().get_queryset().filter(suggested_status='approved')
 
 
-class PrivateElectionsManager(models.Manager):
+class PrivateElectionsManager(models.Manager.from_queryset(ElectionQuerySet)):
+
     """
     In some contexts
     (some API outputs, moderation queue code, /admin, unit tests, etc)
@@ -58,4 +59,4 @@ class PrivateElectionsManager(models.Manager):
     In these situations we can explicitly use this manager to
     query all election objects.
     """
-    pass
+    use_in_migrations = True
