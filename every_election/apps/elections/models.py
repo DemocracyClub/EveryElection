@@ -4,18 +4,19 @@ import urllib.request
 from datetime import date, timedelta
 from enum import Enum, unique
 
+from django.contrib.postgres.fields import JSONField
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.files import File
 from django.db import models, transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.core.files import File
 from django.urls import reverse
 from django.utils.text import slugify
-from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.postgres.fields import JSONField
+
 from django_extensions.db.models import TimeStampedModel
 from django_markdown.models import MarkdownField
-
 from storages.backends.s3boto3 import S3Boto3Storage
+
 from .managers import PublicElectionsManager, PrivateElectionsManager
 
 
