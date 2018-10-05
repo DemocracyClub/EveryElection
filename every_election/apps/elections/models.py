@@ -5,6 +5,8 @@ from datetime import date, timedelta
 from enum import Enum, unique
 
 from django.db import models, transaction
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.core.files import File
 from django.urls import reverse
 from django.utils.text import slugify
@@ -240,7 +242,19 @@ class Election(SuggestedByPublicMixin, models.Model):
                 group_model = self.group.save(*args, **kwargs)
             self.group = group_model
 
-        return super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
+
+
+@receiver(post_save, sender=Election, dispatch_uid="init_status_history")
+def init_status_history(sender, instance, **kwargs):
+    if not ModerationHistory.objects.all().filter(election=instance).exists():
+        event = ModerationHistory(
+            election=instance,
+            # TODO: update this to 'Suggested' once
+            # we have moderation data entry features
+            status=ModerationStatus.objects.get(short_label='Approved')
+        )
+        event.save()
 
 
 class ModerationHistory(TimeStampedModel):
