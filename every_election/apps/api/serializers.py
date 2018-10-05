@@ -176,7 +176,7 @@ class BaseElectionSerializer(serializers.ModelSerializer):
     deleted = serializers.SerializerMethodField()
 
     def get_deleted(self, obj):
-        return obj.suggested_status == 'deleted'
+        return obj.moderation_status.short_label == 'Deleted'
 
     def get_current(self, obj):
         return obj.get_current

@@ -37,17 +37,27 @@ class ElectionQuerySet(models.QuerySet):
     def future(self):
         return self.filter(poll_open_date__gte=datetime.today())
 
+    def filter_by_status(self, status):
+        return self\
+            .annotate(
+                latest_status=models.Max('moderationhistory__modified')
+            )\
+            .filter(
+                moderationhistory__modified=models.F('latest_status'),
+                moderationhistory__status__short_label=status
+            )
+
 
 class PublicElectionsManager(models.Manager.from_queryset(ElectionQuerySet)):
 
     """
     In most cases, we want to expose elections which are approved
     and hide any which are suggested/rejected/deleted
-    Instead of remembering to pass .filter(suggested_status='approved')
-    into every front-end query we can use this manager.
+    Instead of remembering to filter on (latest status == approved)
+    in every front-end query we can use this manager.
     """
     def get_queryset(self):
-        return super().get_queryset().filter(suggested_status='approved')
+        return super().get_queryset().filter_by_status('Approved')
 
 
 class PrivateElectionsManager(models.Manager.from_queryset(ElectionQuerySet)):
