@@ -115,12 +115,6 @@ class Election(SuggestedByPublicMixin, models.Model):
             return self.poll_open_date > recent_past
         return model_current
 
-    # TODO:
-    # Reason for election
-    # Link to legislation
-    # hashtags? Other names?
-    # Discription
-
     def __str__(self):
         return self.get_id()
 
