@@ -135,8 +135,28 @@ class Election(models.Model):
         null=True, blank=True, on_delete=models.SET_NULL)
 
 
-    public_objects = PublicElectionsManager()
+    """
+    Note that order is significant here.
+    The first manager we define is the default. See:
+    https://docs.djangoproject.com/en/1.11/topics/db/managers/#modifying-a-manager-s-initial-queryset
+
+    public_objects might seem like the 'safe' default here, but there are a
+    number of places where Django implicitly uses the default manager
+    (e.g: /admin, dumpdata, etc).
+    Using public_objects as the default can lead to some strange bugs.
+
+    For the most part, not having a .objects forces us to make a choice
+    about what we are exposing when we query the model but there are
+    some places where django/DRF/etc are "clever" and silently uses the default.
+    We need to be careful about this. e.g:
+
+    class ElectionListView(ListView):
+        model = Election
+
+    and ensure we override get_queryset().
+    """
     private_objects = PrivateElectionsManager()
+    public_objects = PublicElectionsManager()
 
     class Meta:
         ordering = ('election_id',)
