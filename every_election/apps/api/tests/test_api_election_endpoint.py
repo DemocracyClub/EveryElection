@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import vcr
 from rest_framework.test import APITestCase
 
-from elections.tests.factories import ElectionFactory
+from elections.tests.factories import ElectionWithStatusFactory, related_status
 from organisations.tests.factories import (
     OrganisationFactory, OrganisationDivisionFactory)
 from elections.models import MetaData
@@ -17,7 +17,7 @@ class TestElectionAPIQueries(APITestCase):
     fixtures = ['onspd.json']
 
     def test_election_endpoint(self):
-        id = ElectionFactory(group=None).election_id
+        id = ElectionWithStatusFactory(group=None).election_id
         resp = self.client.get("/api/elections/")
         data = resp.json()
 
@@ -25,9 +25,9 @@ class TestElectionAPIQueries(APITestCase):
         assert data['results'][0]['election_id'] == id
 
     def test_election_endpoint_current(self):
-        id_current = ElectionFactory(
+        id_current = ElectionWithStatusFactory(
             group=None, poll_open_date=datetime.today()).election_id
-        id_future = ElectionFactory(  # noqa
+        id_future = ElectionWithStatusFactory(  # noqa
             group=None,
             poll_open_date=datetime.today() - timedelta(days=60)).election_id
 
@@ -40,11 +40,11 @@ class TestElectionAPIQueries(APITestCase):
 
 
     def test_election_endpoint_future(self):
-        ElectionFactory(
+        ElectionWithStatusFactory(
             group=None,
             poll_open_date=datetime.today(),
             election_id="local.place-name-future-election.2017-03-23")
-        ElectionFactory(
+        ElectionWithStatusFactory(
             group=None, poll_open_date=datetime.today() - timedelta(days=1))
 
         resp = self.client.get("/api/elections/?future")
@@ -56,8 +56,8 @@ class TestElectionAPIQueries(APITestCase):
 
     def test_election_endpoint_for_postcode(self):
         election_id = "local.place-name.2017-03-23"
-        ElectionFactory(group=None, election_id=election_id)
-        ElectionFactory(group=None, division_geography=None)
+        ElectionWithStatusFactory(group=None, election_id=election_id)
+        ElectionWithStatusFactory(group=None, division_geography=None)
         resp = self.client.get("/api/elections/?postcode=SW1A1AA")
         data = resp.json()
 
@@ -66,8 +66,8 @@ class TestElectionAPIQueries(APITestCase):
 
     def test_election_endpoint_for_postcode_jsonp(self):
         election_id = "local.place-name.2017-03-23"
-        ElectionFactory(group=None, election_id=election_id)
-        ElectionFactory(group=None, division_geography=None)
+        ElectionWithStatusFactory(group=None, election_id=election_id)
+        ElectionWithStatusFactory(group=None, division_geography=None)
         url = "/api/elections/?postcode=SW1A1AA" + \
               "&format=jsonp&callback=a_callback_string"
         resp = self.client.get(url)
@@ -75,16 +75,16 @@ class TestElectionAPIQueries(APITestCase):
 
     def test_election_endpoint_for_postcode_cors(self):
         election_id = "local.place-name.2017-03-23"
-        ElectionFactory(group=None, election_id=election_id)
-        ElectionFactory(group=None, division_geography=None)
+        ElectionWithStatusFactory(group=None, election_id=election_id)
+        ElectionWithStatusFactory(group=None, division_geography=None)
         url = "/api/elections/?postcode=SW1A1AA"
         resp = self.client.get(url, HTTP_ORIGIN='foo.bar/baz')
         self.assertEqual(resp.get('Access-Control-Allow-Origin'), '*')
 
     def test_election_endpoint_for_invalid_postcode(self):
         election_id = "local.place-name.2017-03-23"
-        ElectionFactory(group=None, election_id=election_id)
-        ElectionFactory(group=None, division_geography=None)
+        ElectionWithStatusFactory(group=None, election_id=election_id)
+        ElectionWithStatusFactory(group=None, division_geography=None)
         # this input should fail the validation check
         resp = self.client.get("/api/elections/?postcode=not-a-postcode")
         data = resp.json()
@@ -94,8 +94,8 @@ class TestElectionAPIQueries(APITestCase):
         'fixtures/vcr_cassettes/test_election_for_bad_postcode.yaml')
     def test_election_endpoint_for_bad_postcode(self):
         election_id = "local.place-name.2017-03-23"
-        ElectionFactory(group=None, election_id=election_id)
-        ElectionFactory(group=None, division_geography=None)
+        ElectionWithStatusFactory(group=None, election_id=election_id)
+        ElectionWithStatusFactory(group=None, division_geography=None)
         # this input passes the validation check
         # but when we call out to mapit we can't find it
         resp = self.client.get("/api/elections/?postcode=SW1A1AX")
@@ -105,8 +105,8 @@ class TestElectionAPIQueries(APITestCase):
 
     def test_election_endpoint_for_lat_lng(self):
         election_id = "local.place-name.2017-03-23"
-        ElectionFactory(group=None, election_id=election_id)
-        ElectionFactory(group=None, division_geography=None)
+        ElectionWithStatusFactory(group=None, election_id=election_id)
+        ElectionWithStatusFactory(group=None, division_geography=None)
 
         resp = self.client.get(
             "/api/elections/?coords=51.5010089365,-0.141587600123")
@@ -116,7 +116,7 @@ class TestElectionAPIQueries(APITestCase):
         assert len(data['results']) == 1
 
     def test_metadata_filter(self):
-        election = ElectionFactory(group=None, poll_open_date=datetime.today())
+        election = ElectionWithStatusFactory(group=None, poll_open_date=datetime.today())
         resp = self.client.get(
             "/api/elections/?metadata=1")
         data = resp.json()
@@ -145,10 +145,10 @@ class TestElectionAPIQueries(APITestCase):
         assert data['count'] == 1
 
     def test_deleted_filter_list(self):
-        approved = ElectionFactory(group=None, suggested_status='approved')
-        deleted = ElectionFactory(group=None, suggested_status='deleted')
-        ElectionFactory(group=None, suggested_status='rejected')
-        ElectionFactory(group=None, suggested_status='suggested')
+        approved = ElectionWithStatusFactory(group=None, moderation_status=related_status('Approved'))
+        deleted = ElectionWithStatusFactory(group=None, moderation_status=related_status('Deleted'))
+        ElectionWithStatusFactory(group=None, moderation_status=related_status('Rejected'))
+        ElectionWithStatusFactory(group=None, moderation_status=related_status('Suggested'))
 
         resp = self.client.get("/api/elections/")
         data = resp.json()
@@ -165,7 +165,7 @@ class TestElectionAPIQueries(APITestCase):
         self.assertEqual(data['results'][0]['deleted'], True)
 
     def test_deleted_filter_detail(self):
-        election = ElectionFactory(group=None, suggested_status='deleted')
+        election = ElectionWithStatusFactory(group=None, moderation_status=related_status('Deleted'))
         id_ = election.election_id
 
         resp = self.client.get("/api/elections/{}/".format(id_))
@@ -179,7 +179,7 @@ class TestElectionAPIQueries(APITestCase):
         org = OrganisationFactory()
         org_div = OrganisationDivisionFactory(
             organisation=org, territory_code="ENG")
-        ElectionFactory(group=None, organisation=org, division=org_div)
+        ElectionWithStatusFactory(group=None, organisation=org, division=org_div)
 
         self.expected_object = json.loads("""
         {
