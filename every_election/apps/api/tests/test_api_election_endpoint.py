@@ -4,7 +4,12 @@ from datetime import datetime, timedelta
 import vcr
 from rest_framework.test import APITestCase
 
-from elections.tests.factories import ElectionWithStatusFactory, related_status
+from elections.tests.factories import (
+    ElectionWithStatusFactory,
+    ModerationHistoryFactory,
+    ModerationStatusFactory,
+    related_status,
+)
 from organisations.tests.factories import (
     OrganisationFactory, OrganisationDivisionFactory)
 from elections.models import MetaData
@@ -173,6 +178,36 @@ class TestElectionAPIQueries(APITestCase):
 
         resp = self.client.get("/api/elections/{}/?deleted=1".format(id_))
         self.assertEqual(200, resp.status_code)
+
+    def test_child_visibility(self):
+        # 4 ballots in the same group with different moderation statuses
+        group = ElectionWithStatusFactory(group_type='election', moderation_status=related_status('Approved'))
+        approved = ElectionWithStatusFactory(group=group, moderation_status=related_status('Approved'))
+        suggested = ElectionWithStatusFactory(group=group, moderation_status=related_status('Suggested'))
+        rejected = ElectionWithStatusFactory(group=group, moderation_status=related_status('Rejected'))
+        deleted = ElectionWithStatusFactory(group=group, moderation_status=related_status('Deleted'))
+
+        resp = self.client.get("/api/elections/{}/".format(group.election_id))
+        self.assertEqual(200, resp.status_code)
+        data = resp.json()
+        # only the approved child election should be in the response
+        self.assertEqual(1, len(data['children']))
+        self.assertEqual([approved.election_id], data['children'])
+
+        # delete the group
+        ModerationHistoryFactory(
+            election=group,
+            status=ModerationStatusFactory(short_label='Deleted')
+        )
+        resp = self.client.get("/api/elections/{}/?deleted=1".format(group.election_id))
+        self.assertEqual(200, resp.status_code)
+        data = resp.json()
+        # deleted and approved child elections should be in the response
+        self.assertTrue(deleted.election_id in data['children'])
+        self.assertTrue(approved.election_id in data['children'])
+        # we should never show suggested or rejected elections in API outputs
+        self.assertTrue(suggested.election_id not in data['children'])
+        self.assertTrue(rejected.election_id not in data['children'])
 
     def test_all_expected_fields_returned(self):
 

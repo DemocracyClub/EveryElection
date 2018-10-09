@@ -163,11 +163,7 @@ class BaseElectionSerializer(serializers.ModelSerializer):
         slug_field='election_id',
         read_only=True
     )
-    children = serializers.SlugRelatedField(
-        slug_field='election_id',
-        read_only=True,
-        many=True
-    )
+    children = serializers.SerializerMethodField()
     elected_role = ElectedRoleField(read_only=True)
     voting_system = serializers.SerializerMethodField()
     explanation = ExplanationSerializer(read_only=True)
@@ -185,6 +181,16 @@ class BaseElectionSerializer(serializers.ModelSerializer):
         if obj.group_type == 'organisation' or obj.group_type == 'subtype' or not obj.group_type:
             return VotingSystemSerializer(obj.voting_system).data
         return None
+
+    def get_children(self, obj):
+        if self.context['request'].query_params.get('deleted', None):
+            children = obj\
+                .get_children('private_objects')\
+                .all()\
+                .filter_by_status(['Approved', 'Deleted'])
+        else:
+            children = obj.get_children('public_objects').all()
+        return [c.election_id for c in children]
 
 class ElectionSerializer(serializers.HyperlinkedModelSerializer, BaseElectionSerializer):
     class Meta:

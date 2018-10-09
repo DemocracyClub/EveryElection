@@ -8,6 +8,7 @@ from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files import File
 from django.db import models, transaction
+from django.db.models.fields.related_descriptors import create_reverse_many_to_one_manager
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
@@ -100,7 +101,27 @@ class Election(models.Model):
         null=True, blank=True)
     seats_contested = models.IntegerField(blank=True, null=True)
     seats_total = models.IntegerField(blank=True, null=True)
-    group = models.ForeignKey('Election', null=True, related_name="children")
+    group = models.ForeignKey('Election', null=True, related_name="_children_qs")
+
+    def get_children(self, manager):
+        """
+        This method allows us to call with a manger instance or a string
+        i.e both: obj.get_children('private_objects') and
+        obj.get_children(Election.public_objects)
+        are supported.
+
+        This will return a 'children' RelatedManager
+        with the relevant filters applied.
+        """
+        for m in self._meta.managers:
+            if m.name == manager or m == manager:
+                child_manager_cls = create_reverse_many_to_one_manager(
+                    m.__class__,
+                    self._meta.get_field('_children_qs')
+                )
+                return child_manager_cls(self)
+        raise ValueError('Unknown manager {}'.format(manager))
+
     group_type = models.CharField(blank=True, max_length=100, null=True)
     voting_system = models.ForeignKey('elections.VotingSystem', null=True)
     explanation = models.ForeignKey('elections.Explanation',

@@ -67,6 +67,11 @@ class SingleElection(DetailView):
     def get_queryset(self):
         return Election.public_objects.all()
 
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        obj.children = obj.get_children(Election.public_objects)
+        return obj
+
     def get_context_data(self, **kwargs):
         if self.request.POST:
             form = NoticeOfElectionForm(self.request.POST)

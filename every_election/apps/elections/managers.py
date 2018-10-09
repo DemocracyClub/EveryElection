@@ -38,13 +38,21 @@ class ElectionQuerySet(models.QuerySet):
         return self.filter(poll_open_date__gte=datetime.today())
 
     def filter_by_status(self, status):
+        if isinstance(status, list):
+            query = models.Q(moderationhistory__status__short_label__in=status)
+        elif isinstance(status, str):
+            query = models.Q(moderationhistory__status__short_label=status)
+        else:
+            raise TypeError('Expected list or str found {}'.format(type(status)))
+
         return self\
             .annotate(
                 latest_status=models.Max('moderationhistory__modified')
             )\
             .filter(
-                moderationhistory__modified=models.F('latest_status'),
-                moderationhistory__status__short_label=status
+                query
+                &
+                models.Q(moderationhistory__modified=models.F('latest_status'))
             )
 
 

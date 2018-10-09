@@ -115,8 +115,8 @@ class Command(BaseCommand):
         leaf_nodes = []
         while len(to_visit) > 0:
             e = to_visit.pop()
-            children = e.children.all()
-            if len(children) == 0:
+            children = e.get_children('public_objects').all()
+            if not children and e.group_type in ["organisation", None]:
                 leaf_nodes.append(e)
             else:
                 to_visit += children
