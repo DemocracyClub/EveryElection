@@ -63,7 +63,11 @@ class TestElectionAPIQueries(APITestCase):
         election_id = "local.place-name.2017-03-23"
         ElectionWithStatusFactory(group=None, election_id=election_id)
         ElectionWithStatusFactory(group=None, division_geography=None)
-        resp = self.client.get("/api/elections/?postcode=SW1A1AA")
+
+        # we should monitor this and be aware if this number increases
+        with self.assertNumQueries(12):
+            resp = self.client.get("/api/elections/?postcode=SW1A1AA")
+
         data = resp.json()
 
         assert len(data['results']) == 1
