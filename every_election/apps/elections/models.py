@@ -293,7 +293,7 @@ def init_status_history(sender, instance, **kwargs):
             election=instance,
             # TODO: update this to 'Suggested' once
             # we have moderation data entry features
-            status=ModerationStatus.objects.get(short_label='Approved')
+            status_id=ModerationStatuses.approved.value
         )
         event.save()
 

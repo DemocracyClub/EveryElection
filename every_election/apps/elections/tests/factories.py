@@ -8,7 +8,8 @@ from elections.models import (
     ModerationHistory,
     ElectionType,
     ElectedRole,
-    ModerationStatus
+    ModerationStatus,
+    ModerationStatuses,
 )
 from organisations.tests.factories import (
     OrganisationFactory,
@@ -72,7 +73,7 @@ class ModerationStatusFactory(factory.django.DjangoModelFactory):
         model = ModerationStatus
         django_get_or_create = ('short_label', )
 
-    short_label = 'Approved'
+    short_label = ModerationStatuses.approved.value
     long_label = 'long label'
 
 
@@ -90,7 +91,7 @@ class ElectionWithStatusFactory(ElectionFactory):
     moderation_status = factory.RelatedFactory(
         ModerationHistoryFactory,
         'election',
-        status__short_label='Approved'
+        status__short_label=ModerationStatuses.approved.value
     )
 
 
@@ -99,5 +100,5 @@ def related_status(status):
     return factory.RelatedFactory(
         ModerationHistoryFactory,
         'election',
-        status__short_label=status
+        status__short_label=ModerationStatuses(status.capitalize()).value
     )

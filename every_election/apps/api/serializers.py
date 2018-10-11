@@ -3,7 +3,7 @@ from rest_framework_gis.serializers import (
     GeoFeatureModelSerializer, GeometrySerializerMethodField)
 
 from elections.models import (
-    Election, ElectionType, ElectionSubType, VotingSystem)
+    Election, ElectionType, ElectionSubType, ModerationStatuses, VotingSystem)
 from organisations.models import (Organisation, OrganisationDivision,
                                   OrganisationDivisionSet)
 
@@ -172,7 +172,7 @@ class BaseElectionSerializer(serializers.ModelSerializer):
     deleted = serializers.SerializerMethodField()
 
     def get_deleted(self, obj):
-        return obj.moderation_status.short_label == 'Deleted'
+        return obj.moderation_status.short_label == ModerationStatuses.deleted.value
 
     def get_current(self, obj):
         return obj.get_current
@@ -187,7 +187,10 @@ class BaseElectionSerializer(serializers.ModelSerializer):
             children = obj\
                 .get_children('private_objects')\
                 .all()\
-                .filter_by_status(['Approved', 'Deleted'])
+                .filter_by_status([
+                    ModerationStatuses.approved.value,
+                    ModerationStatuses.deleted.value
+                ])
         else:
             children = obj.get_children('public_objects').all()
         return [c.election_id for c in children]
