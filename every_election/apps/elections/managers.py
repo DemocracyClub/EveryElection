@@ -37,25 +37,44 @@ class ElectionQuerySet(models.QuerySet):
     def future(self):
         return self.filter(poll_open_date__gte=datetime.today())
 
+    def filter_by_status(self, status):
+        if isinstance(status, list):
+            query = models.Q(moderationhistory__status__short_label__in=status)
+        elif isinstance(status, str):
+            query = models.Q(moderationhistory__status__short_label=status)
+        else:
+            raise TypeError('Expected list or str found {}'.format(type(status)))
 
-class PublicElectionsManager(models.Manager):
+        return self\
+            .annotate(
+                latest_status=models.Max('moderationhistory__modified')
+            )\
+            .filter(
+                query
+                &
+                models.Q(moderationhistory__modified=models.F('latest_status'))
+            )
+
+
+class PublicElectionsManager(models.Manager.from_queryset(ElectionQuerySet)):
 
     """
     In most cases, we want to expose elections which are approved
     and hide any which are suggested/rejected/deleted
-    Instead of remembering to pass .filter(suggested_status='approved')
-    into every front-end query we can use this manager.
+    Instead of remembering to filter on (latest status == approved)
+    in every front-end query we can use this manager.
     """
     def get_queryset(self):
-        return super().get_queryset().filter(suggested_status='approved')
+        return super().get_queryset().filter_by_status('Approved')
 
 
-class PrivateElectionsManager(models.Manager):
+class PrivateElectionsManager(models.Manager.from_queryset(ElectionQuerySet)):
+
     """
-    In a some contexts
+    In some contexts
     (some API outputs, moderation queue code, /admin, unit tests, etc)
     we do also need to reference suggested/rejected/deleted elections.
     In these situations we can explicitly use this manager to
     query all election objects.
     """
-    pass
+    use_in_migrations = True

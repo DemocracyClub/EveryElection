@@ -3,7 +3,7 @@ from rest_framework_gis.serializers import (
     GeoFeatureModelSerializer, GeometrySerializerMethodField)
 
 from elections.models import (
-    Election, ElectionType, ElectionSubType, VotingSystem)
+    Election, ElectionType, ElectionSubType, ModerationStatuses, VotingSystem)
 from organisations.models import (Organisation, OrganisationDivision,
                                   OrganisationDivisionSet)
 
@@ -163,11 +163,7 @@ class BaseElectionSerializer(serializers.ModelSerializer):
         slug_field='election_id',
         read_only=True
     )
-    children = serializers.SlugRelatedField(
-        slug_field='election_id',
-        read_only=True,
-        many=True
-    )
+    children = serializers.SerializerMethodField()
     elected_role = ElectedRoleField(read_only=True)
     voting_system = serializers.SerializerMethodField()
     explanation = ExplanationSerializer(read_only=True)
@@ -176,7 +172,7 @@ class BaseElectionSerializer(serializers.ModelSerializer):
     deleted = serializers.SerializerMethodField()
 
     def get_deleted(self, obj):
-        return obj.suggested_status == 'deleted'
+        return obj.moderation_status.short_label == ModerationStatuses.deleted.value
 
     def get_current(self, obj):
         return obj.get_current
@@ -185,6 +181,19 @@ class BaseElectionSerializer(serializers.ModelSerializer):
         if obj.group_type == 'organisation' or obj.group_type == 'subtype' or not obj.group_type:
             return VotingSystemSerializer(obj.voting_system).data
         return None
+
+    def get_children(self, obj):
+        if self.context['request'].query_params.get('deleted', None):
+            children = obj\
+                .get_children('private_objects')\
+                .all()\
+                .filter_by_status([
+                    ModerationStatuses.approved.value,
+                    ModerationStatuses.deleted.value
+                ])
+        else:
+            children = obj.get_children('public_objects').all()
+        return [c.election_id for c in children]
 
 class ElectionSerializer(serializers.HyperlinkedModelSerializer, BaseElectionSerializer):
     class Meta:

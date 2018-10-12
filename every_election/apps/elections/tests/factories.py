@@ -1,9 +1,21 @@
+import datetime
 import factory
 
-from elections.models import Election, ElectionType, ElectedRole
-from organisations.tests.factories import (OrganisationFactory,
-                                           OrganisationDivisionFactory,
-                                           DivisionGeographyFactory)
+from django.db.models import signals
+
+from elections.models import (
+    Election,
+    ModerationHistory,
+    ElectionType,
+    ElectedRole,
+    ModerationStatus,
+    ModerationStatuses,
+)
+from organisations.tests.factories import (
+    OrganisationFactory,
+    OrganisationDivisionFactory,
+    DivisionGeographyFactory
+)
 
 
 class ElectionTypeFactory(factory.django.DjangoModelFactory):
@@ -27,10 +39,15 @@ class ElectedRoleFactory(factory.django.DjangoModelFactory):
     elected_role_name = "Councillor"
 
 
+@factory.django.mute_signals(signals.post_save)
 class ElectionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Election
         django_get_or_create = ('election_id', )
+
+    @classmethod
+    def _get_manager(cls, model_class):
+        return model_class.private_objects
 
     election_id = factory.Sequence(
         lambda n: 'local.place-name-%d.2017-03-23' % n)
@@ -49,4 +66,39 @@ class ElectionFactory(factory.django.DjangoModelFactory):
         election_id="local.2017-03-23",
         group=None, group_type="election")
     group_type = None
-    suggested_status = 'approved'
+
+
+class ModerationStatusFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = ModerationStatus
+        django_get_or_create = ('short_label', )
+
+    short_label = ModerationStatuses.approved.value
+    long_label = 'long label'
+
+
+class ModerationHistoryFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = ModerationHistory
+
+    election = factory.SubFactory(ElectionFactory)
+    status = factory.SubFactory(ModerationStatusFactory)
+    created = datetime.datetime.now()
+    modified = datetime.datetime.now()
+
+
+class ElectionWithStatusFactory(ElectionFactory):
+    moderation_status = factory.RelatedFactory(
+        ModerationHistoryFactory,
+        'election',
+        status__short_label=ModerationStatuses.approved.value
+    )
+
+
+
+def related_status(status):
+    return factory.RelatedFactory(
+        ModerationHistoryFactory,
+        'election',
+        status__short_label=ModerationStatuses(status.capitalize()).value
+    )

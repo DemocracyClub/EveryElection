@@ -2,18 +2,23 @@ import tempfile
 import urllib.request
 
 from datetime import date, timedelta
+from enum import Enum, unique
 
-from django.db import models, transaction
+from django.contrib.postgres.fields import JSONField
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.files import File
+from django.db import models, transaction
+from django.db.models.fields.related_descriptors import create_reverse_many_to_one_manager
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.text import slugify
-from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.postgres.fields import JSONField
-from django_markdown.models import MarkdownField
 
+from django_extensions.db.models import TimeStampedModel
+from django_markdown.models import MarkdownField
 from storages.backends.s3boto3 import S3Boto3Storage
-from suggested_content.models import SuggestedByPublicMixin
-from .managers import PublicElectionsManager, PrivateElectionsManager, ElectionQuerySet
+
+from .managers import PublicElectionsManager, PrivateElectionsManager
 
 
 class ElectionType(models.Model):
@@ -53,7 +58,28 @@ class ElectedRole(models.Model):
         return "{} ({})".format(self.elected_title, self.organisation)
 
 
-class Election(SuggestedByPublicMixin, models.Model):
+@unique
+class ModerationStatuses(Enum):
+    suggested = "Suggested"
+    rejected = "Rejected"
+    approved = "Approved"
+    deleted = "Deleted"
+
+
+class ModerationStatus(models.Model):
+    short_label = models.CharField(
+        blank=False,
+        max_length=32,
+        primary_key=True,
+        choices=[(x, x.value) for x in ModerationStatuses]
+    )
+    long_label = models.CharField(blank=False, max_length=100)
+
+    def __str__(self):
+        return self.short_label
+
+
+class Election(models.Model):
     """
     An election.
     This model should contain everything needed to make the election ID,
@@ -75,7 +101,27 @@ class Election(SuggestedByPublicMixin, models.Model):
         null=True, blank=True)
     seats_contested = models.IntegerField(blank=True, null=True)
     seats_total = models.IntegerField(blank=True, null=True)
-    group = models.ForeignKey('Election', null=True, related_name="children")
+    group = models.ForeignKey('Election', null=True, related_name="_children_qs")
+
+    def get_children(self, manager):
+        """
+        This method allows us to call with a manger instance or a string
+        i.e both: obj.get_children('private_objects') and
+        obj.get_children(Election.public_objects)
+        are supported.
+
+        This will return a 'children' RelatedManager
+        with the relevant filters applied.
+        """
+        for m in self._meta.managers:
+            if m.name == manager or m == manager:
+                child_manager_cls = create_reverse_many_to_one_manager(
+                    m.__class__,
+                    self._meta.get_field('_children_qs')
+                )
+                return child_manager_cls(self)
+        raise ValueError('Unknown manager {}'.format(manager))
+
     group_type = models.CharField(blank=True, max_length=100, null=True)
     voting_system = models.ForeignKey('elections.VotingSystem', null=True)
     explanation = models.ForeignKey('elections.Explanation',
@@ -83,6 +129,19 @@ class Election(SuggestedByPublicMixin, models.Model):
     metadata = models.ForeignKey('elections.MetaData',
         null=True, blank=True, on_delete=models.SET_NULL)
     current = models.NullBooleanField()
+
+    """
+    election.moderation_statuses.all() is not a terribly useful call
+    to reference directly because it just gives us a list of all the
+    statuses an election object has ever been assigned
+    (but not when they were assigned or or which is the most recent).
+
+    Use election.moderation_status to get the current status of an election
+    or Election.private_objects.all.filter_by_status()
+    to select elections based on their most recent status value.
+    """
+    moderation_statuses = models.ManyToManyField(
+        ModerationStatus, through='ModerationHistory')
 
     # where did we hear about this election
     # (not necessarily the Notice of Election)
@@ -97,8 +156,28 @@ class Election(SuggestedByPublicMixin, models.Model):
         null=True, blank=True, on_delete=models.SET_NULL)
 
 
-    public_objects = PublicElectionsManager.from_queryset(ElectionQuerySet)()
-    private_objects = PrivateElectionsManager.from_queryset(ElectionQuerySet)()
+    """
+    Note that order is significant here.
+    The first manager we define is the default. See:
+    https://docs.djangoproject.com/en/1.11/topics/db/managers/#modifying-a-manager-s-initial-queryset
+
+    public_objects might seem like the 'safe' default here, but there are a
+    number of places where Django implicitly uses the default manager
+    (e.g: /admin, dumpdata, etc).
+    Using public_objects as the default can lead to some strange bugs.
+
+    For the most part, not having a .objects forces us to make a choice
+    about what we are exposing when we query the model but there are
+    some places where django/DRF/etc are "clever" and silently uses the default.
+    We need to be careful about this. e.g:
+
+    class ElectionListView(ListView):
+        model = Election
+
+    and ensure we override get_queryset().
+    """
+    private_objects = PrivateElectionsManager()
+    public_objects = PublicElectionsManager()
 
     class Meta:
         ordering = ('election_id',)
@@ -115,12 +194,6 @@ class Election(SuggestedByPublicMixin, models.Model):
             return self.poll_open_date > recent_past
         return model_current
 
-    # TODO:
-    # Reason for election
-    # Link to legislation
-    # hashtags? Other names?
-    # Discription
-
     def __str__(self):
         return self.get_id()
 
@@ -129,6 +202,15 @@ class Election(SuggestedByPublicMixin, models.Model):
             return self.election_id
         else:
             return self.tmp_election_id
+
+    @property
+    def moderation_status(self):
+        return ModerationHistory\
+            .objects\
+            .all()\
+            .filter(election=self)\
+            .latest()\
+            .status
 
     @property
     def geography(self):
@@ -201,7 +283,30 @@ class Election(SuggestedByPublicMixin, models.Model):
                 group_model = self.group.save(*args, **kwargs)
             self.group = group_model
 
-        return super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
+
+
+@receiver(post_save, sender=Election, dispatch_uid="init_status_history")
+def init_status_history(sender, instance, **kwargs):
+    if not ModerationHistory.objects.all().filter(election=instance).exists():
+        event = ModerationHistory(
+            election=instance,
+            # TODO: update this to 'Suggested' once
+            # we have moderation data entry features
+            status_id=ModerationStatuses.approved.value
+        )
+        event.save()
+
+
+class ModerationHistory(TimeStampedModel):
+    election = models.ForeignKey(Election, on_delete=models.CASCADE)
+    status = models.ForeignKey(ModerationStatus, on_delete=models.CASCADE)
+    # TODO: add more fields when we add moderation data entry features
+
+    class Meta:
+        verbose_name_plural = "Moderation History"
+        get_latest_by = 'modified'
+        ordering = ('election', '-modified')
 
 
 class VotingSystem(models.Model):

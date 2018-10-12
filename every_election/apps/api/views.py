@@ -42,8 +42,7 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         queryset = Election.public_objects.all()
         if self.request.query_params.get('deleted', None):
-            queryset = Election.private_objects.all().filter(
-                suggested_status='deleted')
+            queryset = Election.private_objects.all().filter_by_status('Deleted')
 
         postcode = self.request.query_params.get('postcode', None)
         if postcode is not None:

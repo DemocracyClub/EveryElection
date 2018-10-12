@@ -1,6 +1,11 @@
 from datetime import date
 from django.test import TestCase
-from elections.models import ElectionType, ElectionSubType, ElectedRole
+from elections.models import (
+    Election,
+    ElectedRole,
+    ElectionSubType,
+    ElectionType,
+)
 from elections.utils import ElectionBuilder
 from election_snooper.models import SnoopedElection
 from organisations.models import Organisation, OrganisationDivision
@@ -108,3 +113,39 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
         election.save()
         self.assertEqual(1, election.seats_contested)
         self.assertEqual(3, election.seats_total)
+
+    def test_with_groups(self):
+        builder = ElectionBuilder('local', '2017-06-08')\
+            .with_organisation(self.org1)\
+            .with_division(self.org_div_1)
+        election_group = builder.build_election_group()
+        org_group = builder.build_organisation_group(election_group)
+        ballot = builder.build_ballot(org_group)
+        ballot.save()
+
+        # calling save() on the ballot object
+        # should also save its 2x parent groups
+        self.assertEqual(3, Election.private_objects.all().count())
+        self.assertIsNotNone(election_group.id)
+        self.assertIsNotNone(org_group.id)
+        self.assertIsNotNone(ballot.id)
+
+    def test_created_with_status(self):
+        builder = ElectionBuilder('local', '2017-06-08')\
+            .with_organisation(self.org1)\
+            .with_division(self.org_div_1)
+        election_group = builder.build_election_group()
+        org_group = builder.build_organisation_group(election_group)
+        ballot = builder.build_ballot(org_group)
+        ballot.save()
+
+        # TODO: update this to 'Suggested' once
+        # we have moderation data entry features
+        default_status = 'Approved'
+
+        self.assertEqual(
+            default_status, ballot.moderation_status.short_label)
+        self.assertEqual(
+            default_status, org_group.moderation_status.short_label)
+        self.assertEqual(
+            default_status, election_group.moderation_status.short_label)
