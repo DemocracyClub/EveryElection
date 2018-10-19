@@ -31,8 +31,18 @@ class ElectionAdmin(admin.ModelAdmin):
         'geography',
         'division_geography',
         'organisation_geography',
+        'notice',
+        'cancellation_notice',
     )
 
+    def render_change_form(self, request, context, *args, **kwargs):
+        context['adminform'].form.fields['replaces'].queryset = Election\
+            .public_objects\
+            .filter(cancelled=True)\
+            .filter(poll_open_date__lte=context['original'].poll_open_date)\
+            .filter(division_id=context['original'].division_id)\
+            .filter(organisation_id=context['original'].organisation_id)
+        return super().render_change_form(request, context, *args, **kwargs)
 
 class JSONEditor(Textarea):
     def render(self, name, value, attrs=None):

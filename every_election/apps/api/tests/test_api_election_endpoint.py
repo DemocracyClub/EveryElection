@@ -65,7 +65,7 @@ class TestElectionAPIQueries(APITestCase):
         ElectionWithStatusFactory(group=None, division_geography=None)
 
         # we should monitor this and be aware if this number increases
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(13):
             resp = self.client.get("/api/elections/?postcode=SW1A1AA")
 
         data = resp.json()
@@ -213,6 +213,22 @@ class TestElectionAPIQueries(APITestCase):
         self.assertTrue(suggested.election_id not in data['children'])
         self.assertTrue(rejected.election_id not in data['children'])
 
+    def test_cancelled_election_with_replacement(self):
+        cancelled = ElectionWithStatusFactory(group=None, cancelled=True)
+        rescheduled = ElectionWithStatusFactory(group=None, replaces=cancelled)
+
+        resp = self.client.get("/api/elections/{}/".format(cancelled.election_id))
+        self.assertEqual(200, resp.status_code)
+        data = resp.json()
+        self.assertTrue(data['cancelled'])
+        self.assertEqual(rescheduled.election_id, data['replaced_by'])
+
+        resp = self.client.get("/api/elections/{}/".format(rescheduled.election_id))
+        self.assertEqual(200, resp.status_code)
+        data = resp.json()
+        self.assertFalse(data['cancelled'])
+        self.assertEqual(cancelled.election_id, data['replaces'])
+
     def test_all_expected_fields_returned(self):
 
         org = OrganisationFactory()
@@ -279,7 +295,10 @@ class TestElectionAPIQueries(APITestCase):
             "seats_contested": 1,
             "tmp_election_id": null,
             "metadata": null,
-            "deleted": false
+            "deleted": false,
+            "cancelled": false,
+            "replaces": null,
+            "replaced_by": null
         }
         """)
 

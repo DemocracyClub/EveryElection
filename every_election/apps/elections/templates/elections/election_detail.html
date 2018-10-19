@@ -9,7 +9,11 @@
                 {{ object.election_title }}
             {% else %}
                 {{ object.election_id }}
-        {% endif %}</h1>
+        {% endif %}
+        {% if object.cancelled %}
+          <span class="label alert">cancelled</span>
+        {% endif %}
+        </h1>
         {% if object.election_subtype %}
         <h3>{{ object.election_subtype }}</h3>
         {% endif %}
@@ -41,39 +45,60 @@
             {# Only do this for non-group IDs #}
         {% endif %}
 
-        {% if object.notice %}
-            {% include './notice_doc.html' with object=object only %}
-        {% elif object.group.notice %}
-            {% include './notice_doc.html' with object=object.group only %}
-        {% endif %}
-        </dl>
+        {% if object.cancelled %}
+          {% if object.cancellation_notice %}
+            {% include './official_document.html' with document=object.cancellation_notice type="Notice of Cancellation Document" only %}
+          {% endif %}
+          </dl>
+        {% else %}
+          {% if object.notice %}
+            {% include './official_document.html' with document=object.notice type="Notice of Election Document" only %}
+          {% elif object.group.notice %}
+            {% include './official_document.html' with document=object.group.notice type="Notice of Election Document" only %}
+          {% endif %}
+          </dl>
 
-        {% if not object.notice and not object.group.notice %}
-            <hr />
-            <form action="" method="post">
-                {% csrf_token %}
-                <div class="form-group">
-                    {{ form|dc_form }}
-                </div>
-                <div class="form-group">
-                    <input type="submit" class="button" value="Submit" />
-                </div>
-            </form>
+          {% if not object.notice and not object.group.notice %}
+              <hr />
+              <form action="" method="post">
+                  {% csrf_token %}
+                  <div class="form-group">
+                      {{ form|dc_form }}
+                  </div>
+                  <div class="form-group">
+                      <input type="submit" class="button" value="Submit" />
+                  </div>
+              </form>
+          {% endif %}
         {% endif %}
     </div>
 
     <div class="card postcode_card related">
         <h3>Related Elections</h3>
-        {% if object.group %}
-            <p>Part of the election group <a href="{{ object.group.get_absolute_url }}">
-                {{ object.group }}</a></p>
+        {% if object.group or object.replaces or object.replaced_by %}
+        <ul>
+          {% if object.group %}
+            <li>Part of the election group <a href="{{ object.group.get_absolute_url }}">{{ object.group }}</a></li>
+          {% endif %}
+          {% if object.replaces %}
+            <li>Replaces cancelled election <a href="{{ object.replaces.get_absolute_url }}">{{ object.replaces }}</a></li>
+          {% endif %}
+          {% if object.replaced_by %}
+            <li>This election was cancelled and replaced by <a href="{{ object.replaced_by.get_absolute_url }}">{{ object.replaced_by }}</a></li>
+          {% endif %}
+        </ul>
         {% endif %}
 
         {% if object.children.all.exists %}
-            <p>These are sub-IDs or IDs for each ballot paper:</p>
+            <p>Sub-IDs for each election in this group:</p>
             <ul>
             {% for child in object.children.all %}
-                <li><a href="{{ child.get_absolute_url }}">{{ child }}</a></li>
+                <li>
+                  <a href="{{ child.get_absolute_url }}">{{ child }}</a>
+                  {% if child.cancelled %}
+                    <span class="label alert">cancelled</span>
+                  {% endif %}
+                </li>
             {% endfor %}
             </ul>
         {% endif %}

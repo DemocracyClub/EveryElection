@@ -5,7 +5,7 @@ from datetime import date, timedelta
 from enum import Enum, unique
 
 from django.contrib.postgres.fields import JSONField
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.files import File
 from django.db import models, transaction
 from django.db.models.fields.related_descriptors import create_reverse_many_to_one_manager
@@ -149,12 +149,28 @@ class Election(models.Model):
 
     # Notice of Election document
     notice = models.ForeignKey('elections.Document',
-        null=True, blank=True, on_delete=models.SET_NULL)
+        null=True, blank=True, on_delete=models.SET_NULL,
+        related_name='notice_election_set')
 
     # optional FK to a SnoopedElection record
     snooped_election = models.ForeignKey('election_snooper.SnoopedElection',
         null=True, blank=True, on_delete=models.SET_NULL)
 
+    cancelled = models.BooleanField(default=False)
+    cancellation_notice = models.ForeignKey('elections.Document',
+        null=True, blank=True, on_delete=models.SET_NULL,
+        related_name='cancellation_election_set')
+    replaces = models.ForeignKey('Election',
+        null=True, blank=True, related_name="_replaced_by")
+
+
+    @property
+    def replaced_by(self):
+        if len(self._replaced_by.all()) == 0:
+            return None
+        if len(self._replaced_by.all()) == 1:
+            return self._replaced_by.all()[0]
+        raise AttributeError('Election should only have one replacement')
 
     """
     Note that order is significant here.
@@ -270,6 +286,16 @@ class Election(models.Model):
         except ObjectDoesNotExist:
             pass
         return None
+
+    def clean(self):
+        if self.group_type and self.cancelled:
+            raise ValidationError(
+                "Can't set a group to cancelled. Only a ballot can be cancelled"
+            )
+        if not self.cancelled and self.cancellation_notice:
+            raise ValidationError(
+                "Only a cancelled election can have a cancellation notice"
+            )
 
     @transaction.atomic
     def save(self, *args, **kwargs):
