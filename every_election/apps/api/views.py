@@ -71,6 +71,13 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
         if with_metadata is not None:
             queryset = queryset.exclude(metadata=None)
 
+        queryset = queryset.select_related(
+            'election_type',
+            'organisation',
+            'elected_role',
+            'division',
+        )
+
         return queryset
 
 

@@ -65,7 +65,7 @@ class TestElectionAPIQueries(APITestCase):
         ElectionWithStatusFactory(group=None, division_geography=None)
 
         # we should monitor this and be aware if this number increases
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(9):
             resp = self.client.get("/api/elections/?postcode=SW1A1AA")
 
         data = resp.json()
