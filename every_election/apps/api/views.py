@@ -30,7 +30,7 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Election.public_objects.all()
     serializer_class = ElectionSerializer
     lookup_field = 'election_id'
-    lookup_value_regex = "(?!\.json$)[^/]+"
+    lookup_value_regex = r"(?!\.json$)[^/]+"
     filter_fields = ('group_type', 'poll_open_date')
 
     @action(detail=True, url_path='geo')
