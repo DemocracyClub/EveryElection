@@ -35,6 +35,12 @@ class ElectionAdmin(admin.ModelAdmin):
         'cancellation_notice',
     )
 
+    def get_readonly_fields(self, request, obj=None):
+        if not obj.group_type:
+            return self.readonly_fields
+        else:
+            return self.readonly_fields + ('cancelled',)
+
     def render_change_form(self, request, context, *args, **kwargs):
         context['adminform'].form.fields['replaces'].queryset = Election\
             .public_objects\
