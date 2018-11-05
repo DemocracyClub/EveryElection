@@ -77,7 +77,7 @@ class TestAttachPostsPerWard(TestCase):
         command.stdout = StringIO()
 
         options = self.default_options
-        with self.assertRaisesRegexp(ValueError, "seats total less than "):
+        with self.assertRaisesRegex(ValueError, "seats total less than "):
             command.handle(**options)
 
 
@@ -99,7 +99,7 @@ class TestAttachPostsPerWard(TestCase):
         command.stdout = StringIO()
 
         options = self.default_options
-        with self.assertRaisesRegexp(ValueError, "Seats total not known for"):
+        with self.assertRaisesRegex(ValueError, "Seats total not known for"):
             command.handle(**options)
 
         options['skip_unknown'] = True

@@ -44,7 +44,7 @@ def _convert_multipolygons_to_latlong(features, srid):
     # ensure our .multipolygon property uses srid 4326
     for feature in features:
         if not feature.multipolygon.srid:
-            feature.multipolygon.set_srid(srid)
+            feature.multipolygon.srid = srid
         feature.multipolygon.transform(4326)
     return features
 

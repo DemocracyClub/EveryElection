@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.http import Http404
 from rest_framework import viewsets
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 
@@ -30,10 +30,10 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Election.public_objects.all()
     serializer_class = ElectionSerializer
     lookup_field = 'election_id'
-    lookup_value_regex = "(?!\.json$)[^/]+"
+    lookup_value_regex = r"(?!\.json$)[^/]+"
     filter_fields = ('group_type', 'poll_open_date')
 
-    @detail_route(url_path='geo')
+    @action(detail=True, url_path='geo')
     def geo(self, request, election_id=None, format=None):
         election = self.get_queryset().get(election_id=election_id)
         return Response(ElectionGeoSerializer(election,
@@ -103,7 +103,7 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
         except Organisation.DoesNotExist:
             raise Http404()
 
-    @detail_route(url_path='geo')
+    @action(detail=True, url_path='geo')
     def geo(self, request, **kwargs):
         kwargs.pop('format', None)
         org = self.get_object(**kwargs)
