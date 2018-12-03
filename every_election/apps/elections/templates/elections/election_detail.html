@@ -58,7 +58,7 @@
           {% endif %}
           </dl>
 
-          {% if not object.notice and not object.group.notice %}
+          {% if not object.notice and not object.group.notice and user_can_upload_docs %}
               <hr />
               <form action="" method="post">
                   {% csrf_token %}
