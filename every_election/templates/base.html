@@ -30,6 +30,13 @@
                 <li><a href="{% url "reference_definition_view"%}">Reference Definition</a></li>
                 <li><a href="{% url "elections_view"%}">Elections</a></li>
                 <li><a href="{% url "id_creator"%}">ID Creator</a></li>
+                <li>|</li>
+                {% if user.is_authenticated %}
+                  <li><a href="{% url "logout"%}">Log Out</a></li>
+                  <li><a href="{% url "password_change"%}">Change Password</a></li>
+                {% else %}
+                  <li><a href="{% url "login"%}">Log In</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>

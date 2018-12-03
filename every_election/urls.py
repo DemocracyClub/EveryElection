@@ -9,6 +9,7 @@ from core.views import HomeView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^$', HomeView.as_view(), name="home"),
     url(r'^organisations/', include('organisations.urls')),
     url(r'', include('elections.urls')),
