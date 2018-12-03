@@ -1,6 +1,7 @@
 from datetime import date
 from django.test import TestCase
 from elections.models import (
+    DEFAULT_STATUS,
     Election,
     ElectedRole,
     ElectionSubType,
@@ -139,9 +140,7 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
         ballot = builder.build_ballot(org_group)
         ballot.save()
 
-        # TODO: update this to 'Suggested' once
-        # we have moderation data entry features
-        default_status = 'Approved'
+        default_status = DEFAULT_STATUS
 
         self.assertEqual(
             default_status, ballot.moderation_status.short_label)

@@ -79,6 +79,9 @@ class ModerationStatus(models.Model):
         return self.short_label
 
 
+DEFAULT_STATUS = ModerationStatuses.suggested.value
+
+
 class Election(models.Model):
     """
     An election.
@@ -299,6 +302,8 @@ class Election(models.Model):
 
     @transaction.atomic
     def save(self, *args, **kwargs):
+        status = kwargs.pop('status', None)
+
         self.division_geography = self.get_division_geography()
         self.organisation_geography = self.get_organisation_geography()
 
@@ -311,16 +316,15 @@ class Election(models.Model):
 
         super().save(*args, **kwargs)
 
+        if status and status != DEFAULT_STATUS:
+            event = ModerationHistory(election=self, status_id=status)
+            event.save()
+
 
 @receiver(post_save, sender=Election, dispatch_uid="init_status_history")
 def init_status_history(sender, instance, **kwargs):
     if not ModerationHistory.objects.all().filter(election=instance).exists():
-        event = ModerationHistory(
-            election=instance,
-            # TODO: update this to 'Suggested' once
-            # we have moderation data entry features
-            status_id=ModerationStatuses.approved.value
-        )
+        event = ModerationHistory(election=instance, status_id=DEFAULT_STATUS)
         event.save()
 
 
