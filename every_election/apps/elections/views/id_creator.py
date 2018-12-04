@@ -258,11 +258,17 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                     election.notice = doc
 
         status = ModerationStatuses.suggested.value
+        notes = ''
         if user_is_moderator(self.request.user):
             status = ModerationStatuses.approved.value
+            notes = 'auto approved for user {}'.format(self.request.user)
 
         for election in context['all_ids']:
-            election.save(status=status)
+            election.save(
+                status=status,
+                user=self.request.user,
+                notes=notes
+            )
 
         # if this election was created from a radar entry set the status
         # of the radar entry to indicate we have made an id for it
