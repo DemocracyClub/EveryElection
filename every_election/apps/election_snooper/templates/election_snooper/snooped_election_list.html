@@ -4,13 +4,7 @@
 {% block content %}
 
 <section class="columns large-8 large-centered">
-  <ul class="menu">
-    <li {% if not request.GET.status and not request.GET.pk %}class="active"{% endif %} ><a href="{% url "snooped_election_view" %}">All</a></li>
-    <li {% if request.GET.status == 'new' %}class="active"{% endif %} ><a href="{% url "snooped_election_view" %}?status=new">New</a></li>
-    <li {% if request.GET.status == 'election' %}class="active"{% endif %} ><a href="{% url "snooped_election_view" %}?status=election">Elections</a></li>
-    <li {% if request.GET.status == 'out_of_scope' %}class="active"{% endif %} ><a href="{% url "snooped_election_view" %}?status=out_of_scope">Out of scope</a></li>
-    <li {% if request.GET.status == 'duplicate' %}class="active"{% endif %} ><a href="{% url "snooped_election_view" %}?status=duplicate">Duplicate</a></li>
-  </ul>
+    {% include "election_snooper/sub_menu.html" %}
 
     {% for form in objects %}
     <div class="card postcode_card">
