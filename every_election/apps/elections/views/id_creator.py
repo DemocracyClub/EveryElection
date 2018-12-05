@@ -23,6 +23,7 @@ from elections.forms import (
     ElectionOrganisationDivisionForm,
     ElectionSourceForm,
 )
+from election_snooper.helpers import post_to_slack
 from election_snooper.models import SnoopedElection
 
 
@@ -269,6 +270,13 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                 user=self.request.user,
                 notes=notes
             )
+
+        if not user_is_moderator(self.request.user) and len(context['all_ids']) > 0:
+            message = """
+                New election suggested by anonymous user:\n
+                <https://elections.democracyclub.org.uk/moderation_queue/>
+            """
+            post_to_slack(message)
 
         # if this election was created from a radar entry set the status
         # of the radar entry to indicate we have made an id for it
