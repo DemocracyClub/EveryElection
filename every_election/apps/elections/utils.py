@@ -124,9 +124,9 @@ class ElectionBuilder:
             return None
 
     def get_voting_system(self):
-        # Scottish council elections use Single Transferrable Vote
+        # Scottish and NI council elections use Single Transferrable Vote
         if self._use_org:
-            if self.organisation.territory_code == "SCT" and \
+            if self.organisation.territory_code in ("SCT", "NIR") and \
                     self.election_type.election_type == "local":
                 return VotingSystem.objects.get(slug="STV")
 
