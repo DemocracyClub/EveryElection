@@ -1,14 +1,14 @@
-dist: trusty
-sudo: false
+dist: xenial
 language: python
 python:
   - '3.6'
-  - '3.5'
 addons:
-  postgresql: '9.5'
+  postgresql: '10'
   apt:
     packages:
-      - postgresql-9.5-postgis-2.3
+      - postgresql-10
+      - postgresql-client-10
+      - postgresql-10-postgis-2.4
 cache:
   pip: true
   directories:
@@ -26,7 +26,6 @@ script:
 after_success:
   - coveralls
 before_cache:
-    - rm -f .tox/py35-django111/log/*.log
     - rm -f .tox/py36-django111/log/*.log
     - rm -f .cache/pip/log/*.log
 notifications:
