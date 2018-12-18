@@ -15,8 +15,8 @@ class TestSingleElectionView(TestCase):
         self.client.login(username='testuser', password='12345')
 
     def test_not_logged_in(self):
-        resp = self.client.get("/moderation_queue/")
-        self.assertRedirects(resp, '/accounts/login/?next=/moderation_queue/')
+        resp = self.client.get("/election_radar/moderation_queue/")
+        self.assertRedirects(resp, '/accounts/login/?next=/election_radar/moderation_queue/')
 
     def test_approve(self):
         self.login()
@@ -35,7 +35,7 @@ class TestSingleElectionView(TestCase):
             moderation_status=related_status('Suggested')
         )
 
-        resp = self.client.get("/moderation_queue/")
+        resp = self.client.get("/election_radar/moderation_queue/")
         self.assertEqual(200, resp.status_code)
 
         # only suggested ballot should be shown
@@ -47,7 +47,7 @@ class TestSingleElectionView(TestCase):
         self.assertContains(resp, suggested_child.election_id, html=True)
         self.assertNotContains(resp, suggested_parent.election_id, html=True)
 
-        self.client.post("/moderation_queue/", {
+        self.client.post("/election_radar/moderation_queue/", {
             'election': suggested_child.pk,
             '{}-status'.format(suggested_child.pk): 'Approved',
         })

@@ -6,7 +6,7 @@ from django.views.generic import TemplateView
 
 from core.helpers import user_is_moderator
 from elections.constraints import has_approved_parents, check_constraints
-from elections.forms import ModerationHistoryForm
+from election_snooper.forms import ModerationHistoryForm
 from elections.models import Election, ModerationHistory, ModerationStatuses
 
 
@@ -21,7 +21,7 @@ def set_election_status(election, status, user):
 
 
 class ModerationQueueView(UserPassesTestMixin, TemplateView):
-    template_name = "elections/moderation_queue.html"
+    template_name = "election_snooper/moderation_queue.html"
 
     def test_func(self):
         return user_is_moderator(self.request.user)

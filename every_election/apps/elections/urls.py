@@ -6,7 +6,6 @@ from .views import (
     ElectionTypesView,
     FORMS,
     IDCreatorWizard,
-    ModerationQueueView,
     ReferenceDefinitionView,
     SingleElection,
 )
@@ -39,10 +38,4 @@ urlpatterns = [
     url(r'^id_creator/$', id_creator_wizard, name='id_creator'),
 
     url(r'^sync/$', get_election_fixture),
-
-    url(
-        r'^moderation_queue/$',
-        ModerationQueueView.as_view(),
-        name='election_moderation_queue'
-    ),
 ]

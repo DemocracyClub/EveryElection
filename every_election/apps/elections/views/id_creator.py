@@ -277,12 +277,12 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             if len(ballots) == 1:
                 message = """
                     New election {} suggested by anonymous user:\n
-                    <https://elections.democracyclub.org.uk/moderation_queue/>
+                    <https://elections.democracyclub.org.uk/election_radar/moderation_queue/>
                 """.format(ballots[0].election_id)
             else:
                 message = """
                     {} New elections suggested by anonymous user:\n
-                    <https://elections.democracyclub.org.uk/moderation_queue/>
+                    <https://elections.democracyclub.org.uk/election_radar/moderation_queue/>
                 """.format(len(ballots))
             post_to_slack(message)
 
