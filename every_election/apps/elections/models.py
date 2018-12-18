@@ -305,7 +305,7 @@ class Election(models.Model):
     def save(self, *args, **kwargs):
         status = kwargs.pop('status', None)
         user = kwargs.pop('user', None)
-        notes = kwargs.pop('notes', '')
+        notes = kwargs.pop('notes', '')[:255]
 
         self.division_geography = self.get_division_geography()
         self.organisation_geography = self.get_organisation_geography()
