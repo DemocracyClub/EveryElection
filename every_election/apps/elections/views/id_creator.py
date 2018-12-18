@@ -272,10 +272,18 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             )
 
         if not user_is_moderator(self.request.user) and len(context['all_ids']) > 0:
-            message = """
-                New election suggested by anonymous user:\n
-                <https://elections.democracyclub.org.uk/moderation_queue/>
-            """
+
+            ballots = [e for e in context['all_ids'] if e.group_type == None]
+            if len(ballots) == 1:
+                message = """
+                    New election {} suggested by anonymous user:\n
+                    <https://elections.democracyclub.org.uk/moderation_queue/>
+                """.format(ballots[0].election_id)
+            else:
+                message = """
+                    {} New elections suggested by anonymous user:\n
+                    <https://elections.democracyclub.org.uk/moderation_queue/>
+                """.format(len(ballots))
             post_to_slack(message)
 
         # if this election was created from a radar entry set the status
