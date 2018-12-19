@@ -279,8 +279,12 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         naw_election_type = ElectionType.objects.get(
             election_type='naw',
         )
-        naw_election_sub_type = ElectionSubType.objects.get(
+        naw_election_sub_type_c = ElectionSubType.objects.get(
             election_subtype='c',
+            election_type=naw_election_type,
+        )
+        naw_election_sub_type_r = ElectionSubType.objects.get(
+            election_subtype='r',
             election_type=naw_election_type,
         )
         ElectedRole.objects.create(
@@ -292,47 +296,61 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         org_div_3 = OrganisationDivisionFactory(
             organisation=naw_org,
             name="Test Div 3",
-            slug="test-div-3"
+            slug="test-div-3",
+            division_election_sub_type='c',
         )
         org_div_4 = OrganisationDivisionFactory(
             organisation=naw_org,
             name="Test Div 4",
-            slug="test-div-4"
+            slug="test-div-4",
+            division_election_sub_type='c',
+        )
+        org_div_5 = OrganisationDivisionFactory(
+            organisation=naw_org,
+            name="Test Div 5",
+            slug="test-div-5",
+            division_election_sub_type='r',
         )
 
 
         all_data =  {
             'election_organisation': [naw_org, ],
             'election_type': naw_election_type,
-            'election_subtype': [naw_election_sub_type, ],
+            'election_subtype': [naw_election_sub_type_c, naw_election_sub_type_r],
             'date': self.date,
         }
 
         all_data.update({
             self.make_div_id(
-                org=naw_org, div=org_div_3): 'contested',  # contested seat
+                org=naw_org, div=org_div_3, subtype='c'): 'contested',  # contested seat
             self.make_div_id(
-                org=naw_org, div=org_div_4): 'by_election',  # by election
+                org=naw_org, div=org_div_4, subtype='c'): 'by_election',  # by election
+            self.make_div_id(
+                org=naw_org, div=org_div_5, subtype='r'): 'contested',
         })
 
         expected_ids = [
             'naw.'+self.date_str,
             'naw.c.'+self.date_str,
+            'naw.r.'+self.date_str,
             'naw.c.test-div-3.'+self.date_str,  # no 'by' suffix
             'naw.c.test-div-4.by.'+self.date_str,  # 'by' suffix
+            'naw.r.test-div-5.'+self.date_str
         ]
         expected_titles = [
             'National Assembly for Wales elections',
             'National Assembly for Wales elections (Constituencies)',
+            'National Assembly for Wales elections (Regions)',
             'Test Div 3 (Constituencies)',
             'Test Div 4 (Constituencies) by-election',
+            'Test Div 5 (Regions)',
         ]
 
         self.run_test_with_data(
             all_data,
             expected_ids,
             expected_titles,
-            subtypes=[naw_election_sub_type, ]
+            subtypes=[naw_election_sub_type_c, naw_election_sub_type_r]
         )
 
     def test_election_with_organisation_geography(self):
