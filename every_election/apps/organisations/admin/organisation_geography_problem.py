@@ -92,3 +92,6 @@ class OrganisationGeographyProblemAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).defer('geography')
