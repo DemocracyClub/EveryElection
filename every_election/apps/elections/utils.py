@@ -86,6 +86,16 @@ class ElectionBuilder:
                 (division, self.organisation)
             )
 
+        if (
+            self.subtype
+            and self.subtype.election_subtype
+            != division.division_election_sub_type
+        ):
+            raise OrganisationDivision.ValidationError(
+                "election subtype is '%s' but division is of subtype '%s'" %
+                (self.subtype.election_subtype, division.division_election_sub_type)
+            )
+
         divisionset = division.divisionset
 
         if divisionset.start_date and divisionset.start_date > self.date:
