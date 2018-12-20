@@ -14,14 +14,14 @@ from elections.models import (
 from organisations.tests.factories import (
     OrganisationFactory,
     OrganisationDivisionFactory,
-    DivisionGeographyFactory
+    DivisionGeographyFactory,
 )
 
 
 class ElectionTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ElectionType
-        django_get_or_create = ('election_type', )
+        django_get_or_create = ("election_type",)
 
     name = "Local elections"
     election_type = "local"
@@ -31,7 +31,7 @@ class ElectionTypeFactory(factory.django.DjangoModelFactory):
 class ElectedRoleFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ElectedRole
-        django_get_or_create = ('election_type', )
+        django_get_or_create = ("election_type",)
 
     election_type = factory.SubFactory(ElectionTypeFactory)
     organisation = factory.SubFactory(OrganisationFactory)
@@ -43,15 +43,14 @@ class ElectedRoleFactory(factory.django.DjangoModelFactory):
 class ElectionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Election
-        django_get_or_create = ('election_id', )
+        django_get_or_create = ("election_id",)
 
     @classmethod
     def _get_manager(cls, model_class):
         return model_class.private_objects
 
-    election_id = factory.Sequence(
-        lambda n: 'local.place-name-%d.2017-03-23' % n)
-    election_title = factory.Sequence(lambda n: 'Election %d' % n)
+    election_id = factory.Sequence(lambda n: "local.place-name-%d.2017-03-23" % n)
+    election_title = factory.Sequence(lambda n: "Election %d" % n)
     election_type = factory.SubFactory(ElectionTypeFactory)
     poll_open_date = "2017-03-23"
     organisation = factory.SubFactory(OrganisationFactory)
@@ -62,19 +61,21 @@ class ElectionFactory(factory.django.DjangoModelFactory):
     seats_contested = 1
     seats_total = 1
     group = factory.SubFactory(
-        'elections.tests.factories.ElectionFactory',
+        "elections.tests.factories.ElectionFactory",
         election_id="local.2017-03-23",
-        group=None, group_type="election")
+        group=None,
+        group_type="election",
+    )
     group_type = None
 
 
 class ModerationStatusFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ModerationStatus
-        django_get_or_create = ('short_label', )
+        django_get_or_create = ("short_label",)
 
     short_label = ModerationStatuses.approved.value
-    long_label = 'long label'
+    long_label = "long label"
 
 
 class ModerationHistoryFactory(factory.django.DjangoModelFactory):
@@ -90,15 +91,14 @@ class ModerationHistoryFactory(factory.django.DjangoModelFactory):
 class ElectionWithStatusFactory(ElectionFactory):
     moderation_status = factory.RelatedFactory(
         ModerationHistoryFactory,
-        'election',
-        status__short_label=ModerationStatuses.approved.value
+        "election",
+        status__short_label=ModerationStatuses.approved.value,
     )
-
 
 
 def related_status(status):
     return factory.RelatedFactory(
         ModerationHistoryFactory,
-        'election',
-        status__short_label=ModerationStatuses(status.capitalize()).value
+        "election",
+        status__short_label=ModerationStatuses(status.capitalize()).value,
     )

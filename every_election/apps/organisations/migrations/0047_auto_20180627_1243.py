@@ -7,24 +7,36 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0046_police_area'),
-    ]
+    dependencies = [("organisations", "0046_police_area")]
 
     operations = [
         migrations.AlterField(
-            model_name='organisation',
-            name='end_date',
+            model_name="organisation",
+            name="end_date",
             field=models.DateField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='organisation',
-            name='official_identifier',
+            model_name="organisation",
+            name="official_identifier",
             field=models.CharField(db_index=True, max_length=255),
         ),
         migrations.AlterField(
-            model_name='organisation',
-            name='organisation_type',
-            field=models.CharField(choices=[('combined-authority', 'combined-authority'), ('sp', 'sp'), ('gla', 'gla'), ('local-authority', 'local-authority'), ('naw', 'naw'), ('nia', 'nia'), ('parl', 'parl'), ('police-area', 'police-area'), ('sp', 'sp')], default='local-authority', max_length=255),
+            model_name="organisation",
+            name="organisation_type",
+            field=models.CharField(
+                choices=[
+                    ("combined-authority", "combined-authority"),
+                    ("sp", "sp"),
+                    ("gla", "gla"),
+                    ("local-authority", "local-authority"),
+                    ("naw", "naw"),
+                    ("nia", "nia"),
+                    ("parl", "parl"),
+                    ("police-area", "police-area"),
+                    ("sp", "sp"),
+                ],
+                default="local-authority",
+                max_length=255,
+            ),
         ),
     ]

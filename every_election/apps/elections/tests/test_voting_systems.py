@@ -15,13 +15,10 @@ class TestElectoralSystems(BaseElectionCreatorMixIn, TestCase):
         """
 
         # "Normal" UK local election is FPTP
-        election_id = ElectionBuilder('local', '2017-05-04')\
-            .build_election_group()
+        election_id = ElectionBuilder("local", "2017-05-04").build_election_group()
         assert election_id.voting_system.slug == "FPTP"
 
-        scot_org = OrganisationFactory(
-            territory_code="SCT",
-        )
+        scot_org = OrganisationFactory(territory_code="SCT")
 
         ElectedRole.objects.create(
             election_type=self.election_type1,
@@ -31,7 +28,9 @@ class TestElectoralSystems(BaseElectionCreatorMixIn, TestCase):
         )
 
         # Scotish local elections are STV
-        scot_id = ElectionBuilder('local', '2017-05-04')\
-            .with_organisation(scot_org)\
+        scot_id = (
+            ElectionBuilder("local", "2017-05-04")
+            .with_organisation(scot_org)
             .build_organisation_group(None)
+        )
         assert scot_id.voting_system.slug == "STV"

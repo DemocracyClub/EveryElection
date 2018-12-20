@@ -3,13 +3,20 @@ from elections.tests.factories import ElectionWithStatusFactory, related_status
 
 
 class TestSingleElectionView(TestCase):
-
     def test_election_status(self):
         # 4 ballots with different moderation statuses
-        approved = ElectionWithStatusFactory(group=None, moderation_status=related_status('Approved'))
-        suggested = ElectionWithStatusFactory(group=None, moderation_status=related_status('Suggested'))
-        rejected = ElectionWithStatusFactory(group=None, moderation_status=related_status('Rejected'))
-        deleted = ElectionWithStatusFactory(group=None, moderation_status=related_status('Deleted'))
+        approved = ElectionWithStatusFactory(
+            group=None, moderation_status=related_status("Approved")
+        )
+        suggested = ElectionWithStatusFactory(
+            group=None, moderation_status=related_status("Suggested")
+        )
+        rejected = ElectionWithStatusFactory(
+            group=None, moderation_status=related_status("Rejected")
+        )
+        deleted = ElectionWithStatusFactory(
+            group=None, moderation_status=related_status("Deleted")
+        )
 
         # approved elections shoud be visible via the DetailView
         resp = self.client.get("/elections/{}/".format(approved.election_id))
@@ -26,11 +33,21 @@ class TestSingleElectionView(TestCase):
 
     def test_child_election_status(self):
         # 4 ballots in the same group with different moderation statuses
-        group = ElectionWithStatusFactory(group_type='election', moderation_status=related_status('Approved'))
-        approved = ElectionWithStatusFactory(group=group, moderation_status=related_status('Approved'))
-        suggested = ElectionWithStatusFactory(group=group, moderation_status=related_status('Suggested'))
-        rejected = ElectionWithStatusFactory(group=group, moderation_status=related_status('Rejected'))
-        deleted = ElectionWithStatusFactory(group=group, moderation_status=related_status('Deleted'))
+        group = ElectionWithStatusFactory(
+            group_type="election", moderation_status=related_status("Approved")
+        )
+        approved = ElectionWithStatusFactory(
+            group=group, moderation_status=related_status("Approved")
+        )
+        suggested = ElectionWithStatusFactory(
+            group=group, moderation_status=related_status("Suggested")
+        )
+        rejected = ElectionWithStatusFactory(
+            group=group, moderation_status=related_status("Rejected")
+        )
+        deleted = ElectionWithStatusFactory(
+            group=group, moderation_status=related_status("Deleted")
+        )
 
         # DetailView should only show approved child elections
         resp = self.client.get("/elections/{}/".format(group.election_id))

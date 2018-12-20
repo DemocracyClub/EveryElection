@@ -17,7 +17,7 @@ class TestElectionGeoQueries(TestCase):
     lat = 51.5010089365
     lon = -0.141587600123
 
-    fixtures = ['onspd.json']
+    fixtures = ["onspd.json"]
 
     def test_election_for_point(self):
         ElectionWithStatusFactory(group=None)
@@ -27,8 +27,7 @@ class TestElectionGeoQueries(TestCase):
 
     def test_election_for_lat_lng(self):
         ElectionWithStatusFactory(group=None)
-        qs = Election.public_objects.for_lat_lng(
-            lat=self.lat, lng=self.lon)
+        qs = Election.public_objects.for_lat_lng(lat=self.lat, lng=self.lon)
         assert qs.count() == 1
 
     def test_election_for_postcode(self):
@@ -41,41 +40,53 @@ class TestElectionGeoQueries(TestCase):
         ElectionWithStatusFactory(group=None, poll_open_date=datetime.today())
         # This is implicetly not current
         ElectionWithStatusFactory(
-            group=None, poll_open_date=datetime.today() - timedelta(days=60))
+            group=None, poll_open_date=datetime.today() - timedelta(days=60)
+        )
         # This is implicetly not current, but current manually set
         ElectionWithStatusFactory(
             group=None,
             poll_open_date=datetime.today() - timedelta(days=60),
-            current = True
-            )
+            current=True,
+        )
         # This is implicetly current, current manually set to False
         ElectionWithStatusFactory(
             group=None,
             poll_open_date=datetime.today() - timedelta(days=1),
-            current = False
-            )
+            current=False,
+        )
         assert Election.public_objects.current().count() == 2
 
     def test_future_elections(self):
         ElectionWithStatusFactory(group=None, poll_open_date=datetime.today())
         ElectionWithStatusFactory(
-            group=None, poll_open_date=datetime.today() - timedelta(days=1))
+            group=None, poll_open_date=datetime.today() - timedelta(days=1)
+        )
         assert Election.public_objects.future().count() == 1
 
     def test_current_elections_for_postcode(self):
         ElectionWithStatusFactory(group=None, poll_open_date=datetime.today())
         ElectionWithStatusFactory(
-            group=None, poll_open_date=datetime.today(), division_geography=None)
+            group=None, poll_open_date=datetime.today(), division_geography=None
+        )
         ElectionWithStatusFactory(
-            group=None, poll_open_date=datetime.today() - timedelta(days=60) )
-        assert Election.public_objects.current().for_postcode('SW1A1AA').count() == 1
+            group=None, poll_open_date=datetime.today() - timedelta(days=60)
+        )
+        assert Election.public_objects.current().for_postcode("SW1A1AA").count() == 1
 
     def test_public_private_filter_simple(self):
         # simple case: each election only has a single status event
-        ElectionWithStatusFactory(group=None, moderation_status=related_status('Suggested'))
-        ElectionWithStatusFactory(group=None, moderation_status=related_status('Approved'))
-        ElectionWithStatusFactory(group=None, moderation_status=related_status('Rejected'))
-        ElectionWithStatusFactory(group=None, moderation_status=related_status('Deleted'))
+        ElectionWithStatusFactory(
+            group=None, moderation_status=related_status("Suggested")
+        )
+        ElectionWithStatusFactory(
+            group=None, moderation_status=related_status("Approved")
+        )
+        ElectionWithStatusFactory(
+            group=None, moderation_status=related_status("Rejected")
+        )
+        ElectionWithStatusFactory(
+            group=None, moderation_status=related_status("Deleted")
+        )
         self.assertEqual(1, Election.public_objects.count())
         self.assertEqual(4, Election.private_objects.count())
 
@@ -86,30 +97,25 @@ class TestElectionGeoQueries(TestCase):
 
         # to start off with they're both 'suggested'
         ModerationHistoryFactory(
-            election=e1,
-            status=ModerationStatusFactory(short_label='Suggested')
+            election=e1, status=ModerationStatusFactory(short_label="Suggested")
         )
         ModerationHistoryFactory(
-            election=e2,
-            status=ModerationStatusFactory(short_label='Suggested')
+            election=e2, status=ModerationStatusFactory(short_label="Suggested")
         )
         self.assertEqual(0, Election.public_objects.count())
         self.assertEqual(2, Election.private_objects.count())
 
         # approve one of them
         ModerationHistoryFactory(
-            election=e1,
-            status=ModerationStatusFactory(short_label='Approved')
+            election=e1, status=ModerationStatusFactory(short_label="Approved")
         )
         self.assertEqual(1, Election.public_objects.count())
-        self.assertEqual(
-            e1.election_id, Election.public_objects.all()[0].election_id)
+        self.assertEqual(e1.election_id, Election.public_objects.all()[0].election_id)
         self.assertEqual(2, Election.private_objects.count())
 
         # and then delete it again
         ModerationHistoryFactory(
-            election=e1,
-            status=ModerationStatusFactory(short_label='Deleted')
+            election=e1, status=ModerationStatusFactory(short_label="Deleted")
         )
         self.assertEqual(0, Election.public_objects.count())
         self.assertEqual(2, Election.private_objects.count())

@@ -7,19 +7,21 @@ from .common import CustomOrganisationChoiceField, INVALID_SOURCES
 
 
 class OrganisationGeographyProblemManager(Manager):
-
     def get_queryset(self):
         qs = super().get_queryset()
 
         qs = qs.filter(
             (
                 # OrganisationGeographies should have a GSS code...mostly
-                Q(gss='') & ~Q(organisation__organisation_type='police-area')
-            ) | (
+                Q(gss="")
+                & ~Q(organisation__organisation_type="police-area")
+            )
+            | (
                 # OrganisationGeography with NULL
                 # geography field is always a problem
                 Q(geography=None)
-            ) | (
+            )
+            | (
                 # so is OrganisationGeography with
                 # source != BoundaryLine/OSNI, etc
                 Q(source__in=INVALID_SOURCES)
@@ -35,7 +37,7 @@ class OrganisationGeographyProblem(OrganisationGeography):
 
     @property
     def no_gss_code(self):
-        return self.gss == ''
+        return self.gss == ""
 
     @property
     def no_geography(self):
@@ -53,7 +55,7 @@ class OrganisationGeographyProblem(OrganisationGeography):
             return "Boundary source is invalid"
         if self.no_gss_code:
             return "No GSS code"
-        return ''
+        return ""
 
     class Meta:
         verbose_name_plural = "⚠️ Organisation Geography Problems"
@@ -61,30 +63,21 @@ class OrganisationGeographyProblem(OrganisationGeography):
 
 
 class OrganisationGeographyProblemAdminForm(forms.ModelForm):
-    organisation = CustomOrganisationChoiceField(
-        queryset=Organisation.objects.all())
+    organisation = CustomOrganisationChoiceField(queryset=Organisation.objects.all())
 
     class Meta:
         model = OrganisationGeographyProblem
-        fields = '__all__'
+        fields = "__all__"
 
 
 class OrganisationGeographyProblemAdmin(admin.ModelAdmin):
 
     actions = None
 
-    ordering = ('source', 'gss', 'start_date')
-    list_display = (
-        '__str__',
-        'problem_text',
-    )
-    readonly_fields = (
-        'problem_text',
-        'no_gss_code',
-        'invalid_source',
-        'no_geography',
-    )
-    exclude = ('geography',)
+    ordering = ("source", "gss", "start_date")
+    list_display = ("__str__", "problem_text")
+    readonly_fields = ("problem_text", "no_gss_code", "invalid_source", "no_geography")
+    exclude = ("geography",)
     form = OrganisationGeographyProblemAdminForm
 
     def has_add_permission(self, request):
@@ -94,4 +87,4 @@ class OrganisationGeographyProblemAdmin(admin.ModelAdmin):
         return False
 
     def get_queryset(self, request):
-        return super().get_queryset(request).defer('geography')
+        return super().get_queryset(request).defer("geography")

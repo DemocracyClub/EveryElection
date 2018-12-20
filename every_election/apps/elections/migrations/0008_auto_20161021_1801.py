@@ -7,19 +7,17 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('elections', '0007_auto_20161021_1752'),
-    ]
+    dependencies = [("elections", "0007_auto_20161021_1752")]
 
     operations = [
         migrations.AddField(
-            model_name='election',
-            name='rejection_reason',
+            model_name="election",
+            name="rejection_reason",
             field=models.TextField(blank=True),
         ),
         migrations.AddField(
-            model_name='election',
-            name='suggestion_reason',
+            model_name="election",
+            name="suggestion_reason",
             field=models.TextField(blank=True),
         ),
     ]

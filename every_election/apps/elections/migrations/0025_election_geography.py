@@ -9,14 +9,18 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('organisations', '0024_auto_20170210_1537'),
-        ('elections', '0024_auto_20170224_1609'),
+        ("organisations", "0024_auto_20170210_1537"),
+        ("elections", "0024_auto_20170224_1609"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='election',
-            name='geography',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='organisations.DivisionGeography'),
-        ),
+            model_name="election",
+            name="geography",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="organisations.DivisionGeography",
+            ),
+        )
     ]

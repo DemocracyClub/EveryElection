@@ -9,22 +9,32 @@ import django_markdown.models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('elections', '0027_auto_20170415_1308'),
-    ]
+    dependencies = [("elections", "0027_auto_20170415_1308")]
 
     operations = [
         migrations.CreateModel(
-            name='Explanation',
+            name="Explanation",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('description', models.CharField(max_length=100)),
-                ('explanation', django_markdown.models.MarkdownField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("description", models.CharField(max_length=100)),
+                ("explanation", django_markdown.models.MarkdownField()),
             ],
         ),
         migrations.AddField(
-            model_name='election',
-            name='explanation',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='elections.Explanation'),
+            model_name="election",
+            name="explanation",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="elections.Explanation",
+            ),
         ),
     ]

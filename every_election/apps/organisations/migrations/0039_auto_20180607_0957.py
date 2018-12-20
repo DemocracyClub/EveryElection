@@ -7,17 +7,15 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0038_copy_org_data'),
-    ]
+    dependencies = [("organisations", "0038_copy_org_data")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='organisationgeography',
-            options={'get_latest_by': 'start_date', 'ordering': ('-start_date',)},
+            name="organisationgeography",
+            options={"get_latest_by": "start_date", "ordering": ("-start_date",)},
         ),
         migrations.AlterUniqueTogether(
-            name='organisationgeography',
-            unique_together=set([('organisation', 'end_date')]),
+            name="organisationgeography",
+            unique_together=set([("organisation", "end_date")]),
         ),
     ]

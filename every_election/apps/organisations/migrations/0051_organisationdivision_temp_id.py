@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('organisations', '0050_remove_organisationdivision_geography_curie'),
+        ("organisations", "0050_remove_organisationdivision_geography_curie")
     ]
 
     operations = [
         migrations.AddField(
-            model_name='organisationdivision',
-            name='temp_id',
+            model_name="organisationdivision",
+            name="temp_id",
             field=models.CharField(blank=True, db_index=True, max_length=255),
-        ),
+        )
     ]

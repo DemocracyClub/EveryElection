@@ -22,26 +22,20 @@ class ReadFromFileMixin:
     def add_arguments(self, parser):
         group = parser.add_mutually_exclusive_group(required=True)
         group.add_argument(
-            '-f',
-            '--file',
-            action='store',
-            help='Path to import e.g: /foo/bar/baz.csv',
+            "-f", "--file", action="store", help="Path to import e.g: /foo/bar/baz.csv"
         )
         group.add_argument(
-            '-u',
-            '--url',
-            action='store',
-            help='URL to import e.g: http://foo.bar/baz.csv',
+            "-u",
+            "--url",
+            action="store",
+            help="URL to import e.g: http://foo.bar/baz.csv",
         )
         group.add_argument(
-            '-s',
-            '--s3',
-            action='store',
-            help='S3 key to import e.g: foo/bar/baz.csv'
+            "-s", "--s3", action="store", help="S3 key to import e.g: foo/bar/baz.csv"
         )
 
     def read_from_local(self, filename):
-        return open(filename, 'rt')
+        return open(filename, "rt")
 
     def read_from_url(self, url):
         tmp = tempfile.NamedTemporaryFile()
@@ -53,21 +47,21 @@ class ReadFromFileMixin:
         return s3.get_file(filepath)
 
     def load_data(self, options):
-        if options['file']:
-            return self.read_from_local(options['file'])
-        if options['url']:
-            return self.read_from_url(options['url'])
-        if options['s3']:
-            return self.read_from_s3(options['s3'])
+        if options["file"]:
+            return self.read_from_local(options["file"])
+        if options["url"]:
+            return self.read_from_url(options["url"])
+        if options["s3"]:
+            return self.read_from_s3(options["s3"])
 
 
 class ReadFromCSVMixin(ReadFromFileMixin):
 
-    ENCODING = 'utf-8'
-    DELIMITER = ','
+    ENCODING = "utf-8"
+    DELIMITER = ","
 
     def read_from_local(self, filename):
-        f = open(filename, 'rt', encoding=self.ENCODING)
+        f = open(filename, "rt", encoding=self.ENCODING)
         reader = csv.DictReader(f, delimiter=self.DELIMITER)
         return list(reader)
 
@@ -77,7 +71,7 @@ class ReadFromCSVMixin(ReadFromFileMixin):
 
         # if CSV came from google docs
         # manually set the encoding
-        gdocs_pattern = r'(.)+docs\.google(.)+\/ccc(.)+'
+        gdocs_pattern = r"(.)+docs\.google(.)+\/ccc(.)+"
         if re.match(gdocs_pattern, url):
             r.encoding = self.ENCODING
 

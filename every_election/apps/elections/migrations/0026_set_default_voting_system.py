@@ -8,31 +8,19 @@ from elections import constants
 
 
 class Migration(migrations.Migration):
-
     def add_default_voting_systems(apps, schema_editor):
-        VotingSystem = apps.get_model(
-            "elections", "VotingSystem")
-        ElectionType = apps.get_model(
-            "elections", "ElectionType")
+        VotingSystem = apps.get_model("elections", "VotingSystem")
+        ElectionType = apps.get_model("elections", "ElectionType")
 
         for election_type, data in constants.ELECTION_TYPES.items():
-            election_type_model = ElectionType.objects.get(
-                election_type=election_type)
-            voting_system = VotingSystem.objects.get(
-                slug=data['default_voting_system'])
+            election_type_model = ElectionType.objects.get(election_type=election_type)
+            voting_system = VotingSystem.objects.get(slug=data["default_voting_system"])
             election_type_model.default_voting_system = voting_system
             election_type_model.save()
 
     def do_nothing(apps, schema_editor):
         pass
 
+    dependencies = [("elections", "0025_election_geography")]
 
-    dependencies = [
-        ('elections', '0025_election_geography'),
-    ]
-
-    operations = [
-        migrations.RunPython(
-            add_default_voting_systems, do_nothing),
-
-    ]
+    operations = [migrations.RunPython(add_default_voting_systems, do_nothing)]

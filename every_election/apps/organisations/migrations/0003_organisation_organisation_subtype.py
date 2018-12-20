@@ -7,14 +7,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0002_organisation_organisation_type'),
-    ]
+    dependencies = [("organisations", "0002_organisation_organisation_type")]
 
     operations = [
         migrations.AddField(
-            model_name='organisation',
-            name='organisation_subtype',
+            model_name="organisation",
+            name="organisation_subtype",
             field=models.CharField(blank=True, max_length=255),
-        ),
+        )
     ]

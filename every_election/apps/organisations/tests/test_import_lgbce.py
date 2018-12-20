@@ -5,25 +5,28 @@ from io import StringIO
 from django.contrib.gis.gdal import DataSource
 from django.utils.text import slugify
 from django.test import TestCase
-from organisations.models import (DivisionGeography,
-    Organisation, OrganisationDivision, OrganisationDivisionSet)
+from organisations.models import (
+    DivisionGeography,
+    Organisation,
+    OrganisationDivision,
+    OrganisationDivisionSet,
+)
 from organisations.management.commands.import_lgbce import Command
 
 
 class ImportLgbceTests(TestCase):
-
     def setUp(self):
         self.test_data_path = os.path.join(
             os.path.dirname(os.path.realpath(__file__)),
-            'test_data',
-            'test_shapefile',
-            'test_shapefile.shp'
+            "test_data",
+            "test_shapefile",
+            "test_shapefile.shp",
         )
 
         # an org with no division set
         self.org1 = Organisation.objects.create(
-            official_identifier='TEST1',
-            organisation_type='local-authority',
+            official_identifier="TEST1",
+            organisation_type="local-authority",
             official_name="Test Council 1",
             slug="test1",
             territory_code="ENG",
@@ -32,10 +35,10 @@ class ImportLgbceTests(TestCase):
         )
 
         # valid org/div
-        self.valid_org_code = 'TEST2'
+        self.valid_org_code = "TEST2"
         valid_org = Organisation.objects.create(
             official_identifier=self.valid_org_code,
-            organisation_type='local-authority',
+            organisation_type="local-authority",
             official_name="Test Council 2",
             slug="test2",
             territory_code="ENG",
@@ -44,20 +47,20 @@ class ImportLgbceTests(TestCase):
         )
         self.valid_divset = OrganisationDivisionSet.objects.create(
             organisation=valid_org,
-            start_date='2016-10-01',
+            start_date="2016-10-01",
             end_date=None,
-            legislation_url='',
-            consultation_url='',
-            short_title='',
-            mapit_generation_id='',
-            notes='',
+            legislation_url="",
+            consultation_url="",
+            short_title="",
+            mapit_generation_id="",
+            notes="",
         )
         division_names = [
-            'Furley',
-            'Bybrook',
-            'Conningbrook & Little Burton Farm',
-            'Bockhanger',
-            'Kennington'
+            "Furley",
+            "Bybrook",
+            "Conningbrook & Little Burton Farm",
+            "Bockhanger",
+            "Kennington",
         ]
         for division_name in division_names:
             OrganisationDivision.objects.create(
@@ -66,8 +69,8 @@ class ImportLgbceTests(TestCase):
                 divisionset=self.valid_divset,
                 name=division_name,
                 slug=slugify(division_name),
-                division_type='DIW',
-                seats_total=1
+                division_type="DIW",
+                seats_total=1,
             )
 
     def run_import_with_test_data(self, org, name_map):
@@ -75,10 +78,10 @@ class ImportLgbceTests(TestCase):
         cmd.get_data = lambda x: (tempfile.mkdtemp(), DataSource(self.test_data_path))
         cmd.get_name_map = lambda x: name_map
         args = {
-            'org': org,
-            's3': 'foo.bar/baz',
-            'name_column': 'Ward_name',
-            'srid': '27700',
+            "org": org,
+            "s3": "foo.bar/baz",
+            "name_column": "Ward_name",
+            "srid": "27700",
         }
         cmd.stderr = StringIO()
         cmd.handle(**args)
@@ -88,34 +91,34 @@ class ImportLgbceTests(TestCase):
 
     def test_org_not_found(self):
         with self.assertRaises(Organisation.DoesNotExist):
-            self.run_import_with_test_data('NOT-AN-ORG', {})
+            self.run_import_with_test_data("NOT-AN-ORG", {})
 
     def test_divset_not_found(self):
         with self.assertRaises(OrganisationDivisionSet.DoesNotExist):
-            self.run_import_with_test_data('TEST1', {})
+            self.run_import_with_test_data("TEST1", {})
 
     def test_divset_has_no_divisions(self):
         # add an empty division set to org1
         OrganisationDivisionSet.objects.create(
             organisation=self.org1,
-            start_date='2016-10-01',
+            start_date="2016-10-01",
             end_date=None,
-            legislation_url='',
-            consultation_url='',
-            short_title='',
-            mapit_generation_id='',
-            notes='',
+            legislation_url="",
+            consultation_url="",
+            short_title="",
+            mapit_generation_id="",
+            notes="",
         )
 
         with self.assertRaises(Exception):
-            self.run_import_with_test_data('TEST1', {})
+            self.run_import_with_test_data("TEST1", {})
 
     def test_divset_has_end_date(self):
         # divset has divisions and no related geographies but has end date
 
         # normally this setup would import fine, but we're going to
         # set an end date on the division set so it should fail
-        self.valid_divset.end_date = '2018-05-02'
+        self.valid_divset.end_date = "2018-05-02"
         self.valid_divset.save()
 
         with self.assertRaises(Exception):
@@ -127,14 +130,15 @@ class ImportLgbceTests(TestCase):
         name_map = {}
         error_output = self.run_import_with_test_data(self.valid_org_code, name_map)
         self.assertEqual(
-            "Failed: legislation_names != boundary_names", error_output[:43])
+            "Failed: legislation_names != boundary_names", error_output[:43]
+        )
 
     def test_valid(self):
         # all data is valid - should import cleanly
 
         # this time we'll pass a name_map so all the areas can import
-        name_map =  {
-            'Conningbrook and Little Burton Farm': 'Conningbrook & Little Burton Farm'
+        name_map = {
+            "Conningbrook and Little Burton Farm": "Conningbrook & Little Burton Farm"
         }
         self.run_import_with_test_data(self.valid_org_code, name_map)
 
@@ -149,8 +153,8 @@ class ImportLgbceTests(TestCase):
         self.assertEqual(5, count)
 
     def test_divisionset_has_related_geographies(self):
-        name_map =  {
-            'Conningbrook and Little Burton Farm': 'Conningbrook & Little Burton Farm'
+        name_map = {
+            "Conningbrook and Little Burton Farm": "Conningbrook & Little Burton Farm"
         }
         self.run_import_with_test_data(self.valid_org_code, name_map)
 

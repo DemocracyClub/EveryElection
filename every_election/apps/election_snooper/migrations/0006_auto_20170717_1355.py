@@ -7,14 +7,21 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('election_snooper', '0005_auto_20170628_0749'),
-    ]
+    dependencies = [("election_snooper", "0005_auto_20170628_0749")]
 
     operations = [
         migrations.AlterField(
-            model_name='snoopedelection',
-            name='status',
-            field=models.CharField(choices=[('election', 'This is an Election'), ('rejected', 'Not an election'), ('duplicate', 'Duplicate'), ('out_of_scope', 'Election out of scope')], default='new', max_length=100),
-        ),
+            model_name="snoopedelection",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("election", "This is an Election"),
+                    ("rejected", "Not an election"),
+                    ("duplicate", "Duplicate"),
+                    ("out_of_scope", "Election out of scope"),
+                ],
+                default="new",
+                max_length=100,
+            ),
+        )
     ]

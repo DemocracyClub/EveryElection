@@ -7,13 +7,11 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0029_auto_20180131_1424'),
-    ]
+    dependencies = [("organisations", "0029_auto_20180131_1424")]
 
     operations = [
         migrations.AlterUniqueTogether(
-            name='organisationdivisionset',
-            unique_together=set([('organisation', 'end_date')]),
-        ),
+            name="organisationdivisionset",
+            unique_together=set([("organisation", "end_date")]),
+        )
     ]

@@ -4,19 +4,18 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 
+
 def rename(apps, new_name="police_area", old_name="police_force"):
-    Organisation = apps.get_model(
-        "organisations", "Organisation")
+    Organisation = apps.get_model("organisations", "Organisation")
 
     Organisation.objects.filter(organisation_type=old_name).update(
-        organisation_type=new_name)
+        organisation_type=new_name
+    )
+
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0019_auto_20170118_1425'),
-    ]
-
+    dependencies = [("organisations", "0019_auto_20170118_1425")]
 
     def to_police_area(apps, schema_editor):
         rename(apps)
@@ -24,8 +23,4 @@ class Migration(migrations.Migration):
     def to_police_force(apps, schema_editor):
         rename(apps, old_name="police_area", new_name="police_force")
 
-    operations = [
-        migrations.RunPython(
-            to_police_area, to_police_force),
-
-    ]
+    operations = [migrations.RunPython(to_police_area, to_police_force)]

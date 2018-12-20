@@ -9,14 +9,18 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('election_snooper', '0007_remove_snoopedelection_election'),
-        ('elections', '0034_auto_20170727_1146'),
+        ("election_snooper", "0007_remove_snoopedelection_election"),
+        ("elections", "0034_auto_20170727_1146"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='election',
-            name='snooped_election',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='election_snooper.SnoopedElection'),
-        ),
+            model_name="election",
+            name="snooped_election",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="election_snooper.SnoopedElection",
+            ),
+        )
     ]

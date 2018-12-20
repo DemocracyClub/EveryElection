@@ -6,16 +6,16 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('elections', '0045_auto_20181001_1437'),
-    ]
+    dependencies = [("elections", "0045_auto_20181001_1437")]
 
     operations = [
         # assume all elections that already exist are approved
-        migrations.RunSQL("""
+        migrations.RunSQL(
+            """
             UPDATE elections_election SET suggested_status='approved'
-        """,
-        reverse_sql="""
+            """,
+            reverse_sql="""
             UPDATE elections_election SET suggested_status='suggested'
-        """),
+            """,
+        )
     ]

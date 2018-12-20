@@ -7,18 +7,13 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0003_organisation_organisation_subtype'),
-    ]
+    dependencies = [("organisations", "0003_organisation_organisation_subtype")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='organisation',
-            name='country_code',
-        ),
+        migrations.RemoveField(model_name="organisation", name="country_code"),
         migrations.AddField(
-            model_name='organisation',
-            name='territory_code',
+            model_name="organisation",
+            name="territory_code",
             field=models.CharField(blank=True, max_length=10),
         ),
     ]

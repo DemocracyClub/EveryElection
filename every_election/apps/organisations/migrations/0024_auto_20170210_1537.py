@@ -8,14 +8,12 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0023_auto_20170203_1802'),
-    ]
+    dependencies = [("organisations", "0023_auto_20170203_1802")]
 
     operations = [
         migrations.AlterField(
-            model_name='divisiongeography',
-            name='geography',
+            model_name="divisiongeography",
+            name="geography",
             field=django.contrib.gis.db.models.fields.MultiPolygonField(srid=4326),
-        ),
+        )
     ]

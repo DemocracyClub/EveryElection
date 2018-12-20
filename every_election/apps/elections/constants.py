@@ -2,15 +2,15 @@ from uk_election_ids.datapackage import ELECTION_TYPES
 
 
 # These types exist in EE but don't have defined behaviour in the IdBuilder
-ELECTION_TYPES['eu'] = {
-    'name': "European Parliament (UK) elections",
-    'subtypes': [],
-    'default_voting_system': 'PR-CL',
+ELECTION_TYPES["eu"] = {
+    "name": "European Parliament (UK) elections",
+    "subtypes": [],
+    "default_voting_system": "PR-CL",
 }
-ELECTION_TYPES['ref'] = {
-    'name': "Referendum",
-    'subtypes': [],
-    'default_voting_system': 'FPTP',
+ELECTION_TYPES["ref"] = {
+    "name": "Referendum",
+    "subtypes": [],
+    "default_voting_system": "FPTP",
 }
 
 

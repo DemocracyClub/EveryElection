@@ -7,13 +7,10 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('elections', '0026_set_default_voting_system'),
-    ]
+    dependencies = [("elections", "0026_set_default_voting_system")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='election',
-            options={'ordering': ('election_id',)},
-        ),
+            name="election", options={"ordering": ("election_id",)}
+        )
     ]

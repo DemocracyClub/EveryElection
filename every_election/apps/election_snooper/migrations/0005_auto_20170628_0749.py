@@ -10,19 +10,29 @@ import model_utils.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('elections', '0030_merge_20170424_1402'),
-        ('election_snooper', '0004_auto_20170627_1405'),
+        ("elections", "0030_merge_20170424_1402"),
+        ("election_snooper", "0004_auto_20170627_1405"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='snoopedelection',
-            name='election',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='elections.Election'),
+            model_name="snoopedelection",
+            name="election",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="elections.Election",
+            ),
         ),
         migrations.AlterField(
-            model_name='snoopedelection',
-            name='status',
-            field=model_utils.fields.StatusField(choices=[(0, 'dummy')], default='duplicate', max_length=100, no_check_for_status=True, verbose_name='status'),
+            model_name="snoopedelection",
+            name="status",
+            field=model_utils.fields.StatusField(
+                choices=[(0, "dummy")],
+                default="duplicate",
+                max_length=100,
+                no_check_for_status=True,
+                verbose_name="status",
+            ),
         ),
     ]

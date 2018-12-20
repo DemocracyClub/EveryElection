@@ -1,6 +1,7 @@
 from django.test import TestCase
 
-from elections.tests.factories import (ElectionFactory, )
+from elections.tests.factories import ElectionFactory
+
 
 class TestElectionFactories(TestCase):
     def test_election_factory(self):

@@ -9,10 +9,10 @@ from model_utils import Choices
 
 class SnoopedElection(StatusModel):
     STATUS = Choices(
-        ('election', 'This is an Election'),
-        ('rejected', 'Not an election'),
-        ('duplicate', 'Duplicate'),
-        ('out_of_scope', 'Election out of scope'),
+        ("election", "This is an Election"),
+        ("rejected", "Not an election"),
+        ("duplicate", "Duplicate"),
+        ("out_of_scope", "Election out of scope"),
     )
 
     source = models.URLField(blank=True)
@@ -25,10 +25,7 @@ class SnoopedElection(StatusModel):
     extra = models.TextField(blank=True)
     date_seen = models.DateField(default=datetime.datetime.today)
     reviewed = models.BooleanField(default=False)
-    status = models.CharField(choices=STATUS, default='new', max_length=100)
+    status = models.CharField(choices=STATUS, default="new", max_length=100)
 
     def get_absolute_url(self):
-        return "{}?pk={}".format(
-            reverse("snooped_election_view"),
-            self.pk
-        )
+        return "{}?pk={}".format(reverse("snooped_election_view"), self.pk)

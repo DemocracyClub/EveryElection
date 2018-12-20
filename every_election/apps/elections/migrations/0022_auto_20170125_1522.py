@@ -8,19 +8,25 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('elections', '0021_votingsystem'),
-    ]
+    dependencies = [("elections", "0021_votingsystem")]
 
     operations = [
         migrations.AddField(
-            model_name='election',
-            name='voting_system',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='elections.VotingSystem'),
+            model_name="election",
+            name="voting_system",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="elections.VotingSystem",
+            ),
         ),
         migrations.AddField(
-            model_name='electiontype',
-            name='default_voting_system',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='elections.VotingSystem'),
+            model_name="electiontype",
+            name="default_voting_system",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="elections.VotingSystem",
+            ),
         ),
     ]

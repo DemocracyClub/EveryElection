@@ -10,29 +10,37 @@ import model_utils.fields
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('election_snooper', '0003_snoopedelection_extra'),
-    ]
+    dependencies = [("election_snooper", "0003_snoopedelection_extra")]
 
     operations = [
         migrations.AddField(
-            model_name='snoopedelection',
-            name='date_seen',
+            model_name="snoopedelection",
+            name="date_seen",
             field=models.DateField(default=datetime.datetime.today),
         ),
         migrations.AddField(
-            model_name='snoopedelection',
-            name='reviewed',
+            model_name="snoopedelection",
+            name="reviewed",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='snoopedelection',
-            name='status',
-            field=model_utils.fields.StatusField(choices=[(0, 'dummy')], default='seen', max_length=100, no_check_for_status=True, verbose_name='status'),
+            model_name="snoopedelection",
+            name="status",
+            field=model_utils.fields.StatusField(
+                choices=[(0, "dummy")],
+                default="seen",
+                max_length=100,
+                no_check_for_status=True,
+                verbose_name="status",
+            ),
         ),
         migrations.AddField(
-            model_name='snoopedelection',
-            name='status_changed',
-            field=model_utils.fields.MonitorField(default=django.utils.timezone.now, monitor='status', verbose_name='status changed'),
+            model_name="snoopedelection",
+            name="status_changed",
+            field=model_utils.fields.MonitorField(
+                default=django.utils.timezone.now,
+                monitor="status",
+                verbose_name="status changed",
+            ),
         ),
     ]

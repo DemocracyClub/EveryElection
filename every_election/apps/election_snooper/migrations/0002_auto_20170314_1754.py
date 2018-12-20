@@ -7,19 +7,15 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('election_snooper', '0001_initial'),
-    ]
+    dependencies = [("election_snooper", "0001_initial")]
 
     operations = [
         migrations.AlterField(
-            model_name='snoopedelection',
-            name='date',
-            field=models.DateField(null=True),
+            model_name="snoopedelection", name="date", field=models.DateField(null=True)
         ),
         migrations.AlterField(
-            model_name='snoopedelection',
-            name='detail_url',
+            model_name="snoopedelection",
+            name="detail_url",
             field=models.URLField(blank=True, max_length=800),
         ),
     ]

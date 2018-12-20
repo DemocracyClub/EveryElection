@@ -7,13 +7,14 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0035_rename_divset_constraint'),
-    ]
+    dependencies = [("organisations", "0035_rename_divset_constraint")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='organisation',
-            options={'get_latest_by': 'start_date', 'ordering': ('official_name', '-start_date')},
-        ),
+            name="organisation",
+            options={
+                "get_latest_by": "start_date",
+                "ordering": ("official_name", "-start_date"),
+            },
+        )
     ]

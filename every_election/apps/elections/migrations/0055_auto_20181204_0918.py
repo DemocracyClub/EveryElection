@@ -11,18 +11,23 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('elections', '0054_auto_20181018_1024'),
+        ("elections", "0054_auto_20181018_1024"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='moderationhistory',
-            name='notes',
+            model_name="moderationhistory",
+            name="notes",
             field=models.CharField(blank=True, max_length=255),
         ),
         migrations.AddField(
-            model_name='moderationhistory',
-            name='user',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL),
+            model_name="moderationhistory",
+            name="user",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

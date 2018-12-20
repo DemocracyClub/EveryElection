@@ -9,18 +9,43 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0021_remove_old_police_forces'),
-    ]
+    dependencies = [("organisations", "0021_remove_old_police_forces")]
 
     operations = [
         migrations.CreateModel(
-            name='DivisionGeography',
+            name="DivisionGeography",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('geography', django.contrib.gis.db.models.fields.MultiPolygonField(geography=True, srid=4326)),
-                ('division', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='geography', to='organisations.OrganisationDivision')),
-                ('organisation', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='geography', to='organisations.Organisation')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "geography",
+                    django.contrib.gis.db.models.fields.MultiPolygonField(
+                        geography=True, srid=4326
+                    ),
+                ),
+                (
+                    "division",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="geography",
+                        to="organisations.OrganisationDivision",
+                    ),
+                ),
+                (
+                    "organisation",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="geography",
+                        to="organisations.Organisation",
+                    ),
+                ),
             ],
-        ),
+        )
     ]

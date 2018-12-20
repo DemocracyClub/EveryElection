@@ -7,19 +7,17 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('elections', '0039_auto_20180309_1303'),
-    ]
+    dependencies = [("elections", "0039_auto_20180309_1303")]
 
     operations = [
         migrations.AlterField(
-            model_name='election',
-            name='seats_contested',
+            model_name="election",
+            name="seats_contested",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='election',
-            name='seats_total',
+            model_name="election",
+            name="seats_total",
             field=models.IntegerField(blank=True, null=True),
         ),
     ]

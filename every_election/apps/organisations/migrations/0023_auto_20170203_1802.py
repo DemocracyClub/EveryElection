@@ -8,19 +8,27 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0022_divisiongeography'),
-    ]
+    dependencies = [("organisations", "0022_divisiongeography")]
 
     operations = [
         migrations.AlterField(
-            model_name='divisiongeography',
-            name='division',
-            field=models.OneToOneField(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='geography', to='organisations.OrganisationDivision'),
+            model_name="divisiongeography",
+            name="division",
+            field=models.OneToOneField(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="geography",
+                to="organisations.OrganisationDivision",
+            ),
         ),
         migrations.AlterField(
-            model_name='divisiongeography',
-            name='organisation',
-            field=models.OneToOneField(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='geography', to='organisations.Organisation'),
+            model_name="divisiongeography",
+            name="organisation",
+            field=models.OneToOneField(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="geography",
+                to="organisations.Organisation",
+            ),
         ),
     ]

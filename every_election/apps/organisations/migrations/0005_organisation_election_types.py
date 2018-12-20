@@ -8,14 +8,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('elections', '0004_electedrole'),
-        ('organisations', '0004_auto_20161010_1802'),
+        ("elections", "0004_electedrole"),
+        ("organisations", "0004_auto_20161010_1802"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='organisation',
-            name='election_types',
-            field=models.ManyToManyField(through='elections.ElectedRole', to='elections.ElectionType'),
-        ),
+            model_name="organisation",
+            name="election_types",
+            field=models.ManyToManyField(
+                through="elections.ElectedRole", to="elections.ElectionType"
+            ),
+        )
     ]

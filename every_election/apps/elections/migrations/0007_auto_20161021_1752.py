@@ -7,14 +7,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('elections', '0006_election_suggested_status'),
-    ]
+    dependencies = [("elections", "0006_election_suggested_status")]
 
     operations = [
         migrations.AlterField(
-            model_name='election',
-            name='election_id',
+            model_name="election",
+            name="election_id",
             field=models.CharField(max_length=100),
-        ),
+        )
     ]

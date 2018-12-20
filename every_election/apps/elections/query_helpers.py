@@ -19,7 +19,7 @@ class PostcodeError(Exception):
 
 class BasePostcodeLookup(metaclass=abc.ABCMeta):
     def __init__(self, postcode):
-        self.postcode = postcode.replace(' ', '')
+        self.postcode = postcode.replace(" ", "")
 
     @property
     @abc.abstractmethod
@@ -38,16 +38,11 @@ class BaseMaPitPostcodeLookup(BasePostcodeLookup, metaclass=abc.ABCMeta):
         pass
 
     def fetch_from_mapit(self):
-        logger.warning(
-            'Querying mySociety mapit for postcode {}'.format(self.postcode)
-        )
-        if hasattr(self, 'mapit_data'):
+        logger.warning("Querying mySociety mapit for postcode {}".format(self.postcode))
+        if hasattr(self, "mapit_data"):
             return self.mapit_data
 
-        req = requests.get("{}/postcode/{}".format(
-            self.mapit_base,
-            self.postcode
-        ))
+        req = requests.get("{}/postcode/{}".format(self.mapit_base, self.postcode))
         if req.status_code != 200:
             raise PostcodeError
         try:
@@ -58,12 +53,9 @@ class BaseMaPitPostcodeLookup(BasePostcodeLookup, metaclass=abc.ABCMeta):
 
     @property
     def point(self):
-        if not 'wgs84_lon' in self.mapit_data:
+        if not "wgs84_lon" in self.mapit_data:
             raise PostcodeError
-        return Point(
-            self.mapit_data['wgs84_lon'],
-            self.mapit_data['wgs84_lat']
-        )
+        return Point(self.mapit_data["wgs84_lon"], self.mapit_data["wgs84_lat"])
 
 
 class mySocietyMapitPostcodeLookup(BaseMaPitPostcodeLookup):
@@ -93,10 +85,7 @@ def get_point_from_postcode(postcode):
     except ValidationError:
         raise PostcodeError("Invalid Postcode")
 
-    methods = [
-        ONSPDPostcodeLookup,
-        mySocietyMapitPostcodeLookup,
-    ]
+    methods = [ONSPDPostcodeLookup, mySocietyMapitPostcodeLookup]
     for method in methods:
         try:
             return method(postcode).point

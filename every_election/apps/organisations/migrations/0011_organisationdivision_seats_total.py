@@ -7,15 +7,13 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0010_auto_20170111_1355'),
-    ]
+    dependencies = [("organisations", "0010_auto_20170111_1355")]
 
     operations = [
         migrations.AddField(
-            model_name='organisationdivision',
-            name='seats_total',
+            model_name="organisationdivision",
+            name="seats_total",
             field=models.IntegerField(blank=True, default=1),
             preserve_default=False,
-        ),
+        )
     ]

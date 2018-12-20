@@ -5,7 +5,6 @@ from organisations.models import Organisation
 
 
 class OrganisationProblemManager(Manager):
-
     def get_queryset(self):
         qs = super().get_queryset()
 
@@ -14,18 +13,21 @@ class OrganisationProblemManager(Manager):
                 # we always want Organisations to have at least
                 # one related OrganisationGeography record
                 Q(geographies=None)
-            ) | (
+            )
+            | (
                 # usually if an Organisation has no related
                 # DivsionSet records this is a problem
-                Q(divisionset=None) &
+                Q(divisionset=None)
+                &
                 # although (as always), there are some exceptions to this..
-                ~Q(organisation_type='combined-authority') &
-                ~Q(organisation_type='police-area') &
-                ~(
-                    Q(organisation_type='local-authority') &
-                    Q(official_name='Greater London Authority')
+                ~Q(organisation_type="combined-authority")
+                & ~Q(organisation_type="police-area")
+                & ~(
+                    Q(organisation_type="local-authority")
+                    & Q(official_name="Greater London Authority")
                 )
-            ) | (
+            )
+            | (
                 # we always want Organisations to have at least
                 # one related ElectedRole record
                 Q(electedrole=None)
@@ -59,7 +61,7 @@ class OrganisationProblem(Organisation):
             return "No associated DivisionSet"
         if self.no_electedrole:
             return "No associated ElectedRole"
-        return ''
+        return ""
 
     class Meta:
         verbose_name_plural = "⚠️ Organisation Problems"
@@ -70,18 +72,18 @@ class OrganisationProblemAdmin(admin.ModelAdmin):
 
     actions = None
 
-    ordering = ('organisation_type', 'organisation_subtype', 'official_name', 'start_date')
-    list_display = (
-        'official_name',
-        'start_date',
-        'end_date',
-        'problem_text',
+    ordering = (
+        "organisation_type",
+        "organisation_subtype",
+        "official_name",
+        "start_date",
     )
+    list_display = ("official_name", "start_date", "end_date", "problem_text")
     readonly_fields = (
-        'problem_text',
-        'no_geography',
-        'no_divisionset',
-        'no_electedrole',
+        "problem_text",
+        "no_geography",
+        "no_divisionset",
+        "no_electedrole",
     )
 
     def has_add_permission(self, request):

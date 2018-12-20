@@ -3,26 +3,30 @@ from difflib import ndiff
 from django.contrib.gis.gdal import DataSource
 from django.db import transaction
 
-from .models import (
-    OrganisationDivisionSet,
-    OrganisationDivision,
-    DivisionGeography,
-)
+from .models import OrganisationDivisionSet, OrganisationDivision, DivisionGeography
 from storage.shapefile import pre_process_layer
 
 
 class DiffException(Exception):
-
     def __init__(self, message, diff):
         super().__init__(message)
         self.diff = diff
 
 
 class DivisionSetGeographyImporter:
-
-    def __init__(self, data, division_set, name_column='name', name_map={}, srid=27700, source='unknown'):
+    def __init__(
+        self,
+        data,
+        division_set,
+        name_column="name",
+        name_map={},
+        srid=27700,
+        source="unknown",
+    ):
         if not isinstance(data, DataSource):
-            error = "param 'data' must be an instance of django.contrib.gis.gdal.DataSource"
+            error = (
+                "param 'data' must be an instance of django.contrib.gis.gdal.DataSource"
+            )
             raise TypeError(error)
         if len(data) != 1:
             raise ValueError("Expected 1 layer, found %i" % (len(data)))
@@ -55,8 +59,10 @@ class DivisionSetGeographyImporter:
         boundary_names = sorted([self.get_name(div) for div in self.data])
 
         if len(legislation_names) != len(boundary_names):
-            raise ValueError("Expected %i boundaries in input file, found %i"\
-                % (len(legislation_names), len(boundary_names)))
+            raise ValueError(
+                "Expected %i boundaries in input file, found %i"
+                % (len(legislation_names), len(boundary_names))
+            )
         if legislation_names != boundary_names:
             # create a 'diff' of the 2 lists
             # so we can work out what we need to fix
@@ -70,12 +76,13 @@ class DivisionSetGeographyImporter:
         for feature in self.data:
             name = self.get_name(feature)
             division = OrganisationDivision.objects.get(
-                divisionset=self.div_set, name=name)
+                divisionset=self.div_set, name=name
+            )
             div_geogs.append(
                 DivisionGeography(
                     division=division,
                     geography=feature.multipolygon,
-                    source=self.source
+                    source=self.source,
                 )
             )
         return div_geogs

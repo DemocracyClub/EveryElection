@@ -8,14 +8,16 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('elections', '0042_split_geography_field'),
-    ]
+    dependencies = [("elections", "0042_split_geography_field")]
 
     operations = [
         migrations.AlterField(
-            model_name='electedrole',
-            name='organisation',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='electedrole', to='organisations.Organisation'),
-        ),
+            model_name="electedrole",
+            name="organisation",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="electedrole",
+                to="organisations.Organisation",
+            ),
+        )
     ]

@@ -7,7 +7,7 @@ from django.utils.text import slugify
 from organisations.models import (
     Organisation,
     OrganisationDivision,
-    OrganisationDivisionSet
+    OrganisationDivisionSet,
 )
 
 from core.mixins import ReadFromCSVMixin
@@ -24,7 +24,7 @@ class Command(ReadFromCSVMixin, BaseCommand):
 
     division_sets = {}
     divisions = []
-    start_date = '2014-05-22'
+    start_date = "2014-05-22"
 
     def handle(self, *args, **options):
         csv_data = self.load_data(options)
@@ -41,9 +41,9 @@ class Command(ReadFromCSVMixin, BaseCommand):
 
     def get_org_from_line(self, line):
         return Organisation.objects.all().get_by_date(
-            organisation_type='local-authority',
-            official_identifier=line['District Register Code'],
-            date=datetime.datetime.strptime('2015-04-01', "%Y-%m-%d").date()
+            organisation_type="local-authority",
+            official_identifier=line["District Register Code"],
+            date=datetime.datetime.strptime("2015-04-01", "%Y-%m-%d").date(),
         )
 
     def create_division_sets(self, csv_data):
@@ -53,25 +53,25 @@ class Command(ReadFromCSVMixin, BaseCommand):
                 organisation=org,
                 start_date=self.start_date,
                 end_date=None,
-                legislation_url='http://www.legislation.gov.uk/uksi/2014/270/made',
-                short_title='The District Electoral Areas (Northern Ireland) Order 2014',
-                mapit_generation_id='',
-                notes='',
-                consultation_url=''
+                legislation_url="http://www.legislation.gov.uk/uksi/2014/270/made",
+                short_title="The District Electoral Areas (Northern Ireland) Order 2014",
+                mapit_generation_id="",
+                notes="",
+                consultation_url="",
             )
 
     def create_divisions(self, csv_data):
         for line in csv_data:
             org = self.get_org_from_line(line)
-            id_ = "gss:{}".format(line['District Electoral Area GSS code'])
+            id_ = "gss:{}".format(line["District Electoral Area GSS code"])
             div = OrganisationDivision(
                 official_identifier=id_,
-                temp_id='',
+                temp_id="",
                 organisation=org,
-                name=line['District Electoral Area'],
-                slug=slugify(line['District Electoral Area']),
-                division_type='LGE',
-                seats_total=line['Number of councillors'],
+                name=line["District Electoral Area"],
+                slug=slugify(line["District Electoral Area"]),
+                division_type="LGE",
+                seats_total=line["Number of councillors"],
             )
             # set a NULL placeholder for now. We'll update
             # it once the DivisionSets have been persisted

@@ -18,7 +18,7 @@ from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from organisations.models import (
     DivisionGeography,
     OrganisationGeography,
-    OrganisationDivision
+    OrganisationDivision,
 )
 from organisations.boundaries.boundaryline import BoundaryLine
 from organisations.boundaries.constants import get_area_type_lookup, SPECIAL_CASES
@@ -29,7 +29,6 @@ from storage.shapefile import convert_geom_to_multipolygon
 
 
 class Command(BaseBoundaryLineCommand):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.errors = []
@@ -37,27 +36,27 @@ class Command(BaseBoundaryLineCommand):
     def add_arguments(self, parser):
         group = parser.add_mutually_exclusive_group(required=True)
         group.add_argument(
-            '--code',
-            action='store',
-            help='code in the form gss:X01000001 or unit_id:12345',
+            "--code",
+            action="store",
+            help="code in the form gss:X01000001 or unit_id:12345",
         )
         group.add_argument(
-            '--codes',
-            action='store',
-            help='local path to a JSON file containing an array of codes',
+            "--codes",
+            action="store",
+            help="local path to a JSON file containing an array of codes",
         )
 
         parser.add_argument(
-            '--source',
-            action='store',
-            help='where did this boundary come from? e.g: bdline_gb-2018-05',
+            "--source",
+            action="store",
+            help="where did this boundary come from? e.g: bdline_gb-2018-05",
             required=True,
         )
         parser.add_argument(
-            '--all',
-            action='store_true',
-            dest='all',
-            help='import boundaries against multiple GSS codes if found',
+            "--all",
+            action="store_true",
+            dest="all",
+            help="import boundaries against multiple GSS codes if found",
         )
         super().add_arguments(parser)
 
@@ -66,16 +65,20 @@ class Command(BaseBoundaryLineCommand):
         # return True if it looks good
         code_type, code = split_code(identifier)
 
-        if code_type == 'unit_id' and re.match(r'^\d+$', code):
+        if code_type == "unit_id" and re.match(r"^\d+$", code):
             # FIXME before 2021
-            error = ("Importing boundaries from BoundaryLine against CEDs is "
-            "not yet available because unit_id is not a stable identifier")
+            error = (
+                "Importing boundaries from BoundaryLine against CEDs is "
+                "not yet available because unit_id is not a stable identifier"
+            )
             raise ValueError(error)
 
-        if code_type == 'gss' and re.match(r'^[A-Z][0-9]{8}$', code):
+        if code_type == "gss" and re.match(r"^[A-Z][0-9]{8}$", code):
             return True
 
-        raise ValueError("Unknown code type. Expected 'gss:X01000001' or 'unit_id:12345'")
+        raise ValueError(
+            "Unknown code type. Expected 'gss:X01000001' or 'unit_id:12345'"
+        )
 
     def filter_records(self, identifier):
         # use code to find matching OrganisationGeography
@@ -87,14 +90,15 @@ class Command(BaseBoundaryLineCommand):
         if orgs.exists():
             return orgs
 
-        divs = OrganisationDivision.objects.all().filter(
-            official_identifier=identifier)
+        divs = OrganisationDivision.objects.all().filter(official_identifier=identifier)
         if divs.exists():
             return divs
 
         raise ObjectDoesNotExist(
-            ("Couldn't find any OrganisationGeography or OrganisationDivision "
-            "objects matching {}".format(identifier))
+            (
+                "Couldn't find any OrganisationGeography or OrganisationDivision "
+                "objects matching {}".format(identifier)
+            )
         )
 
     def get_record(self, identifier):
@@ -103,17 +107,17 @@ class Command(BaseBoundaryLineCommand):
 
         _, code = split_code(identifier)
         try:
-            return OrganisationGeography.objects.all().get(
-                gss=code)
+            return OrganisationGeography.objects.all().get(gss=code)
         except OrganisationGeography.DoesNotExist:
             return OrganisationDivision.objects.all().get(
-                official_identifier=identifier)
+                official_identifier=identifier
+            )
 
     def get_geography_from_feature(self, feature):
         # extract a geography object we can safely save to
         # our database from a BoundaryLine feature record
         geom = convert_geom_to_multipolygon(feature)
-        geom.srid=27700
+        geom.srid = 27700
         geom.transform(4326)
         return geom
 
@@ -122,29 +126,35 @@ class Command(BaseBoundaryLineCommand):
         # return a BoundaryLine object giving us an abstraction over it
         lookup = get_area_type_lookup()
         filename = lookup[area_type]
-        return BoundaryLine(os.path.join(self.base_dir, 'Data', 'GB', filename))
+        return BoundaryLine(os.path.join(self.base_dir, "Data", "GB", filename))
 
     def import_org_geography(self, org_geo):
         if org_geo.gss in SPECIAL_CASES:
-            filename = SPECIAL_CASES[org_geo.gss]['file']
-            proxy_code = SPECIAL_CASES[org_geo.gss]['code']
-            bl = BoundaryLine(os.path.join(self.base_dir, 'Data', 'GB', filename))
-            geom = self.get_geography_from_feature(bl.get_feature_by_field('code', proxy_code))
+            filename = SPECIAL_CASES[org_geo.gss]["file"]
+            proxy_code = SPECIAL_CASES[org_geo.gss]["code"]
+            bl = BoundaryLine(os.path.join(self.base_dir, "Data", "GB", filename))
+            geom = self.get_geography_from_feature(
+                bl.get_feature_by_field("code", proxy_code)
+            )
         else:
-            area_type = REGISTER_SUBTYPE_TO_BOUNDARYLINE_TYPE[org_geo.organisation.organisation_subtype]
+            area_type = REGISTER_SUBTYPE_TO_BOUNDARYLINE_TYPE[
+                org_geo.organisation.organisation_subtype
+            ]
             bl = self.open_boundaryline(area_type)
-            geom = self.get_geography_from_feature(bl.get_feature_by_field('code', org_geo.gss))
+            geom = self.get_geography_from_feature(
+                bl.get_feature_by_field("code", org_geo.gss)
+            )
 
         org_geo.geography = geom.ewkb
         org_geo.source = self.source
         org_geo.save()
-        self.stdout.write('..saved {}'.format(str(org_geo)))
+        self.stdout.write("..saved {}".format(str(org_geo)))
 
     def import_div_geography(self, div):
         area_type = div.division_type
         bl = self.open_boundaryline(area_type)
         code_type, code = split_code(div.official_identifier)
-        fieldname = 'code' if code_type == 'gss' else code_type
+        fieldname = "code" if code_type == "gss" else code_type
         geom = self.get_geography_from_feature(bl.get_feature_by_field(fieldname, code))
 
         try:
@@ -153,12 +163,10 @@ class Command(BaseBoundaryLineCommand):
             div.geography.save()
         except DivisionGeography.DoesNotExist:
             dg = DivisionGeography(
-                division_id=div.id,
-                geography=geom.ewkb,
-                source=self.source
+                division_id=div.id, geography=geom.ewkb, source=self.source
             )
             dg.save()
-        self.stdout.write('..saved {}'.format(str(div)))
+        self.stdout.write("..saved {}".format(str(div)))
 
     def import_record(self, record):
         if type(record) == OrganisationDivision:
@@ -179,7 +187,7 @@ class Command(BaseBoundaryLineCommand):
                 for rec in records:
                     self.import_record(rec)
             except (ObjectDoesNotExist, MultipleObjectsReturned) as e:
-                self.stdout.write('..FAILED!')
+                self.stdout.write("..FAILED!")
                 self.errors.append((identifier, e))
                 continue
 
@@ -189,8 +197,10 @@ class Command(BaseBoundaryLineCommand):
         else:
             try:
                 records = [self.get_record(identifier)]
-            except (OrganisationGeography.MultipleObjectsReturned,
-                        OrganisationDivision.MultipleObjectsReturned) as e:
+            except (
+                OrganisationGeography.MultipleObjectsReturned,
+                OrganisationDivision.MultipleObjectsReturned,
+            ) as e:
                 message = str(e) + (
                     " This might indicate a problem which needs to be fixed, "
                     "but it can also be valid for the same GSS code to appear "
@@ -202,27 +212,27 @@ class Command(BaseBoundaryLineCommand):
         return records
 
     def get_identifiers(self, options):
-        if options['code']:
-            return [options['code']]
-        codes = json.load(open(options['codes']))
+        if options["code"]:
+            return [options["code"]]
+        codes = json.load(open(options["codes"]))
         if not isinstance(codes, (list,)):
-            raise ValueError('Root JSON element must be array []')
+            raise ValueError("Root JSON element must be array []")
         return codes
 
     def handle(self, *args, **options):
         identifiers = self.get_identifiers(options)
-        self.source = options['source']
+        self.source = options["source"]
         self.base_dir = self.get_base_dir(**options)
 
-        self.import_all(identifiers, options['all'])
+        self.import_all(identifiers, options["all"])
 
         self.stdout.write("\n\n")
-        self.stdout.write("Imported {} boundaries.\n\n".format(len(identifiers)-len(self.errors)))
+        self.stdout.write(
+            "Imported {} boundaries.\n\n".format(len(identifiers) - len(self.errors))
+        )
         self.stdout.write("{} Failures:".format(len(self.errors)))
         for identifier, e in self.errors:
-            self.stdout.write("{id}: {error}".format(
-                id=identifier, error=str(e))
-            )
+            self.stdout.write("{id}: {error}".format(id=identifier, error=str(e)))
 
         if self.cleanup_required:
             self.cleanup(self.base_dir)

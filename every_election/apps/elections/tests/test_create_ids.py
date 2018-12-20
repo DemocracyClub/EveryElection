@@ -1,8 +1,7 @@
 from datetime import date
 from django.test import TestCase
 
-from elections.models import (
-    ElectedRole, Election, ElectionType, ElectionSubType)
+from elections.models import ElectedRole, Election, ElectionType, ElectionSubType
 from organisations.models import Organisation, DivisionGeography, OrganisationGeography
 from organisations.tests.factories import OrganisationDivisionFactory
 
@@ -10,7 +9,6 @@ from .base_tests import BaseElectionCreatorMixIn
 
 
 class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
-
     def run_test_with_data(self, all_data, expected_ids, expected_titles, **kwargs):
         self.create_ids(all_data, **kwargs)
         assert Election.private_objects.count() == len(expected_ids)
@@ -21,71 +19,65 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
 
         # ensure the records created match the expected titles
         for expected_title in expected_titles:
-            assert Election.private_objects.filter(election_title=expected_title).exists()
+            assert Election.private_objects.filter(
+                election_title=expected_title
+            ).exists()
 
         # ensure group relationships have been saved correctly
         for election in Election.private_objects.all():
-            if election.group_type != 'election':
+            if election.group_type != "election":
                 assert isinstance(election.group_id, int)
 
     def test_group_id(self):
         self.run_test_with_data(
-            self.base_data,
-            ['local.'+self.date_str, ],
-            ['Local elections',]
+            self.base_data, ["local." + self.date_str], ["Local elections"]
         )
 
     def test_creates_div_data_ids(self):
         self.assertEqual(Election.private_objects.count(), 0)
         all_data = self.base_data
-        all_data.update({self.make_div_id(): 'contested'})
+        all_data.update({self.make_div_id(): "contested"})
         expected_ids = [
-            'local.'+self.date_str,
-            'local.test.'+self.date_str,
-            'local.test.test-div.'+self.date_str,
+            "local." + self.date_str,
+            "local.test." + self.date_str,
+            "local.test.test-div." + self.date_str,
         ]
         expected_titles = [
-            'Local elections',
-            'Test Council local elections',
-            'Test Council local elections Test Div 1',
+            "Local elections",
+            "Test Council local elections",
+            "Test Council local elections Test Div 1",
         ]
 
-        self.run_test_with_data(
-            all_data,
-            expected_ids,
-            expected_titles
-        )
+        self.run_test_with_data(all_data, expected_ids, expected_titles)
 
     def test_creates_div_data_ids_two_divs(self):
         all_data = self.base_data
 
-        all_data.update({
-            self.make_div_id(): 'contested',
-            self.make_div_id(div=self.org_div_2): 'contested',
-        })
+        all_data.update(
+            {
+                self.make_div_id(): "contested",
+                self.make_div_id(div=self.org_div_2): "contested",
+            }
+        )
         expected_ids = [
-            'local.'+self.date_str,
-            'local.test.'+self.date_str,
-            'local.test.test-div.'+self.date_str,
-            'local.test.test-div-2.'+self.date_str,
+            "local." + self.date_str,
+            "local.test." + self.date_str,
+            "local.test.test-div." + self.date_str,
+            "local.test.test-div-2." + self.date_str,
         ]
         expected_titles = [
-            'Local elections',
-            'Test Council local elections',
-            'Test Council local elections Test Div 1',
-            'Test Council local elections Test Div 2',
+            "Local elections",
+            "Test Council local elections",
+            "Test Council local elections Test Div 1",
+            "Test Council local elections Test Div 2",
         ]
 
-        self.run_test_with_data(
-            all_data,
-            expected_ids,
-            expected_titles
-        )
+        self.run_test_with_data(all_data, expected_ids, expected_titles)
 
     def test_creates_ids_two_orgs(self):
         org2 = Organisation.objects.create(
-            official_identifier='TEST2',
-            organisation_type='local-authority',
+            official_identifier="TEST2",
+            organisation_type="local-authority",
             official_name="Test Council 2",
             slug="test2",
             territory_code="ENG",
@@ -99,104 +91,91 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             elected_role_name="Councillor for Test Council 2",
         )
         div3 = OrganisationDivisionFactory(
-            organisation=org2,
-            name="Test Div 3",
-            slug="test-div-3"
+            organisation=org2, name="Test Div 3", slug="test-div-3"
         )
 
         all_data = self.base_data
-        all_data['election_organisation'] = [self.org1, org2]
-        all_data.update({
-            self.make_div_id(): 'contested',
-            self.make_div_id(org=org2, div=div3): 'contested',
-        })
+        all_data["election_organisation"] = [self.org1, org2]
+        all_data.update(
+            {
+                self.make_div_id(): "contested",
+                self.make_div_id(org=org2, div=div3): "contested",
+            }
+        )
         expected_ids = [
-            'local.'+self.date_str,
-            'local.test.'+self.date_str,
-            'local.test2.'+self.date_str,
-            'local.test.test-div.'+self.date_str,
-            'local.test2.test-div-3.'+self.date_str,
+            "local." + self.date_str,
+            "local.test." + self.date_str,
+            "local.test2." + self.date_str,
+            "local.test.test-div." + self.date_str,
+            "local.test2.test-div-3." + self.date_str,
         ]
         expected_titles = [
-            'Local elections',
-            'Test Council local elections',
-            'Test Council 2 local elections',
-            'Test Council local elections Test Div 1',
-            'Test Council 2 local elections Test Div 3',
+            "Local elections",
+            "Test Council local elections",
+            "Test Council 2 local elections",
+            "Test Council local elections Test Div 1",
+            "Test Council 2 local elections Test Div 3",
         ]
 
-        self.run_test_with_data(
-            all_data,
-            expected_ids,
-            expected_titles
-        )
+        self.run_test_with_data(all_data, expected_ids, expected_titles)
 
     def test_creates_div_data_ids_blank_divs(self):
         all_data = self.base_data
 
-        all_data.update({
-            self.make_div_id(): 'contested',
-            self.make_div_id(div=self.org_div_2): '',
-        })
+        all_data.update(
+            {self.make_div_id(): "contested", self.make_div_id(div=self.org_div_2): ""}
+        )
         expected_ids = [
-            'local.'+self.date_str,
-            'local.test.'+self.date_str,
-            'local.test.test-div.'+self.date_str,
+            "local." + self.date_str,
+            "local.test." + self.date_str,
+            "local.test.test-div." + self.date_str,
         ]
         expected_titles = [
-            'Local elections',
-            'Test Council local elections',
-            'Test Council local elections Test Div 1',
+            "Local elections",
+            "Test Council local elections",
+            "Test Council local elections Test Div 1",
         ]
 
-        self.run_test_with_data(
-            all_data,
-            expected_ids,
-            expected_titles
-        )
+        self.run_test_with_data(all_data, expected_ids, expected_titles)
 
     def test_creates_by_election(self):
         all_data = self.base_data
 
-        all_data.update({
-            self.make_div_id(): 'by_election',
-            self.make_div_id(div=self.org_div_2): 'by_election',
-        })
+        all_data.update(
+            {
+                self.make_div_id(): "by_election",
+                self.make_div_id(div=self.org_div_2): "by_election",
+            }
+        )
         expected_ids = [
-            'local.'+self.date_str,
-            'local.test.'+self.date_str,
-            'local.test.test-div.by.'+self.date_str,
-            'local.test.test-div-2.by.'+self.date_str,
+            "local." + self.date_str,
+            "local.test." + self.date_str,
+            "local.test.test-div.by." + self.date_str,
+            "local.test.test-div-2.by." + self.date_str,
         ]
         expected_titles = [
-            'Local elections',
-            'Test Council local elections',
-            'Test Council local elections Test Div 1 by-election',
-            'Test Council local elections Test Div 2 by-election',
+            "Local elections",
+            "Test Council local elections",
+            "Test Council local elections Test Div 1 by-election",
+            "Test Council local elections Test Div 2 by-election",
         ]
 
-        self.run_test_with_data(
-            all_data,
-            expected_ids,
-            expected_titles
-        )
+        self.run_test_with_data(all_data, expected_ids, expected_titles)
 
         for election in Election.private_objects.filter(group_type=None):
-            assert 'by-election' in election.election_title
+            assert "by-election" in election.election_title
 
     def test_creates_mayor_id(self):
         mayor_org = Organisation.objects.create(
-            official_identifier='MAYORTEST1',
-            organisation_type='combined-authority',
+            official_identifier="MAYORTEST1",
+            organisation_type="combined-authority",
             official_name="Test authority",
             slug="test-ca",
             territory_code="ENG",
             election_name="Test Council Mayoral elections",
             start_date=date(2016, 10, 1),
         )
-        mayor_election_type = ElectionType.objects.get(
-            election_type='mayor',
-        )
+        mayor_election_type = ElectionType.objects.get(election_type="mayor")
         ElectedRole.objects.create(
             election_type=mayor_election_type,
             organisation=mayor_org,
@@ -204,41 +183,28 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             elected_role_name="Mayor of Foo Town",
         )
 
-
-        all_data =  {
-            'election_organisation': [mayor_org, ],
-            'election_type': mayor_election_type,
-            'date': self.date,
+        all_data = {
+            "election_organisation": [mayor_org],
+            "election_type": mayor_election_type,
+            "date": self.date,
         }
 
-        expected_ids = [
-            'mayor.'+self.date_str,
-            'mayor.test-ca.'+self.date_str,
-        ]
-        expected_titles = [
-            'Mayoral elections',
-            'Test Council Mayoral elections',
-        ]
+        expected_ids = ["mayor." + self.date_str, "mayor.test-ca." + self.date_str]
+        expected_titles = ["Mayoral elections", "Test Council Mayoral elections"]
 
-        self.run_test_with_data(
-            all_data,
-            expected_ids,
-            expected_titles
-        )
+        self.run_test_with_data(all_data, expected_ids, expected_titles)
 
     def test_creates_parl_id(self):
         parl_org = Organisation.objects.create(
-            official_identifier='parl',
-            organisation_type='parl',
+            official_identifier="parl",
+            organisation_type="parl",
             official_name="Parl",
             slug="parl",
             territory_code="ENG",
             election_name="General Election",
             start_date=date(2016, 10, 1),
         )
-        parl_election_type = ElectionType.objects.get(
-            election_type='parl',
-        )
+        parl_election_type = ElectionType.objects.get(election_type="parl")
         ElectedRole.objects.create(
             election_type=parl_election_type,
             organisation=parl_org,
@@ -246,46 +212,33 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             elected_role_name="Member of Parliament",
         )
 
-
-        all_data =  {
-            'election_organisation': [parl_org, ],
-            'election_type': parl_election_type,
-            'date': self.date,
+        all_data = {
+            "election_organisation": [parl_org],
+            "election_type": parl_election_type,
+            "date": self.date,
         }
 
-        expected_ids = [
-            'parl.'+self.date_str,
-        ]
-        expected_titles = [
-            'UK Parliament elections',
-        ]
+        expected_ids = ["parl." + self.date_str]
+        expected_titles = ["UK Parliament elections"]
 
-        self.run_test_with_data(
-            all_data,
-            expected_ids,
-            expected_titles
-        )
+        self.run_test_with_data(all_data, expected_ids, expected_titles)
 
     def test_creates_naw_id(self):
         naw_org = Organisation.objects.create(
-            official_identifier='naw',
-            organisation_type='naw',
+            official_identifier="naw",
+            organisation_type="naw",
             official_name="naw",
             slug="naw",
             territory_code="WLS",
             election_name="National Assembly for Wales elections",
             start_date=date(2016, 10, 1),
         )
-        naw_election_type = ElectionType.objects.get(
-            election_type='naw',
-        )
+        naw_election_type = ElectionType.objects.get(election_type="naw")
         naw_election_sub_type_c = ElectionSubType.objects.get(
-            election_subtype='c',
-            election_type=naw_election_type,
+            election_subtype="c", election_type=naw_election_type
         )
         naw_election_sub_type_r = ElectionSubType.objects.get(
-            election_subtype='r',
-            election_type=naw_election_type,
+            election_subtype="r", election_type=naw_election_type
         )
         ElectedRole.objects.create(
             election_type=naw_election_type,
@@ -297,104 +250,104 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             organisation=naw_org,
             name="Test Div 3",
             slug="test-div-3",
-            division_election_sub_type='c',
+            division_election_sub_type="c",
         )
         org_div_4 = OrganisationDivisionFactory(
             organisation=naw_org,
             name="Test Div 4",
             slug="test-div-4",
-            division_election_sub_type='c',
+            division_election_sub_type="c",
         )
         org_div_5 = OrganisationDivisionFactory(
             organisation=naw_org,
             name="Test Div 5",
             slug="test-div-5",
-            division_election_sub_type='r',
+            division_election_sub_type="r",
         )
 
-
-        all_data =  {
-            'election_organisation': [naw_org, ],
-            'election_type': naw_election_type,
-            'election_subtype': [naw_election_sub_type_c, naw_election_sub_type_r],
-            'date': self.date,
+        all_data = {
+            "election_organisation": [naw_org],
+            "election_type": naw_election_type,
+            "election_subtype": [naw_election_sub_type_c, naw_election_sub_type_r],
+            "date": self.date,
         }
 
-        all_data.update({
-            self.make_div_id(
-                org=naw_org, div=org_div_3, subtype='c'): 'contested',  # contested seat
-            self.make_div_id(
-                org=naw_org, div=org_div_4, subtype='c'): 'by_election',  # by election
-            self.make_div_id(
-                org=naw_org, div=org_div_5, subtype='r'): 'contested',
-        })
+        all_data.update(
+            {
+                self.make_div_id(
+                    org=naw_org, div=org_div_3, subtype="c"
+                ): "contested",  # contested seat
+                self.make_div_id(
+                    org=naw_org, div=org_div_4, subtype="c"
+                ): "by_election",  # by election
+                self.make_div_id(org=naw_org, div=org_div_5, subtype="r"): "contested",
+            }
+        )
 
         expected_ids = [
-            'naw.'+self.date_str,
-            'naw.c.'+self.date_str,
-            'naw.r.'+self.date_str,
-            'naw.c.test-div-3.'+self.date_str,  # no 'by' suffix
-            'naw.c.test-div-4.by.'+self.date_str,  # 'by' suffix
-            'naw.r.test-div-5.'+self.date_str
+            "naw." + self.date_str,
+            "naw.c." + self.date_str,
+            "naw.r." + self.date_str,
+            "naw.c.test-div-3." + self.date_str,  # no 'by' suffix
+            "naw.c.test-div-4.by." + self.date_str,  # 'by' suffix
+            "naw.r.test-div-5." + self.date_str,
         ]
         expected_titles = [
-            'National Assembly for Wales elections',
-            'National Assembly for Wales elections (Constituencies)',
-            'National Assembly for Wales elections (Regions)',
-            'Test Div 3 (Constituencies)',
-            'Test Div 4 (Constituencies) by-election',
-            'Test Div 5 (Regions)',
+            "National Assembly for Wales elections",
+            "National Assembly for Wales elections (Constituencies)",
+            "National Assembly for Wales elections (Regions)",
+            "Test Div 3 (Constituencies)",
+            "Test Div 4 (Constituencies) by-election",
+            "Test Div 5 (Regions)",
         ]
 
         self.run_test_with_data(
             all_data,
             expected_ids,
             expected_titles,
-            subtypes=[naw_election_sub_type_c, naw_election_sub_type_r]
+            subtypes=[naw_election_sub_type_c, naw_election_sub_type_r],
         )
 
     def test_election_with_organisation_geography(self):
         all_data = self.base_data
 
         geog = OrganisationGeography()
-        geog.organisation = all_data['election_organisation'][0]
+        geog.organisation = all_data["election_organisation"][0]
         geog.geography = self.test_polygon
         geog.save()
 
-        all_data.update({
-            self.make_div_id(): 'contested',
-            self.make_div_id(div=self.org_div_2): 'contested',
-        })
+        all_data.update(
+            {
+                self.make_div_id(): "contested",
+                self.make_div_id(div=self.org_div_2): "contested",
+            }
+        )
         expected_ids = [
-            'local.'+self.date_str,
-            'local.test.'+self.date_str,
-            'local.test.test-div.'+self.date_str,
-            'local.test.test-div-2.'+self.date_str,
+            "local." + self.date_str,
+            "local.test." + self.date_str,
+            "local.test.test-div." + self.date_str,
+            "local.test.test-div-2." + self.date_str,
         ]
         expected_titles = [
-            'Local elections',
-            'Test Council local elections',
-            'Test Council local elections Test Div 1',
-            'Test Council local elections Test Div 2',
+            "Local elections",
+            "Test Council local elections",
+            "Test Council local elections Test Div 1",
+            "Test Council local elections Test Div 2",
         ]
 
-        self.run_test_with_data(
-            all_data,
-            expected_ids,
-            expected_titles
-        )
+        self.run_test_with_data(all_data, expected_ids, expected_titles)
 
         for election in Election.private_objects.all():
-            if election.group_type == 'organisation':
+            if election.group_type == "organisation":
                 self.assertTrue(election.geography != None)
             else:
                 self.assertTrue(election.geography == None)
 
         result = Election.private_objects.for_lat_lng(
-            51.50124158773981, -0.13715744018554688)
+            51.50124158773981, -0.13715744018554688
+        )
         self.assertEqual(1, len(result))
-        self.assertEqual('local.test.'+self.date_str, result[0].election_id)
-
+        self.assertEqual("local.test." + self.date_str, result[0].election_id)
 
     def test_election_with_division_geography(self):
         all_data = self.base_data
@@ -404,36 +357,37 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         geog.geography = self.test_polygon
         geog.save()
 
-        all_data.update({
-            self.make_div_id(): 'contested',
-            self.make_div_id(div=self.org_div_2): 'contested',
-        })
+        all_data.update(
+            {
+                self.make_div_id(): "contested",
+                self.make_div_id(div=self.org_div_2): "contested",
+            }
+        )
         expected_ids = [
-            'local.'+self.date_str,
-            'local.test.'+self.date_str,
-            'local.test.test-div.'+self.date_str,
-            'local.test.test-div-2.'+self.date_str,
+            "local." + self.date_str,
+            "local.test." + self.date_str,
+            "local.test.test-div." + self.date_str,
+            "local.test.test-div-2." + self.date_str,
         ]
         expected_titles = [
-            'Local elections',
-            'Test Council local elections',
-            'Test Council local elections Test Div 1',
-            'Test Council local elections Test Div 2',
+            "Local elections",
+            "Test Council local elections",
+            "Test Council local elections Test Div 1",
+            "Test Council local elections Test Div 2",
         ]
 
-        self.run_test_with_data(
-            all_data,
-            expected_ids,
-            expected_titles
-        )
+        self.run_test_with_data(all_data, expected_ids, expected_titles)
 
         for election in Election.private_objects.all():
-            if election.election_id == 'local.test.test-div-2.'+self.date_str:
+            if election.election_id == "local.test.test-div-2." + self.date_str:
                 self.assertTrue(election.geography != None)
             else:
                 self.assertTrue(election.geography == None)
 
         result = Election.private_objects.for_lat_lng(
-            51.50124158773981, -0.13715744018554688)
+            51.50124158773981, -0.13715744018554688
+        )
         self.assertEqual(1, len(result))
-        self.assertEqual('local.test.test-div-2.'+self.date_str, result[0].election_id)
+        self.assertEqual(
+            "local.test.test-div-2." + self.date_str, result[0].election_id
+        )

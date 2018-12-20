@@ -7,13 +7,11 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0028_auto_20171214_1331'),
-    ]
+    dependencies = [("organisations", "0028_auto_20171214_1331")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='organisationdivisionset',
-            options={'get_latest_by': 'start_date', 'ordering': ('-start_date',)},
-        ),
+            name="organisationdivisionset",
+            options={"get_latest_by": "start_date", "ordering": ("-start_date",)},
+        )
     ]

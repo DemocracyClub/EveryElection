@@ -20,28 +20,23 @@ class TestElectionModel(TestCase):
 
     def test_has_approved_parents_two_level(self):
         org_group = ElectionWithStatusFactory(
-            group=None,
-            moderation_status=related_status("Suggested")
+            group=None, moderation_status=related_status("Suggested")
         )
         ballot = ElectionWithStatusFactory(
-            group=org_group,
-            moderation_status=related_status("Approved")
+            group=org_group, moderation_status=related_status("Approved")
         )
         self.assertFalse(has_approved_parents(ballot))
         ModerationHistoryFactory(
-            election=org_group,
-            status=ModerationStatusFactory(short_label="Approved")
+            election=org_group, status=ModerationStatusFactory(short_label="Approved")
         )
         self.assertTrue(has_approved_parents(ballot))
 
     def test_has_approved_parents_three_level(self):
         election_group = ElectionWithStatusFactory(
-            group=None,
-            moderation_status=related_status("Suggested")
+            group=None, moderation_status=related_status("Suggested")
         )
         org_group = ElectionWithStatusFactory(
-            group=election_group,
-            moderation_status=related_status("Suggested")
+            group=election_group, moderation_status=related_status("Suggested")
         )
         ballot = ElectionWithStatusFactory(group=org_group)
         self.assertFalse(has_approved_parents(ballot))
@@ -54,8 +49,7 @@ class TestElectionModel(TestCase):
         self.assertFalse(has_approved_parents(ballot))
 
         ModerationHistoryFactory(
-            election=org_group,
-            status=ModerationStatusFactory(short_label="Approved")
+            election=org_group, status=ModerationStatusFactory(short_label="Approved")
         )
         # now both parents are approved
         self.assertTrue(has_approved_parents(ballot))
@@ -64,19 +58,16 @@ class TestElectionModel(TestCase):
         org_group = ElectionWithStatusFactory(group=None)
         ballots = [
             ElectionWithStatusFactory(
-                group=org_group,
-                moderation_status=related_status("Suggested")
+                group=org_group, moderation_status=related_status("Suggested")
             ),
             ElectionWithStatusFactory(
-                group=org_group,
-                moderation_status=related_status("Suggested")
-            )
+                group=org_group, moderation_status=related_status("Suggested")
+            ),
         ]
         self.assertFalse(has_approved_child(org_group))
 
         # approve one of the 2 child ballots
         ModerationHistoryFactory(
-            election=ballots[0],
-            status=ModerationStatusFactory(short_label="Approved")
+            election=ballots[0], status=ModerationStatusFactory(short_label="Approved")
         )
         self.assertTrue(has_approved_child(org_group))

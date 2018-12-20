@@ -8,7 +8,6 @@ from .common import CustomOrganisationChoiceField, INVALID_SOURCES
 
 
 class DivisionProblemManager(Manager):
-
     def get_queryset(self):
         qs = super().get_queryset()
 
@@ -22,18 +21,20 @@ class DivisionProblemManager(Manager):
                 # we always want divisions to have
                 # an associated geography record
                 Q(geography=None)
-            ) | (
+            )
+            | (
                 # if the division has a GSS code,
                 # the boundary source should be BoundaryLine/OSNI
-                Q(geography__source__in=INVALID_SOURCES) &
-                Q(official_identifier__startswith='gss:')
-            ) | (
+                Q(geography__source__in=INVALID_SOURCES)
+                & Q(official_identifier__startswith="gss:")
+            )
+            | (
                 # once a division is current (or past)
                 # it should have a GSS code
                 # ... mostly
-                ~Q(official_identifier__startswith='gss:') &
-                ~Q(division_type='CED') &
-                ~Q(division_type='NIE')
+                ~Q(official_identifier__startswith="gss:")
+                & ~Q(division_type="CED")
+                & ~Q(division_type="NIE")
             )
         )
         return qs
@@ -45,7 +46,7 @@ class DivisionProblem(OrganisationDivision):
 
     @property
     def no_gss_code(self):
-        return self.official_identifier[:4] != 'gss:'
+        return self.official_identifier[:4] != "gss:"
 
     @property
     def invalid_source(self):
@@ -69,7 +70,7 @@ class DivisionProblem(OrganisationDivision):
             return "No GSS code"
         if self.invalid_source:
             return "Boundary source is invalid"
-        return ''
+        return ""
 
     class Meta:
         verbose_name_plural = "⚠️ Division Geography Problems"
@@ -77,32 +78,26 @@ class DivisionProblem(OrganisationDivision):
 
 
 class DivisionProblemForm(forms.ModelForm):
-    organisation = CustomOrganisationChoiceField(
-        queryset=Organisation.objects.all())
+    organisation = CustomOrganisationChoiceField(queryset=Organisation.objects.all())
 
     class Meta:
         model = DivisionProblem
-        fields = '__all__'
+        fields = "__all__"
 
 
 class DivisionProblemAdmin(admin.ModelAdmin):
 
     actions = None
 
-    ordering = ('organisation', 'divisionset', 'name')
+    ordering = ("organisation", "divisionset", "name")
     list_display = (
-        'official_identifier',
-        'name',
-        'organisation',
-        'divisionset',
-        'problem_text',
+        "official_identifier",
+        "name",
+        "organisation",
+        "divisionset",
+        "problem_text",
     )
-    readonly_fields = (
-        'problem_text',
-        'no_gss_code',
-        'invalid_source',
-        'no_geography',
-    )
+    readonly_fields = ("problem_text", "no_gss_code", "invalid_source", "no_geography")
     form = DivisionProblemForm
 
     def has_add_permission(self, request):
@@ -112,4 +107,4 @@ class DivisionProblemAdmin(admin.ModelAdmin):
         return False
 
     def get_queryset(self, request):
-        return super().get_queryset(request).defer('geography')
+        return super().get_queryset(request).defer("geography")

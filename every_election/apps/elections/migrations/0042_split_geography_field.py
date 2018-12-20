@@ -5,8 +5,8 @@ from django.db import migrations
 
 
 def split_geography_field(apps, schema_editor):
-    Election = apps.get_model('elections', 'Election')
-    OrganisationGeography = apps.get_model('organisations', 'OrganisationGeography')
+    Election = apps.get_model("elections", "Election")
+    OrganisationGeography = apps.get_model("organisations", "OrganisationGeography")
 
     elections = Election.objects.all()
     for election in elections:
@@ -26,13 +26,10 @@ def split_geography_field(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('organisations', '0040_end_date_constraint'),
-        ('elections', '0041_auto_20180607_1141'),
+        ("organisations", "0040_end_date_constraint"),
+        ("elections", "0041_auto_20180607_1141"),
     ]
 
     operations = [
-        migrations.RunPython(
-            split_geography_field,
-            migrations.RunPython.noop
-        ),
+        migrations.RunPython(split_geography_field, migrations.RunPython.noop)
     ]
