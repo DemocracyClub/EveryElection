@@ -8,29 +8,45 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('elections', '0053_auto_20181008_1534'),
-    ]
+    dependencies = [("elections", "0053_auto_20181008_1534")]
 
     operations = [
         migrations.AddField(
-            model_name='election',
-            name='cancellation_notice',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='cancellation_election_set', to='elections.Document'),
+            model_name="election",
+            name="cancellation_notice",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="cancellation_election_set",
+                to="elections.Document",
+            ),
         ),
         migrations.AddField(
-            model_name='election',
-            name='cancelled',
+            model_name="election",
+            name="cancelled",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='election',
-            name='replaces',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='_replaced_by', to='elections.Election'),
+            model_name="election",
+            name="replaces",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="_replaced_by",
+                to="elections.Election",
+            ),
         ),
         migrations.AlterField(
-            model_name='election',
-            name='notice',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='notice_election_set', to='elections.Document'),
+            model_name="election",
+            name="notice",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="notice_election_set",
+                to="elections.Document",
+            ),
         ),
     ]

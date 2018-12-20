@@ -11,44 +11,45 @@ from organisations.models import Organisation
 
 class ElectionAdmin(admin.ModelAdmin):
 
-    search_fields = ('election_id',)
+    search_fields = ("election_id",)
 
     def has_add_permission(self, request):
         return False
 
     readonly_fields = (
-        'election_id',
-        'tmp_election_id',
-        'election_type',
-        'election_subtype',
-        'poll_open_date',
-        'organisation',
-        'elected_role',
-        'division',
-        'group',
+        "election_id",
+        "tmp_election_id",
+        "election_type",
+        "election_subtype",
+        "poll_open_date",
+        "organisation",
+        "elected_role",
+        "division",
+        "group",
     )
     exclude = (
-        'geography',
-        'division_geography',
-        'organisation_geography',
-        'notice',
-        'cancellation_notice',
+        "geography",
+        "division_geography",
+        "organisation_geography",
+        "notice",
+        "cancellation_notice",
     )
 
     def get_readonly_fields(self, request, obj=None):
         if not obj.group_type:
             return self.readonly_fields
         else:
-            return self.readonly_fields + ('cancelled',)
+            return self.readonly_fields + ("cancelled",)
 
     def render_change_form(self, request, context, *args, **kwargs):
-        context['adminform'].form.fields['replaces'].queryset = Election\
-            .public_objects\
-            .filter(cancelled=True)\
-            .filter(poll_open_date__lte=context['original'].poll_open_date)\
-            .filter(division_id=context['original'].division_id)\
-            .filter(organisation_id=context['original'].organisation_id)
+        context["adminform"].form.fields["replaces"].queryset = (
+            Election.public_objects.filter(cancelled=True)
+            .filter(poll_open_date__lte=context["original"].poll_open_date)
+            .filter(division_id=context["original"].division_id)
+            .filter(organisation_id=context["original"].organisation_id)
+        )
         return super().render_change_form(request, context, *args, **kwargs)
+
 
 class JSONEditor(Textarea):
     def render(self, name, value, attrs=None):
@@ -60,30 +61,30 @@ class JSONEditor(Textarea):
         finally:
             return super().render(name, value, attrs)
 
-class MetaDataAdmin(admin.ModelAdmin):
 
+class MetaDataAdmin(admin.ModelAdmin):
     def get_form(self, *args, **kwargs):
         self.form = deepcopy(self.form)
         form = super().get_form(*args, **kwargs)
-        form.base_fields['data'].widget = JSONEditor()
+        form.base_fields["data"].widget = JSONEditor()
         return form
 
 
 class ElectedRoleAdminForm(forms.ModelForm):
-    organisation = CustomOrganisationChoiceField(
-        queryset=Organisation.objects.all())
+    organisation = CustomOrganisationChoiceField(queryset=Organisation.objects.all())
 
     class Meta:
         model = ElectedRole
-        fields = '__all__'
+        fields = "__all__"
+
 
 class ElectedRoleAdmin(admin.ModelAdmin):
     search_fields = (
-        'elected_title',
-        'elected_role_name',
-        'organisation__official_name',
-        'organisation__common_name',
-        'organisation__official_identifier'
+        "elected_title",
+        "elected_role_name",
+        "organisation__official_name",
+        "organisation__common_name",
+        "organisation__official_identifier",
     )
     form = ElectedRoleAdminForm
 
@@ -95,8 +96,10 @@ class ModerationHistoryAdmin(admin.ModelAdmin):
     # we can't edit or delete existing entries.
     def has_change_permission(self, request, obj=None):
         return False
+
     def has_delete_permission(self, request, obj=None):
         return False
+
 
 admin.site.register(ElectedRole, ElectedRoleAdmin)
 admin.site.register(Election, ElectionAdmin)

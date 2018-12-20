@@ -12,10 +12,7 @@ from elections.models import Election, ModerationHistory, ModerationStatuses
 
 def set_election_status(election, status, user):
     event = ModerationHistory(
-        election=election,
-        status_id=status,
-        user=user,
-        notes='moderation queue'
+        election=election, status_id=status, user=user, notes="moderation queue"
     )
     event.save()
 
@@ -28,28 +25,26 @@ class ModerationQueueView(UserPassesTestMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        elections = Election\
-            .private_objects\
-            .all()\
-            .filter_by_status('Suggested')\
-            .filter(group_type=None)\
-            .order_by('poll_open_date', 'election_id')
+        elections = (
+            Election.private_objects.all()
+            .filter_by_status("Suggested")
+            .filter(group_type=None)
+            .order_by("poll_open_date", "election_id")
+        )
 
         forms = []
         for election in elections:
             mh = election.moderationhistory_set.all().latest()
-            forms.append(
-                ModerationHistoryForm(instance=mh, prefix=election.pk)
-            )
+            forms.append(ModerationHistoryForm(instance=mh, prefix=election.pk))
 
-        context['forms'] = forms
+        context["forms"] = forms
         return context
 
     @transaction.atomic
     def post(self, request, *args, **kwargs):
-        ballot_pk = request.POST.get('election', None)
+        ballot_pk = request.POST.get("election", None)
         ballot = Election.private_objects.get(pk=ballot_pk)
-        status = request.POST.get('{}-status'.format(ballot_pk), None)
+        status = request.POST.get("{}-status".format(ballot_pk), None)
         set_election_status(ballot, status, request.user)
 
         if status == ModerationStatuses.approved.value:
@@ -66,5 +61,5 @@ class ModerationQueueView(UserPassesTestMixin, TemplateView):
         # which will roll back the transaction
         check_constraints(ballot)
 
-        url = reverse('election_moderation_queue')
+        url = reverse("election_moderation_queue")
         return HttpResponseRedirect(url)

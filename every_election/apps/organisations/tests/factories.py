@@ -6,7 +6,7 @@ from organisations.models import (
     OrganisationDivisionSet,
     OrganisationDivision,
     OrganisationGeography,
-    DivisionGeography
+    DivisionGeography,
 )
 
 
@@ -16,10 +16,9 @@ class OrganisationFactory(factory.django.DjangoModelFactory):
 
     official_identifier = factory.Sequence(lambda n: n)
     organisation_type = "local-authority"
-    official_name = factory.Sequence(
-        lambda n: 'The Organisation %d Council' % n)
-    common_name = factory.Sequence(lambda n: 'Organisation %d' % n)
-    slug = factory.Sequence(lambda n: 'org-%d' % n)
+    official_name = factory.Sequence(lambda n: "The Organisation %d Council" % n)
+    common_name = factory.Sequence(lambda n: "Organisation %d" % n)
+    slug = factory.Sequence(lambda n: "org-%d" % n)
     territory_code = "ENG"
     # election_types
     # election_name
@@ -43,16 +42,15 @@ class OrganisationDivisionSetFactory(factory.django.DjangoModelFactory):
         self.refresh_from_db()
 
 
-
 class OrganisationDivisionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = OrganisationDivision
 
     organisation = factory.SubFactory(OrganisationFactory)
     divisionset = factory.SubFactory(OrganisationDivisionSetFactory)
-    name = factory.Sequence(lambda n: 'Division %d' % n)
+    name = factory.Sequence(lambda n: "Division %d" % n)
     official_identifier = factory.Sequence(lambda n: n)
-    slug = factory.Sequence(lambda n: '%d' % n)
+    slug = factory.Sequence(lambda n: "%d" % n)
     division_type = "test"
     # division_election_sub_type
     # seats_total
@@ -75,6 +73,6 @@ class OrganisationGeographyFactory(factory.django.DjangoModelFactory):
     organisation = factory.SubFactory(OrganisationFactory)
     start_date = None
     end_date = None
-    gss = factory.Sequence(lambda n: 'E00000%d' % n)
+    gss = factory.Sequence(lambda n: "E00000%d" % n)
     legislation_url = "https://example.com/the-law"
     geography = "MULTIPOLYGON (((-0.16211289446232513 51.51267297506594,-0.10374802629826263 51.51267297506594,-0.10374802629826263 51.47858081771695,-0.16211289446232513 51.47858081771695,-0.16211289446232513 51.51267297506594)))"  # noqa

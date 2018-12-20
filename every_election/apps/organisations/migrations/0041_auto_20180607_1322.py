@@ -7,17 +7,9 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0040_end_date_constraint'),
-    ]
+    dependencies = [("organisations", "0040_end_date_constraint")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='divisiongeography',
-            name='organisation',
-        ),
-        migrations.RemoveField(
-            model_name='organisation',
-            name='gss',
-        ),
+        migrations.RemoveField(model_name="divisiongeography", name="organisation"),
+        migrations.RemoveField(model_name="organisation", name="gss"),
     ]

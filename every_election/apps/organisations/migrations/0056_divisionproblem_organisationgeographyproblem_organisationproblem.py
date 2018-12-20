@@ -7,42 +7,37 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0055_auto_20180720_1118'),
-    ]
+    dependencies = [("organisations", "0055_auto_20180720_1118")]
 
     operations = [
         migrations.CreateModel(
-            name='DivisionProblem',
-            fields=[
-            ],
+            name="DivisionProblem",
+            fields=[],
             options={
-                'proxy': True,
-                'verbose_name_plural': '⚠️ Division Geography Problems',
-                'indexes': [],
+                "proxy": True,
+                "verbose_name_plural": "⚠️ Division Geography Problems",
+                "indexes": [],
             },
-            bases=('organisations.organisationdivision',),
+            bases=("organisations.organisationdivision",),
         ),
         migrations.CreateModel(
-            name='OrganisationGeographyProblem',
-            fields=[
-            ],
+            name="OrganisationGeographyProblem",
+            fields=[],
             options={
-                'proxy': True,
-                'verbose_name_plural': '⚠️ Organisation Geography Problems',
-                'indexes': [],
+                "proxy": True,
+                "verbose_name_plural": "⚠️ Organisation Geography Problems",
+                "indexes": [],
             },
-            bases=('organisations.organisationgeography',),
+            bases=("organisations.organisationgeography",),
         ),
         migrations.CreateModel(
-            name='OrganisationProblem',
-            fields=[
-            ],
+            name="OrganisationProblem",
+            fields=[],
             options={
-                'proxy': True,
-                'verbose_name_plural': '⚠️ Organisation Problems',
-                'indexes': [],
+                "proxy": True,
+                "verbose_name_plural": "⚠️ Organisation Problems",
+                "indexes": [],
             },
-            bases=('organisations.organisation',),
+            bases=("organisations.organisation",),
         ),
     ]

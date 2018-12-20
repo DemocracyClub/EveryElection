@@ -1,10 +1,11 @@
-
 from django.test import TestCase
 
-from organisations.tests.factories import (OrganisationFactory,
-                                           OrganisationDivisionSetFactory,
-                                           OrganisationDivisionFactory,
-                                           DivisionGeographyFactory)
+from organisations.tests.factories import (
+    OrganisationFactory,
+    OrganisationDivisionSetFactory,
+    OrganisationDivisionFactory,
+    DivisionGeographyFactory,
+)
 
 
 class TestElectionIDs(TestCase):

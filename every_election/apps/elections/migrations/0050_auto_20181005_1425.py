@@ -7,21 +7,10 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('elections', '0049_move_status'),
-    ]
+    dependencies = [("elections", "0049_move_status")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='election',
-            name='rejection_reason',
-        ),
-        migrations.RemoveField(
-            model_name='election',
-            name='suggested_status',
-        ),
-        migrations.RemoveField(
-            model_name='election',
-            name='suggestion_reason',
-        ),
+        migrations.RemoveField(model_name="election", name="rejection_reason"),
+        migrations.RemoveField(model_name="election", name="suggested_status"),
+        migrations.RemoveField(model_name="election", name="suggestion_reason"),
     ]

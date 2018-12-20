@@ -9,37 +9,34 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('organisations', '0009_organisationdivision_division_election_sub_type'),
-        ('elections', '0011_remove_field_requirements'),
+        ("organisations", "0009_organisationdivision_division_election_sub_type"),
+        ("elections", "0011_remove_field_requirements"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='election',
-            name='division',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='tmp_real', to='organisations.OrganisationDivision'),
+            model_name="election",
+            name="division",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="tmp_real",
+                to="organisations.OrganisationDivision",
+            ),
         ),
         migrations.AddField(
-            model_name='election',
-            name='seats_contested',
+            model_name="election",
+            name="seats_contested",
             field=models.IntegerField(default=1),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='election',
-            name='seats_total',
+            model_name="election",
+            name="seats_total",
             field=models.IntegerField(default=1),
             preserve_default=False,
         ),
-        migrations.RemoveField(
-            model_name='electiondivisions',
-            name='election',
-        ),
-        migrations.RemoveField(
-            model_name='election',
-            name='divisions',
-        ),
-        migrations.DeleteModel(
-            name='ElectionDivisions',
-        ),
+        migrations.RemoveField(model_name="electiondivisions", name="election"),
+        migrations.RemoveField(model_name="election", name="divisions"),
+        migrations.DeleteModel(name="ElectionDivisions"),
     ]

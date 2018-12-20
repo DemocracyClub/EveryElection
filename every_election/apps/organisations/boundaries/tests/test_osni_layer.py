@@ -4,7 +4,7 @@ from django.test import TestCase
 from organisations.boundaries.osni import OsniLayer
 
 
-fake_data = b'''{
+fake_data = b"""{
   "type": "FeatureCollection",
   "features": [
     {
@@ -51,29 +51,28 @@ fake_data = b'''{
       }
     }
   ]
-}'''
+}"""
 
 
 class OsniLayerTest(TestCase):
-
     @mock.patch(
-        'organisations.boundaries.osni.OsniLayer.get_data_from_url',
-        lambda a, b: fake_data
+        "organisations.boundaries.osni.OsniLayer.get_data_from_url",
+        lambda a, b: fake_data,
     )
     def test_with_gss(self):
-        layer = OsniLayer('foo.bar/baz', 'code', 'area_name')
+        layer = OsniLayer("foo.bar/baz", "code", "area_name")
         self.assertEqual(2, len(layer.features))
         for feature in layer.features:
-            self.assertTrue('gss' in feature)
-            self.assertIsInstance(feature['geometry'], MultiPolygon)
+            self.assertTrue("gss" in feature)
+            self.assertIsInstance(feature["geometry"], MultiPolygon)
 
     @mock.patch(
-        'organisations.boundaries.osni.OsniLayer.get_data_from_url',
-        lambda a, b: fake_data
+        "organisations.boundaries.osni.OsniLayer.get_data_from_url",
+        lambda a, b: fake_data,
     )
     def test_without_gss(self):
-        layer = OsniLayer('foo.bar/baz', None, 'area_name')
+        layer = OsniLayer("foo.bar/baz", None, "area_name")
         self.assertEqual(2, len(layer.features))
         for feature in layer.features:
-            self.assertTrue('gss' not in feature)
-            self.assertIsInstance(feature['geometry'], MultiPolygon)
+            self.assertTrue("gss" not in feature)
+            self.assertIsInstance(feature["geometry"], MultiPolygon)

@@ -1,10 +1,11 @@
 from django import forms
 
-class CustomOrganisationChoiceField(forms.ModelChoiceField):
 
+class CustomOrganisationChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
         return "{name} ({start} - {end})".format(
-            name=obj.name, start=obj.start_date, end=obj.end_date)
+            name=obj.name, start=obj.start_date, end=obj.end_date
+        )
 
 
-INVALID_SOURCES = ('unknown', 'lgbce', '')
+INVALID_SOURCES = ("unknown", "lgbce", "")

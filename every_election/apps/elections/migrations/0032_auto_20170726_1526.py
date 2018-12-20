@@ -8,14 +8,14 @@ import elections.models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('elections', '0031_auto_20170726_1333'),
-    ]
+    dependencies = [("elections", "0031_auto_20170726_1333")]
 
     operations = [
         migrations.AlterField(
-            model_name='document',
-            name='uploaded_file',
-            field=models.FileField(storage=elections.models.PdfS3Storage(), upload_to=''),
-        ),
+            model_name="document",
+            name="uploaded_file",
+            field=models.FileField(
+                storage=elections.models.PdfS3Storage(), upload_to=""
+            ),
+        )
     ]

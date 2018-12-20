@@ -6,28 +6,37 @@ from model_utils import Choices
 
 
 class DateConstraintMixin:
-
     def check_start_date(self):
         if type(self.start_date) == str:
             self.start_date = parse_date(self.start_date)
-        if self.start_date and self.organisation.start_date and self.start_date < self.organisation.start_date:
+        if (
+            self.start_date
+            and self.organisation.start_date
+            and self.start_date < self.organisation.start_date
+        ):
             raise ValidationError(
-                'start_date (%s) must be on or after parent organisation start_date (%s)' %\
-                (self.start_date.isoformat(), self.organisation.start_date.isoformat())
+                "start_date (%s) must be on or after parent organisation start_date (%s)"
+                % (
+                    self.start_date.isoformat(),
+                    self.organisation.start_date.isoformat(),
+                )
             )
 
     def check_end_date(self):
         if type(self.end_date) == str:
             self.end_date = parse_date(self.end_date)
-        if self.end_date and self.organisation.end_date and self.end_date > self.organisation.end_date:
+        if (
+            self.end_date
+            and self.organisation.end_date
+            and self.end_date > self.organisation.end_date
+        ):
             raise ValidationError(
-                'end_date (%s) must be on or before parent organisation end_date (%s)' %\
-                (self.end_date.isoformat(), self.organisation.end_date.isoformat())
+                "end_date (%s) must be on or before parent organisation end_date (%s)"
+                % (self.end_date.isoformat(), self.organisation.end_date.isoformat())
             )
 
 
 class OrganisationManager(models.QuerySet):
-
     def get_date_filter(self, date):
         return models.Q(start_date__lte=date) & (
             models.Q(end_date__gte=date) | models.Q(end_date=None)
@@ -38,9 +47,9 @@ class OrganisationManager(models.QuerySet):
 
     def get_by_date(self, organisation_type, official_identifier, date):
         return self.get(
-            models.Q(organisation_type=organisation_type) &\
-            models.Q(official_identifier=official_identifier) &\
-            self.get_date_filter(date)
+            models.Q(organisation_type=organisation_type)
+            & models.Q(official_identifier=official_identifier)
+            & self.get_date_filter(date)
         )
 
 
@@ -48,9 +57,10 @@ class Organisation(models.Model):
     """
     An organisation that can hold an election in the UK
     """
+
     ORGTYPES = Choices(
         ("combined-authority", "combined-authority"),
-        ('sp', 'sp'),
+        ("sp", "sp"),
         ("gla", "gla"),
         ("local-authority", "local-authority"),
         ("naw", "naw"),
@@ -60,17 +70,18 @@ class Organisation(models.Model):
         ("sp", "sp"),
     )
 
-    official_identifier = models.CharField(
-        blank=False, max_length=255, db_index=True)
-    organisation_type = models.CharField(blank=False, max_length=255,
-        choices=ORGTYPES, default='local-authority')
+    official_identifier = models.CharField(blank=False, max_length=255, db_index=True)
+    organisation_type = models.CharField(
+        blank=False, max_length=255, choices=ORGTYPES, default="local-authority"
+    )
     organisation_subtype = models.CharField(blank=True, max_length=255)
     official_name = models.CharField(blank=True, max_length=255)
     common_name = models.CharField(blank=True, max_length=255)
     slug = models.CharField(blank=True, max_length=100)
     territory_code = models.CharField(blank=True, max_length=10)
     election_types = models.ManyToManyField(
-        'elections.ElectionType', through='elections.ElectedRole')
+        "elections.ElectionType", through="elections.ElectedRole"
+    )
     election_name = models.CharField(blank=True, max_length=255)
     start_date = models.DateField(null=False)
     end_date = models.DateField(blank=True, null=True)
@@ -86,11 +97,11 @@ class Organisation(models.Model):
         return self.official_name or self.common_name or self.official_identifier
 
     class Meta:
-        ordering = ('official_name', '-start_date')
-        get_latest_by = 'start_date'
+        ordering = ("official_name", "-start_date")
+        get_latest_by = "start_date"
         unique_together = (
-            ('official_identifier', 'organisation_type', 'start_date'),
-            ('official_identifier', 'organisation_type', 'end_date')
+            ("official_identifier", "organisation_type", "start_date"),
+            ("official_identifier", "organisation_type", "end_date"),
         )
         """
         Note:
@@ -124,25 +135,25 @@ class Organisation(models.Model):
         else:
             if date < self.start_date:
                 raise ValueError(
-                    'date %s is before organisation start_date (%s)' %\
-                    (date.isoformat(), self.start_date.isoformat())
+                    "date %s is before organisation start_date (%s)"
+                    % (date.isoformat(), self.start_date.isoformat())
                 )
             if self.end_date and date > self.end_date:
                 raise ValueError(
-                    'date %s is after organisation end_date (%s)' %\
-                    (date.isoformat(), self.end_date.isoformat())
+                    "date %s is after organisation end_date (%s)"
+                    % (date.isoformat(), self.end_date.isoformat())
                 )
             try:
                 return self.geographies.get(
-                    (models.Q(start_date__lte=date) | models.Q(start_date=None)) &\
-                    (models.Q(end_date__gte=date) | models.Q(end_date=None))
+                    (models.Q(start_date__lte=date) | models.Q(start_date=None))
+                    & (models.Q(end_date__gte=date) | models.Q(end_date=None))
                 )
             except OrganisationGeography.DoesNotExist:
                 return None
 
 
 class OrganisationGeography(DateConstraintMixin, models.Model):
-    organisation = models.ForeignKey(Organisation, related_name='geographies')
+    organisation = models.ForeignKey(Organisation, related_name="geographies")
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     gss = models.CharField(blank=True, max_length=20)
@@ -154,9 +165,7 @@ class OrganisationGeography(DateConstraintMixin, models.Model):
         if self.gss:
             return self.gss
         return "{name} ({start} - {end})".format(
-            name=self.organisation.name,
-            start=self.start_date,
-            end=self.end_date
+            name=self.organisation.name, start=self.start_date, end=self.end_date
         )
 
     def save(self, *args, **kwargs):
@@ -166,12 +175,9 @@ class OrganisationGeography(DateConstraintMixin, models.Model):
 
     class Meta:
         verbose_name_plural = "Organisation Geographies"
-        ordering = ('-start_date',)
-        get_latest_by = 'start_date'
-        unique_together = (
-            ('organisation', 'start_date'),
-            ('organisation', 'end_date')
-        )
+        ordering = ("-start_date",)
+        get_latest_by = "start_date"
+        unique_together = (("organisation", "start_date"), ("organisation", "end_date"))
         """
         Note:
         This model also has an additional constraint to prevent
@@ -182,7 +188,7 @@ class OrganisationGeography(DateConstraintMixin, models.Model):
 
 
 class OrganisationDivisionSet(DateConstraintMixin, models.Model):
-    organisation = models.ForeignKey(Organisation, related_name='divisionset')
+    organisation = models.ForeignKey(Organisation, related_name="divisionset")
     start_date = models.DateField(null=False)
     end_date = models.DateField(null=True, blank=True)
     legislation_url = models.CharField(blank=True, max_length=500, null=True)
@@ -194,10 +200,7 @@ class OrganisationDivisionSet(DateConstraintMixin, models.Model):
 
     def __str__(self):
         return "{}:{} ({} to {})".format(
-            self.pk,
-            self.short_title,
-            self.start_date,
-            self.end_date or "now"
+            self.pk, self.short_title, self.start_date, self.end_date or "now"
         )
 
     @property
@@ -218,10 +221,10 @@ class OrganisationDivisionSet(DateConstraintMixin, models.Model):
 
     class Meta:
         verbose_name_plural = "Organisation Division Sets"
-        ordering = ('-start_date',)
-        get_latest_by = 'start_date'
-        unique_together = ('organisation', 'start_date')
-        unique_together = ('organisation', 'end_date')
+        ordering = ("-start_date",)
+        get_latest_by = "start_date"
+        unique_together = ("organisation", "start_date")
+        unique_together = ("organisation", "end_date")
         """
         Note:
         This model also has an additional constraint to prevent
@@ -231,19 +234,23 @@ class OrganisationDivisionSet(DateConstraintMixin, models.Model):
 
 
 class DivisionManager(models.QuerySet):
-
     def filter_by_date(self, date):
         return self.filter(
-            models.Q(divisionset__start_date__lte=date) &
-            (models.Q(divisionset__end_date__gte=date) | models.Q(divisionset__end_date=None))
+            models.Q(divisionset__start_date__lte=date)
+            & (
+                models.Q(divisionset__end_date__gte=date)
+                | models.Q(divisionset__end_date=None)
+            )
         )
 
     def filter_with_temp_id(self):
-        return self.extra(where=[
-            "LEFT(organisations_organisationdivision.official_identifier,4) != 'gss:'",
-            "LEFT(organisations_organisationdivision.official_identifier,8) != 'unit_id:'",
-            "LEFT(organisations_organisationdivision.official_identifier,9) != 'osni_oid:'",
-        ])
+        return self.extra(
+            where=[
+                "LEFT(organisations_organisationdivision.official_identifier,4) != 'gss:'",
+                "LEFT(organisations_organisationdivision.official_identifier,8) != 'unit_id:'",
+                "LEFT(organisations_organisationdivision.official_identifier,9) != 'osni_oid:'",
+            ]
+        )
 
 
 class OrganisationDivision(models.Model):
@@ -252,14 +259,14 @@ class OrganisationDivision(models.Model):
 
     This could be a ward, constituency or office
     """
-    organisation = models.ForeignKey(Organisation, related_name='divisions')
+
+    organisation = models.ForeignKey(Organisation, related_name="divisions")
     divisionset = models.ForeignKey(
-        OrganisationDivisionSet, related_name='divisions', null=False)
+        OrganisationDivisionSet, related_name="divisions", null=False
+    )
     name = models.CharField(blank=True, max_length=255)
-    official_identifier = models.CharField(
-        blank=True, max_length=255, db_index=True)
-    temp_id = models.CharField(
-        blank=True, max_length=255, db_index=True)
+    official_identifier = models.CharField(blank=True, max_length=255, db_index=True)
+    temp_id = models.CharField(blank=True, max_length=255, db_index=True)
     slug = models.CharField(blank=True, max_length=100)
     division_type = models.CharField(blank=True, max_length=255)
     division_subtype = models.CharField(blank=True, max_length=255)
@@ -271,31 +278,24 @@ class OrganisationDivision(models.Model):
     ValidationError = ValueError
     objects = DivisionManager().as_manager()
 
-
     def __str__(self):
         return "{}".format(self.name)
 
     class Meta:
         verbose_name_plural = "Organisation Divisions"
-        ordering = ('name',)
-        unique_together = (
-            'organisation',
-            'divisionset',
-            'official_identifier'
-        )
+        ordering = ("name",)
+        unique_together = ("organisation", "divisionset", "official_identifier")
 
     def format_geography_link(self):
         try:
-            code_type, code = self.geography_curie.split(':')
+            code_type, code = self.geography_curie.split(":")
         except (ValueError, AttributeError):
             return None
 
-        if code_type.lower() != 'gss':
+        if code_type.lower() != "gss":
             return None
 
-        return "https://mapit.mysociety.org/code/{}/{}".format(
-            code_type, code
-        )
+        return "https://mapit.mysociety.org/code/{}/{}".format(code_type, code)
 
     @property
     def geography_curie(self):
@@ -303,7 +303,6 @@ class OrganisationDivision(models.Model):
 
 
 class DivisionGeography(models.Model):
-    division = models.OneToOneField(
-        OrganisationDivision, related_name="geography")
+    division = models.OneToOneField(OrganisationDivision, related_name="geography")
     geography = models.MultiPolygonField()
     source = models.CharField(blank=True, max_length=255)

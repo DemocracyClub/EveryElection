@@ -7,13 +7,10 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('elections', '0038_auto_20180309_1126'),
-    ]
+    dependencies = [("elections", "0038_auto_20180309_1126")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='metadata',
-            options={'verbose_name_plural': 'MetaData'},
-        ),
+            name="metadata", options={"verbose_name_plural": "MetaData"}
+        )
     ]

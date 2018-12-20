@@ -9,22 +9,33 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('elections', '0037_auto_20180126_1612'),
-    ]
+    dependencies = [("elections", "0037_auto_20180126_1612")]
 
     operations = [
         migrations.CreateModel(
-            name='MetaData',
+            name="MetaData",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('description', models.CharField(max_length=100)),
-                ('data', django.contrib.postgres.fields.jsonb.JSONField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("description", models.CharField(max_length=100)),
+                ("data", django.contrib.postgres.fields.jsonb.JSONField()),
             ],
         ),
         migrations.AddField(
-            model_name='election',
-            name='metadata',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='elections.MetaData'),
+            model_name="election",
+            name="metadata",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="elections.MetaData",
+            ),
         ),
     ]

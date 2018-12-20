@@ -29,30 +29,31 @@ class ReferenceDefinitionView(TemplateView):
 
             # for the moment leave 'ref' and 'eu' types out of the docs
             # because our spec for these is incomplete
-            if et_key == 'eu' or et_key == 'ref':
+            if et_key == "eu" or et_key == "ref":
                 continue
 
-            et_record['slug'] = et_key
-            et_record['subtype'] = None
+            et_record["slug"] = et_key
+            et_record["subtype"] = None
 
-            if et_record['subtypes']:
+            if et_record["subtypes"]:
                 # if we've got subtypes, duplicate the
                 # election type data for each subtype
-                for s_record in et_record['subtypes']:
+                for s_record in et_record["subtypes"]:
                     table_rec = et_record.copy()
-                    table_rec['subtype'] = s_record
+                    table_rec["subtype"] = s_record
                     # subtype data takes precedence if it exists
-                    if 'can_have_orgs' in s_record:
-                        table_rec['can_have_orgs'] = s_record['can_have_orgs']
-                    if 'can_have_divs' in s_record:
-                        table_rec['can_have_divs'] = s_record['can_have_divs']
+                    if "can_have_orgs" in s_record:
+                        table_rec["can_have_orgs"] = s_record["can_have_orgs"]
+                    if "can_have_divs" in s_record:
+                        table_rec["can_have_divs"] = s_record["can_have_divs"]
                     election_types_table.append(table_rec)
             else:
                 # otherwise just shove it in the list
                 election_types_table.append(et_record)
 
-        context['election_types'] = election_types_table
+        context["election_types"] = election_types_table
         return context
+
 
 class AllElectionsView(ListView):
     template_name = "elections/elections.html"
@@ -62,10 +63,11 @@ class AllElectionsView(ListView):
     def get_queryset(self):
         return Election.public_objects.all()
 
+
 class SingleElection(AccessMixin, DetailView):
     model = Election
-    slug_url_kwarg = 'election_id'
-    slug_field = 'election_id'
+    slug_url_kwarg = "election_id"
+    slug_field = "election_id"
 
     def get_queryset(self):
         return Election.public_objects.all()
@@ -81,8 +83,8 @@ class SingleElection(AccessMixin, DetailView):
         else:
             form = NoticeOfElectionForm()
         context = super().get_context_data(**kwargs)
-        context['form'] = form
-        context['user_can_upload_docs'] = user_is_moderator(self.request.user)
+        context["form"] = form
+        context["user_can_upload_docs"] = user_is_moderator(self.request.user)
         return context
 
     def post(self, *args, **kwargs):
@@ -91,14 +93,14 @@ class SingleElection(AccessMixin, DetailView):
 
         form = NoticeOfElectionForm(self.request.POST)
         if form.is_valid():
-            document_url = form.cleaned_data['document']
+            document_url = form.cleaned_data["document"]
 
             doc = Document()
             doc.source_url = document_url
-            doc.archive_document(document_url, kwargs['election_id'])
+            doc.archive_document(document_url, kwargs["election_id"])
             doc.save()
 
-            e = Election.public_objects.get(election_id=kwargs['election_id'])
+            e = Election.public_objects.get(election_id=kwargs["election_id"])
             e.notice = doc
             e.save()
 

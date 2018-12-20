@@ -7,7 +7,7 @@ def overlap_percent(geom1, geom2):
     g1 = geom1.transform(27700, clone=True)
     g2 = geom2.transform(27700, clone=True)
     intersection = g1.intersection(g2)
-    return (intersection.area/g1.area)*100
+    return (intersection.area / g1.area) * 100
 
 
 def normalize_name_for_matching(name):
@@ -16,12 +16,12 @@ def normalize_name_for_matching(name):
     # and the suffixes ' Ward' and ' ED' (which are appended to
     # the names of wards and electoral districts in BoundaryLine)
     slug = slugify(name)
-    if slug.endswith('-ed'):
+    if slug.endswith("-ed"):
         return slug[:-3]
-    if slug.endswith('-ward'):
+    if slug.endswith("-ward"):
         return slug[:-5]
     return slug
 
 
 def split_code(code):
-    return tuple(code.split(':'))
+    return tuple(code.split(":"))

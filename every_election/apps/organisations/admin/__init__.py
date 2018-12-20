@@ -3,12 +3,13 @@ from organisations.models import (
     Organisation,
     OrganisationDivision,
     OrganisationDivisionSet,
-    OrganisationGeography
+    OrganisationGeography,
 )
 from .division_problem import DivisionProblem, DivisionProblemAdmin
 from .organisation_problem import OrganisationProblem, OrganisationProblemAdmin
 from .organisation_geography_problem import (
-    OrganisationGeographyProblem, OrganisationGeographyProblemAdmin
+    OrganisationGeographyProblem,
+    OrganisationGeographyProblemAdmin,
 )
 from .organisation import OrganisationAdmin
 from .organisation_division import OrganisationDivisionAdmin

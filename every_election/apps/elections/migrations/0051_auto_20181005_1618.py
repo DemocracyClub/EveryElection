@@ -8,15 +8,13 @@ import elections.managers
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('elections', '0050_auto_20181005_1425'),
-    ]
+    dependencies = [("elections", "0050_auto_20181005_1425")]
 
     operations = [
         migrations.AlterModelManagers(
-            name='election',
+            name="election",
             managers=[
-                ('private_objects', elections.managers.PrivateElectionsManager()),
+                ("private_objects", elections.managers.PrivateElectionsManager())
             ],
-        ),
+        )
     ]

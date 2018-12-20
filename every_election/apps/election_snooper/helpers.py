@@ -8,7 +8,7 @@ import requests
 
 
 def post_to_slack(message):
-    if not hasattr(settings, 'SLACK_WEBHOOK_URL'):
+    if not hasattr(settings, "SLACK_WEBHOOK_URL"):
         warnings.warn("settings.SLACK_WEBHOOK_URL is not set")
         return
 

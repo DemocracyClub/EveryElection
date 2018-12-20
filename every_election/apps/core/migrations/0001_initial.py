@@ -6,7 +6,7 @@ from django.contrib.auth.models import Group, User
 
 
 def add_moderator_group(apps, schema_editor):
-    g = Group.objects.create(name='moderators')
+    g = Group.objects.create(name="moderators")
     g.save()
     for user in User.objects.all():
         # add any existing admin users
@@ -17,10 +17,6 @@ def add_moderator_group(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('auth', '0008_alter_user_username_max_length'),
-    ]
+    dependencies = [("auth", "0008_alter_user_username_max_length")]
 
-    operations = [
-        migrations.RunPython(add_moderator_group),
-    ]
+    operations = [migrations.RunPython(add_moderator_group)]

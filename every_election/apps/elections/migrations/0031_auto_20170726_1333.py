@@ -9,22 +9,38 @@ import storages.backends.s3boto3
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('elections', '0030_merge_20170424_1402'),
-    ]
+    dependencies = [("elections", "0030_merge_20170424_1402")]
 
     operations = [
         migrations.CreateModel(
-            name='Document',
+            name="Document",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('source_url', models.URLField(max_length=1000)),
-                ('uploaded_file', models.FileField(storage=storages.backends.s3boto3.S3Boto3Storage(), upload_to='')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("source_url", models.URLField(max_length=1000)),
+                (
+                    "uploaded_file",
+                    models.FileField(
+                        storage=storages.backends.s3boto3.S3Boto3Storage(), upload_to=""
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='election',
-            name='notice',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='elections.Document'),
+            model_name="election",
+            name="notice",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="elections.Document",
+            ),
         ),
     ]

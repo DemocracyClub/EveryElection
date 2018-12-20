@@ -6,11 +6,10 @@ from elections.query_helpers import get_point_from_postcode
 
 
 class ElectionQuerySet(models.QuerySet):
-
     def for_point(self, point):
         return self.filter(
-            models.Q(division_geography__geography__contains=point) |
-            models.Q(organisation_geography__geography__contains=point)
+            models.Q(division_geography__geography__contains=point)
+            | models.Q(organisation_geography__geography__contains=point)
         )
 
     def for_lat_lng(self, lat, lng):
@@ -29,9 +28,7 @@ class ElectionQuerySet(models.QuerySet):
         """
         recent_past = datetime.today() - timedelta(days=30)
         return self.filter(
-            models.Q(poll_open_date__gt=recent_past)
-            |
-            models.Q(current=True)
+            models.Q(poll_open_date__gt=recent_past) | models.Q(current=True)
         ).exclude(current=False)
 
     def future(self):
@@ -43,17 +40,13 @@ class ElectionQuerySet(models.QuerySet):
         elif isinstance(status, str):
             query = models.Q(moderationhistory__status__short_label=status)
         else:
-            raise TypeError('Expected list or str found {}'.format(type(status)))
+            raise TypeError("Expected list or str found {}".format(type(status)))
 
-        return self\
-            .annotate(
-                latest_status=models.Max('moderationhistory__modified')
-            )\
-            .filter(
-                query
-                &
-                models.Q(moderationhistory__modified=models.F('latest_status'))
-            )
+        return self.annotate(
+            latest_status=models.Max("moderationhistory__modified")
+        ).filter(
+            query & models.Q(moderationhistory__modified=models.F("latest_status"))
+        )
 
 
 class PublicElectionsManager(models.Manager.from_queryset(ElectionQuerySet)):
@@ -64,8 +57,9 @@ class PublicElectionsManager(models.Manager.from_queryset(ElectionQuerySet)):
     Instead of remembering to filter on (latest status == approved)
     in every front-end query we can use this manager.
     """
+
     def get_queryset(self):
-        return super().get_queryset().filter_by_status('Approved')
+        return super().get_queryset().filter_by_status("Approved")
 
 
 class PrivateElectionsManager(models.Manager.from_queryset(ElectionQuerySet)):
@@ -77,4 +71,5 @@ class PrivateElectionsManager(models.Manager.from_queryset(ElectionQuerySet)):
     In these situations we can explicitly use this manager to
     query all election objects.
     """
+
     use_in_migrations = True

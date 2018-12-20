@@ -7,14 +7,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0044_auto_20180619_1200'),
-    ]
+    dependencies = [("organisations", "0044_auto_20180619_1200")]
 
     operations = [
         migrations.AddField(
-            model_name='organisation',
-            name='legislation_url',
+            model_name="organisation",
+            name="legislation_url",
             field=models.CharField(blank=True, max_length=500, null=True),
-        ),
+        )
     ]

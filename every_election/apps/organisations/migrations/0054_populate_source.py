@@ -6,20 +6,23 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0053_auto_20180705_1041'),
-    ]
+    dependencies = [("organisations", "0053_auto_20180705_1041")]
 
     operations = [
-        migrations.RunSQL("""
+        migrations.RunSQL(
+            """
         UPDATE organisations_organisationgeography
         SET source='unknown';
-        """),
-        migrations.RunSQL("""
+        """
+        ),
+        migrations.RunSQL(
+            """
         UPDATE organisations_divisiongeography
         SET source='unknown';
-        """),
-        migrations.RunSQL("""
+        """
+        ),
+        migrations.RunSQL(
+            """
         UPDATE public.organisations_divisiongeography AS dg
         SET source='lgbce'
         FROM organisations_organisationdivision od
@@ -27,5 +30,6 @@ class Migration(migrations.Migration):
         AND LEFT(od.official_identifier,4) != 'gss:'
         AND LEFT(od.official_identifier,8) != 'unit_id:'
         AND LEFT(od.official_identifier,9) != 'osni_oid:';
-        """),
+        """
+        ),
     ]

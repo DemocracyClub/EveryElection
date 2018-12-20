@@ -9,21 +9,28 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='SnoopedElection',
+            name="SnoopedElection",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('source', models.URLField(blank=True)),
-                ('snooper_name', models.CharField(blank=True, max_length=100)),
-                ('title', models.CharField(blank=True, max_length=800)),
-                ('date', models.DateField()),
-                ('cause', models.CharField(blank=True, max_length=800)),
-                ('detail_url', models.URLField(blank=True)),
-                ('detail', models.TextField(blank=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("source", models.URLField(blank=True)),
+                ("snooper_name", models.CharField(blank=True, max_length=100)),
+                ("title", models.CharField(blank=True, max_length=800)),
+                ("date", models.DateField()),
+                ("cause", models.CharField(blank=True, max_length=800)),
+                ("detail_url", models.URLField(blank=True)),
+                ("detail", models.TextField(blank=True)),
             ],
-        ),
+        )
     ]

@@ -7,18 +7,15 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0018_auto_20170113_1738'),
-    ]
+    dependencies = [("organisations", "0018_auto_20170113_1738")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='organisationdivisionset',
-            options={'ordering': ('-start_date',)},
+            name="organisationdivisionset", options={"ordering": ("-start_date",)}
         ),
         migrations.AddField(
-            model_name='organisationdivisionset',
-            name='consultation_url',
+            model_name="organisationdivisionset",
+            name="consultation_url",
             field=models.CharField(blank=True, max_length=500, null=True),
         ),
     ]

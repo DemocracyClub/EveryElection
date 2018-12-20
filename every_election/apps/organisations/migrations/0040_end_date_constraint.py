@@ -6,14 +6,12 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0039_auto_20180607_0957'),
-    ]
+    dependencies = [("organisations", "0039_auto_20180607_0957")]
 
     operations = [
-        migrations.RunSQL('CREATE EXTENSION IF NOT EXISTS btree_gist;'),
-
-        migrations.RunSQL("""
+        migrations.RunSQL("CREATE EXTENSION IF NOT EXISTS btree_gist;"),
+        migrations.RunSQL(
+            """
             ALTER TABLE organisations_organisationgeography
             ADD CONSTRAINT no_org_geog_overlaps
             EXCLUDE USING GIST (
@@ -29,8 +27,9 @@ class Migration(migrations.Migration):
                 ) WITH &&
             );
         """,
-        reverse_sql="""
+            reverse_sql="""
             ALTER TABLE organisations_organisationgeography
             DROP CONSTRAINT no_org_geog_overlaps;
-        """),
+        """,
+        ),
     ]

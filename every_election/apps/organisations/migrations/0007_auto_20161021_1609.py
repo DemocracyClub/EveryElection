@@ -7,18 +7,15 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0006_organisationdivision'),
-    ]
+    dependencies = [("organisations", "0006_organisationdivision")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='organisation',
-            options={'ordering': ('official_name',)},
+            name="organisation", options={"ordering": ("official_name",)}
         ),
         migrations.AddField(
-            model_name='organisation',
-            name='election_name',
+            model_name="organisation",
+            name="election_name",
             field=models.CharField(blank=True, max_length=255),
         ),
     ]

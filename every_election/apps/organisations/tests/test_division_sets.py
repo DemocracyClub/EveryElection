@@ -2,7 +2,7 @@ import pytest
 
 from organisations.tests.factories import (
     OrganisationDivisionSetFactory,
-    OrganisationDivisionFactory
+    OrganisationDivisionFactory,
 )
 from elections.utils import ElectionBuilder
 from elections.tests.factories import ElectedRoleFactory
@@ -25,7 +25,7 @@ def test_division_set_by_date(db):
     ElectedRoleFactory(organisation=org)
 
     def _make_ids_for_date(date):
-        x = ElectionBuilder('local', date)
+        x = ElectionBuilder("local", date)
         x.with_organisation(org)
         x.with_division(org_div)
         return x
@@ -34,5 +34,4 @@ def test_division_set_by_date(db):
 
     with pytest.raises(ValueError) as excinfo:
         _make_ids_for_date(FUTURE_DATE)
-    assert 'DivisionSet end date before election date' in str(excinfo.value)
-
+    assert "DivisionSet end date before election date" in str(excinfo.value)

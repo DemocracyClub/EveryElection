@@ -7,22 +7,27 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0054_populate_source'),
-    ]
+    dependencies = [("organisations", "0054_populate_source")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='organisationdivision',
-            options={'ordering': ('name',), 'verbose_name_plural': 'Organisation Divisions'},
+            name="organisationdivision",
+            options={
+                "ordering": ("name",),
+                "verbose_name_plural": "Organisation Divisions",
+            },
         ),
         migrations.AlterModelOptions(
-            name='organisationdivisionset',
-            options={'get_latest_by': 'start_date', 'ordering': ('-start_date',), 'verbose_name_plural': 'Organisation Division Sets'},
+            name="organisationdivisionset",
+            options={
+                "get_latest_by": "start_date",
+                "ordering": ("-start_date",),
+                "verbose_name_plural": "Organisation Division Sets",
+            },
         ),
         migrations.AlterField(
-            model_name='organisationdivisionset',
-            name='end_date',
+            model_name="organisationdivisionset",
+            name="end_date",
             field=models.DateField(blank=True, null=True),
         ),
     ]

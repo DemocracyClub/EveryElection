@@ -4,6 +4,7 @@ from election_snooper.snoopers.aldc import ALDCScraper
 from election_snooper.snoopers.customsearch import CustomSearchScraper
 from election_snooper.snoopers.lib_dem_newbies import LibDemNewbiesScraper
 
+
 class Command(BaseCommand):
 
     # def add_arguments(self, parser):

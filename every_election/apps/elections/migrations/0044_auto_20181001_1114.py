@@ -7,14 +7,21 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('elections', '0043_auto_20180720_1631'),
-    ]
+    dependencies = [("elections", "0043_auto_20180720_1631")]
 
     operations = [
         migrations.AlterField(
-            model_name='election',
-            name='suggested_status',
-            field=models.CharField(choices=[('suggested', 'Suggested'), ('rejected', 'Rejected'), ('approved', 'Approved'), ('deleted', 'Deleted')], default='suggested', max_length=255),
-        ),
+            model_name="election",
+            name="suggested_status",
+            field=models.CharField(
+                choices=[
+                    ("suggested", "Suggested"),
+                    ("rejected", "Rejected"),
+                    ("approved", "Approved"),
+                    ("deleted", "Deleted"),
+                ],
+                default="suggested",
+                max_length=255,
+            ),
+        )
     ]

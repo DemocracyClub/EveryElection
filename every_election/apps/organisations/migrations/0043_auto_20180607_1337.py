@@ -8,14 +8,16 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0042_cleanup_old_geogs'),
-    ]
+    dependencies = [("organisations", "0042_cleanup_old_geogs")]
 
     operations = [
         migrations.AlterField(
-            model_name='divisiongeography',
-            name='division',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='geography', to='organisations.OrganisationDivision'),
-        ),
+            model_name="divisiongeography",
+            name="division",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="geography",
+                to="organisations.OrganisationDivision",
+            ),
+        )
     ]

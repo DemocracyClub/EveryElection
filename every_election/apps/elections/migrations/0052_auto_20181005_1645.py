@@ -7,13 +7,15 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('elections', '0051_auto_20181005_1618'),
-    ]
+    dependencies = [("elections", "0051_auto_20181005_1618")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='moderationhistory',
-            options={'get_latest_by': 'modified', 'ordering': ('election', '-modified'), 'verbose_name_plural': 'Moderation History'},
-        ),
+            name="moderationhistory",
+            options={
+                "get_latest_by": "modified",
+                "ordering": ("election", "-modified"),
+                "verbose_name_plural": "Moderation History",
+            },
+        )
     ]

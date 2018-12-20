@@ -7,19 +7,17 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0017_auto_20170113_1625'),
-    ]
+    dependencies = [("organisations", "0017_auto_20170113_1625")]
 
     operations = [
         migrations.AddField(
-            model_name='organisationdivision',
-            name='mapit_generation_high',
+            model_name="organisationdivision",
+            name="mapit_generation_high",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='organisationdivision',
-            name='mapit_generation_low',
+            model_name="organisationdivision",
+            name="mapit_generation_low",
             field=models.IntegerField(blank=True, null=True),
         ),
     ]

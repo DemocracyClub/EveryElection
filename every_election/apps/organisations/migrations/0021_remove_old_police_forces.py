@@ -9,23 +9,16 @@ from organisations import constants
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0020_rename_police_force_to_area'),
-    ]
+    dependencies = [("organisations", "0020_rename_police_force_to_area")]
 
     def remove_old_areas(apps, schema_editor):
-        Organisation = apps.get_model(
-            "organisations", "Organisation")
+        Organisation = apps.get_model("organisations", "Organisation")
 
         Organisation.objects.filter(
-            organisation_type='police_area',
-            slug__in=constants.AREAS_WITHOUT_PCCS).delete()
+            organisation_type="police_area", slug__in=constants.AREAS_WITHOUT_PCCS
+        ).delete()
 
     def do_nothing(apps, schema_editor):
         pass
 
-    operations = [
-        migrations.RunPython(
-            remove_old_areas, do_nothing),
-
-    ]
+    operations = [migrations.RunPython(remove_old_areas, do_nothing)]

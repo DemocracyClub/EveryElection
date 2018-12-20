@@ -7,14 +7,10 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('elections', '0026_set_default_voting_system'),
-    ]
+    dependencies = [("elections", "0026_set_default_voting_system")]
 
     operations = [
         migrations.AddField(
-            model_name='election',
-            name='current',
-            field=models.NullBooleanField(),
-        ),
+            model_name="election", name="current", field=models.NullBooleanField()
+        )
     ]

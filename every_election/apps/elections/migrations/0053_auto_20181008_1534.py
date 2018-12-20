@@ -8,14 +8,17 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('elections', '0052_auto_20181005_1645'),
-    ]
+    dependencies = [("elections", "0052_auto_20181005_1645")]
 
     operations = [
         migrations.AlterField(
-            model_name='election',
-            name='group',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='_children_qs', to='elections.Election'),
-        ),
+            model_name="election",
+            name="group",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="_children_qs",
+                to="elections.Election",
+            ),
+        )
     ]

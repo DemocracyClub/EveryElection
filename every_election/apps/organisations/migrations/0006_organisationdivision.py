@@ -8,21 +8,36 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('organisations', '0005_organisation_election_types'),
-    ]
+    dependencies = [("organisations", "0005_organisation_election_types")]
 
     operations = [
         migrations.CreateModel(
-            name='OrganisationDivision',
+            name="OrganisationDivision",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('official_identifier', models.CharField(blank=True, db_index=True, max_length=255)),
-                ('gss', models.CharField(blank=True, max_length=20)),
-                ('slug', models.CharField(blank=True, max_length=100)),
-                ('division_type', models.CharField(blank=True, max_length=255)),
-                ('division_subtype', models.CharField(blank=True, max_length=255)),
-                ('organisation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='organisations.Organisation')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "official_identifier",
+                    models.CharField(blank=True, db_index=True, max_length=255),
+                ),
+                ("gss", models.CharField(blank=True, max_length=20)),
+                ("slug", models.CharField(blank=True, max_length=100)),
+                ("division_type", models.CharField(blank=True, max_length=255)),
+                ("division_subtype", models.CharField(blank=True, max_length=255)),
+                (
+                    "organisation",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="organisations.Organisation",
+                    ),
+                ),
             ],
-        ),
+        )
     ]

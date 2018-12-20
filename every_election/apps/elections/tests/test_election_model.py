@@ -3,26 +3,30 @@ from elections.models import (
     DEFAULT_STATUS,
     Election,
     ModerationHistory,
-    ModerationStatuses
+    ModerationStatuses,
 )
 from elections.utils import ElectionBuilder
 from .base_tests import BaseElectionCreatorMixIn
 
 
 class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
-
     def setUp(self):
         super().setUp()
         Election.private_objects.all().delete()
-        self.election_group = ElectionBuilder('local', '2017-06-08')\
-                .build_election_group()
-        self.org_group = ElectionBuilder('local', '2017-06-08')\
-                .with_organisation(self.org1)\
-                .build_organisation_group(self.election_group)
-        self.ballot = ElectionBuilder('local', '2017-06-08')\
-                .with_organisation(self.org1)\
-                .with_division(self.org_div_1)\
-                .build_ballot(self.org_group)
+        self.election_group = ElectionBuilder(
+            "local", "2017-06-08"
+        ).build_election_group()
+        self.org_group = (
+            ElectionBuilder("local", "2017-06-08")
+            .with_organisation(self.org1)
+            .build_organisation_group(self.election_group)
+        )
+        self.ballot = (
+            ElectionBuilder("local", "2017-06-08")
+            .with_organisation(self.org1)
+            .with_division(self.org_div_1)
+            .build_ballot(self.org_group)
+        )
 
     def test_recursive_save_group(self):
         # table should be empty before we start
@@ -90,19 +94,18 @@ class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
 
         # saving the same record again shouldn't though
         self.election_group.seats_contests = 7
-        self.election_group.source = 'some bloke down the pub told me'
+        self.election_group.source = "some bloke down the pub told me"
         self.election_group.save()
         self.assertEqual(1, ModerationHistory.objects.count())
 
     def test_save_with_status(self):
         self.election_group.save()
         self.assertEqual(
-            self.election_group.moderation_status.short_label,
-            DEFAULT_STATUS
+            self.election_group.moderation_status.short_label, DEFAULT_STATUS
         )
 
         self.election_group.save(status=ModerationStatuses.approved.value)
         self.assertEqual(
             self.election_group.moderation_status.short_label,
-            ModerationStatuses.approved.value
+            ModerationStatuses.approved.value,
         )

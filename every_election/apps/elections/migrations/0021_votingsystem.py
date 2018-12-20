@@ -9,23 +9,19 @@ from elections import constants
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('elections', '0020_auto_20170110_1556'),
-    ]
+    dependencies = [("elections", "0020_auto_20170110_1556")]
 
     def add_default_voting_systems(apps, schema_editor):
-        VotingSystem = apps.get_model(
-            "elections", "VotingSystem")
+        VotingSystem = apps.get_model("elections", "VotingSystem")
 
         for system in constants.VOTING_SYSTEMS:
             VotingSystem.objects.update_or_create(
-                slug=system['slug'],
+                slug=system["slug"],
                 defaults={
-                    "name": system['name'],
-                    "wikipedia_url": system['wikipedia_url'],
-                    "description": system['description'],
-
-                }
+                    "name": system["name"],
+                    "wikipedia_url": system["wikipedia_url"],
+                    "description": system["description"],
+                },
             )
 
     def do_nothing(apps, schema_editor):
@@ -33,14 +29,13 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='VotingSystem',
+            name="VotingSystem",
             fields=[
-                ('slug', models.SlugField(primary_key=True, serialize=False)),
-                ('name', models.CharField(blank=True, max_length=100)),
-                ('wikipedia_url', models.URLField(blank=True)),
-                ('description', models.TextField(blank=True)),
+                ("slug", models.SlugField(primary_key=True, serialize=False)),
+                ("name", models.CharField(blank=True, max_length=100)),
+                ("wikipedia_url", models.URLField(blank=True)),
+                ("description", models.TextField(blank=True)),
             ],
         ),
-        migrations.RunPython(
-            add_default_voting_systems, do_nothing),
+        migrations.RunPython(add_default_voting_systems, do_nothing),
     ]

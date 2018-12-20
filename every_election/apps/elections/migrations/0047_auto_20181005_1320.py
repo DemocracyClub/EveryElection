@@ -11,51 +11,96 @@ import elections.managers
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('elections', '0046_update_status'),
-    ]
+    dependencies = [("elections", "0046_update_status")]
 
     operations = [
         migrations.CreateModel(
-            name='ModerationHistory',
+            name="ModerationHistory",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', django_extensions.db.fields.CreationDateTimeField(auto_now_add=True, verbose_name='created')),
-                ('modified', django_extensions.db.fields.ModificationDateTimeField(auto_now=True, verbose_name='modified')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created",
+                    django_extensions.db.fields.CreationDateTimeField(
+                        auto_now_add=True, verbose_name="created"
+                    ),
+                ),
+                (
+                    "modified",
+                    django_extensions.db.fields.ModificationDateTimeField(
+                        auto_now=True, verbose_name="modified"
+                    ),
+                ),
             ],
             options={
-                'ordering': ('-modified', '-created'),
-                'get_latest_by': 'modified',
-                'abstract': False,
+                "ordering": ("-modified", "-created"),
+                "get_latest_by": "modified",
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='ModerationStatus',
+            name="ModerationStatus",
             fields=[
-                ('short_label', models.CharField(choices=[(elections.models.ModerationStatuses('Suggested'), 'Suggested'), (elections.models.ModerationStatuses('Rejected'), 'Rejected'), (elections.models.ModerationStatuses('Approved'), 'Approved'), (elections.models.ModerationStatuses('Deleted'), 'Deleted')], max_length=32, primary_key=True, serialize=False)),
-                ('long_label', models.CharField(max_length=100)),
+                (
+                    "short_label",
+                    models.CharField(
+                        choices=[
+                            (
+                                elections.models.ModerationStatuses("Suggested"),
+                                "Suggested",
+                            ),
+                            (
+                                elections.models.ModerationStatuses("Rejected"),
+                                "Rejected",
+                            ),
+                            (
+                                elections.models.ModerationStatuses("Approved"),
+                                "Approved",
+                            ),
+                            (elections.models.ModerationStatuses("Deleted"), "Deleted"),
+                        ],
+                        max_length=32,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("long_label", models.CharField(max_length=100)),
             ],
         ),
         migrations.AlterModelManagers(
-            name='election',
+            name="election",
             managers=[
-                ('public_objects', django.db.models.manager.Manager()),
-                ('private_objects', elections.managers.PrivateElectionsManager()),
+                ("public_objects", django.db.models.manager.Manager()),
+                ("private_objects", elections.managers.PrivateElectionsManager()),
             ],
         ),
         migrations.AddField(
-            model_name='moderationhistory',
-            name='election',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='elections.Election'),
+            model_name="moderationhistory",
+            name="election",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="elections.Election"
+            ),
         ),
         migrations.AddField(
-            model_name='moderationhistory',
-            name='status',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='elections.ModerationStatus'),
+            model_name="moderationhistory",
+            name="status",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="elections.ModerationStatus",
+            ),
         ),
         migrations.AddField(
-            model_name='election',
-            name='moderation_statuses',
-            field=models.ManyToManyField(through='elections.ModerationHistory', to='elections.ModerationStatus'),
+            model_name="election",
+            name="moderation_statuses",
+            field=models.ManyToManyField(
+                through="elections.ModerationHistory", to="elections.ModerationStatus"
+            ),
         ),
     ]
