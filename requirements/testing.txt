@@ -1,5 +1,6 @@
 -r base.txt
 
+black
 mock
 model-mommy
 tox
