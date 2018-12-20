@@ -1,15 +1,20 @@
 import urllib
-from django.views.generic import TemplateView
-from django.http import HttpResponseRedirect
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.views.generic import TemplateView
 
+from core.helpers import user_is_moderator
 from election_snooper.models import SnoopedElection
 from election_snooper.forms import ReviewElectionForm
 
 
-class SnoopedElectionView(TemplateView):
+class SnoopedElectionView(UserPassesTestMixin, TemplateView):
     template_name = "election_snooper/snooped_election_list.html"
+
+    def test_func(self):
+        return user_is_moderator(self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

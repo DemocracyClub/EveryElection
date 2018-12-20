@@ -1,11 +1,11 @@
 from django.conf.urls import url
 
 from .views import (
-    ElectionTypesView,
     AllElectionsView,
-    IDCreatorWizard,
-    FORMS,
     CONDITION_DICT,
+    ElectionTypesView,
+    FORMS,
+    IDCreatorWizard,
     ReferenceDefinitionView,
     SingleElection,
 )

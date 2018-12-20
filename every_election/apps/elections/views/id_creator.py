@@ -3,8 +3,14 @@ from django.http import HttpResponseRedirect
 from django import forms
 from formtools.wizard.views import NamedUrlSessionWizardView
 
+from core.helpers import user_is_moderator
 from organisations.models import Organisation
-from elections.models import Document, ElectedRole, ElectionSubType
+from elections.models import (
+    Document,
+    ElectedRole,
+    ElectionSubType,
+    ModerationStatuses
+)
 from elections.utils import (
     create_ids_for_each_ballot_paper,
     get_notice_directory,
@@ -17,6 +23,7 @@ from elections.forms import (
     ElectionOrganisationDivisionForm,
     ElectionSourceForm,
 )
+from election_snooper.helpers import post_to_slack
 from election_snooper.models import SnoopedElection
 
 
@@ -203,6 +210,7 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                 self.get_election_subtypes()
             )
             context['all_ids'] = all_ids
+        context['user_is_moderator'] = user_is_moderator(self.request.user)
         return context
 
     def get_form_kwargs(self, step):
@@ -250,8 +258,33 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                 if not election.group_type:
                     election.notice = doc
 
+        status = ModerationStatuses.suggested.value
+        notes = ''
+        if user_is_moderator(self.request.user):
+            status = ModerationStatuses.approved.value
+            notes = 'auto approved for user {}'.format(self.request.user)
+
         for election in context['all_ids']:
-            election.save()
+            election.save(
+                status=status,
+                user=self.request.user,
+                notes=notes
+            )
+
+        if not user_is_moderator(self.request.user) and len(context['all_ids']) > 0:
+
+            ballots = [e for e in context['all_ids'] if e.group_type == None]
+            if len(ballots) == 1:
+                message = """
+                    New election {} suggested by anonymous user:\n
+                    <https://elections.democracyclub.org.uk/election_radar/moderation_queue/>
+                """.format(ballots[0].election_id)
+            else:
+                message = """
+                    {} New elections suggested by anonymous user:\n
+                    <https://elections.democracyclub.org.uk/election_radar/moderation_queue/>
+                """.format(len(ballots))
+            post_to_slack(message)
 
         # if this election was created from a radar entry set the status
         # of the radar entry to indicate we have made an id for it

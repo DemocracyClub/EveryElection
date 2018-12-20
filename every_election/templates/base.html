@@ -30,8 +30,25 @@
                 <li><a href="{% url "reference_definition_view"%}">Reference Definition</a></li>
                 <li><a href="{% url "elections_view"%}">Elections</a></li>
                 <li><a href="{% url "id_creator"%}">ID Creator</a></li>
+                {% if not user.is_authenticated %}
+                  <li>|</li>
+                  <li><a href="{% url "login"%}">Log In</a></li>
+                {% endif %}
             </ul>
         </div>
+
+        {% if user.is_authenticated %}
+        <div class="top-bar-left">
+            <ul class="menu">
+                <li><a href="{% url "snooped_election_view"%}">Election Radar</a></li>
+                <li><a href="{% url "election_moderation_queue"%}">Moderation</a></li>
+                <li>|</li>
+                <li><a href="{% url "logout"%}">Log Out {{ user }}</a></li>
+                <li><a href="{% url "password_change"%}">Change Password</a></li>
+            </ul>
+        </div>
+        {% endif %}
+
     </div>
 </nav>
 

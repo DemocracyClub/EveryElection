@@ -3,9 +3,13 @@
 {% block form_page_header %}
 <h1>Your election IDs</h1>
 
-<p>This is a preview of the IDs that will be created if you click 'create
-IDs'. If you don't know the date of the election(s) then we will make up an ID
-and replace it with the date when it's known.</p>
+{% if not user_is_moderator %}
+<p>
+  Thanks for your submission.
+  This is a preview of the IDs that will be created
+  once your submission is approved by a moderator.
+</p>
+{% endif %}
 
 
 

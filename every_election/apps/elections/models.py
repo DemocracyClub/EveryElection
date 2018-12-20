@@ -4,6 +4,7 @@ import urllib.request
 from datetime import date, timedelta
 from enum import Enum, unique
 
+from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.files import File
@@ -77,6 +78,9 @@ class ModerationStatus(models.Model):
 
     def __str__(self):
         return self.short_label
+
+
+DEFAULT_STATUS = ModerationStatuses.suggested.value
 
 
 class Election(models.Model):
@@ -299,6 +303,10 @@ class Election(models.Model):
 
     @transaction.atomic
     def save(self, *args, **kwargs):
+        status = kwargs.pop('status', None)
+        user = kwargs.pop('user', None)
+        notes = kwargs.pop('notes', '')[:255]
+
         self.division_geography = self.get_division_geography()
         self.organisation_geography = self.get_organisation_geography()
 
@@ -311,23 +319,32 @@ class Election(models.Model):
 
         super().save(*args, **kwargs)
 
+        if (
+            status
+            and status != DEFAULT_STATUS
+            and status != self.moderation_status.short_label
+        ):
+            event = ModerationHistory(
+                election=self,
+                status_id=status,
+                user=user,
+                notes=notes,
+            )
+            event.save()
+
 
 @receiver(post_save, sender=Election, dispatch_uid="init_status_history")
 def init_status_history(sender, instance, **kwargs):
     if not ModerationHistory.objects.all().filter(election=instance).exists():
-        event = ModerationHistory(
-            election=instance,
-            # TODO: update this to 'Suggested' once
-            # we have moderation data entry features
-            status_id=ModerationStatuses.approved.value
-        )
+        event = ModerationHistory(election=instance, status_id=DEFAULT_STATUS)
         event.save()
 
 
 class ModerationHistory(TimeStampedModel):
     election = models.ForeignKey(Election, on_delete=models.CASCADE)
     status = models.ForeignKey(ModerationStatus, on_delete=models.CASCADE)
-    # TODO: add more fields when we add moderation data entry features
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    notes = models.CharField(blank=True, max_length=255)
 
     class Meta:
         verbose_name_plural = "Moderation History"

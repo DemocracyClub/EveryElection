@@ -1,6 +1,9 @@
 from collections import OrderedDict
+
+from django.contrib.auth.mixins import AccessMixin
 from django.views.generic import ListView, DetailView, TemplateView
 
+from core.helpers import user_is_moderator
 from elections.constants import ELECTION_TYPES
 from elections.forms import NoticeOfElectionForm
 from elections.models import ElectionType, Election, Document
@@ -59,7 +62,7 @@ class AllElectionsView(ListView):
     def get_queryset(self):
         return Election.public_objects.all()
 
-class SingleElection(DetailView):
+class SingleElection(AccessMixin, DetailView):
     model = Election
     slug_url_kwarg = 'election_id'
     slug_field = 'election_id'
@@ -79,9 +82,13 @@ class SingleElection(DetailView):
             form = NoticeOfElectionForm()
         context = super().get_context_data(**kwargs)
         context['form'] = form
+        context['user_can_upload_docs'] = user_is_moderator(self.request.user)
         return context
 
     def post(self, *args, **kwargs):
+        if not user_is_moderator(self.request.user):
+            return self.handle_no_permission()
+
         form = NoticeOfElectionForm(self.request.POST)
         if form.is_valid():
             document_url = form.cleaned_data['document']

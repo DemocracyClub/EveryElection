@@ -1,5 +1,10 @@
 from django.test import TestCase
-from elections.models import Election, ModerationHistory
+from elections.models import (
+    DEFAULT_STATUS,
+    Election,
+    ModerationHistory,
+    ModerationStatuses
+)
 from elections.utils import ElectionBuilder
 from .base_tests import BaseElectionCreatorMixIn
 
@@ -88,3 +93,16 @@ class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
         self.election_group.source = 'some bloke down the pub told me'
         self.election_group.save()
         self.assertEqual(1, ModerationHistory.objects.count())
+
+    def test_save_with_status(self):
+        self.election_group.save()
+        self.assertEqual(
+            self.election_group.moderation_status.short_label,
+            DEFAULT_STATUS
+        )
+
+        self.election_group.save(status=ModerationStatuses.approved.value)
+        self.assertEqual(
+            self.election_group.moderation_status.short_label,
+            ModerationStatuses.approved.value
+        )

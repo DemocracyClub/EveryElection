@@ -4,7 +4,7 @@ from django.db import models
 from organisations.models import Organisation
 from organisations.models import OrganisationDivisionSet
 
-from .models import ElectionType, ElectionSubType
+from .models import ElectionSubType, ElectionType
 
 from dc_theme import forms as dc_forms
 
