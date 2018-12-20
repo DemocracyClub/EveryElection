@@ -11,25 +11,25 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunSQL(
             """
-        UPDATE organisations_organisationgeography
-        SET source='unknown';
-        """
+            UPDATE organisations_organisationgeography
+            SET source='unknown';
+            """
         ),
         migrations.RunSQL(
             """
-        UPDATE organisations_divisiongeography
-        SET source='unknown';
-        """
+            UPDATE organisations_divisiongeography
+            SET source='unknown';
+            """
         ),
         migrations.RunSQL(
             """
-        UPDATE public.organisations_divisiongeography AS dg
-        SET source='lgbce'
-        FROM organisations_organisationdivision od
-        WHERE od.id=dg.division_id
-        AND LEFT(od.official_identifier,4) != 'gss:'
-        AND LEFT(od.official_identifier,8) != 'unit_id:'
-        AND LEFT(od.official_identifier,9) != 'osni_oid:';
-        """
+            UPDATE public.organisations_divisiongeography AS dg
+            SET source='lgbce'
+            FROM organisations_organisationdivision od
+            WHERE od.id=dg.division_id
+            AND LEFT(od.official_identifier,4) != 'gss:'
+            AND LEFT(od.official_identifier,8) != 'unit_id:'
+            AND LEFT(od.official_identifier,9) != 'osni_oid:';
+            """
         ),
     ]

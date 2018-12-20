@@ -13,9 +13,9 @@ class Migration(migrations.Migration):
         migrations.RunSQL(
             """
             UPDATE elections_election SET suggested_status='approved'
-        """,
+            """,
             reverse_sql="""
             UPDATE elections_election SET suggested_status='suggested'
-        """,
+            """,
         )
     ]

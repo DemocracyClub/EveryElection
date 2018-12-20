@@ -26,10 +26,10 @@ class Migration(migrations.Migration):
                     ELSE end_date END
                 ) WITH &&
             );
-        """,
+            """,
             reverse_sql="""
             ALTER TABLE organisations_organisationgeography
             DROP CONSTRAINT no_org_geog_overlaps;
-        """,
+            """,
         ),
     ]

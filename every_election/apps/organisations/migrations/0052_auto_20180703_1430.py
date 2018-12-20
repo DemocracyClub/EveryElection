@@ -12,11 +12,11 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunSQL(
             """
-        UPDATE organisations_organisationdivision
-        SET temp_id=official_identifier
-        WHERE LEFT(official_identifier,4) != 'gss:'
-        AND LEFT(official_identifier,8) != 'unit_id:'
-        AND LEFT(official_identifier,9) != 'osni_oid:';
-        """
+            UPDATE organisations_organisationdivision
+            SET temp_id=official_identifier
+            WHERE LEFT(official_identifier,4) != 'gss:'
+            AND LEFT(official_identifier,8) != 'unit_id:'
+            AND LEFT(official_identifier,9) != 'osni_oid:';
+            """
         )
     ]

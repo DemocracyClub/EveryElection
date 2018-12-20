@@ -14,11 +14,11 @@ class Migration(migrations.Migration):
             UPDATE organisations_organisation
             SET organisation_type='police-area'
             WHERE organisation_type='police_area';
-        """,
+            """,
             reverse_sql="""
             UPDATE organisations_organisation
             SET organisation_type='police_area'
             WHERE organisation_type='police-area';
-        """,
+            """,
         )
     ]

@@ -11,9 +11,9 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunSQL(
             """
-        UPDATE organisations_organisationdivision
-        SET official_identifier = geography_curie
-        WHERE official_identifier != geography_curie;
-        """
+            UPDATE organisations_organisationdivision
+            SET official_identifier = geography_curie
+            WHERE official_identifier != geography_curie;
+            """
         )
     ]
