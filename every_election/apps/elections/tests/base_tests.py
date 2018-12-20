@@ -60,13 +60,15 @@ class BaseElectionCreatorMixIn():
             'date': self.date,
         }
 
-    def make_div_id(self, org=None, div=None):
+    def make_div_id(self, org=None, div=None, subtype=None):
         if not org:
             org = self.org1
 
         if not div:
             div = self.org_div_1
 
+        if subtype:
+            return "__".join(map(str, [org.pk, div.pk, subtype]))
         return "__".join(map(str, [org.pk, div.pk]))
 
     def create_ids(self, all_data, save_model=True, **kwargs):

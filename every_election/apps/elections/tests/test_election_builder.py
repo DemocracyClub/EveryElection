@@ -10,6 +10,7 @@ from elections.models import (
 from elections.utils import ElectionBuilder
 from election_snooper.models import SnoopedElection
 from organisations.models import Organisation, OrganisationDivision
+from organisations.tests.factories import OrganisationDivisionFactory
 from .base_tests import BaseElectionCreatorMixIn
 
 
@@ -72,7 +73,7 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
         with self.assertRaises(Organisation.ValidationError):
             builder.with_organisation(self.org1)
 
-    def test_invalid_division(self):
+    def test_invalid_division_not_child_of_org(self):
         org2 = Organisation.objects.create(
             official_identifier='TEST2',
             organisation_type='local-authority',
@@ -95,6 +96,44 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
         # its a child of self.org1
         with self.assertRaises(OrganisationDivision.ValidationError):
             builder.with_division(self.org_div_1)
+
+    def test_invalid_division_wrong_subtype(self):
+        naw_election_type = ElectionType.objects.get(
+            election_type='naw',
+        )
+        region_sub_type = ElectionSubType.objects.get(
+            election_subtype='r',
+            election_type=naw_election_type,
+        )
+        naw_org = Organisation.objects.create(
+            official_identifier='naw',
+            organisation_type='naw',
+            official_name="naw",
+            slug="naw",
+            territory_code="WLS",
+            election_name="National Assembly for Wales elections",
+            start_date=date(2016, 10, 1),
+        )
+        ElectedRole.objects.create(
+            election_type=naw_election_type,
+            organisation=naw_org,
+            elected_title="Assembly Member",
+            elected_role_name="Assembly Member for Foo",
+        )
+        constituency_div = OrganisationDivisionFactory(
+            organisation=naw_org,
+            name="Test Div",
+            slug="test-div",
+            division_election_sub_type='c',
+        )
+        builder = ElectionBuilder('naw', '2017-06-08')\
+            .with_organisation(naw_org)\
+            .with_subtype(region_sub_type)
+
+        # constituency_div is a constituency
+        # but this builder object expects a region
+        with self.assertRaises(OrganisationDivision.ValidationError):
+            builder.with_division(constituency_div)
 
     def test_seats_contested_local_election(self):
         builder = ElectionBuilder('local', '2017-06-08')\

@@ -86,6 +86,16 @@ class ElectionBuilder:
                 (division, self.organisation)
             )
 
+        if (
+            self.subtype
+            and self.subtype.election_subtype
+            != division.division_election_sub_type
+        ):
+            raise OrganisationDivision.ValidationError(
+                "election subtype is '%s' but division is of subtype '%s'" %
+                (self.subtype.election_subtype, division.division_election_sub_type)
+            )
+
         divisionset = division.divisionset
 
         if divisionset.start_date and divisionset.start_date > self.date:
@@ -333,8 +343,13 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                     all_ids.append(subtype_id)
 
                 for div, contest_type in div_data.items():
+                    _, div_id, div_subtype = div.split('__')
+                    if not div_subtype == subtype.election_subtype:
+                        continue
+
                     org_div = OrganisationDivision.objects.get(
-                        pk=div.split('__')[1]
+                        pk=div_id,
+                        division_election_sub_type=subtype.election_subtype
                     )
 
                     builder = ElectionBuilder(
