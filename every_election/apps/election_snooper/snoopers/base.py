@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
-from .helpers import post_to_slack
+from election_snooper.helpers import post_to_slack
 
 class BaseSnooper:
     def get_page(self, url):
