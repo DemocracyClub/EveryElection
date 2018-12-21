@@ -161,4 +161,4 @@ class Command(BaseCommand):
             shutil.rmtree(tempdir)
         except OSError:
             self.stdout.write("Failed to clean up temp files.")
-            self.stdout.write("Oh well. ¯\_(ツ)_/¯ All the important stuff worked.")
+            self.stdout.write("Oh well. ¯\\_(ツ)_/¯ All the important stuff worked.")

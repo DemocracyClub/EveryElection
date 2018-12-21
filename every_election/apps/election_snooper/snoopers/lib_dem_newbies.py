@@ -28,7 +28,7 @@ class LibDemNewbiesScraper(BaseSnooper):
             if "cause" in content.lower():
                 try:
                     cause = re.match(
-                        ".*\n(\S+) seat. [cC]ause: (\S+)\n.*", content
+                        r".*\n(\S+) seat. [cC]ause: (\S+)\n.*", content
                     ).group(2)
                 except AttributeError:
                     cause = "unknown"
