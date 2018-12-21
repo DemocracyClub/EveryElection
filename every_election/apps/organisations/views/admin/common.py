@@ -6,6 +6,3 @@ class CustomOrganisationChoiceField(forms.ModelChoiceField):
         return "{name} ({start} - {end})".format(
             name=obj.name, start=obj.start_date, end=obj.end_date
         )
-
-
-INVALID_SOURCES = ("unknown", "lgbce", "")

@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.forms.widgets import Textarea
 from django_markdown.admin import MarkdownModelAdmin
 from .models import ElectedRole, Election, Explanation, MetaData, ModerationHistory
-from organisations.admin.common import CustomOrganisationChoiceField
+from organisations.views.admin.common import CustomOrganisationChoiceField
 from organisations.models import Organisation
 
 

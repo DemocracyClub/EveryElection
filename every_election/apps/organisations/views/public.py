@@ -2,7 +2,7 @@ from datetime import datetime
 from django.http import Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView, TemplateView
-from .models import Organisation
+from organisations.models import Organisation
 
 
 class SupportedOrganisationsView(ListView):
