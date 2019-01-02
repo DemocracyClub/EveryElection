@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 
+{% block extra_page_css %}
+<style>
+@-moz-document url-prefix() {
+  summary {
+    display: list-item;
+  }
+}
+</style>
+{% endblock extra_page_css %}
 
 {% block content %}
 <section class="columns large-6 large-centered">
