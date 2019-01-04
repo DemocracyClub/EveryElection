@@ -584,6 +584,11 @@ ORG_CURIE_TO_MAPIT_AREA_TYPE = {
     "local-authority-wls:BGW": "UTA",
     "local-authority-wls:BGE": "UTA",
     "local-authority-wls:AGY": "UTA",
+    "local-authority-eng:BPC": "UTA",
+    "local-authority-eng:DST": "UTA",
+    "local-authority-eng:SWT": "DIS",
+    "local-authority-eng:WSK": "DIS",
+    "local-authority-eng:ESK": "DIS",
 }
 
 
