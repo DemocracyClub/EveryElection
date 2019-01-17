@@ -117,12 +117,16 @@
             {% endif %}
         </ul>
 
-        {% if object.whocivf_link and object.ynr_link %}
+        {% if object.whocivf_link or object.ynr_link %}
             <h3>Candidates</h3>
             <p>View this election on:</p>
             <ul>
-              <li><a href="{{ object.whocivf_link }}">WhoCanIVoteFor</a></li>
-              <li><a href="{{ object.ynr_link }}">candidates.democracyclub.org.uk</a></li>
+              {% if object.whocivf_link %}
+                <li><a href="{{ object.whocivf_link }}">WhoCanIVoteFor</a></li>
+              {% endif %}
+              {% if object.ynr_link %}
+                <li><a href="{{ object.ynr_link }}">candidates.democracyclub.org.uk</a></li>
+              {% endif %}
           </ul>
         {% endif %}
 

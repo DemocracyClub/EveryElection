@@ -269,8 +269,8 @@ class Election(models.Model):
 
     @property
     def ynr_link(self):
-        if self.group_type == "organisation":
-            return "https://candidates.democracyclub.org.uk/election/{}/constituencies".format(
+        if self.group_type == "organisation" or not self.group_type:
+            return "https://candidates.democracyclub.org.uk/elections/{}".format(
                 self.election_id
             )
         return None
