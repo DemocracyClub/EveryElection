@@ -4,8 +4,8 @@ black
 mock
 model-mommy
 tox
-pytest<=3.6.4
-pluggy==0.7.1
+pytest
+pluggy
 pytest-django
 pytest-pep8
 pytest-flakes

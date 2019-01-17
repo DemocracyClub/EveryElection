@@ -1,8 +1,8 @@
 from django.test import TestCase
 
-from organisations.admin.division_problem import DivisionProblem
-from organisations.admin.organisation_problem import OrganisationProblem
-from organisations.admin.organisation_geography_problem import (
+from organisations.models import (
+    DivisionProblem,
+    OrganisationProblem,
     OrganisationGeographyProblem,
 )
 

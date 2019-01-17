@@ -1,20 +1,24 @@
 from django.contrib import admin
 from organisations.models import (
+    DivisionProblem,
     Organisation,
     OrganisationDivision,
     OrganisationDivisionSet,
     OrganisationGeography,
-)
-from .division_problem import DivisionProblem, DivisionProblemAdmin
-from .organisation_problem import OrganisationProblem, OrganisationProblemAdmin
-from .organisation_geography_problem import (
     OrganisationGeographyProblem,
+    OrganisationProblem,
+)
+from organisations.views.admin.division_problem import DivisionProblemAdmin
+from organisations.views.admin.organisation_problem import OrganisationProblemAdmin
+from organisations.views.admin.organisation_geography_problem import (
     OrganisationGeographyProblemAdmin,
 )
-from .organisation import OrganisationAdmin
-from .organisation_division import OrganisationDivisionAdmin
-from .organisation_divisionset import OrganisationDivisionSetAdmin
-from .organisation_geography import OrganisationGeographyAdmin
+from organisations.views.admin.organisation import OrganisationAdmin
+from organisations.views.admin.organisation_division import OrganisationDivisionAdmin
+from organisations.views.admin.organisation_divisionset import (
+    OrganisationDivisionSetAdmin,
+)
+from organisations.views.admin.organisation_geography import OrganisationGeographyAdmin
 
 
 admin.site.register(Organisation, OrganisationAdmin)
