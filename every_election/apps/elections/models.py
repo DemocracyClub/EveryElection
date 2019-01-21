@@ -15,7 +15,6 @@ from django.db.models.fields.related_descriptors import (
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
-from django.utils.text import slugify
 
 from django_extensions.db.models import TimeStampedModel
 from django_markdown.models import MarkdownField
@@ -277,10 +276,8 @@ class Election(models.Model):
 
     @property
     def whocivf_link(self):
-        if self.group_type == "organisation":
-            return "https://whocanivotefor.co.uk/elections/{id}/{type}".format(
-                id=self.election_id, type=slugify(self.election_type)
-            )
+        if self.group_type == "organisation" or not self.group_type:
+            return "https://whocanivotefor.co.uk/elections/{}".format(self.election_id)
         return None
 
     def get_organisation_geography(self):
