@@ -48,7 +48,7 @@ def test_publish_date_greater_london_assembly():
 
     publish_date = sopn_publish_date_for_id('gla.c.barnet-and-camden.2016-05-05')
 
-    assert publish_date == datetime(2016, 3, 31)
+    assert publish_date == datetime(2016, 4, 1)
 
 
 # Reference election: nia.belfast-east.2017-03-02
@@ -57,6 +57,14 @@ def test_publish_date_northern_irish_assembly():
     publish_date = sopn_publish_date_for_id('nia.belfast-east.2017-03-02')
 
     assert publish_date == datetime(2017, 2, 8)
+
+
+# Reference election: pcc.avon-and-somerset.2016-05-05
+def test_publish_date_police_and_crime_commissioner():
+
+    publish_date = sopn_publish_date_for_id('pcc.avon-and-somerset.2016-05-05')
+
+    assert publish_date == datetime(2016, 4, 8)
 
 
 # Reference election: local.highland.wester-ross-strathpeffer-and-lochalsh.by.2018-12-06
