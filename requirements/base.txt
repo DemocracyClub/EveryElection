@@ -16,7 +16,7 @@ djangorestframework-jsonp==1.0.2
 geojson==2.4.1
 glob2==0.6
 markdown==3.0.1
-psutil==5.5.1
+psutil==5.6.1
 psycopg2-binary==2.7.7
 requests==2.21.0
 requests_cache==0.4.13
