@@ -85,7 +85,8 @@ def get_point_from_postcode(postcode):
     except ValidationError:
         raise PostcodeError("Invalid Postcode")
 
-    methods = [ONSPDPostcodeLookup, mySocietyMapitPostcodeLookup]
+    # methods = [ONSPDPostcodeLookup, mySocietyMapitPostcodeLookup]
+    methods = [ONSPDPostcodeLookup]
     for method in methods:
         try:
             return method(postcode).point
