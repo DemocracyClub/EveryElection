@@ -57,11 +57,14 @@ def test_scottish_parliament(row):
 
 
 @mark.parametrize("row", generate_test_cases("naw"), ids=generate_test_id)
-def test_national_assembly_of_wales(row):
-    assert same_or_next_day(
-        read_date(row["sopn_publish_date"]),
-        sopn_publish_date.for_id(row["election_id"]),
+def test_national_assembly_for_wales(row):
+    expected_date = sopn_publish_date.national_assembly_for_wales(
+        read_date(row["election_date"])
     )
+
+    actual_date = read_date(row["sopn_publish_date"])
+
+    assert same_or_next_day(actual_date, expected_date)
 
 
 @mark.parametrize("row", generate_test_cases("pcc"), ids=generate_test_id)
