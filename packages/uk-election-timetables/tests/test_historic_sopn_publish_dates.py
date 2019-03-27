@@ -35,10 +35,14 @@ def generate_test_cases(type):
 
 @mark.parametrize("row", generate_test_cases("nia"), ids=generate_test_id)
 def test_northern_irish_assembly(row):
-    assert same_or_next_day(
-        read_date(row["sopn_publish_date"]),
-        sopn_publish_date.for_id(row["election_id"]),
+
+    expected_date = sopn_publish_date.northern_irish_assembly(
+        read_date(row["election_date"])
     )
+
+    actual_date = read_date(row["sopn_publish_date"])
+
+    assert same_or_next_day(actual_date, expected_date)
 
 
 @mark.parametrize("row", generate_test_cases("sp"), ids=generate_test_id)
