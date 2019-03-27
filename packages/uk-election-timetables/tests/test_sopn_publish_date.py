@@ -57,7 +57,7 @@ def test_publish_date_national_assembly_of_wales():
 
 # Reference election: gla.c.barnet-and-camden.2016-05-05
 def test_publish_date_greater_london_assembly():
-    publish_date = sopn_publish_date.for_id("gla.c.barnet-and-camden.2016-05-05")
+    publish_date = sopn_publish_date.greater_london_assembly(datetime(2016, 5, 5))
 
     assert publish_date == datetime(2016, 4, 1)
 
