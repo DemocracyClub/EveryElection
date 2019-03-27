@@ -71,3 +71,11 @@ def test_mayoral(row):
         read_date(row["sopn_publish_date"]),
         sopn_publish_date.for_id(row["election_id"]),
     )
+
+
+@mark.parametrize("row", generate_test_cases("gla"), ids=generate_test_id)
+def test_greater_london_assembly(row):
+    assert within_one_day(
+        read_date(row["sopn_publish_date"]),
+        sopn_publish_date.for_id(row["election_id"]),
+    )
