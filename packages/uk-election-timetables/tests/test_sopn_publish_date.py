@@ -43,7 +43,7 @@ def test_publish_date_invalid_date():
 
 # Reference election: sp.c.shetland-islands.2016-05-05
 def test_publish_date_scottish_parliament():
-    publish_date = sopn_publish_date.for_id("sp.c.shetland-islands.2016-05-05")
+    publish_date = sopn_publish_date.scottish_parliament(datetime(2016, 5, 5))
 
     assert publish_date == datetime(2016, 4, 1)
 
