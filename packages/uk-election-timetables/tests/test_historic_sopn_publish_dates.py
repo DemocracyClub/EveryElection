@@ -6,7 +6,7 @@ from pytest import mark
 sopn_publish_date = StatementPublishDate()
 
 with open("./tests/historic_sopn_data.csv") as f:
-    historic_data = list(DictReader(f))
+    historic_data = list(DictReader(row for row in f if not row.startswith('--')))
 
 
 def read_date(date_as_string):
@@ -34,7 +34,7 @@ def generate_test_cases(type):
 
 
 @mark.parametrize("row", generate_test_cases("nia"), ids=generate_test_id)
-def test_nia(row):
+def test_northern_irish_assembly(row):
     assert same_or_next_day(
         read_date(row["sopn_publish_date"]),
         sopn_publish_date.for_id(row["election_id"]),
@@ -42,7 +42,7 @@ def test_nia(row):
 
 
 @mark.parametrize("row", generate_test_cases("sp"), ids=generate_test_id)
-def test_sp(row):
+def test_scottish_parliament(row):
     assert same_or_next_day(
         read_date(row["sopn_publish_date"]),
         sopn_publish_date.for_id(row["election_id"]),
@@ -50,7 +50,7 @@ def test_sp(row):
 
 
 @mark.parametrize("row", generate_test_cases("naw"), ids=generate_test_id)
-def test_naw(row):
+def test_national_assembly_of_wales(row):
     assert same_or_next_day(
         read_date(row["sopn_publish_date"]),
         sopn_publish_date.for_id(row["election_id"]),
@@ -58,7 +58,7 @@ def test_naw(row):
 
 
 @mark.parametrize("row", generate_test_cases("pcc"), ids=generate_test_id)
-def test_pcc(row):
+def test_police_and_crime_commissioner(row):
     assert within_one_day(
         read_date(row["sopn_publish_date"]),
         sopn_publish_date.for_id(row["election_id"]),

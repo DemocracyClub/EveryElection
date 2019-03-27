@@ -25,14 +25,6 @@ def test_publish_date_parliamentary_group():
         assert str(e) == "Cannot derive country from election id [parl.2017-06-08]"
 
 
-def test_publish_date_mayoral_group():
-    try:
-        sopn_publish_date.for_id("mayor.2016-05-05")
-        fail("Should have thrown exception")
-    except AmbiguousElectionId as e:
-        assert str(e) == "Cannot derive country from election id [mayor.2016-05-05]"
-
-
 def test_publish_date_invalid_id():
     try:
         sopn_publish_date.for_id("not an election id")
