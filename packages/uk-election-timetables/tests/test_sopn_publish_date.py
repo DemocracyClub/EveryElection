@@ -90,3 +90,17 @@ def test_publish_date_northern_ireland_local():
     )
 
     assert publish_date == datetime(2019, 4, 8)
+
+
+# Reference election: mayor.liverpool-city-ca.2017-05-04
+def test_publish_date_mayor():
+    publish_date = sopn_publish_date.for_id("mayor.liverpool-city-ca.2017-05-04")
+
+    assert publish_date == datetime(2017, 4, 4)
+
+
+# Reference election: mayor.london.2016-05-05
+def test_publish_date_mayor_london():
+    publish_date = sopn_publish_date.for_id("mayor.london.2016-05-05")
+
+    assert publish_date == datetime(2016, 4, 1)

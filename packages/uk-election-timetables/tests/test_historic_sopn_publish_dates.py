@@ -63,3 +63,11 @@ def test_police_and_crime_commissioner(row):
         read_date(row["sopn_publish_date"]),
         sopn_publish_date.for_id(row["election_id"]),
     )
+
+
+@mark.parametrize("row", generate_test_cases("mayor"), ids=generate_test_id)
+def test_mayoral(row):
+    assert within_one_day(
+        read_date(row["sopn_publish_date"]),
+        sopn_publish_date.for_id(row["election_id"]),
+    )
