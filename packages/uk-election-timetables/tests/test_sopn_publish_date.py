@@ -63,8 +63,8 @@ def test_publish_date_greater_london_assembly():
 
 
 # Reference election: nia.belfast-east.2017-03-02
-def test_publish_date_northern_irish_assembly():
-    publish_date = sopn_publish_date.northern_irish_assembly(datetime(2017, 3, 2))
+def test_publish_date_northern_ireland_assembly():
+    publish_date = sopn_publish_date.northern_ireland_assembly(datetime(2017, 3, 2))
 
     assert publish_date == datetime(2017, 2, 8)
 

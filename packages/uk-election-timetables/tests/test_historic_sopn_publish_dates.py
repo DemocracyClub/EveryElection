@@ -34,9 +34,9 @@ def generate_test_cases(type):
 
 
 @mark.parametrize("row", generate_test_cases("nia"), ids=generate_test_id)
-def test_northern_irish_assembly(row):
+def test_northern_ireland_assembly(row):
 
-    expected_date = sopn_publish_date.northern_irish_assembly(
+    expected_date = sopn_publish_date.northern_ireland_assembly(
         read_date(row["election_date"])
     )
 
