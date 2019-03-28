@@ -80,10 +80,13 @@ def test_greater_london_assembly(row):
 
 @mark.parametrize("row", generate_test_cases("pcc"), ids=generate_test_id)
 def test_police_and_crime_commissioner(row):
-    assert within_one_day(
-        read_date(row["sopn_publish_date"]),
-        sopn_publish_date.for_id(row["election_id"]),
+    expected_date = sopn_publish_date.police_and_crime_commissioner(
+        read_date(row["election_date"])
     )
+
+    actual_date = read_date(row["sopn_publish_date"])
+
+    assert within_one_day(actual_date, expected_date)
 
 
 @mark.parametrize("row", generate_test_cases("mayor"), ids=generate_test_id)

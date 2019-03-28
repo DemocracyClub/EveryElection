@@ -71,7 +71,7 @@ def test_publish_date_northern_ireland_assembly():
 
 # Reference election: pcc.avon-and-somerset.2016-05-05
 def test_publish_date_police_and_crime_commissioner():
-    publish_date = sopn_publish_date.for_id("pcc.avon-and-somerset.2016-05-05")
+    publish_date = sopn_publish_date.police_and_crime_commissioner(datetime(2016, 5, 5))
 
     assert publish_date == datetime(2016, 4, 8)
 
