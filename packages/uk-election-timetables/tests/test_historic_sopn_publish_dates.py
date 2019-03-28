@@ -10,7 +10,7 @@ with open("./tests/historic_sopn_data.csv") as f:
 
 
 def read_date(date_as_string):
-    return datetime.strptime(date_as_string, "%Y-%m-%d")
+    return datetime.strptime(date_as_string, "%Y-%m-%d").date()
 
 
 def same_or_next_day(actual_date, expected_date):
