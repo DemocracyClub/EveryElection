@@ -55,6 +55,12 @@ def test_publish_date_national_assembly_of_wales():
     assert publish_date == date(2016, 4, 7)
 
 
+def test_publish_date_european_parliament():
+    publish_date = sopn_publish_date.european_parliament(date(2019, 5, 23))
+
+    assert publish_date == date(2019, 4, 25)
+
+
 # Reference election: gla.c.barnet-and-camden.2016-05-05
 def test_publish_date_greater_london_assembly():
     publish_date = sopn_publish_date.greater_london_assembly(date(2016, 5, 5))
