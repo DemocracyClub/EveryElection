@@ -2,6 +2,7 @@ from sopn_publish_date import (
     StatementPublishDate,
     InvalidElectionId,
     AmbiguousElectionId,
+    Country
 )
 from datetime import date
 from pytest import fail
@@ -84,18 +85,32 @@ def test_publish_date_police_and_crime_commissioner():
 
 # Reference election: local.highland.wester-ross-strathpeffer-and-lochalsh.by.2018-12-06
 def test_publish_date_scottish_local():
-    publish_date = sopn_publish_date.for_country("scotland", date(2018, 12, 6))
+    publish_date = sopn_publish_date.local(
+        date(2018, 12, 6),
+        country=Country.SCOTLAND
+    )
 
     assert publish_date == date(2018, 11, 2)
 
 
 # Reference election: local.belfast.balmoral.2019-05-02
 def test_publish_date_northern_ireland_local():
-    publish_date = sopn_publish_date.for_country(
-        "northern-ireland", date(2019, 5, 2)
+    publish_date = sopn_publish_date.local(
+        date(2019, 5, 2),
+        country=Country.NORTHERN_IRELAND
     )
 
     assert publish_date == date(2019, 4, 8)
+
+
+# Reference election: local.basildon.wickford-north.2016-05-05
+def test_publish_date_local_election_england():
+    publish_date = sopn_publish_date.local(
+        date(2016, 5, 5),
+        country=Country.ENGLAND
+    )
+
+    assert publish_date == date(2016, 4, 7)
 
 
 # Reference election: mayor.liverpool-city-ca.2017-05-04
