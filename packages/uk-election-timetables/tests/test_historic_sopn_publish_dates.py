@@ -33,7 +33,11 @@ def generate_test_cases(search, exceptions=None):
 
     exceptions = exceptions if exceptions is not None else []
 
-    return [row for row in historic_data if search in row["election_id"] and row['election_id'] not in exceptions]
+    return [
+        row
+        for row in historic_data
+        if search in row["election_id"] and row["election_id"] not in exceptions
+    ]
 
 
 @mark.parametrize("row", generate_test_cases("nia"), ids=generate_test_id)
@@ -92,11 +96,13 @@ def test_police_and_crime_commissioner(row):
     assert within_one_day(actual_date, expected_date)
 
 
-@mark.parametrize("row", generate_test_cases("mayor", exceptions=['mayor.london.2016-05-05']), ids=generate_test_id)
+@mark.parametrize(
+    "row",
+    generate_test_cases("mayor", exceptions=["mayor.london.2016-05-05"]),
+    ids=generate_test_id,
+)
 def test_mayoral(row):
-    expected_date = sopn_publish_date.mayor(
-        read_date(row["election_date"])
-    )
+    expected_date = sopn_publish_date.mayor(read_date(row["election_date"]))
 
     actual_date = read_date(row["sopn_publish_date"])
 
