@@ -6,7 +6,7 @@ from pytest import mark
 sopn_publish_date = StatementPublishDate()
 
 with open("./tests/historic_sopn_data.csv") as f:
-    historic_data = list(DictReader(row for row in f if not row.startswith('--')))
+    historic_data = list(DictReader(row for row in f if not row.startswith("--")))
 
 
 def read_date(date_as_string):
@@ -95,5 +95,3 @@ def test_mayoral(row):
         read_date(row["sopn_publish_date"]),
         sopn_publish_date.for_id(row["election_id"]),
     )
-
-
