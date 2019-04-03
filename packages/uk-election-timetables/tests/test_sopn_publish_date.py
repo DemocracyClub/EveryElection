@@ -112,34 +112,34 @@ def test_publish_date_mayor_london():
 
 # Reference election: parl.aberavon.2017-06-08
 def test_publish_date_uk_parliament_wales():
-    publish_date = sopn_publish_date.uk_parliament(date(2017, 6, 8))
+    publish_date = sopn_publish_date.uk_parliament(date(2017, 6, 8), country=Country.WALES)
 
     assert publish_date == date(2017, 5, 11)
 
 
 # Reference election: parl.na-h-eileanan-an-iar.2017-06-08
 def test_publish_date_uk_parliament_scotland():
-    publish_date = sopn_publish_date.uk_parliament(date(2017, 6, 8))
+    publish_date = sopn_publish_date.uk_parliament(date(2017, 6, 8), country=Country.SCOTLAND)
 
     assert publish_date == date(2017, 5, 11)
 
 
 # Reference election: parl.belfast-east.2017-06-08
 def test_publish_date_uk_parliament_northern_ireland():
-    publish_date = sopn_publish_date.uk_parliament(date(2017, 6, 8))
+    publish_date = sopn_publish_date.uk_parliament(date(2017, 6, 8), country=Country.NORTHERN_IRELAND)
 
     assert publish_date == date(2017, 5, 11)
 
 
 # Reference election: parl.hemel-hempstead.2017-06-08
 def test_publish_date_uk_parliament_england():
-    publish_date = sopn_publish_date.uk_parliament(date(2017, 6, 8))
+    publish_date = sopn_publish_date.uk_parliament(date(2017, 6, 8), country=Country.ENGLAND)
 
     assert publish_date == date(2017, 5, 11)
 
 
 # Reference election: parl.aberdeen-north.2015-05-07
 def test_publish_date_uk_parliament_scotland_2015():
-    publish_date = sopn_publish_date.uk_parliament(date(2015, 5, 7))
+    publish_date = sopn_publish_date.uk_parliament(date(2015, 5, 7), country=Country.SCOTLAND)
 
     assert publish_date == date(2015, 4, 9)
