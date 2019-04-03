@@ -13,6 +13,8 @@ These documents are called Statements of Persons Nominated, and must be publishe
 
 This library encapsulates timetable legislation for elections run in the United Kingdom and its devolved administrations.
 
+## Usage
+
 ```python
 
 from sopn_publish_date import StatementPublishDate
@@ -25,6 +27,10 @@ print(publish_date.national_assembly_for_wales(date(2016, 5, 5)))
 # datetime.date(2016, 4, 7)
 ```
  
-## Sources
+## Installation
+
+`pip install sopn_publish_date`
+ 
+## Third-Party Sources
  
  The bank holidays JSON used in this project is provided by [gov.uk](https://www.gov.uk/bank-holidays.json) under the [Open Government Licence](http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/)
