@@ -108,13 +108,13 @@ def test_publish_date_local_election_england():
 
 # Reference election: mayor.liverpool-city-ca.2017-05-04
 def test_publish_date_mayor():
-    publish_date = sopn_publish_date.for_id("mayor.liverpool-city-ca.2017-05-04")
+    publish_date = sopn_publish_date.mayor(date(2017, 5, 4))
 
     assert publish_date == date(2017, 4, 4)
 
 
 # Reference election: mayor.london.2016-05-05
 def test_publish_date_mayor_london():
-    publish_date = sopn_publish_date.for_id("mayor.london.2016-05-05")
+    publish_date = sopn_publish_date.greater_london_assembly(date(2016, 5, 5))
 
     assert publish_date == date(2016, 4, 1)
