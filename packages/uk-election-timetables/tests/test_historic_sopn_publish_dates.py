@@ -118,3 +118,14 @@ def test_mayor_of_london(row):
     actual_date = read_date(row["sopn_publish_date"])
 
     assert within_one_day(actual_date, expected_date)
+
+
+@mark.parametrize("row", generate_test_cases("parl"), ids=generate_test_id)
+def test_uk_parliament(row):
+    expected_date = sopn_publish_date.uk_parliament(
+        read_date(row["election_date"])
+    )
+
+    actual_date = read_date(row["sopn_publish_date"])
+
+    assert within_one_day(actual_date, expected_date)
