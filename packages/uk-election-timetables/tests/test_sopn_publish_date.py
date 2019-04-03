@@ -1,9 +1,7 @@
-from sopn_publish_date import (
-    StatementPublishDate,
-    InvalidElectionId,
-    AmbiguousElectionId,
-    Country,
-)
+from sopn_publish_date import StatementPublishDate
+from sopn_publish_date.calendars import Country
+from sopn_publish_date.election_ids import InvalidElectionId, AmbiguousElectionId
+
 from datetime import date
 from pytest import fail
 
