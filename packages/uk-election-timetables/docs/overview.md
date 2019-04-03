@@ -1,6 +1,6 @@
 # Overview
 
-*Given the polling day of an election in the UK, when should the Statement of Persons Nominated (SoPN) should be published?*
+*Given the polling day of an election in the UK, when should the Statement of Persons Nominated (SoPN) be published?*
 
 When an election is called in the United Kingdom, the voting public must have access to the list of candidates who have been nominated to that post.
 
