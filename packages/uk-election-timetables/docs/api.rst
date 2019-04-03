@@ -1,10 +1,14 @@
 API
 ****
 
+sopn_publish_date
+-----------------
 .. automodule:: sopn_publish_date
    :members:
    :undoc-members:
 
+sopn_publish_date.calendars
+---------------------------
 .. automodule:: sopn_publish_date.calendars
    :members:
    :undoc-members:
