@@ -36,6 +36,7 @@ class Organisation(models.Model):
         ("parl", "parl"),
         ("police-area", "police-area"),
         ("sp", "sp"),
+        ("europarl", "europarl"),
     )
 
     official_identifier = models.CharField(blank=False, max_length=255, db_index=True)
