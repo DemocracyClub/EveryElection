@@ -1,5 +1,5 @@
 from sopn_publish_date import StatementPublishDate
-from sopn_publish_date.calendars import Country
+from sopn_publish_date.calendars import Country, Region
 from sopn_publish_date.election_ids import InvalidElectionId, AmbiguousElectionId
 
 from datetime import date
@@ -47,9 +47,19 @@ def test_publish_date_national_assembly_of_wales():
 
 
 def test_publish_date_european_parliament():
-    publish_date = sopn_publish_date.european_parliament(date(2019, 5, 23))
+    publish_date = sopn_publish_date.european_parliament(
+        date(2019, 5, 23), region=Region.LONDON
+    )
 
     assert publish_date == date(2019, 4, 25)
+
+
+def test_publish_date_european_parliament_south_west_england():
+    publish_date = sopn_publish_date.european_parliament(
+        date(2019, 5, 23), region=Region.SOUTH_WEST_ENGLAND
+    )
+
+    assert publish_date == date(2019, 4, 24)
 
 
 # Reference election: gla.c.barnet-and-camden.2016-05-05
@@ -112,34 +122,44 @@ def test_publish_date_mayor_london():
 
 # Reference election: parl.aberavon.2017-06-08
 def test_publish_date_uk_parliament_wales():
-    publish_date = sopn_publish_date.uk_parliament(date(2017, 6, 8), country=Country.WALES)
+    publish_date = sopn_publish_date.uk_parliament(
+        date(2017, 6, 8), country=Country.WALES
+    )
 
     assert publish_date == date(2017, 5, 11)
 
 
 # Reference election: parl.na-h-eileanan-an-iar.2017-06-08
 def test_publish_date_uk_parliament_scotland():
-    publish_date = sopn_publish_date.uk_parliament(date(2017, 6, 8), country=Country.SCOTLAND)
+    publish_date = sopn_publish_date.uk_parliament(
+        date(2017, 6, 8), country=Country.SCOTLAND
+    )
 
     assert publish_date == date(2017, 5, 11)
 
 
 # Reference election: parl.belfast-east.2017-06-08
 def test_publish_date_uk_parliament_northern_ireland():
-    publish_date = sopn_publish_date.uk_parliament(date(2017, 6, 8), country=Country.NORTHERN_IRELAND)
+    publish_date = sopn_publish_date.uk_parliament(
+        date(2017, 6, 8), country=Country.NORTHERN_IRELAND
+    )
 
     assert publish_date == date(2017, 5, 11)
 
 
 # Reference election: parl.hemel-hempstead.2017-06-08
 def test_publish_date_uk_parliament_england():
-    publish_date = sopn_publish_date.uk_parliament(date(2017, 6, 8), country=Country.ENGLAND)
+    publish_date = sopn_publish_date.uk_parliament(
+        date(2017, 6, 8), country=Country.ENGLAND
+    )
 
     assert publish_date == date(2017, 5, 11)
 
 
 # Reference election: parl.aberdeen-north.2015-05-07
 def test_publish_date_uk_parliament_scotland_2015():
-    publish_date = sopn_publish_date.uk_parliament(date(2015, 5, 7), country=Country.SCOTLAND)
+    publish_date = sopn_publish_date.uk_parliament(
+        date(2015, 5, 7), country=Country.SCOTLAND
+    )
 
     assert publish_date == date(2015, 4, 9)
