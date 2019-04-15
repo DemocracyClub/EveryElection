@@ -20,6 +20,7 @@ AREA_TYPE_TO_FILE = [
     ("SPE", "scotland_and_wales_region.shp"),
     ("WAE", "scotland_and_wales_region.shp"),
     ("WMC", "westminster_const_region.shp"),
+    ("EUR", "european_region_region.shp"),
 ]
 
 
