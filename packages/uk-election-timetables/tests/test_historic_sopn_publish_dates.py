@@ -19,6 +19,12 @@ def same_or_next_day(actual_date, expected_date):
     )
 
 
+def no_later_than(actual_date, expected_date):
+    return actual_date == expected_date or actual_date == (
+        expected_date - timedelta(days=1)
+    )
+
+
 def within_one_day(actual_date, expected_date):
     return same_or_next_day(actual_date, expected_date) or actual_date == (
         expected_date - timedelta(days=1)
@@ -93,7 +99,7 @@ def test_police_and_crime_commissioner(row):
 
     actual_date = read_date(row["sopn_publish_date"])
 
-    assert within_one_day(actual_date, expected_date)
+    assert no_later_than(actual_date, expected_date)
 
 
 @mark.parametrize(
