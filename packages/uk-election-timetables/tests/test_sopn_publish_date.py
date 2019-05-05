@@ -1,35 +1,40 @@
 from sopn_publish_date import StatementPublishDate
 from sopn_publish_date.calendars import Country, Region
-from sopn_publish_date.election_ids import InvalidElectionId, AmbiguousElectionId
+from sopn_publish_date.election_ids import (
+    InvalidElectionIdError,
+    AmbiguousElectionIdError,
+)
 
 from datetime import date
-from pytest import fail
+from pytest import raises
 
 sopn_publish_date = StatementPublishDate()
 
 
 def test_publish_date_local_group():
-    try:
+
+    with raises(AmbiguousElectionIdError) as err:
         sopn_publish_date.for_id("local.2019-02-21")
-        fail("Should have thrown exception")
-    except AmbiguousElectionId as e:
-        assert str(e) == "Cannot derive country from election id [local.2019-02-21]"
+
+    assert str(err.value) == "Cannot derive country from election id [local.2019-02-21]"
 
 
 def test_publish_date_invalid_id():
-    try:
+
+    with raises(InvalidElectionIdError) as err:
         sopn_publish_date.for_id("not an election id")
-        fail("Should have thrown exception")
-    except InvalidElectionId as e:
-        assert str(e) == "Parameter [not an election id] is not in election id format"
+
+    assert (
+        str(err.value) == "Parameter [not an election id] is not in election id format"
+    )
 
 
 def test_publish_date_invalid_date():
-    try:
+
+    with raises(InvalidElectionIdError) as err:
         sopn_publish_date.for_id("parl.not-a-date")
-        fail("Should have thrown exception")
-    except InvalidElectionId as e:
-        assert str(e) == "Parameter [parl.not-a-date] is not in election id format"
+
+    assert str(err.value) == "Parameter [parl.not-a-date] is not in election id format"
 
 
 # Reference election: sp.c.shetland-islands.2016-05-05
