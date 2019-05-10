@@ -104,11 +104,11 @@ def test_publish_date_northern_ireland_local():
     assert publish_date == date(2019, 4, 8)
 
 
-# Reference election: local.basildon.wickford-north.2016-05-05
+# Reference election: local.herefordshire.ross-north.2019-06-06
 def test_publish_date_local_election_england():
-    publish_date = sopn_publish_date.local(date(2016, 5, 5), country=Country.ENGLAND)
+    publish_date = sopn_publish_date.local(date(2019, 6, 6), country=Country.ENGLAND)
 
-    assert publish_date == date(2016, 4, 7)
+    assert publish_date == date(2019, 5, 10)
 
 
 # Reference election: mayor.liverpool-city-ca.2017-05-04
