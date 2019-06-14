@@ -87,7 +87,7 @@ def select_organisation_division(wizard):
     election_type = wizard.get_election_type()
     if not election_type:
         return False
-    if wizard.get_election_type().election_type == "mayor":
+    if wizard.get_election_type().election_type in ["mayor", "pcc"]:
         return False
     return True
 
