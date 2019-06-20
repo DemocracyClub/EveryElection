@@ -66,9 +66,11 @@ class Command(BaseCommand):
         tempdir = unzip(tmp.name)
         data_path = os.path.join(tempdir, "Data")
 
+        table_name = get_onspd_model()._meta.db_table
+        temp_table_name = table_name + "_temp"
+        cursor = connection.cursor()
+
         try:
-            table_name = get_onspd_model()._meta.db_table
-            temp_table_name = table_name + "_temp"
             self.stdout.write("Creating temp table..")
             self.create_temp_table(table_name, temp_table_name)
 
@@ -92,10 +94,10 @@ class Command(BaseCommand):
             # this will mean we block queries for the absolute minimum time
             # the table will be queryable (but a bit slower) while the indexes rebuild
             self.stdout.write("Building indexes..")
-            cursor = connection.cursor()
             for statement in index_create_statements:
                 cursor.execute(statement)
         finally:
+            cursor.execute("DROP TABLE IF EXISTS %s;" % (temp_table_name))
             self.stdout.write("Cleaning up temp files..")
             self.cleanup(tempdir)
         self.stdout.write("...done")
