@@ -3,6 +3,7 @@ import psutil
 import shutil
 import tempfile
 import urllib.request
+import sqlparse
 from django.core.management.base import BaseCommand
 from django.db import connection
 from django.db import transaction
@@ -26,14 +27,45 @@ class Command(BaseCommand):
         gb = ((mem.total / 1024) / 1024) / 1024
         return gb >= 2
 
-    def get_index_create_statements(self, table_name):
+    def get_index_statements(self, table_name, temp_table_name):
         cursor = connection.cursor()
         cursor.execute(
             "SELECT indexdef FROM pg_indexes WHERE tablename='%s' ORDER BY indexname LIKE '%%_pk' DESC;"
             % (table_name)
         )
         results = cursor.fetchall()
-        return [row[0] for row in results]
+
+        indexes = []
+        statements = [row[0] for row in results]
+        for statement in statements:
+            indexes.append(
+                {
+                    "original_index_create_statement": statement,
+                    "temp_index_create_statement": "",
+                    "index_rename_statement": "",
+                }
+            )
+
+        for index in indexes:
+            index["temp_index_create_statement"] = index[
+                "original_index_create_statement"
+            ].replace(table_name, temp_table_name)
+            parsed_sql = sqlparse.parse(index["original_index_create_statement"])[0]
+            identifiers = [
+                token.value
+                for token in parsed_sql.tokens
+                if not token.ttype and table_name in token.value
+            ]
+            if len(identifiers) != 2:
+                raise Exception("Expected 2 identifiers, found %i" % len(identifiers))
+            original_index_name = identifiers[0]
+            temp_index_name = original_index_name.replace(table_name, temp_table_name)
+            index["index_rename_statement"] = "ALTER INDEX %s RENAME TO %s" % (
+                temp_index_name,
+                original_index_name,
+            )
+
+        return indexes
 
     def create_temp_table(self, table_name, temp_table_name):
         cursor = connection.cursor()
@@ -45,14 +77,8 @@ class Command(BaseCommand):
 
     def swap_tables(self, table_name, temp_table_name):
         cursor = connection.cursor()
-        # drop the old table and swap in the new one
-        # do these 2 in a transaction so if it fails
-        # we don't leave ourselves in an inconsistent state
-        with transaction.atomic():
-            cursor.execute("DROP TABLE %s;" % (table_name))
-            cursor.execute(
-                "ALTER TABLE %s RENAME TO %s;" % (temp_table_name, table_name)
-            )
+        cursor.execute("DROP TABLE %s;" % (table_name))
+        cursor.execute("ALTER TABLE %s RENAME TO %s;" % (temp_table_name, table_name))
 
     def handle(self, **options):
         if not self.check_memory():
@@ -86,21 +112,28 @@ class Command(BaseCommand):
             # new table with the exact names django expects them to have
             # (e.g: uk_geo_utils_onspd_pcds_9d376544_uniq )
             # so we can still run migrations and stuff on it
-            index_create_statements = self.get_index_create_statements(table_name)
+            indexes = self.get_index_statements(table_name, temp_table_name)
 
-            self.stdout.write("Swapping tables..")
-            self.swap_tables(table_name, temp_table_name)
-
-            # create the indexes outside of the transaction block
-            # this will mean we block queries for the absolute minimum time
-            # the table will be queryable (but a bit slower) while the indexes rebuild
             self.stdout.write("Building indexes..")
-            for statement in index_create_statements:
-                cursor.execute(statement)
+            for index in indexes:
+                cursor.execute(index["temp_index_create_statement"])
+
+            # drop the old table, swap in the new one and rename the indexes
+            # do this bit in a transaction so if it fails
+            # we don't leave ourselves in an inconsistent state
+            with transaction.atomic():
+                self.stdout.write("Swapping tables..")
+                self.swap_tables(table_name, temp_table_name)
+
+                self.stdout.write("Renaming indexes..")
+                for index in indexes:
+                    cursor.execute(index["index_rename_statement"])
+
         finally:
             cursor.execute("DROP TABLE IF EXISTS %s;" % (temp_table_name))
             self.stdout.write("Cleaning up temp files..")
             self.cleanup(tempdir)
+
         self.stdout.write("...done")
 
     def cleanup(self, tempdir):
