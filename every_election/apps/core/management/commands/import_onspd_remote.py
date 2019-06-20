@@ -29,7 +29,8 @@ class Command(BaseCommand):
     def get_index_create_statements(self, table_name):
         cursor = connection.cursor()
         cursor.execute(
-            "SELECT indexdef FROM pg_indexes WHERE tablename='%s';" % (table_name)
+            "SELECT indexdef FROM pg_indexes WHERE tablename='%s' ORDER BY indexname LIKE '%%_pk' DESC;"
+            % (table_name)
         )
         results = cursor.fetchall()
         return [row[0] for row in results]
