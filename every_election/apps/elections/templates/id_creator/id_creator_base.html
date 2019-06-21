@@ -3,8 +3,9 @@
 
 {% block content %}
 
-
-<div class="columns large-8 large-centered card">
+<div class="row">
+<section class="columns large-10 large-centered">
+  <div class="columns card">
     {# <p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p> #}
     {% block form_page_header %}{% endblock form_page_header %}
     <form action="" method="post" {% block form_tag_extra %}{% endblock form_tag_extra %}>
@@ -32,5 +33,7 @@
     {% endblock wizard_buttons %}
 
     </form>
+  </div>
+</section>
 </div>
 {% endblock content %}
