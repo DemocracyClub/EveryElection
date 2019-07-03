@@ -100,7 +100,6 @@ class OrganisationDivisionSerializer(serializers.ModelSerializer):
             "divisionset",
             "name",
             "official_identifier",
-            "geography_curie",
             "slug",
             "division_type",
             "division_subtype",

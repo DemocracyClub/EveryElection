@@ -100,7 +100,7 @@ class OrganisationDivision(models.Model):
 
     def format_geography_link(self):
         try:
-            code_type, code = self.geography_curie.split(":")
+            code_type, code = self.official_identifier.split(":")
         except (ValueError, AttributeError):
             return None
 
@@ -108,10 +108,6 @@ class OrganisationDivision(models.Model):
             return None
 
         return "https://mapit.mysociety.org/code/{}/{}".format(code_type, code)
-
-    @property
-    def geography_curie(self):
-        return self.official_identifier
 
 
 class DivisionGeography(models.Model):

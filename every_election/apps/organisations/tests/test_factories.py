@@ -20,7 +20,6 @@ class TestElectionIDs(TestCase):
     def test_organisation_division_factory(self):
         od = OrganisationDivisionFactory()
         assert od.organisation.slug.startswith("org-")
-        assert od.geography_curie == od.official_identifier
 
     def test_division_geography_factory(self):
         DivisionGeographyFactory()
