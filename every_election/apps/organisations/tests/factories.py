@@ -54,8 +54,6 @@ class OrganisationDivisionFactory(factory.django.DjangoModelFactory):
     division_type = "test"
     # division_election_sub_type
     # seats_total
-    # mapit_generation_low
-    # mapit_generation_high
 
 
 class DivisionGeographyFactory(factory.django.DjangoModelFactory):

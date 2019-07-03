@@ -278,14 +278,11 @@ class TestElectionAPIQueries(APITestCase):
                     "short_title": "Made up boundary changes",
                     "notes": "This is just for testing.",
                     "end_date": "2025-05-03",
-                    "consultation_url": "https://example.com/consultation",
-                    "mapit_generation_id": ""
+                    "consultation_url": "https://example.com/consultation"
                 },
-                "mapit_generation_high": null,
                 "seats_total": null,
                 "division_election_sub_type": "",
                 "division_subtype": "",
-                "mapit_generation_low": null,
                 "division_type": "test",
                 "official_identifier": "0",
                 "territory_code": "ENG"

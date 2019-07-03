@@ -87,7 +87,6 @@ class OrganisationDivisionSetSerializer(serializers.ModelSerializer):
             "legislation_url",
             "consultation_url",
             "short_title",
-            "mapit_generation_id",
             "notes",
         )
 
@@ -107,8 +106,6 @@ class OrganisationDivisionSerializer(serializers.ModelSerializer):
             "division_subtype",
             "division_election_sub_type",
             "seats_total",
-            "mapit_generation_low",
-            "mapit_generation_high",
             "territory_code",
         )
 
