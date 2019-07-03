@@ -1,8 +1,6 @@
 import abc
 import logging
-import requests
 
-from django.contrib.gis.geos import Point
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import ValidationError
 
@@ -25,41 +23,6 @@ class BasePostcodeLookup(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def point(self):
         pass
-
-
-class BaseMaPitPostcodeLookup(BasePostcodeLookup, metaclass=abc.ABCMeta):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fetch_from_mapit()
-
-    @property
-    @abc.abstractmethod
-    def mapit_base(self):
-        pass
-
-    def fetch_from_mapit(self):
-        logger.warning("Querying mySociety mapit for postcode {}".format(self.postcode))
-        if hasattr(self, "mapit_data"):
-            return self.mapit_data
-
-        req = requests.get("{}/postcode/{}".format(self.mapit_base, self.postcode))
-        if req.status_code != 200:
-            raise PostcodeError
-        try:
-            self.mapit_data = req.json()
-        except ValueError:
-            raise PostcodeError
-        return self.mapit_data
-
-    @property
-    def point(self):
-        if not "wgs84_lon" in self.mapit_data:
-            raise PostcodeError
-        return Point(self.mapit_data["wgs84_lon"], self.mapit_data["wgs84_lat"])
-
-
-class mySocietyMapitPostcodeLookup(BaseMaPitPostcodeLookup):
-    mapit_base = "https://mapit.mysociety.org/"
 
 
 class ONSPDPostcodeLookup(BasePostcodeLookup):
@@ -85,7 +48,6 @@ def get_point_from_postcode(postcode):
     except ValidationError:
         raise PostcodeError("Invalid Postcode")
 
-    # methods = [ONSPDPostcodeLookup, mySocietyMapitPostcodeLookup]
     methods = [ONSPDPostcodeLookup]
     for method in methods:
         try:
