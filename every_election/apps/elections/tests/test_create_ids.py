@@ -194,6 +194,11 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
 
         self.run_test_with_data(all_data, expected_ids, expected_titles)
 
+        ballot = Election.private_objects.get(
+            election_id="mayor.test-ca." + self.date_str
+        )
+        self.assertIsNone(ballot.group_type)
+
     def test_creates_parl_id(self):
         parl_org = Organisation.objects.create(
             official_identifier="parl",
