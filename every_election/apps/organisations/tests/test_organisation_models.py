@@ -143,7 +143,7 @@ class TestOrganisationDivision(TestCase):
 
     def test_format_geography_valid(self):
         self.assertEqual(
-            "https://mapit.mysociety.org/code/gss/X01000001",
+            "https://mapit.mysociety.org/area/X01000001",
             OrganisationDivisionFactory(
                 official_identifier="gss:X01000001"
             ).format_geography_link(),

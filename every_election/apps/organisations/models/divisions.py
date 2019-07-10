@@ -110,7 +110,7 @@ class OrganisationDivision(models.Model):
         if code_type.lower() != "gss":
             return None
 
-        return "https://mapit.mysociety.org/code/{}/{}".format(code_type, code)
+        return "https://mapit.mysociety.org/area/{}".format(code)
 
     @property
     def geography_curie(self):
