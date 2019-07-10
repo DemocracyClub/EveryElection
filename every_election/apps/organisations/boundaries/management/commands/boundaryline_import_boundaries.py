@@ -6,9 +6,9 @@ The --all flag may also optionally be passed if a code exists in multiple
 DivisionSets and we want to import the boundary against all occurrences.
 
 Example calls:
-manage.py boundaryline_boundaries --code gss:W09000043 --source bdline_gb-2018-05 -f /foo/bar/bdline_gb-2018-05
-manage.py boundaryline_boundaries --code gss:W09000019 --source bdline_gb-2018-05 --all -u "http://parlvid.mysociety.org/os/bdline_gb-2018-05.zip"
-manage.py boundaryline_boundaries --codes /foo/bar/codes.json --source bdline_gb-2018-05 -f /foo/bar/bdline_gb-2018-05
+manage.py boundaryline_import_boundaries --code gss:W09000043 --source bdline_gb-2018-05 -f /foo/bar/bdline_gb-2018-05
+manage.py boundaryline_import_boundaries --code gss:W09000019 --source bdline_gb-2018-05 --all -u "http://parlvid.mysociety.org/os/bdline_gb-2018-05.zip"
+manage.py boundaryline_import_boundaries --codes /foo/bar/codes.json --source bdline_gb-2018-05 -f /foo/bar/bdline_gb-2018-05
 """
 
 import json
