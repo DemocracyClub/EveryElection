@@ -112,8 +112,11 @@ class BoundaryLine:
             if len(matches) > 1:
                 # ...but we also need to be a little bit careful
                 raise MultipleObjectsReturned(
-                    "Found >1 matches for division {div}".format(
-                        div=div.official_identifier
+                    "Found >1 possible matches for division {div}: {codes}".format(
+                        div=div.official_identifier,
+                        codes=", ".join(
+                            [self.get_code_from_feature(match) for match in matches]
+                        ),
                     )
                 )
 
