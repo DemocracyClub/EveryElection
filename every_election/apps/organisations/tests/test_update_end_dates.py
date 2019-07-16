@@ -44,7 +44,6 @@ class UpdateEndDatesTests(TestCase):
             legislation_url="",
             consultation_url="",
             short_title="",
-            mapit_generation_id="",
             notes="",
         )
         OrganisationDivisionSet.objects.create(
@@ -54,7 +53,6 @@ class UpdateEndDatesTests(TestCase):
             legislation_url="",
             consultation_url="",
             short_title="",
-            mapit_generation_id="",
             notes="",
         )
         OrganisationDivisionSet.objects.create(
@@ -64,7 +62,6 @@ class UpdateEndDatesTests(TestCase):
             legislation_url="",
             consultation_url="",
             short_title="",
-            mapit_generation_id="",
             notes="",
         )
 

@@ -60,7 +60,6 @@ class ImportDivisionSetsFromCsvTests(TestCase):
             legislation_url="",
             consultation_url="",
             short_title="",
-            mapit_generation_id="",
             notes="",
         )
         OrganisationDivisionSet.objects.create(
@@ -70,7 +69,6 @@ class ImportDivisionSetsFromCsvTests(TestCase):
             legislation_url="",
             consultation_url="",
             short_title="",
-            mapit_generation_id="",
             notes="",
         )
 
@@ -129,7 +127,6 @@ class ImportDivisionSetsFromCsvTests(TestCase):
             legislation_url="",
             consultation_url="",
             short_title="",
-            mapit_generation_id="",
             notes="",
         )
         cmd = Command()

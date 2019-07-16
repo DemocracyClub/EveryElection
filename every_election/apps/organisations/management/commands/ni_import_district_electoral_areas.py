@@ -55,7 +55,6 @@ class Command(ReadFromCSVMixin, BaseCommand):
                 end_date=None,
                 legislation_url="http://www.legislation.gov.uk/uksi/2014/270/made",
                 short_title="The District Electoral Areas (Northern Ireland) Order 2014",
-                mapit_generation_id="",
                 notes="",
                 consultation_url="",
             )

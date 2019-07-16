@@ -107,7 +107,6 @@ class Command(ReadFromCSVMixin, BaseCommand):
                 end_date=line["End Date"] or None,
                 legislation_url=line["Legislation URL"],
                 short_title=line["Short Title"],
-                mapit_generation_id=line["Mapit Generation URI"],
                 notes=line["Notes"],
                 consultation_url=line["Boundary Commission Consultation URL"],
             )

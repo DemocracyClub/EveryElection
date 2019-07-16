@@ -52,7 +52,6 @@ class ImportLgbceTests(TestCase):
             legislation_url="",
             consultation_url="",
             short_title="",
-            mapit_generation_id="",
             notes="",
         )
         division_names = [
@@ -106,7 +105,6 @@ class ImportLgbceTests(TestCase):
             legislation_url="",
             consultation_url="",
             short_title="",
-            mapit_generation_id="",
             notes="",
         )
 

@@ -9,7 +9,6 @@ class OrganisationDivisionSet(DateConstraintMixin, models.Model):
     legislation_url = models.CharField(blank=True, max_length=500, null=True)
     consultation_url = models.CharField(blank=True, max_length=500, null=True)
     short_title = models.CharField(blank=True, max_length=200)
-    mapit_generation_id = models.CharField(blank=True, max_length=255)
     notes = models.TextField(blank=True)
     ValidationError = ValueError
 
@@ -87,8 +86,6 @@ class OrganisationDivision(models.Model):
     division_subtype = models.CharField(blank=True, max_length=255)
     division_election_sub_type = models.CharField(blank=True, max_length=2)
     seats_total = models.IntegerField(blank=True, null=True)
-    mapit_generation_low = models.IntegerField(blank=True, null=True)
-    mapit_generation_high = models.IntegerField(blank=True, null=True)
     territory_code = models.CharField(blank=True, max_length=10)
     ValidationError = ValueError
     objects = DivisionManager().as_manager()
@@ -103,7 +100,7 @@ class OrganisationDivision(models.Model):
 
     def format_geography_link(self):
         try:
-            code_type, code = self.geography_curie.split(":")
+            code_type, code = self.official_identifier.split(":")
         except (ValueError, AttributeError):
             return None
 
@@ -111,10 +108,6 @@ class OrganisationDivision(models.Model):
             return None
 
         return "https://mapit.mysociety.org/area/{}".format(code)
-
-    @property
-    def geography_curie(self):
-        return self.official_identifier
 
 
 class DivisionGeography(models.Model):
