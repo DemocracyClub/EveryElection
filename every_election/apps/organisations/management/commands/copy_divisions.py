@@ -30,6 +30,10 @@ class Command(BaseCommand):
         if len(new_divset.divisions.all()) > 0:
             raise Exception("Target DivisionSet must be empty")
 
+        self.stdout.write(
+            f"Copying all divisions from {str(old_divset)} to {str(new_divset)}..."
+        )
+
         # copy the divisions
         for div in old_divset.divisions.all():
             div.pk = None
@@ -54,6 +58,8 @@ class Command(BaseCommand):
             div.save()
 
         assert len(old_divset.divisions.all()) == len(new_divset.divisions.all())
+
+        self.stdout.write("...done!")
 
     def handle(self, *args, **options):
         self.copy_divsions(options["src_id"], options["dst_id"])
