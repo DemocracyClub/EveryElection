@@ -3,7 +3,8 @@
 
 {% block content %}
 
-<section class="columns large-8 large-centered">
+<div class="row">
+<section class="columns large-12 large-centered">
     {% include "election_snooper/sub_menu.html" %}
 
     {% for form in objects %}
@@ -48,4 +49,5 @@
     {% include "core/pagination_links.html" %}
 
 </section>
+</div>
 {% endblock content %}

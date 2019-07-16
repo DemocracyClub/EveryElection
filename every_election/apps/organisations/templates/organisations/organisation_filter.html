@@ -2,7 +2,8 @@
 
 
 {% block content %}
-<section class="columns large-6 large-centered">
+<div class="row">
+<section class="columns large-10 large-centered">
 
 {% for object in objects %}
   <div class="card postcode_card">
@@ -13,4 +14,5 @@
 {% include "core/pagination_links.html" %}
 
 </section>
+</div>
 {% endblock content %}
