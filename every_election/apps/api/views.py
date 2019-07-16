@@ -75,6 +75,13 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
         if self.request.query_params.get("metadata", None) is not None:
             queryset = queryset.exclude(metadata=None)
 
+        identifier_type = self.request.query_params.get("identifier_type", None)
+        if identifier_type is not None:
+            if identifier_type == "ballot":
+                queryset = queryset.filter(group_type=None)
+            else:
+                queryset = queryset.filter(group_type=identifier_type)
+
         queryset = queryset.select_related(
             "election_type", "organisation", "elected_role", "division"
         )
