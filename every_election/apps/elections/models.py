@@ -252,6 +252,12 @@ class Election(models.Model):
             return self.division_geography
         return self.organisation_geography
 
+    @property
+    def identifier_type(self):
+        if not self.group_type:
+            return "ballot"
+        return self.group_type
+
     def get_division_geography(self):
         if self.division_geography:
             return self.division_geography
