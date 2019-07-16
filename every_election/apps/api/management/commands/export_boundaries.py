@@ -134,13 +134,13 @@ class Command(BaseCommand):
         return geojson.FeatureCollection(features, election_group=parent.election_id)
 
     def get_ballots(self, group):
-        " Return the leaf-level ballots for a group of elections. "
+        " Return the ballots for a group of elections. "
         to_visit = [group]
         leaf_nodes = []
         while len(to_visit) > 0:
             e = to_visit.pop()
             children = e.get_children("public_objects").all()
-            if not children and e.group_type in ["organisation", None]:
+            if e.identifier_type == "ballot":
                 leaf_nodes.append(e)
             else:
                 to_visit += children
