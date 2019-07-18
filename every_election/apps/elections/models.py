@@ -248,17 +248,22 @@ class Election(models.Model):
 
     @property
     def geography(self):
-        if not self.group_type and self.division:
+        if self.identifier_type == "ballot" and self.division:
             return self.division_geography
         return self.organisation_geography
+
+    @property
+    def identifier_type(self):
+        if not self.group_type:
+            return "ballot"
+        return self.group_type
 
     def get_division_geography(self):
         if self.division_geography:
             return self.division_geography
 
         try:
-            # if the election is a 'ballot'
-            if not self.group_type:
+            if self.identifier_type == "ballot":
                 # attach geography by division if possible
                 if self.division:
                     return self.division.geography
@@ -268,7 +273,7 @@ class Election(models.Model):
 
     @property
     def ynr_link(self):
-        if self.group_type == "organisation" or not self.group_type:
+        if self.identifier_type in ["organisation", "ballot"]:
             return "https://candidates.democracyclub.org.uk/elections/{}".format(
                 self.election_id
             )
@@ -276,7 +281,7 @@ class Election(models.Model):
 
     @property
     def whocivf_link(self):
-        if self.group_type == "organisation" or not self.group_type:
+        if self.identifier_type in ["organisation", "ballot"]:
             return "https://whocanivotefor.co.uk/elections/{}".format(self.election_id)
         return None
 
@@ -285,8 +290,7 @@ class Election(models.Model):
             return self.organisation_geography
 
         try:
-            # if the election is a 'ballot'
-            if not self.group_type:
+            if self.identifier_type == "ballot":
 
                 if self.division:
                     return None
@@ -306,7 +310,7 @@ class Election(models.Model):
         return None
 
     def clean(self):
-        if self.group_type and self.cancelled:
+        if not self.identifier_type == "ballot" and self.cancelled:
             raise ValidationError(
                 "Can't set a group to cancelled. Only a ballot can be cancelled"
             )

@@ -15,7 +15,7 @@
 
 <h2>Group IDs</h2>
 {% for election in all_ids %}
-    {% if election.group_type %}
+    {% if not election.identifier_type == "ballot" %}
     <h3><code>{{ election.election_id }}</code></h3>
     {% endif %}
 {% endfor %}
@@ -27,7 +27,7 @@
     {% if election_group.grouper %}
     <h3>{{ election_group.grouper }}</h3>
     {% for election in election_group.list %}
-        {% if not election.group_type %}
+        {% if election.identifier_type == "ballot" %}
         <h3><code>{{ election.election_id }}</code></h3>
         {% endif %}
     {% endfor %}

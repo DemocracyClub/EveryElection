@@ -36,7 +36,7 @@ class ElectionAdmin(admin.ModelAdmin):
     )
 
     def get_readonly_fields(self, request, obj=None):
-        if not obj.group_type:
+        if obj.identifier_type == "ballot":
             return self.readonly_fields
         else:
             return self.readonly_fields + ("cancelled",)

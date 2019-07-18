@@ -38,7 +38,7 @@
               </dd>
         {% endif %}
 
-        {% if object.group_type == 'organisation' or not object.group_type %}
+        {% if object.identifier_type == "organisation" or object.identifier_type == "ballot" %}
             {% if object.voting_system %}
             <dt>Voting system</dt><dd><a href="{{ object.voting_system.wikipedia_url }}">
                 {{ object.voting_system }}</a></dd>

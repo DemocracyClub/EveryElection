@@ -197,6 +197,32 @@ class TestElectionAPIQueries(APITestCase):
         resp = self.client.get("/api/elections/{}/?deleted=1".format(id_))
         self.assertEqual(200, resp.status_code)
 
+    def test_identifier_type_filter(self):
+        group = ElectionWithStatusFactory(
+            group_type="election", moderation_status=related_status("Approved")
+        )
+        ballot = ElectionWithStatusFactory(
+            group=group, moderation_status=related_status("Approved")
+        )
+
+        resp = self.client.get("/api/elections/?identifier_type=election")
+        data = resp.json()
+        self.assertEqual(1, data["count"])
+        self.assertEqual(data["results"][0]["election_id"], group.election_id)
+
+        resp = self.client.get("/api/elections/?identifier_type=ballot")
+        data = resp.json()
+        self.assertEqual(1, data["count"])
+        self.assertEqual(data["results"][0]["election_id"], ballot.election_id)
+
+        resp = self.client.get("/api/elections/?identifier_type=organisation")
+        data = resp.json()
+        self.assertEqual(0, data["count"])
+
+        resp = self.client.get("/api/elections/?identifier_type=foobar")
+        data = resp.json()
+        self.assertEqual(0, data["count"])
+
     def test_child_visibility(self):
         # 4 ballots in the same group with different moderation statuses
         group = ElectionWithStatusFactory(
@@ -264,6 +290,7 @@ class TestElectionAPIQueries(APITestCase):
             """
         {
             "group_type": null,
+            "identifier_type": "ballot",
             "current": false,
             "poll_open_date": "2017-03-23",
             "election_id": "local.place-name-0.2017-03-23",

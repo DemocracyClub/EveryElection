@@ -47,7 +47,8 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         queryset = Election.public_objects.all()
-        if self.request.query_params.get("deleted", None):
+
+        if self.request.query_params.get("deleted", None) is not None:
             queryset = Election.private_objects.all().filter_by_status("Deleted")
 
         postcode = self.request.query_params.get("postcode", None)
@@ -65,17 +66,21 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
                 raise APICoordsException()
             queryset = queryset.for_lat_lng(lat=lat, lng=lng)
 
-        current = self.request.query_params.get("current", None)
-        if current is not None:
+        if self.request.query_params.get("current", None) is not None:
             queryset = queryset.current()
 
-        future = self.request.query_params.get("future", None)
-        if future is not None:
+        if self.request.query_params.get("future", None) is not None:
             queryset = queryset.future()
 
-        with_metadata = self.request.query_params.get("metadata", None)
-        if with_metadata is not None:
+        if self.request.query_params.get("metadata", None) is not None:
             queryset = queryset.exclude(metadata=None)
+
+        identifier_type = self.request.query_params.get("identifier_type", None)
+        if identifier_type is not None:
+            if identifier_type == "ballot":
+                queryset = queryset.filter(group_type=None)
+            else:
+                queryset = queryset.filter(group_type=identifier_type)
 
         queryset = queryset.select_related(
             "election_type", "organisation", "elected_role", "division"

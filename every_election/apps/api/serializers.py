@@ -153,6 +153,7 @@ election_fields = (
     "organisation",
     "group",
     "group_type",
+    "identifier_type",
     "children",
     "elected_role",
     "seats_contested",
