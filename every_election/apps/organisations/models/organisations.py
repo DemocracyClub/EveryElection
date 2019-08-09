@@ -122,7 +122,9 @@ class Organisation(models.Model):
 
 
 class OrganisationGeography(DateConstraintMixin, models.Model):
-    organisation = models.ForeignKey("Organisation", related_name="geographies")
+    organisation = models.ForeignKey(
+        "Organisation", related_name="geographies", on_delete=models.CASCADE
+    )
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     gss = models.CharField(blank=True, max_length=20)

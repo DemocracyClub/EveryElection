@@ -27,7 +27,9 @@ class ElectionType(models.Model):
 
     name = models.CharField(blank=True, max_length=100)
     election_type = models.CharField(blank=True, max_length=100, unique=True)
-    default_voting_system = models.ForeignKey("elections.VotingSystem", null=True)
+    default_voting_system = models.ForeignKey(
+        "elections.VotingSystem", null=True, on_delete=models.CASCADE
+    )
 
     def __str__(self):
         return self.name
@@ -36,7 +38,9 @@ class ElectionType(models.Model):
 class ElectionSubType(models.Model):
 
     name = models.CharField(blank=True, max_length=100)
-    election_type = models.ForeignKey("ElectionType", related_name="subtype")
+    election_type = models.ForeignKey(
+        "ElectionType", related_name="subtype", on_delete=models.CASCADE
+    )
     election_subtype = models.CharField(blank=True, max_length=100)
     ValidationError = ValueError
 
@@ -51,9 +55,11 @@ class ElectedRole(models.Model):
     "Councillor for Trumpton" or "Mayor of London"
     """
 
-    election_type = models.ForeignKey("ElectionType")
+    election_type = models.ForeignKey("ElectionType", on_delete=models.CASCADE)
     organisation = models.ForeignKey(
-        "organisations.Organisation", related_name="electedrole"
+        "organisations.Organisation",
+        related_name="electedrole",
+        on_delete=models.CASCADE,
     )
     elected_title = models.CharField(blank=True, max_length=255)
     elected_role_name = models.CharField(blank=True, max_length=255)
@@ -96,21 +102,35 @@ class Election(models.Model):
     election_id = models.CharField(blank=True, null=True, max_length=250, unique=True)
     tmp_election_id = models.CharField(blank=True, null=True, max_length=250)
     election_title = models.CharField(blank=True, max_length=255)
-    election_type = models.ForeignKey(ElectionType)
-    election_subtype = models.ForeignKey(ElectionSubType, null=True)
+    election_type = models.ForeignKey(ElectionType, on_delete=models.CASCADE)
+    election_subtype = models.ForeignKey(
+        ElectionSubType, null=True, on_delete=models.CASCADE
+    )
     poll_open_date = models.DateField(blank=True, null=True)
-    organisation = models.ForeignKey("organisations.Organisation", null=True)
-    elected_role = models.ForeignKey(ElectedRole, null=True)
-    division = models.ForeignKey("organisations.OrganisationDivision", null=True)
+    organisation = models.ForeignKey(
+        "organisations.Organisation", null=True, on_delete=models.CASCADE
+    )
+    elected_role = models.ForeignKey(ElectedRole, null=True, on_delete=models.CASCADE)
+    division = models.ForeignKey(
+        "organisations.OrganisationDivision", null=True, on_delete=models.CASCADE
+    )
     division_geography = models.ForeignKey(
-        "organisations.DivisionGeography", null=True, blank=True
+        "organisations.DivisionGeography",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
     )
     organisation_geography = models.ForeignKey(
-        "organisations.OrganisationGeography", null=True, blank=True
+        "organisations.OrganisationGeography",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
     )
     seats_contested = models.IntegerField(blank=True, null=True)
     seats_total = models.IntegerField(blank=True, null=True)
-    group = models.ForeignKey("Election", null=True, related_name="_children_qs")
+    group = models.ForeignKey(
+        "Election", null=True, related_name="_children_qs", on_delete=models.CASCADE
+    )
 
     def get_children(self, manager):
         """
@@ -131,7 +151,9 @@ class Election(models.Model):
         raise ValueError("Unknown manager {}".format(manager))
 
     group_type = models.CharField(blank=True, max_length=100, null=True)
-    voting_system = models.ForeignKey("elections.VotingSystem", null=True)
+    voting_system = models.ForeignKey(
+        "elections.VotingSystem", null=True, on_delete=models.CASCADE
+    )
     explanation = models.ForeignKey(
         "elections.Explanation", null=True, blank=True, on_delete=models.SET_NULL
     )
@@ -184,7 +206,11 @@ class Election(models.Model):
         related_name="cancellation_election_set",
     )
     replaces = models.ForeignKey(
-        "Election", null=True, blank=True, related_name="_replaced_by"
+        "Election",
+        null=True,
+        blank=True,
+        related_name="_replaced_by",
+        on_delete=models.CASCADE,
     )
 
     @property
