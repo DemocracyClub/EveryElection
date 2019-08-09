@@ -42,10 +42,12 @@ class ElectionQuerySet(models.QuerySet):
         else:
             raise TypeError("Expected list or str found {}".format(type(status)))
 
-        return self.annotate(
-            latest_status=models.Max("moderationhistory__modified")
-        ).filter(
-            query & models.Q(moderationhistory__modified=models.F("latest_status"))
+        return (
+            self.annotate(latest_status=models.Max("moderationhistory__modified"))
+            .filter(
+                query & models.Q(moderationhistory__modified=models.F("latest_status"))
+            )
+            .order_by("election_id")
         )
 
 
