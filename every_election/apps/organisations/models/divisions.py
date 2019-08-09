@@ -3,7 +3,9 @@ from .mixins import DateConstraintMixin
 
 
 class OrganisationDivisionSet(DateConstraintMixin, models.Model):
-    organisation = models.ForeignKey("Organisation", related_name="divisionset")
+    organisation = models.ForeignKey(
+        "Organisation", related_name="divisionset", on_delete=models.CASCADE
+    )
     start_date = models.DateField(null=False)
     end_date = models.DateField(null=True, blank=True)
     legislation_url = models.CharField(blank=True, max_length=500, null=True)
@@ -74,9 +76,14 @@ class OrganisationDivision(models.Model):
     This could be a ward, constituency or office
     """
 
-    organisation = models.ForeignKey("Organisation", related_name="divisions")
+    organisation = models.ForeignKey(
+        "Organisation", related_name="divisions", on_delete=models.CASCADE
+    )
     divisionset = models.ForeignKey(
-        "OrganisationDivisionSet", related_name="divisions", null=False
+        "OrganisationDivisionSet",
+        related_name="divisions",
+        null=False,
+        on_delete=models.CASCADE,
     )
     name = models.CharField(blank=True, max_length=255)
     official_identifier = models.CharField(blank=True, max_length=255, db_index=True)
@@ -111,6 +118,8 @@ class OrganisationDivision(models.Model):
 
 
 class DivisionGeography(models.Model):
-    division = models.OneToOneField(OrganisationDivision, related_name="geography")
+    division = models.OneToOneField(
+        OrganisationDivision, related_name="geography", on_delete=models.CASCADE
+    )
     geography = models.MultiPolygonField()
     source = models.CharField(blank=True, max_length=255)
