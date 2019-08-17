@@ -3,6 +3,7 @@ from sopn_publish_date.calendars import Country, Region
 from sopn_publish_date.election_ids import (
     InvalidElectionIdError,
     AmbiguousElectionIdError,
+    NoSuchElectionTypeError,
 )
 
 from datetime import date
@@ -11,12 +12,49 @@ from pytest import raises
 sopn_publish_date = StatementPublishDate()
 
 
-def test_publish_date_local_group():
+def test_publish_date_local_id():
 
     with raises(AmbiguousElectionIdError) as err:
         sopn_publish_date.for_id("local.2019-02-21")
 
     assert str(err.value) == "Cannot derive country from election id [local.2019-02-21]"
+
+
+def test_publish_date_local_id_with_country():
+    publish_date = sopn_publish_date.for_id("local.2019-02-21", country="ENG")
+
+    assert publish_date == date(2019, 1, 28)
+
+
+def test_publish_date_parl_id_with_country():
+    publish_date = sopn_publish_date.for_id("parl.2019-02-21", country="ENG")
+
+    assert publish_date == date(2019, 1, 25)
+
+
+def test_publish_date_parl_id_with_invalid_country():
+
+    with raises(AmbiguousElectionIdError) as err:
+        sopn_publish_date.for_id("parl.2019-02-21", country="USA")
+
+    assert (
+        str(err.value)
+        == "Election id [parl.2019-02-21] requires a valid country, got [USA]"
+    )
+
+
+def test_publish_date_not_an_election_type():
+
+    with raises(NoSuchElectionTypeError) as err:
+        sopn_publish_date.for_id("not-an-election.2019-02-21")
+
+    assert str(err.value) == "Election type [not-an-election] does not exist"
+
+
+def test_publish_date_id_that_does_not_need_country():
+    publish_date = sopn_publish_date.for_id("naw.c.ceredigion.2016-05-05")
+
+    assert publish_date == date(2016, 4, 7)
 
 
 def test_publish_date_invalid_id():
