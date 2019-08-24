@@ -21,26 +21,15 @@ def test_publish_date_local_id():
 
 
 def test_publish_date_local_id_with_country():
-    publish_date = sopn_publish_date.for_id("local.2019-02-21", country="ENG")
+    publish_date = sopn_publish_date.for_id("local.2019-02-21", country=Country.ENGLAND)
 
     assert publish_date == date(2019, 1, 28)
 
 
 def test_publish_date_parl_id_with_country():
-    publish_date = sopn_publish_date.for_id("parl.2019-02-21", country="ENG")
+    publish_date = sopn_publish_date.for_id("parl.2019-02-21", country=Country.ENGLAND)
 
     assert publish_date == date(2019, 1, 25)
-
-
-def test_publish_date_parl_id_with_invalid_country():
-
-    with raises(AmbiguousElectionIdError) as err:
-        sopn_publish_date.for_id("parl.2019-02-21", country="USA")
-
-    assert (
-        str(err.value)
-        == "Election id [parl.2019-02-21] requires a valid country, got [USA]"
-    )
 
 
 def test_publish_date_not_an_election_type():
