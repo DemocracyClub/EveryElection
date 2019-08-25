@@ -33,9 +33,12 @@ def test_publish_date_parl_id_with_country():
 
 
 def test_publish_date_europarl_id_with_country():
-    publish_date = sopn_publish_date.for_id("europarl.2019-02-21", country=Country.ENGLAND)
+    publish_date = sopn_publish_date.for_id(
+        "europarl.2019-02-21", country=Country.ENGLAND
+    )
 
     assert publish_date is None
+
 
 def test_publish_date_not_an_election_type():
 
