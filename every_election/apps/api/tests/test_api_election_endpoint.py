@@ -197,6 +197,10 @@ class TestElectionAPIQueries(APITestCase):
         resp = self.client.get("/api/elections/{}/?deleted=1".format(id_))
         self.assertEqual(200, resp.status_code)
 
+    def test_detail_invalid_id(self):
+        resp = self.client.get("/api/elections/foo/")
+        self.assertEqual(400, resp.status_code)
+
     def test_identifier_type_filter(self):
         group = ElectionWithStatusFactory(
             group_type="election", moderation_status=related_status("Approved")

@@ -4,6 +4,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
+from uk_election_ids.election_ids import validate
 
 from elections.models import Election, ElectionType, ElectionSubType
 from elections.query_helpers import PostcodeError
@@ -29,6 +30,12 @@ class APICoordsException(APIException):
     status_code = 400
     default_detail = "Invalid co-ordinates"
     default_code = "invalid_coords"
+
+
+class APIInvalidElectionIdException(APIException):
+    status_code = 400
+    default_detail = "Invalid Election ID"
+    default_code = "invalid_election_id"
 
 
 class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -87,6 +94,11 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
         )
 
         return queryset
+
+    def retrieve(self, request, *args, **kwargs):
+        if not validate(kwargs["election_id"]):
+            raise APIInvalidElectionIdException()
+        return super().retrieve(request, *args, **kwargs)
 
 
 class ElectionTypeViewSet(viewsets.ReadOnlyModelViewSet):
