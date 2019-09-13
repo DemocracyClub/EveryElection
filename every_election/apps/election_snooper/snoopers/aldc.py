@@ -19,7 +19,7 @@ class ALDCScraper(BaseSnooper):
             date = tile.find("date").text.strip()
             content = tile.find("div", {"class": "c-editor"}).find_all("p")
 
-            if "cause" in content[0].text.lower():
+            if content[0].text.lower().count("cause") == 1:
                 seat_control, cause = content[0].text.lower().split("cause")
                 cause = cause.split("\n")[0].strip(": .")
             else:
