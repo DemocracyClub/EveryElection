@@ -4,6 +4,7 @@ import urllib.request
 from datetime import date, timedelta
 from enum import Enum, unique
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
@@ -253,11 +254,12 @@ class Election(models.Model):
     @property
     def get_current(self):
         model_current = getattr(self, "current", None)
-        if model_current is None:
-            # We've not explicetly set current
-            recent_past = date.today() - timedelta(days=20)
-            return self.poll_open_date > recent_past
-        return model_current
+        if model_current is not None:
+            return model_current
+
+        recent_past = date.today() - timedelta(days=settings.CURRENT_PAST_DAYS)
+        near_future = date.today() + timedelta(days=settings.CURRENT_FUTURE_DAYS)
+        return self.poll_open_date >= recent_past and self.poll_open_date <= near_future
 
     def __str__(self):
         return self.get_id()
