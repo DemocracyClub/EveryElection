@@ -226,6 +226,13 @@ EMAIL_SIGNUP_API_KEY = ""
 BASICAUTH_DISABLE = True
 
 
+# elections where polling day is in the range
+# (NOW - CURRENT_PAST_DAYS) - (NOW + CURRENT_FUTURE_DAYS)
+# are considered "current"
+CURRENT_PAST_DAYS = 20
+CURRENT_FUTURE_DAYS = 90
+
+
 # .local.py overrides all the common settings.
 try:
     from .local import *  # noqa

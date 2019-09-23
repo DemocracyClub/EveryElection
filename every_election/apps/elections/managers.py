@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from django.conf import settings
 from django.db import models
 from django.contrib.gis.geos import Point
 from elections.query_helpers import get_point_from_postcode
@@ -21,14 +22,14 @@ class ElectionQuerySet(models.QuerySet):
         return self.for_point(point)
 
     def current(self):
-        """
-        For the moment, we'll just define 'current' and any election
-        with a poll date greater than 30 days ago.
-        # TODO replace this with a current status of the election model
-        """
-        recent_past = datetime.today() - timedelta(days=30)
+        recent_past = datetime.today() - timedelta(days=settings.CURRENT_PAST_DAYS)
+        near_future = datetime.today() + timedelta(days=settings.CURRENT_FUTURE_DAYS)
         return self.filter(
-            models.Q(poll_open_date__gt=recent_past) | models.Q(current=True)
+            (
+                models.Q(poll_open_date__gte=recent_past)
+                & models.Q(poll_open_date__lte=near_future)
+            )
+            | models.Q(current=True)
         ).exclude(current=False)
 
     def future(self):

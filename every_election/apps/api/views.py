@@ -43,7 +43,10 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ElectionSerializer
     lookup_field = "election_id"
     lookup_value_regex = r"(?!\.json$)[^/]+"
-    filterset_fields = ("group_type", "poll_open_date")
+    filterset_fields = {
+        "group_type": ["exact"],
+        "poll_open_date": ["exact", "gte", "lte"],
+    }
 
     @action(detail=True, url_path="geo")
     def geo(self, request, election_id=None, format=None):
