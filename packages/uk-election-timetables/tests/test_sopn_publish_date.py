@@ -32,6 +32,12 @@ def test_publish_date_parl_id_with_country():
     assert publish_date == date(2019, 1, 25)
 
 
+def test_publish_date_parl_id_without_country():
+    publish_date = sopn_publish_date.for_id("parl.2019-02-21")
+
+    assert publish_date == date(2019, 1, 25)
+
+
 def test_publish_date_europarl_id_with_country():
     publish_date = sopn_publish_date.for_id(
         "europarl.2019-02-21", country=Country.ENGLAND
