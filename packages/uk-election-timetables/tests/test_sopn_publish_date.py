@@ -203,3 +203,10 @@ def test_publish_date_uk_parliament_scotland_2015():
     )
 
     assert publish_date == date(2015, 4, 9)
+
+
+# Reference election: parl.2019-12-12
+def test_publish_date_uk_parliament_2019():
+    publish_date = sopn_publish_date.uk_parliament(date(2019, 12, 12))
+
+    assert publish_date == date(2019, 11, 14)
