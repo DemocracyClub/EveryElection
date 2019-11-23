@@ -216,3 +216,17 @@ def test_publish_date_uk_parliament_2019():
     publish_date = sopn_publish_date.uk_parliament(date(2019, 12, 12))
 
     assert publish_date == date(2019, 11, 14)
+
+
+def test_christmas_eve_not_counted():
+
+    election_and_expected_sopn_date = {
+        sopn_publish_date.police_and_crime_commissioner: date(2018, 12, 11),
+        sopn_publish_date.uk_parliament: date(2018, 12, 7),
+        sopn_publish_date.scottish_parliament: date(2018, 12, 3),
+        sopn_publish_date.northern_ireland_assembly: date(2018, 12, 13),
+        sopn_publish_date.national_assembly_for_wales: date(2018, 12, 10),
+    }
+
+    for sopn_for_election_on, expected_date in election_and_expected_sopn_date.items():
+        assert sopn_for_election_on(date(2019, 1, 10)) == expected_date
