@@ -58,6 +58,18 @@
             </table>
         {% endfor %}
         </ul>
+        <h2>Elections</h2>
+        <ul>
+            {% for election in object.election_set.all %}
+                {% if election.identifier_type == 'organisation' %}
+                    <li>
+                        <a href="{{ election.get_absolute_url }}">
+                        {{ election.get_id }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+
         <h3>API</h3>
         <ul>
             <li><a href="{{ api_detail }}">
