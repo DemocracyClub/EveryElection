@@ -1,8 +1,10 @@
 from datetime import datetime
+from django.db.models import Prefetch, Q
 from django.http import Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView, TemplateView
 from organisations.models import Organisation
+from elections.models import Election
 
 
 class SupportedOrganisationsView(ListView):
@@ -38,8 +40,18 @@ class OrganisationDetailView(TemplateView):
 
     def get_context_data(self, **kwargs):
         kwargs["date"] = datetime.strptime(kwargs["date"], "%Y-%m-%d").date()
+
+        mayor_q = Q(election_id__startswith="pcc")
+        pcc_q = Q(election_id__startswith="mayor")
+        others_q = Q(group_type__isnull=False) & ~Q(group_type="subtype")
+        elections = Election.public_objects.filter(others_q | pcc_q | mayor_q)
+
         try:
-            obj = Organisation.objects.all().get_by_date(**kwargs)
+            obj = (
+                Organisation.objects.all()
+                .prefetch_related(Prefetch("election_set", elections))
+                .get_by_date(**kwargs)
+            )
         except Organisation.DoesNotExist:
             raise Http404()
 

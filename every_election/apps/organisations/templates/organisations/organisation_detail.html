@@ -61,19 +61,10 @@
         <h2>Elections</h2>
         <ul>
             {% for election in object.election_set.all %}
-                {% if 'pcc' in election.get_id or 'mayor' in election.get_id %}
-                    <li>
-                        <a href="{{ election.get_absolute_url }}">
-                        {{ election.get_id }}</a>
-                    </li>
-                {% else %}
-                    {% if election.identifier_type != 'ballot' and election.identifier_type != 'subtype' %}
-                        <li>
-                            <a href="{{ election.get_absolute_url }}">
-                            {{ election.get_id }}</a>
-                        </li>
-                    {% endif %}
-                {% endif %}
+                <li>
+                    <a href="{{ election.get_absolute_url }}">
+                    {{ election.get_id }}</a>
+                </li>
             {% empty %}
                 <li>No elections found for {{ object.name }}</li>
             {% endfor %}
