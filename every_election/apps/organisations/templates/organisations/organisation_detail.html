@@ -38,21 +38,23 @@
                 </tr>
             </thead>
             <tbody>
-            {% for division in divisionset.divisions.all %}
-                <tr>
-                    <td>{{ division }}</td>
-                    <td>{{ division.seats_total|default_if_none:"Unknown" }}</td>
-                    <td>{{ division.division_subtype }}</td>
-                    <td>
-                        {% if division.format_geography_link %}
-                        <a href="{{ division.format_geography_link }}.html">
-                            {{ division.official_identifier }}
-                        </a>
-                        {% else %}
-                        <strong>Missing</strong>
-                        {% endif %}
-                    </td>
-                </tr>
+            {% for division_type, divisions in divisionset.divisions_by_type.items %}
+                {% for division in divisions %}
+                    <tr>
+                        <td>{{ division }}</td>
+                        <td>{{ division.seats_total|default_if_none:"Unknown" }}</td>
+                        <td>{{ division.division_subtype }}</td>
+                        <td>
+                            {% if division.format_geography_link %}
+                            <a href="{{ division.format_geography_link }}.html">
+                                {{ division.official_identifier }}
+                            </a>
+                            {% else %}
+                            <strong>Missing</strong>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
             {% endfor %}
             </tbody>
             </table>

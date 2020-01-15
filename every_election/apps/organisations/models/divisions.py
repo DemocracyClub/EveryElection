@@ -31,6 +31,16 @@ class OrganisationDivisionSet(DateConstraintMixin, models.Model):
                 pass
         return found_geography
 
+    def divisions_by_type(self):
+        divisions_by_type = {}
+        divisions = self.divisions.all()
+        for division in divisions:
+            if division.division_type not in divisions_by_type:
+                divisions_by_type[division.division_type] = [division]
+            else:
+                divisions_by_type[division.division_type].append(division)
+        return divisions_by_type
+
     def save(self, *args, **kwargs):
         self.check_end_date()
         return super().save(*args, **kwargs)
