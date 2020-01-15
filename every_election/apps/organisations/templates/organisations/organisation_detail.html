@@ -61,12 +61,14 @@
         <h2>Elections</h2>
         <ul>
             {% for election in object.election_set.all %}
-                {% if election.identifier_type == 'organisation' %}
+                {% if election.identifier_type != 'ballot' %}
                     <li>
                         <a href="{{ election.get_absolute_url }}">
                         {{ election.get_id }}</a>
                     </li>
                 {% endif %}
+            {% empty %}
+                <li>No elections found for {{ object.name }}</li>
             {% endfor %}
         </ul>
 
