@@ -47,6 +47,11 @@
       {# Only do this for non-group IDs #}
     {% endif %}
 
+    {% if object.seats_total and object.seats_contested %}
+      <dt>Total Seats</dt><dd>{{ object.seats_total }}</dd>
+      <dt>Seats Contested</dt><dd>{{ object.seats_contested }}</dd>
+    {% endif %}
+
     {% if object.cancelled %}
       {% if object.cancellation_notice %}
         {% include './official_document.html' with document=object.cancellation_notice type="Notice of Cancellation Document" only %}
