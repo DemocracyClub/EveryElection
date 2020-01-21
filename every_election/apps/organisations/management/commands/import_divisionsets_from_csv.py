@@ -132,7 +132,7 @@ class Command(ReadFromCSVMixin, BaseCommand):
         curie = ":".join([line["Organisation ID type"], line["Organisation ID"]])
         return PARENT_TO_CHILD_AREAS[self.org_curie_to_area_type[curie]][0]
 
-    def create_div_from_line(self, org, identifier, line):
+    def create_div_from_line(self, div_set, identifier, line):
 
         # just in case...
         if "geography_curie" in line and line["geography_curie"]:
@@ -147,15 +147,13 @@ class Command(ReadFromCSVMixin, BaseCommand):
         div = OrganisationDivision(
             official_identifier=identifier,
             temp_id=identifier,
-            organisation=org,
             name=line["Name"],
             slug=slugify(line["Name"]),
             division_type=self.get_division_type_from_registers(line),
             seats_total=seats_total,
+            divisionset=div_set,
         )
-        # set a NULL placeholder for now. We'll update
-        # it once the DivisionSets have been persisted
-        div.divisionset = None
+
         return div
 
     def create_divisions(self, csv_data):
@@ -164,14 +162,15 @@ class Command(ReadFromCSVMixin, BaseCommand):
             org = self.get_org_from_line(line)
             div_set = self.division_sets[org.official_identifier]
             div_identifier = self.get_identifier_from_line(div_set, line)
-            division = self.create_div_from_line(org, div_identifier, line)
+            division = self.create_div_from_line(div_set, div_identifier, line)
             self.divisions.append(division)
 
     @transaction.atomic
     def save_all(self):
-        for _, record in self.division_sets.items():
-            record.save()
         for record in self.divisions:
-            org = self.division_sets[record.organisation.official_identifier]
-            record.divisionset = org
+            record.divisionset.save()
+            # hack: see https://code.djangoproject.com/ticket/29085
+            # This should fix it when we use Django>=3.03:
+            # https://github.com/django/django/commit/519016e5f25d7c0a040015724f9920581551cab0
+            record.divisionset = record.divisionset
             record.save()

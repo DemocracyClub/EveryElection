@@ -63,10 +63,11 @@ class Command(ReadFromCSVMixin, BaseCommand):
         for line in csv_data:
             org = self.get_org_from_line(line)
             id_ = "gss:{}".format(line["District Electoral Area GSS code"])
+            div_set = OrganisationDivisionSet(organisation=org)
             div = OrganisationDivision(
                 official_identifier=id_,
                 temp_id="",
-                organisation=org,
+                divisionset=div_set,
                 name=line["District Electoral Area"],
                 slug=slugify(line["District Electoral Area"]),
                 division_type="LGE",
@@ -80,9 +81,10 @@ class Command(ReadFromCSVMixin, BaseCommand):
 
     @transaction.atomic
     def save_all(self):
-        for _, record in self.division_sets.items():
-            record.save()
         for record in self.divisions:
-            org = self.division_sets[record.organisation.official_identifier]
-            record.divisionset = org
+            record.divisionset.save()
+            # hack: see https://code.djangoproject.com/ticket/29085
+            # This should fix it when we use Django>=3.03:
+            # https://github.com/django/django/commit/519016e5f25d7c0a040015724f9920581551cab0
+            record.divisionset = record.divisionset
             record.save()
