@@ -1,13 +1,9 @@
-{% load dc_forms %}
 
 
 <div class="card postcode_card election">
   <h1>
-    {% if object.election_title %}
-      {{ object.election_title }}
-    {% else %}
-      {{ object.election_id }}
-    {% endif %}
+    {% firstof object.election_title object.election_id %}
+
     {% if object.cancelled %}
       <span class="label alert">cancelled</span>
     {% endif %}
