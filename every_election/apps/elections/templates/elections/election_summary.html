@@ -17,22 +17,14 @@
     <dt>ID</dt> <dd>{{ object.election_id }}</dd>
     <dt>Type</dt> <dd>{{ object.election_type }}</dd>
     <dt>Date</dt> <dd>{{ object.poll_open_date }}</dd>
+
     {% if object.organisation %}
       <dt>Organisation</dt><dd><a href="{{ object.organisation.get_absolute_url }}">
       {{ object.organisation }}</a></dd>
     {% endif %}
 
     {% if object.division %}
-      <dt>Division</dt>
-      <dd>
-        {% if object.division.format_geography_link %}
-          <a href="{{ object.division.format_geography_link }}.html">
-            {{ object.division.official_identifier }}
-          </a>
-        {% else %}
-          <strong>Missing</strong>
-        {% endif %}
-      </dd>
+      <dt>Division</dt><dd>{{ geography_html }}</dd>
     {% endif %}
 
     {% if object.identifier_type == "organisation" or object.identifier_type == "ballot" %}
@@ -48,22 +40,14 @@
       <dt>Seats Contested</dt><dd>{{ object.seats_contested }}</dd>
     {% endif %}
 
-    {% if object.cancelled %}
-      {% if object.cancellation_notice %}
-        {% include './official_document.html' with document=object.cancellation_notice type="Notice of Cancellation Document" only %}
-      {% endif %}
-      </dl>
-    {% else %}
-      {% if object.notice %}
-        {% include './official_document.html' with document=object.notice type="Notice of Election Document" only %}
-      {% elif object.group.notice %}
-        {% include './official_document.html' with document=object.group.notice type="Notice of Election Document" only %}
-      {% endif %}
-      </dl>
-
-      {% if not object.notice and not object.group.notice and user_can_upload_docs %}
-        <hr />
-        {% include "./election_form.html" %}
-      {% endif %}
+    {% if document %}
+      {% include './official_document.html' with document=document type=document_type only %}
     {% endif %}
+  </dl>
+
+  {% if not object.notice and not object.group.notice and user_can_upload_docs and not object.cancelled %}
+    <hr />
+    {% include "./election_form.html" %}
+  {% endif %}
+
 </div>
