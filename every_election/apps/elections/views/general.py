@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 from django.contrib.auth.mixins import AccessMixin
 from django.views.generic import ListView, DetailView, TemplateView
+from django.utils.html import mark_safe
 
 from core.helpers import user_is_moderator
 from elections.constants import ELECTION_TYPES
@@ -77,12 +78,43 @@ class SingleElection(AccessMixin, DetailView):
         obj.children = obj.get_children(Election.public_objects)
         return obj
 
+    def get_document(self, election):
+        if election.cancelled and election.cancellation_notice:
+            document = election.cancellation_notice
+            document_type = "Notice of Cancellation Document"
+        else:
+            if election.notice:
+                document = election.notice
+                document_type = "Notice of Election Document"
+            elif election.group and election.group.notice:
+                document = election.group.notice
+                document_type = "Notice of Election Document"
+            else:
+                document = None
+                document_type = None
+
+        return document, document_type
+
+    def get_geography_html(self, election):
+        if election.division and election.division.format_geography_link():
+            division = election.division
+            geography_link = "<a href={}.html>{}</a>".format(
+                division.format_geography_link(), division.official_identifier
+            )
+        else:
+            geography_link = "<strong>Missing</strong>"
+        return mark_safe(geography_link)
+
     def get_context_data(self, **kwargs):
         if self.request.POST:
             form = NoticeOfElectionForm(self.request.POST)
         else:
             form = NoticeOfElectionForm()
         context = super().get_context_data(**kwargs)
+        context["geography_html"] = self.get_geography_html(context["object"])
+        context["document"], context["document_type"] = self.get_document(
+            context["object"]
+        )
         context["form"] = form
         context["user_can_upload_docs"] = user_is_moderator(self.request.user)
         return context

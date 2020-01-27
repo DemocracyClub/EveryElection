@@ -1,78 +1,10 @@
 {% extends "base.html" %}
-{% load dc_forms %}
 
 {% block content %}
 <div class="row">
 <section class="columns large-10 large-centered">
 
-    <div class="card postcode_card election">
-        <h1>{% if object.election_title %}
-                {{ object.election_title }}
-            {% else %}
-                {{ object.election_id }}
-        {% endif %}
-        {% if object.cancelled %}
-          <span class="label alert">cancelled</span>
-        {% endif %}
-        </h1>
-        {% if object.election_subtype %}
-        <h3>{{ object.election_subtype }}</h3>
-        {% endif %}
-        <dl>
-            <dt>ID</dt> <dd>{{ object.election_id }}</dd>
-            <dt>Type</dt> <dd>{{ object.election_type }}</dd>
-            <dt>Date</dt> <dd>{{ object.poll_open_date }}</dd>
-        {% if object.organisation %}
-            <dt>Organisation</dt><dd><a href="{{ object.organisation.get_absolute_url }}">
-            {{ object.organisation }}</a></dd>
-        {% endif %}
-        {% if object.division %}
-            <dt>Division</dt>
-              <dd>{% if object.division.format_geography_link %}
-                    <a href="{{ object.division.format_geography_link }}.html">
-                      {{ object.division.official_identifier }}
-                    </a>
-                  {% else %}
-                    <strong>Missing</strong>
-                  {% endif %}
-              </dd>
-        {% endif %}
-
-        {% if object.identifier_type == "organisation" or object.identifier_type == "ballot" %}
-            {% if object.voting_system %}
-            <dt>Voting system</dt><dd><a href="{{ object.voting_system.wikipedia_url }}">
-                {{ object.voting_system }}</a></dd>
-            {% endif %}
-            {# Only do this for non-group IDs #}
-        {% endif %}
-
-        {% if object.cancelled %}
-          {% if object.cancellation_notice %}
-            {% include './official_document.html' with document=object.cancellation_notice type="Notice of Cancellation Document" only %}
-          {% endif %}
-          </dl>
-        {% else %}
-          {% if object.notice %}
-            {% include './official_document.html' with document=object.notice type="Notice of Election Document" only %}
-          {% elif object.group.notice %}
-            {% include './official_document.html' with document=object.group.notice type="Notice of Election Document" only %}
-          {% endif %}
-          </dl>
-
-          {% if not object.notice and not object.group.notice and user_can_upload_docs %}
-              <hr />
-              <form action="" method="post">
-                  {% csrf_token %}
-                  <div class="form-group">
-                      {{ form|dc_form }}
-                  </div>
-                  <div class="form-group">
-                      <input type="submit" class="button" value="Submit" />
-                  </div>
-              </form>
-          {% endif %}
-        {% endif %}
-    </div>
+         {% include "./election_summary.html" %}
 
     <div class="card postcode_card related">
         <h3>Related Elections</h3>
