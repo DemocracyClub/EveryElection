@@ -52,7 +52,7 @@ class ElectionAdmin(admin.ModelAdmin):
 
 
 class JSONEditor(Textarea):
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         # if its valid json, pretty print it
         # if not (e.g: on init, validation error)
         # just use the input string
