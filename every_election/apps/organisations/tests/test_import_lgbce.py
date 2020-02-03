@@ -64,7 +64,6 @@ class ImportLgbceTests(TestCase):
         for division_name in division_names:
             OrganisationDivision.objects.create(
                 official_identifier=division_name,
-                organisation=valid_org,
                 divisionset=self.valid_divset,
                 name=division_name,
                 slug=slugify(division_name),

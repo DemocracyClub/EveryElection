@@ -3,7 +3,10 @@ from django.test import TestCase
 
 from elections.models import ElectedRole, Election, ElectionType, ElectionSubType
 from organisations.models import Organisation, DivisionGeography, OrganisationGeography
-from organisations.tests.factories import OrganisationDivisionFactory
+from organisations.tests.factories import (
+    OrganisationDivisionFactory,
+    OrganisationDivisionSetFactory,
+)
 
 from .base_tests import BaseElectionCreatorMixIn
 
@@ -90,8 +93,9 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             elected_title="Local Councillor",
             elected_role_name="Councillor for Test Council 2",
         )
+        div_set2 = OrganisationDivisionSetFactory(organisation=org2)
         div3 = OrganisationDivisionFactory(
-            organisation=org2, name="Test Div 3", slug="test-div-3"
+            divisionset=div_set2, name="Test Div 3", slug="test-div-3"
         )
 
         all_data = self.base_data
@@ -251,20 +255,21 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             elected_title="Assembly Member",
             elected_role_name="Assembly Member for Foo",
         )
+        naw_div_set = OrganisationDivisionSetFactory(organisation=naw_org)
         org_div_3 = OrganisationDivisionFactory(
-            organisation=naw_org,
+            divisionset=naw_div_set,
             name="Test Div 3",
             slug="test-div-3",
             division_election_sub_type="c",
         )
         org_div_4 = OrganisationDivisionFactory(
-            organisation=naw_org,
+            divisionset=naw_div_set,
             name="Test Div 4",
             slug="test-div-4",
             division_election_sub_type="c",
         )
         org_div_5 = OrganisationDivisionFactory(
-            organisation=naw_org,
+            divisionset=naw_div_set,
             name="Test Div 5",
             slug="test-div-5",
             division_election_sub_type="r",
