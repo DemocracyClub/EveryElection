@@ -13,9 +13,7 @@
         <ul>
         {% for divisionset in object.divisionset.all %}
             <h3>{{ divisionset.short_title }}</h3>
-            <p>Active from {{ divisionset.start_date }} to
-                {% if divisionset.end_date %}{{divisionset.end_date}}{% else %}now{% endif %}.</p>
-
+            <p>Active from {{ divisionset.active_period_text }}.</p>
             {% if divisionset.legislation_url %}
             <p>These sub-divisions were enacted in
                 <a href="{{ divisionset.legislation_url }}">this legislation</a>.</p>

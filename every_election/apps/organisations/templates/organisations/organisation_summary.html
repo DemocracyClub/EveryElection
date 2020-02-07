@@ -1,7 +1,6 @@
 <h1><a href="{{ object.get_absolute_url }}">{{ object.name }}</a></h1>
 <p>Also known as "{{ object.common_name }}".</p>
-<p>Active from {{ object.start_date }} to
-    {% if object.end_date %}{{object.end_date}}{% else %}now{% endif %}.</p>
+<p>Active from {{ object.active_period_text }}.</p>
 <p>For election IDs, this should be referred to as <code>{{ object.slug }}</code></p>
 <p>The official identifier is <code>{{ object.official_identifier }}</code></p>
 <p>The organisation type is <code>{{ object.organisation_type }}</code></p>

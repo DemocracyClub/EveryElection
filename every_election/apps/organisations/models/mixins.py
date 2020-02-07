@@ -2,6 +2,16 @@ from django.core.exceptions import ValidationError
 from django.utils.dateparse import parse_date
 
 
+class DateDisplayMixin:
+    @property
+    def active_period_text(self):
+        text = f"{self.start_date.strftime('%d %b %Y')}"
+        if self.end_date:
+            return f"{text} to {self.end_date.strftime('%d %b %Y')}"
+        else:
+            return f"{text} onwards"
+
+
 class DateConstraintMixin:
     def check_start_date(self):
         if type(self.start_date) == str:

@@ -1,8 +1,8 @@
 from django.contrib.gis.db import models
-from .mixins import DateConstraintMixin
+from .mixins import DateConstraintMixin, DateDisplayMixin
 
 
-class OrganisationDivisionSet(DateConstraintMixin, models.Model):
+class OrganisationDivisionSet(DateConstraintMixin, DateDisplayMixin, models.Model):
     organisation = models.ForeignKey(
         "Organisation", related_name="divisionset", on_delete=models.CASCADE
     )
@@ -15,9 +15,7 @@ class OrganisationDivisionSet(DateConstraintMixin, models.Model):
     ValidationError = ValueError
 
     def __str__(self):
-        return "{}:{} ({} to {})".format(
-            self.pk, self.short_title, self.start_date, self.end_date or "now"
-        )
+        return "{}:{} ({})".format(self.pk, self.short_title, self.active_period_text)
 
     @property
     def has_related_geographies(self):

@@ -1,7 +1,7 @@
 from django.contrib.gis.db import models
 from django.urls import reverse
 from model_utils import Choices
-from .mixins import DateConstraintMixin
+from .mixins import DateConstraintMixin, DateDisplayMixin
 
 
 class OrganisationManager(models.QuerySet):
@@ -21,7 +21,7 @@ class OrganisationManager(models.QuerySet):
         )
 
 
-class Organisation(models.Model):
+class Organisation(models.Model, DateDisplayMixin):
     """
     An organisation that can hold an election in the UK
     """
@@ -59,7 +59,7 @@ class Organisation(models.Model):
     objects = OrganisationManager().as_manager()
 
     def __str__(self):
-        return "{}".format(self.name)
+        return "{} ({})".format(self.name, self.active_period_text)
 
     @property
     def name(self):
@@ -121,7 +121,7 @@ class Organisation(models.Model):
                 return None
 
 
-class OrganisationGeography(DateConstraintMixin, models.Model):
+class OrganisationGeography(DateConstraintMixin, DateDisplayMixin, models.Model):
     organisation = models.ForeignKey(
         "Organisation", related_name="geographies", on_delete=models.CASCADE
     )
@@ -135,8 +135,8 @@ class OrganisationGeography(DateConstraintMixin, models.Model):
     def __str__(self):
         if self.gss:
             return self.gss
-        return "{name} ({start} - {end})".format(
-            name=self.organisation.name, start=self.start_date, end=self.end_date
+        return "{name} ({dates})".format(
+            name=self.organisation.name, dates=self.active_period_text
         )
 
     def save(self, *args, **kwargs):
