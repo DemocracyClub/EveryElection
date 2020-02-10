@@ -84,9 +84,6 @@ class OrganisationDivision(models.Model):
     This could be a ward, constituency or office
     """
 
-    organisation = models.ForeignKey(
-        "Organisation", related_name="divisions", on_delete=models.CASCADE
-    )
     divisionset = models.ForeignKey(
         "OrganisationDivisionSet",
         related_name="divisions",
@@ -111,7 +108,15 @@ class OrganisationDivision(models.Model):
     class Meta:
         verbose_name_plural = "Organisation Divisions"
         ordering = ("name",)
-        unique_together = ("organisation", "divisionset", "official_identifier")
+        unique_together = ("divisionset", "official_identifier")
+
+    @property
+    def organisation(self):
+        return self.divisionset.organisation
+
+    @property
+    def organisation_id(self):
+        return self.organisation.id
 
     def format_geography_link(self):
         try:

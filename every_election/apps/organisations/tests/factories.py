@@ -46,7 +46,6 @@ class OrganisationDivisionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = OrganisationDivision
 
-    organisation = factory.SubFactory(OrganisationFactory)
     divisionset = factory.SubFactory(OrganisationDivisionSetFactory)
     name = factory.Sequence(lambda n: "Division %d" % n)
     official_identifier = factory.Sequence(lambda n: n)

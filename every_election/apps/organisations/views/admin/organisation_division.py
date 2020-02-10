@@ -42,8 +42,8 @@ class OrganisationDivisionAdminForm(forms.ModelForm):
 
 
 class OrganisationDivisionAdmin(admin.ModelAdmin):
-    list_display = ("official_identifier", "name", "organisation", "divisionset")
-    ordering = ("organisation", "divisionset", "name")
+    list_display = ("official_identifier", "name", "divisionset")
+    ordering = ("divisionset", "name")
     search_fields = ("official_identifier", "name")
     list_filter = [CurrentDivisionFilter, TempIdFilter, "division_type"]
     form = OrganisationDivisionAdminForm

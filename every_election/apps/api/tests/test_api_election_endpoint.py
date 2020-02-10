@@ -12,6 +12,7 @@ from elections.tests.factories import (
 )
 from organisations.tests.factories import (
     OrganisationFactory,
+    OrganisationDivisionSetFactory,
     OrganisationDivisionFactory,
 )
 from elections.models import MetaData
@@ -287,7 +288,8 @@ class TestElectionAPIQueries(APITestCase):
         OrganisationFactory.reset_sequence(0)
         OrganisationDivisionFactory.reset_sequence(0)
         org = OrganisationFactory()
-        org_div = OrganisationDivisionFactory(organisation=org, territory_code="ENG")
+        div_set = OrganisationDivisionSetFactory(organisation=org)
+        org_div = OrganisationDivisionFactory(divisionset=div_set, territory_code="ENG")
         ElectionWithStatusFactory(group=None, organisation=org, division=org_div)
 
         self.expected_object = json.loads(

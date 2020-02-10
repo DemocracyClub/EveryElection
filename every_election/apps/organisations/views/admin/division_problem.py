@@ -16,11 +16,10 @@ class DivisionProblemAdmin(admin.ModelAdmin):
 
     actions = None
 
-    ordering = ("organisation", "divisionset", "name")
+    ordering = ("divisionset", "name")
     list_display = (
         "official_identifier",
         "name",
-        "organisation",
         "divisionset",
         "problem_text",
     )

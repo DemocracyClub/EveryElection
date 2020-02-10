@@ -33,7 +33,6 @@
         "model": "organisations.organisationdivision",
         "pk": 15096,
         "fields": {
-            "organisation": 387,
             "divisionset": 115,
             "name": "Tintagel",
             "official_identifier": "gss:E05009271",
