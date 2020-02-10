@@ -63,7 +63,7 @@ class Command(ReadFromCSVMixin, BaseCommand):
         for line in csv_data:
             org = self.get_org_from_line(line)
             id_ = "gss:{}".format(line["District Electoral Area GSS code"])
-            div_set = OrganisationDivisionSet(organisation=org)
+            div_set = self.division_sets[org.official_identifier]
             div = OrganisationDivision(
                 official_identifier=id_,
                 temp_id="",
