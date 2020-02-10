@@ -73,9 +73,6 @@ class Command(ReadFromCSVMixin, BaseCommand):
                 division_type="LGE",
                 seats_total=line["Number of councillors"],
             )
-            # set a NULL placeholder for now. We'll update
-            # it once the DivisionSets have been persisted
-            div.divisionset = None
 
             self.divisions.append(div)
 
