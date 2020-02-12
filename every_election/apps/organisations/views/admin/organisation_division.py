@@ -1,8 +1,7 @@
 from django.contrib import admin
 from django import forms
 from datetime import datetime
-from organisations.models import Organisation, OrganisationDivision
-from .common import CustomOrganisationChoiceField
+from organisations.models import OrganisationDivision
 
 
 class CurrentDivisionFilter(admin.SimpleListFilter):

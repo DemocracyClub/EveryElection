@@ -5,8 +5,6 @@ from django.contrib import admin
 from django.forms.widgets import Textarea
 from django_markdown.admin import MarkdownModelAdmin
 from .models import ElectedRole, Election, Explanation, MetaData, ModerationHistory
-from organisations.views.admin.common import CustomOrganisationChoiceField
-from organisations.models import Organisation
 
 
 class ElectionAdmin(admin.ModelAdmin):
@@ -71,8 +69,6 @@ class MetaDataAdmin(admin.ModelAdmin):
 
 
 class ElectedRoleAdminForm(forms.ModelForm):
-    organisation = CustomOrganisationChoiceField(queryset=Organisation.objects.all())
-
     class Meta:
         model = ElectedRole
         fields = "__all__"
