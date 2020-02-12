@@ -34,8 +34,6 @@ class TempIdFilter(admin.SimpleListFilter):
 
 
 class OrganisationDivisionAdminForm(forms.ModelForm):
-    organisation = CustomOrganisationChoiceField(queryset=Organisation.objects.all())
-
     class Meta:
         model = OrganisationDivision
         fields = "__all__"
