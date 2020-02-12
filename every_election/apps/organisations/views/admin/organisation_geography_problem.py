@@ -1,12 +1,9 @@
 from django import forms
 from django.contrib import admin
-from organisations.models import Organisation, OrganisationGeographyProblem
-from .common import CustomOrganisationChoiceField
+from organisations.models import OrganisationGeographyProblem
 
 
 class OrganisationGeographyProblemAdminForm(forms.ModelForm):
-    organisation = CustomOrganisationChoiceField(queryset=Organisation.objects.all())
-
     class Meta:
         model = OrganisationGeographyProblem
         fields = "__all__"
