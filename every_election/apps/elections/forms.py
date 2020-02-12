@@ -55,6 +55,11 @@ class ElectionSubTypeForm(forms.Form):
     )
 
 
+class ElectionOrganisationField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        return obj.name
+
+
 class ElectionOrganisationForm(forms.Form):
     def __init__(self, *args, **kwargs):
         election_type = kwargs.pop("election_type", None)
@@ -75,7 +80,7 @@ class ElectionOrganisationForm(forms.Form):
             else:
                 self.fields["election_organisation"].queryset = qs
 
-    election_organisation = forms.ModelMultipleChoiceField(
+    election_organisation = ElectionOrganisationField(
         queryset=Organisation.objects.all(), widget=forms.CheckboxSelectMultiple
     )
 
