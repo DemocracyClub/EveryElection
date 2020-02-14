@@ -1,5 +1,5 @@
 beautifulsoup4==4.8.2
-boto3==1.11.3 # pyup: update minor
+boto3==1.12.0 # pyup: update minor
 django==2.2.10  # pyup: >=2.2,<3.0
 django-basicauth==0.5.2
 django-cors-headers==3.2.1
