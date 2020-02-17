@@ -401,3 +401,41 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         self.assertEqual(
             "local.test.test-div-2." + self.date_str, result[0].election_id
         )
+
+    def test_gla_a_is_ballot(self):
+        election_type = ElectionType.objects.get(election_type="gla")
+        gla = Organisation.objects.create(
+            official_identifier="gla",
+            organisation_type="gla",
+            official_name="Greater London Authority",
+            slug="gla",
+            territory_code="ENG",
+            election_name="London Assembly election",
+            start_date=date(2016, 10, 1),
+        )
+        gla.election_types.add(election_type)
+
+        all_data = {
+            "election_organisation": [gla],
+            "election_subtype": [election_type.subtype.get(election_subtype="a")],
+            "election_type": election_type,
+            "date": self.date,
+            gla.pk: None,
+            "{}_no_divs".format(gla.pk): "",
+        }
+
+        expected_ids = [
+            "gla." + self.date_str,
+            "gla.a." + self.date_str,
+        ]
+        expected_titles = [
+            "Greater London Assembly elections",
+            "Greater London Assembly elections (Additional)",
+        ]
+
+        self.run_test_with_data(
+            all_data, expected_ids, expected_titles, subtypes=True,
+        )
+
+        ballot = Election.private_objects.get(election_id__startswith="gla.a.")
+        self.assertIsNone(ballot.group_type)
