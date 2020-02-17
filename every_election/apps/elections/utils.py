@@ -203,20 +203,30 @@ class ElectionBuilder:
     def to_title(self, id_type):
         if id_type == "election":
             return self.election_type.name
-        if id_type == "subtype":
-            return "{election} ({subtype})".format(
-                election=self.election_type.name, subtype=self.subtype.name
-            )
 
         parts = []
-        if self._use_org and self.organisation:
-            parts.append(self.organisation.election_name)
-        if self.division:
-            parts.append("{}".format(self.division.name))
+
         if self.subtype:
-            parts.append("({})".format(self.subtype.name))
+            subtype_title = "{election} ({subtype})".format(
+                election=self.election_type.name, subtype=self.subtype.name
+            )
+            if id_type == "subtype":
+                return subtype_title
+            else:
+                parts.append(subtype_title)
+
+        if self._use_org and self.organisation:
+            if self.election_type.election_type == "mayor":
+                parts.append(self.get_elected_role().elected_role_name)
+            else:
+                parts.append(self.organisation.election_name)
+
+        if self.division:
+            parts.append(self.division.name)
+
         if self.contest_type == "by":
             parts.append("by-election")
+
         return " ".join(parts).strip()
 
     def __eq__(self, other):

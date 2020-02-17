@@ -194,7 +194,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         }
 
         expected_ids = ["mayor." + self.date_str, "mayor.test-ca." + self.date_str]
-        expected_titles = ["Mayoral elections", "Test Council Mayoral elections"]
+        expected_titles = ["Mayoral elections", "Mayor of Foo Town"]
 
         self.run_test_with_data(all_data, expected_ids, expected_titles)
 
@@ -306,9 +306,9 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             "National Assembly for Wales elections",
             "National Assembly for Wales elections (Constituencies)",
             "National Assembly for Wales elections (Regions)",
-            "Test Div 3 (Constituencies)",
-            "Test Div 4 (Constituencies) by-election",
-            "Test Div 5 (Regions)",
+            "National Assembly for Wales elections (Constituencies) Test Div 3",
+            "National Assembly for Wales elections (Constituencies) Test Div 4 by-election",
+            "National Assembly for Wales elections (Regions) Test Div 5",
         ]
 
         self.run_test_with_data(
