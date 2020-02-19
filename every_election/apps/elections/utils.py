@@ -272,13 +272,13 @@ class ElectionBuilder:
             }
         )
 
-    def build_subtype_group(self, group):
+    def build_subtype_group(self, group, group_type="subtype"):
         return self._build(
             {
                 "election_id": self.id.subtype_group_id,
                 "election_title": self.to_title("subtype"),
                 "group": group,
-                "group_type": "subtype",
+                "group_type": group_type,
                 "notice": None,
                 "source": "",
                 "snooped_election_id": None,
@@ -367,14 +367,19 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
 
         if subtypes:
             for subtype in all_data.get("election_subtype", []):
-
+                # Special case `gla.a` elections as they should be a ballot
+                if organisation.slug == "gla" and subtype.election_subtype == "a":
+                    group_id = date_id
+                    group_type = None
+                else:
+                    group_type = "subtype"
                 subtype_id = (
                     ElectionBuilder(all_data["election_type"], all_data["date"])
-                    .with_subtype(subtype)
                     .with_organisation(organisation)
                     .with_source(all_data.get("source", ""))
                     .with_snooped_election(all_data.get("radar_id", None))
-                    .build_subtype_group(group_id)
+                    .with_subtype(subtype)
+                    .build_subtype_group(group_id, group_type=group_type)
                 )
                 if subtype_id.election_id not in [e.election_id for e in all_ids]:
                     all_ids.append(subtype_id)
