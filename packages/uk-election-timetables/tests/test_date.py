@@ -1,4 +1,4 @@
-from sopn_publish_date.date import days_before
+from sopn_publish_date.date import days_before, DateMatcher
 from datetime import date
 
 
@@ -21,9 +21,17 @@ def test_ignore_weekends():
     assert days_before(example, 1) == date(2020, 1, 3)
 
 
-def test_ignore_exempted_days():
+def test_ignore_exempted_day_with_year():
     example = date(2020, 1, 1)
 
-    exempted_dates = [date(2019, 12, 31)]
+    exempted_dates = [DateMatcher(year=2019, month=12, day=31)]
+
+    assert days_before(example, 1, exempted_dates) == date(2019, 12, 30)
+
+
+def test_ignore_exempted_day_without_year():
+    example = date(2020, 1, 1)
+
+    exempted_dates = [DateMatcher(month=12, day=31)]
 
     assert days_before(example, 1, exempted_dates) == date(2019, 12, 30)
