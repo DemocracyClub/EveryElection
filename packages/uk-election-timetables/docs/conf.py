@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
 project = 'sopn-publish-date'
-copyright = '2019, Alex Wilson'
+copyright = '2020, Alex Wilson'
 author = 'Alex Wilson'
 
 # The short X.Y version
-version = '1.3'
+version = '1.4'
 # The full version, including alpha/beta/rc tags
-release = '1.3.2'
+release = '1.4.0'
 
 
 # -- General configuration ---------------------------------------------------
