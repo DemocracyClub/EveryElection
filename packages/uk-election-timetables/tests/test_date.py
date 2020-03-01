@@ -19,3 +19,11 @@ def test_ignore_weekends():
     example = date(2020, 1, 6)  # Monday
 
     assert days_before(example, 1) == date(2020, 1, 3)
+
+
+def test_ignore_exempted_days():
+    example = date(2020, 1, 1)
+
+    exempted_dates = [date(2019, 12, 31)]
+
+    assert days_before(example, 1, exempted_dates) == date(2019, 12, 30)
