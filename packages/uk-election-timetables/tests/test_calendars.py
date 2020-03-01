@@ -17,4 +17,6 @@ def test_should_separate_by_country():
 
 
 def should_not_contain_holiday(calendar, name):
-    assert not [holiday for holiday in calendar.rules if holiday.name == name]
+    assert not [
+        holiday for holiday in calendar.exempted_dates() if holiday.name == name
+    ]
