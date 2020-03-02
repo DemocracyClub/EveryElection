@@ -24,7 +24,7 @@ class TestAttachPostsPerWard(TestCase):
                 {
                     "created": "yes",
                     "id": election.election_id,
-                    "posts up": 1,
+                    "seats_contested": 1,
                     "seats_total": 2,
                 }
             )
@@ -64,7 +64,7 @@ class TestAttachPostsPerWard(TestCase):
             {
                 "created": "yes",
                 "id": election.election_id,
-                "posts up": 200,
+                "seats_contested": 200,
                 "seats_total": 1,
             }
         ]
@@ -85,7 +85,7 @@ class TestAttachPostsPerWard(TestCase):
             {
                 "created": "yes",
                 "id": election.election_id,
-                "posts up": None,
+                "seats_contested": None,
                 "seats_total": None,
             }
         ]

@@ -7,7 +7,10 @@ from elections.models import Election
 
 class Command(ReadFromCSVMixin, BaseCommand):
 
-    SEATS_CONTESTED_FIELD = "posts up"
+    SEATS_CONTESTED_FIELD = "seats_contested"
+    SEATS_TOTAL_FIELD = "seats_total"
+    ELECTION_ID_FIELD = "id"
+    CREATED_FIELD = "created"
 
     help = """
     Given a CSV file, path or url import the number of contested seats for that
@@ -15,7 +18,7 @@ class Command(ReadFromCSVMixin, BaseCommand):
 
     Expected CSV format is, e.g:
 
-    ORG Name,ORG GSS,REG,geography_curie,ward name,seats_total,has_election,posts up,created,id,problem/note
+    ORG Name,ORG GSS,REG,geography_curie,ward name,seats_total,has_election,seats_contested,created,id,problem/note
     Eastleigh,E07000086,EAT,EAT:bishopstoke,Bishopstoke,3,yes,3,yes,local.eastleigh.bishopstoke.2018-05-03,
     Eastleigh,E07000086,EAT,EAT:botley,Botley,2,yes,2,yes,local.eastleigh.botley.2018-05-03,
 
@@ -46,8 +49,8 @@ class Command(ReadFromCSVMixin, BaseCommand):
         if election.division.seats_total:
             db_seats_total = election.division.seats_total
 
-        if line["seats_total"]:
-            csv_seats_total = int(line["seats_total"] or None)
+        if line[self.SEATS_TOTAL_FIELD]:
+            csv_seats_total = int(line[self.SEATS_TOTAL_FIELD] or None)
 
         if db_seats_total:
             # Warn if the CSV has a different seats total
@@ -88,9 +91,11 @@ class Command(ReadFromCSVMixin, BaseCommand):
         trust_csv = options["replace_seats_total"]
         updated_elections = []
         for line in data:
-            if line["created"] == "yes":
+            if line[self.CREATED_FIELD].lower() == "yes":
 
-                election = Election.public_objects.get(election_id=line["id"])
+                election = Election.public_objects.get(
+                    election_id=line[self.ELECTION_ID_FIELD]
+                )
                 seats_contested = self.get_seats_contested(line)
 
                 seats_total = self.get_seats_total(election, line, trust_csv=trust_csv)
