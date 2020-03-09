@@ -1,4 +1,4 @@
-from django_global_request.middleware import get_request
+from django_middleware_global_request.middleware import get_request
 
 
 class DbRouter:
