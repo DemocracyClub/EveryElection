@@ -76,7 +76,7 @@ LOGGING = {
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
-    "django_global_request.middleware.GlobalRequestMiddleware",
+    "django_middleware_global_request.middleware.GlobalRequestMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
