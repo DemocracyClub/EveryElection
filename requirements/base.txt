@@ -6,7 +6,7 @@ django-cors-headers==3.2.1
 django-extensions==2.2.9
 django-filter==2.2.0
 django-formtools==2.2
-django-localflavor==3.0
+django-localflavor==3.0.1
 django-markdown-app==0.9.6
 django-middleware-global-request==0.2.0
 django-model-utils==4.0.0
