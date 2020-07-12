@@ -87,7 +87,7 @@ def test_publish_date_scottish_parliament():
 
 # Reference election: naw.c.ceredigion.2016-05-05
 def test_publish_date_national_assembly_of_wales():
-    publish_date = sopn_publish_date.national_assembly_for_wales(date(2016, 5, 5))
+    publish_date = sopn_publish_date.senedd_cymru(date(2016, 5, 5))
 
     assert publish_date == date(2016, 4, 7)
 
