@@ -8,6 +8,7 @@ from sopn_publish_date.election_ids import (
 
 from datetime import date
 from pytest import raises
+from warnings import catch_warnings
 
 sopn_publish_date = StatementPublishDate()
 
@@ -218,6 +219,18 @@ def test_publish_date_uk_parliament_2019():
     assert publish_date == date(2019, 11, 14)
 
 
+def test_national_assembly_for_wales_deprecation_warning():
+    with catch_warnings(record=True) as warnings:
+        sopn_publish_date.national_assembly_for_wales(date(2020, 1, 1))
+
+        assert len(warnings) == 1
+
+        warning = warnings[-1]
+
+        assert issubclass(warning.category, DeprecationWarning)
+        assert str(warning.message) == "national_assembly_for_wales is deprecated, use senedd_cymru instead"
+
+
 def test_christmas_eve_not_counted():
 
     election_and_expected_sopn_date = {
@@ -225,7 +238,7 @@ def test_christmas_eve_not_counted():
         sopn_publish_date.uk_parliament: date(2018, 12, 7),
         sopn_publish_date.scottish_parliament: date(2018, 12, 3),
         sopn_publish_date.northern_ireland_assembly: date(2018, 12, 13),
-        sopn_publish_date.national_assembly_for_wales: date(2018, 12, 10),
+        sopn_publish_date.senedd_cymru: date(2018, 12, 10),
     }
 
     for sopn_for_election_on, expected_date in election_and_expected_sopn_date.items():

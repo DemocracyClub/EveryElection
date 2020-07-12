@@ -2,6 +2,7 @@ from sopn_publish_date import StatementPublishDate
 from datetime import timedelta, datetime
 from csv import DictReader
 from pytest import mark
+from warnings import catch_warnings, simplefilter
 
 sopn_publish_date = StatementPublishDate()
 
@@ -71,9 +72,12 @@ def test_scottish_parliament(row):
 
 @mark.parametrize("row", generate_test_cases("naw"), ids=generate_test_id)
 def test_national_assembly_for_wales(row):
-    expected_date = sopn_publish_date.national_assembly_for_wales(
-        read_date(row["election_date"])
-    )
+    with catch_warnings():
+        simplefilter("ignore")
+
+        expected_date = sopn_publish_date.national_assembly_for_wales(
+            read_date(row["election_date"])
+        )
 
     actual_date = read_date(row["sopn_publish_date"])
 
