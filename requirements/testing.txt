@@ -8,7 +8,7 @@ pytest
 pluggy
 pytest-django
 pytest-pep8
-pytest-flakes
+pytest-flakes==4.0.2
 pytest-cov
 factory_boy
 vcrpy
