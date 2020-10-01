@@ -10,6 +10,6 @@ pytest-django
 pytest-pep8
 pytest-flakes
 pytest-cov
-factory_boy
+factory_boy==3.0.1
 vcrpy
 
