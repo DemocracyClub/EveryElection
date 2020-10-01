@@ -6,6 +6,7 @@ from enum import Enum, unique
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.gis.db.models.functions import Distance
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.files import File
@@ -20,6 +21,7 @@ from django.urls import reverse
 from django_extensions.db.models import TimeStampedModel
 from django_markdown.models import MarkdownField
 from storages.backends.s3boto3 import S3Boto3Storage
+from uk_geo_utils.models import Onspd
 
 from .managers import PublicElectionsManager, PrivateElectionsManager
 
@@ -263,6 +265,18 @@ class Election(models.Model):
 
     def __str__(self):
         return self.get_id()
+
+    def get_example_postcode(self):
+        if not self.group_type and self.geography:
+            return (
+                Onspd.objects.filter(location__within=self.geography.geography)
+                .filter(location__dwithin=(self.geography.geography.centroid, 0.08))
+                .annotate(distance=Distance("location", self.geography.geography))
+                .order_by("distance")
+                .first()
+            )
+        else:
+            return None
 
     def get_id(self):
         if self.election_id:

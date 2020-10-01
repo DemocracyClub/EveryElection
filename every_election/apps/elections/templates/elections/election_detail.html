@@ -35,6 +35,28 @@
             {% endfor %}
             </ul>
         {% endif %}
+        {% if object.get_example_postcode %}
+        <h3>Example postcode</h3>
+        <p>{{ object.get_example_postcode.pcds }}</p>
+        <ul>
+          <li><a href="https://whocanivotefor.co.uk/elections/{{ object.get_example_postcode.pcds }}">
+            WhoCanIVoteFor
+          </a>
+          </li>
+          <li><a href="https://wheredoivote.co.uk/postcode/{{ object.get_example_postcode.pcds }}">
+            WhereDoIVote
+          </a>
+          </li>
+          <li><a href="https://candidates.democracyclub.org.uk/search?q={{ object.get_example_postcode.pcds }}">
+            Candidates
+          </a>
+          </li>
+          <li><a href="https://www.electoralcommission.org.uk/polling-stations?postcode-search={{ object.get_example_postcode.pcds }}">
+            Electoral Commission
+          </a>
+          </li>
+        </ul>
+        {% endif %}
 
         <h3>API</h3>
         <ul>
