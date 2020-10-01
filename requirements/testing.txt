@@ -9,7 +9,7 @@ pluggy
 pytest-django
 pytest-pep8
 pytest-flakes
-pytest-cov
+pytest-cov==2.10.1
 factory_boy
 vcrpy
 
