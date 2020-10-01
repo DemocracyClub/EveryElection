@@ -11,5 +11,5 @@ pytest-pep8
 pytest-flakes
 pytest-cov
 factory_boy
-vcrpy
+vcrpy==4.1.0
 
