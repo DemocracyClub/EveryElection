@@ -14,5 +14,8 @@ class Migration(migrations.Migration):
             name="organisationdivision",
             unique_together={("divisionset", "official_identifier")},
         ),
-        migrations.RemoveField(model_name="organisationdivision", name="organisation",),
+        migrations.RemoveField(
+            model_name="organisationdivision",
+            name="organisation",
+        ),
     ]
