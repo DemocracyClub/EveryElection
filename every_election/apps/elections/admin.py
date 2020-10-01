@@ -89,8 +89,8 @@ class ModerationHistoryAdmin(admin.ModelAdmin):
 
     list_display = ("election", "status", "user", "notes")
     list_filter = ("status", "user")
-    search_fields = ("election__election_id", )
-    raw_id_fields = ("election", )
+    search_fields = ("election__election_id",)
+    raw_id_fields = ("election",)
 
     # This makes ModerationHistory an append-only log in /admin.
     # We can add a new entry to the log, but
