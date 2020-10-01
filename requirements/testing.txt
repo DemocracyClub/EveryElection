@@ -5,7 +5,7 @@ mock
 model-mommy
 tox
 pytest
-pluggy
+pluggy==0.13.1
 pytest-django
 pytest-pep8
 pytest-flakes
