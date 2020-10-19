@@ -1,6 +1,6 @@
 beautifulsoup4==4.9.2
 boto3==1.13.14
-django==2.2.13
+django==2.2.16
 django-basicauth==0.5.2
 django-cors-headers==3.3.0
 django-extensions==3.0.9
