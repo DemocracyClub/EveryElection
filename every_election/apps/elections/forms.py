@@ -1,5 +1,6 @@
 from django import forms
 from django.db import models
+from django.db.models import Q
 
 from organisations.models import Organisation
 from organisations.models import OrganisationDivisionSet
@@ -32,6 +33,20 @@ class ElectionDateForm(forms.Form):
 
 
 class ElectionTypeForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        date = kwargs.pop("date", None)
+        super().__init__(*args, **kwargs)
+        if date:
+            qs = self.fields["election_type"].queryset
+            qs = (
+                qs.filter(organisation__start_date__lte=date)
+                .filter(
+                    Q(organisation__end_date__gte=date) | Q(organisation__end_date=None)
+                )
+                .distinct()
+            )
+            self.fields["election_type"].queryset = qs
+
     election_type = forms.ModelChoiceField(
         queryset=ElectionType.objects.exclude(organisation=None),
         widget=forms.RadioSelect,
