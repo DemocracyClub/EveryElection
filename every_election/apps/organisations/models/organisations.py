@@ -32,6 +32,7 @@ class Organisation(models.Model, DateDisplayMixin):
         ("gla", "gla"),
         ("local-authority", "local-authority"),
         ("naw", "naw"),
+        ("senedd", "senedd"),
         ("nia", "nia"),
         ("parl", "parl"),
         ("police-area", "police-area"),
