@@ -93,6 +93,12 @@ def test_publish_date_national_assembly_of_wales():
     assert publish_date == date(2016, 4, 7)
 
 
+def test_publish_date_senedd_election_id():
+    publish_date = sopn_publish_date.for_id("senedd.c.ceredigion.2016-05-05")
+
+    assert publish_date == date(2016, 4, 7)
+
+
 def test_publish_date_european_parliament():
     publish_date = sopn_publish_date.european_parliament(
         date(2019, 5, 23), region=Region.LONDON
