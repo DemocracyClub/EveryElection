@@ -212,6 +212,10 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                 "election_subtype": election_subtype,
                 "election_date": self.get_election_date(),
             }
+
+        if step == "election_type":
+            return {"date": self.get_election_date()}
+
         return {}
 
     @transaction.atomic
