@@ -129,8 +129,8 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             return qs
 
     def get_election_date(self):
-        election_date = self.get_cleaned_data_for_step("date")
-        return election_date["date"]
+        election_date = self.get_cleaned_data_for_step("date") or {}
+        return election_date.get("date", None)
 
     def get_form_initial(self, step):
         if step == "source":
