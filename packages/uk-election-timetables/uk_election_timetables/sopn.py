@@ -14,14 +14,16 @@ from uk_election_timetables.election_ids import (
 from warnings import warn
 from datetime import date
 
+from uk_election_timetables.elections.senedd_cymru import SeneddCymruElection
+
 
 class StatementPublishDate(object):
     def __init__(self):
         self.election_id_lookup = {
             "nia": self.northern_ireland_assembly,
             "sp": self.scottish_parliament,
-            "naw": self.senedd_cymru,
-            "senedd": self.senedd_cymru,
+            "naw": lambda x: SeneddCymruElection(x).sopn_publish_date(),
+            "senedd": lambda x: SeneddCymruElection(x).sopn_publish_date(),
             "gla": self.greater_london_assembly,
             "pcc": self.police_and_crime_commissioner,
             "mayor": self.mayor,
@@ -103,17 +105,6 @@ class StatementPublishDate(object):
             DeprecationWarning,
         )
 
-        return working_days_before(poll_date, 19, self.calendar.england_and_wales())
-
-    def senedd_cymru(self, poll_date: date) -> date:
-        """
-        Calculate the publish date for an election to the Senedd Cymru / Welsh Parliament
-
-        This is set out in `Senedd and Elections (Wales) Act 2020 <https://www.legislation.gov.uk/anaw/2020/1/contents>` and `The National Assembly for Wales (Representation of the People) (Amendment) Order 2016 <https://www.legislation.gov.uk/uksi/2016/272/article/18/made>`_
-
-        :param poll_date: a datetime representing the date of the poll
-        :return: a datetime representing the expected publish date
-        """
         return working_days_before(poll_date, 19, self.calendar.england_and_wales())
 
     def greater_london_assembly(self, poll_date: date) -> date:
