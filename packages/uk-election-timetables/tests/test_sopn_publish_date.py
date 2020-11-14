@@ -1,6 +1,6 @@
-from sopn_publish_date import StatementPublishDate
-from sopn_publish_date.calendars import Country, Region
-from sopn_publish_date.election_ids import (
+from uk_election_timetables.sopn import StatementPublishDate
+from uk_election_timetables.calendars import Country, Region
+from uk_election_timetables.election_ids import (
     InvalidElectionIdError,
     AmbiguousElectionIdError,
     NoSuchElectionTypeError,

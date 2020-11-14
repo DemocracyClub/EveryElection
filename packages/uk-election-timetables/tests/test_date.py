@@ -1,4 +1,4 @@
-from sopn_publish_date.date import days_before, DateMatcher
+from uk_election_timetables.date import days_before, DateMatcher
 from datetime import date
 
 

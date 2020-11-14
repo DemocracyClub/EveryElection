@@ -1,4 +1,4 @@
-from sopn_publish_date import StatementPublishDate
+from uk_election_timetables.sopn import StatementPublishDate
 from datetime import timedelta, datetime
 from csv import DictReader
 from pytest import mark

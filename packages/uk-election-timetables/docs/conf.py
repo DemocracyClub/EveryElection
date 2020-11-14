@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-project = 'sopn-publish-date'
+project = 'uk-election-timetables'
 copyright = '2020, Alex Wilson'
 author = 'Alex Wilson'
 
@@ -55,7 +55,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'sopn-publish-datedoc'
+htmlhelp_basename = 'uk-election-timetablesdoc'
 
 # -- Options for Epub output -------------------------------------------------
 

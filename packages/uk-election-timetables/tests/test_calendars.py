@@ -1,4 +1,4 @@
-from sopn_publish_date.calendars import UnitedKingdomBankHolidays
+from uk_election_timetables.calendars import UnitedKingdomBankHolidays
 
 uk_calendars = UnitedKingdomBankHolidays()
 

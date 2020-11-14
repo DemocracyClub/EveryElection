@@ -17,7 +17,7 @@ This library encapsulates timetable legislation for elections run in the United 
 
 ```python
 
-from sopn_publish_date import StatementPublishDate
+from uk_election_timetables.sopnimport StatementPublishDate
 from datetime import date
 
 publish_date = StatementPublishDate()
