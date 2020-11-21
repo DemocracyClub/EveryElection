@@ -1,6 +1,6 @@
 from datetime import date
 
-from uk_election_timetables.elections.senedd_cymru import SeneddCymruElection
+from uk_election_timetables.elections import SeneddCymruElection
 
 
 # Reference election: naw.c.ceredigion.2016-05-05

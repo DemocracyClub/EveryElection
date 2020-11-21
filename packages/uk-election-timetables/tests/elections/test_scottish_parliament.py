@@ -1,6 +1,6 @@
 from datetime import date
 
-from uk_election_timetables.elections.scottish_parliament import (
+from uk_election_timetables.elections import (
     ScottishParliamentElection,
 )
 

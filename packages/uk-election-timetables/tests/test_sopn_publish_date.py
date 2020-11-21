@@ -1,7 +1,8 @@
-from uk_election_timetables.elections.scottish_parliament import (
+from uk_election_timetables.elections import (
     ScottishParliamentElection,
+    SeneddCymruElection,
 )
-from uk_election_timetables.elections.senedd_cymru import SeneddCymruElection
+
 from uk_election_timetables.sopn import StatementPublishDate
 from uk_election_timetables.calendars import Country, Region
 from uk_election_timetables.election_ids import (

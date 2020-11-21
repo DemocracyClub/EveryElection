@@ -14,10 +14,10 @@ from uk_election_timetables.election_ids import (
 from warnings import warn
 from datetime import date
 
-from uk_election_timetables.elections.scottish_parliament import (
+from uk_election_timetables.elections import (
     ScottishParliamentElection,
+    SeneddCymruElection,
 )
-from uk_election_timetables.elections.senedd_cymru import SeneddCymruElection
 
 
 class StatementPublishDate(object):
