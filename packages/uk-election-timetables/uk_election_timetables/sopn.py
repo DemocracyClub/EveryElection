@@ -1,9 +1,7 @@
 from uk_election_timetables.calendars import (
     UnitedKingdomBankHolidays,
     Country,
-    Region,
     working_days_before,
-    FixedDates,
 )
 from uk_election_timetables.election_ids import (
     type_and_poll_date,
@@ -38,8 +36,6 @@ class StatementPublishDate(object):
         """
         Calculate the publish date for an election given in `uk-election-ids <https://elections.democracyclub.org.uk/reference_definition/>`_ format and an optional country if necessary (for example, local or parliamentary elections).
 
-        This function returns *None* for elections to the European Parliament, and will raise an exception if the election id is ambiguous (could correspond to elections in multiple countries with different electoral legislation).
-
         :param election_id: a string representing an election id in uk-election-ids format
         :param country: an optional Country representing the country where the election will be held
         :return: a datetime representing the expected publish date
@@ -51,11 +47,10 @@ class StatementPublishDate(object):
             return el_type in self.election_id_lookup or el_type in [
                 "local",
                 "parl",
-                "europarl",
             ]
 
         def requires_country(el_type):
-            return el_type in ["local", "europarl"]
+            return el_type in ["local"]
 
         if not valid_election_type(election_type):
             raise NoSuchElectionTypeError(election_type)
@@ -70,8 +65,6 @@ class StatementPublishDate(object):
             return self.local(poll_date, country=country)
         elif election_type == "parl":
             return self.uk_parliament(poll_date, country=country)
-        elif election_type == "europarl":
-            return None
 
     def northern_ireland_assembly(self, poll_date: date) -> date:
         """
@@ -99,34 +92,6 @@ class StatementPublishDate(object):
         )
 
         return working_days_before(poll_date, 19, self.calendar.england_and_wales())
-
-    def european_parliament(self, poll_date: date, region: Region) -> date:
-        """
-        Calculate the publish date for an election to the European Parliament
-
-        This is set out in `The European Parliamentary Elections (Amendment) Regulations 2009 <https://www.legislation.gov.uk/uksi/2009/186/made>`_
-
-        As Gibraltar is included within *South West England* but has a different bank holiday calendar, it's plausible that the SoPN date for *South West England* will differ from the rest of England.
-
-        :param poll_date: a datetime representing the date of the poll
-        :param region: the region of the UK and Gibraltar where the poll is being run
-        :return: a datetime representing the expected publish date
-        """
-
-        def date_with_calendar(calendar):
-            return working_days_before(poll_date, 19, calendar)
-
-        if region == Region.SCOTLAND:
-            return date_with_calendar(self.calendar.scotland())
-        elif region == Region.NORTHERN_IRELAND:
-            return date_with_calendar(self.calendar.northern_ireland())
-        elif region == Region.SOUTH_WEST_ENGLAND:
-            return min(
-                date_with_calendar(self.calendar.england_and_wales()),
-                FixedDates.EUROPARL_GIBRALTAR_2019,
-            )
-        else:
-            return date_with_calendar(self.calendar.england_and_wales())
 
     def police_and_crime_commissioner(self, poll_date: date) -> date:
         """

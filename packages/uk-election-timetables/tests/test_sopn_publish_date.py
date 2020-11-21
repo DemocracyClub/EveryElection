@@ -5,7 +5,7 @@ from uk_election_timetables.elections import (
 )
 
 from uk_election_timetables.sopn import StatementPublishDate
-from uk_election_timetables.calendars import Country, Region
+from uk_election_timetables.calendars import Country
 from uk_election_timetables.election_ids import (
     InvalidElectionIdError,
     AmbiguousElectionIdError,
@@ -45,14 +45,6 @@ def test_publish_date_parl_id_without_country():
     assert publish_date == date(2019, 1, 25)
 
 
-def test_publish_date_europarl_id_with_country():
-    publish_date = sopn_publish_date.for_id(
-        "europarl.2019-02-21", country=Country.ENGLAND
-    )
-
-    assert publish_date is None
-
-
 def test_publish_date_not_an_election_type():
 
     with raises(NoSuchElectionTypeError) as err:
@@ -89,22 +81,6 @@ def test_publish_date_senedd_election_id():
     publish_date = sopn_publish_date.for_id("senedd.c.ceredigion.2016-05-05")
 
     assert publish_date == date(2016, 4, 7)
-
-
-def test_publish_date_european_parliament():
-    publish_date = sopn_publish_date.european_parliament(
-        date(2019, 5, 23), region=Region.LONDON
-    )
-
-    assert publish_date == date(2019, 4, 25)
-
-
-def test_publish_date_european_parliament_south_west_england():
-    publish_date = sopn_publish_date.european_parliament(
-        date(2019, 5, 23), region=Region.SOUTH_WEST_ENGLAND
-    )
-
-    assert publish_date == date(2019, 4, 24)
 
 
 # Reference election: nia.belfast-east.2017-03-02

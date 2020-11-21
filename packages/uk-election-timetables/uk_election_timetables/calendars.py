@@ -36,14 +36,6 @@ class Region(Enum):
     YORKSHIRE_AND_THE_HUMBER = 12
 
 
-class FixedDates:
-    """
-    A set of fixed dates used in other calculations by this library.
-    """
-
-    EUROPARL_GIBRALTAR_2019 = date(2019, 4, 24)
-
-
 class BankHolidayCalendar:
     """
     A calendar that honours the standard 5-day week in addition to the input list of dates.
