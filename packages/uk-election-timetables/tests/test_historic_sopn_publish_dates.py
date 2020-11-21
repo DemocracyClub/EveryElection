@@ -1,3 +1,6 @@
+from uk_election_timetables.elections.scottish_parliament import (
+    ScottishParliamentElection,
+)
 from uk_election_timetables.sopn import StatementPublishDate
 from datetime import timedelta, datetime
 from csv import DictReader
@@ -61,9 +64,9 @@ def test_northern_ireland_assembly(row):
 
 @mark.parametrize("row", generate_test_cases("sp"), ids=generate_test_id)
 def test_scottish_parliament(row):
-    expected_date = sopn_publish_date.scottish_parliament(
-        read_date(row["election_date"])
-    )
+    poll_date = read_date(row["election_date"])
+
+    expected_date = ScottishParliamentElection(poll_date).sopn_publish_date()
 
     actual_date = read_date(row["sopn_publish_date"])
 

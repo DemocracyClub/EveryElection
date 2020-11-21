@@ -14,6 +14,9 @@ from uk_election_timetables.election_ids import (
 from warnings import warn
 from datetime import date
 
+from uk_election_timetables.elections.scottish_parliament import (
+    ScottishParliamentElection,
+)
 from uk_election_timetables.elections.senedd_cymru import SeneddCymruElection
 
 
@@ -21,7 +24,7 @@ class StatementPublishDate(object):
     def __init__(self):
         self.election_id_lookup = {
             "nia": self.northern_ireland_assembly,
-            "sp": self.scottish_parliament,
+            "sp": lambda x: ScottishParliamentElection(x).sopn_publish_date(),
             "naw": lambda x: SeneddCymruElection(x).sopn_publish_date(),
             "senedd": lambda x: SeneddCymruElection(x).sopn_publish_date(),
             "gla": self.greater_london_assembly,
@@ -79,17 +82,6 @@ class StatementPublishDate(object):
         :return: a datetime representing the expected publish date
         """
         return working_days_before(poll_date, 16, self.calendar.northern_ireland())
-
-    def scottish_parliament(self, poll_date: date) -> date:
-        """
-        Calculate the publish date for an election to the Scottish Parliament
-
-        This is set out in `The Scottish Parliament (Elections etc.) Order 2015 <https://www.legislation.gov.uk/ssi/2015/425/made>`_
-
-        :param poll_date: a datetime representing the date of the poll
-        :return: a datetime representing the expected publish date
-        """
-        return working_days_before(poll_date, 23, self.calendar.scotland())
 
     def national_assembly_for_wales(self, poll_date: date) -> date:
         """

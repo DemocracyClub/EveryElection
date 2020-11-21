@@ -1,3 +1,6 @@
+from uk_election_timetables.elections.scottish_parliament import (
+    ScottishParliamentElection,
+)
 from uk_election_timetables.elections.senedd_cymru import SeneddCymruElection
 from uk_election_timetables.sopn import StatementPublishDate
 from uk_election_timetables.calendars import Country, Region
@@ -78,13 +81,6 @@ def test_publish_date_invalid_date():
         sopn_publish_date.for_id("parl.not-a-date")
 
     assert str(err.value) == "Parameter [parl.not-a-date] is not in election id format"
-
-
-# Reference election: sp.c.shetland-islands.2016-05-05
-def test_publish_date_scottish_parliament():
-    publish_date = sopn_publish_date.scottish_parliament(date(2016, 5, 5))
-
-    assert publish_date == date(2016, 4, 1)
 
 
 def test_publish_date_senedd_election_id():
@@ -239,7 +235,7 @@ def test_christmas_eve_not_counted():
     election_and_expected_sopn_date = {
         sopn_publish_date.police_and_crime_commissioner: date(2018, 12, 11),
         sopn_publish_date.uk_parliament: date(2018, 12, 7),
-        sopn_publish_date.scottish_parliament: date(2018, 12, 3),
+        lambda x: ScottishParliamentElection(x).sopn_publish_date(): date(2018, 12, 3),
         sopn_publish_date.northern_ireland_assembly: date(2018, 12, 13),
         lambda x: SeneddCymruElection(x).sopn_publish_date(): date(2018, 12, 10),
     }
