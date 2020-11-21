@@ -1,5 +1,6 @@
-from uk_election_timetables.elections.scottish_parliament import (
+from uk_election_timetables.elections import (
     ScottishParliamentElection,
+    GreaterLondonAssemblyElection,
 )
 from uk_election_timetables.sopn import StatementPublishDate
 from datetime import timedelta, datetime
@@ -89,9 +90,9 @@ def test_national_assembly_for_wales(row):
 
 @mark.parametrize("row", generate_test_cases("gla."), ids=generate_test_id)
 def test_greater_london_assembly(row):
-    expected_date = sopn_publish_date.greater_london_assembly(
-        read_date(row["election_date"])
-    )
+    poll_date = read_date(row["election_date"])
+
+    expected_date = GreaterLondonAssemblyElection(poll_date).sopn_publish_date()
 
     actual_date = read_date(row["sopn_publish_date"])
 
@@ -124,9 +125,9 @@ def test_mayoral(row):
 
 @mark.parametrize("row", generate_test_cases("mayor.london"), ids=generate_test_id)
 def test_mayor_of_london(row):
-    expected_date = sopn_publish_date.greater_london_assembly(
-        read_date(row["election_date"])
-    )
+    poll_date = read_date(row["election_date"])
+
+    expected_date = GreaterLondonAssemblyElection(poll_date).sopn_publish_date()
 
     actual_date = read_date(row["sopn_publish_date"])
 

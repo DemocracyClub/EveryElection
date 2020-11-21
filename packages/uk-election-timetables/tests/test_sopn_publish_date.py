@@ -1,6 +1,7 @@
 from uk_election_timetables.elections import (
     ScottishParliamentElection,
     SeneddCymruElection,
+    GreaterLondonAssemblyElection,
 )
 
 from uk_election_timetables.sopn import StatementPublishDate
@@ -106,13 +107,6 @@ def test_publish_date_european_parliament_south_west_england():
     assert publish_date == date(2019, 4, 24)
 
 
-# Reference election: gla.c.barnet-and-camden.2016-05-05
-def test_publish_date_greater_london_assembly():
-    publish_date = sopn_publish_date.greater_london_assembly(date(2016, 5, 5))
-
-    assert publish_date == date(2016, 4, 1)
-
-
 # Reference election: nia.belfast-east.2017-03-02
 def test_publish_date_northern_ireland_assembly():
     publish_date = sopn_publish_date.northern_ireland_assembly(date(2017, 3, 2))
@@ -155,13 +149,6 @@ def test_publish_date_mayor():
     publish_date = sopn_publish_date.mayor(date(2017, 5, 4))
 
     assert publish_date == date(2017, 4, 4)
-
-
-# Reference election: mayor.london.2016-05-05
-def test_publish_date_mayor_london():
-    publish_date = sopn_publish_date.greater_london_assembly(date(2016, 5, 5))
-
-    assert publish_date == date(2016, 4, 1)
 
 
 # Reference election: parl.aberavon.2017-06-08

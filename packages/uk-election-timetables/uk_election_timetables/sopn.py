@@ -17,6 +17,7 @@ from datetime import date
 from uk_election_timetables.elections import (
     ScottishParliamentElection,
     SeneddCymruElection,
+    GreaterLondonAssemblyElection,
 )
 
 
@@ -27,7 +28,7 @@ class StatementPublishDate(object):
             "sp": lambda x: ScottishParliamentElection(x).sopn_publish_date(),
             "naw": lambda x: SeneddCymruElection(x).sopn_publish_date(),
             "senedd": lambda x: SeneddCymruElection(x).sopn_publish_date(),
-            "gla": self.greater_london_assembly,
+            "gla": lambda x: GreaterLondonAssemblyElection(x).sopn_publish_date(),
             "pcc": self.police_and_crime_commissioner,
             "mayor": self.mayor,
         }
@@ -98,17 +99,6 @@ class StatementPublishDate(object):
         )
 
         return working_days_before(poll_date, 19, self.calendar.england_and_wales())
-
-    def greater_london_assembly(self, poll_date: date) -> date:
-        """
-        Calculate the publish date for an election to the Greater London Assembly
-
-        This is set out in `The Greater London Authority Elections (Amendment) Rules 2016 <https://www.legislation.gov.uk/uksi/2016/24/article/6/made>`_
-
-        :param poll_date: a datetime representing the date of the poll
-        :return: a datetime representing the expected publish date
-        """
-        return working_days_before(poll_date, 23, self.calendar.england_and_wales())
 
     def european_parliament(self, poll_date: date, region: Region) -> date:
         """
