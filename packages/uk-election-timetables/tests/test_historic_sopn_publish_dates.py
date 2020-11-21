@@ -1,6 +1,7 @@
 from uk_election_timetables.elections import (
     ScottishParliamentElection,
     GreaterLondonAssemblyElection,
+    NorthernIrelandAssemblyElection,
 )
 from uk_election_timetables.sopn import StatementPublishDate
 from datetime import timedelta, datetime
@@ -54,9 +55,9 @@ def generate_test_cases(search, exceptions=None):
 @mark.parametrize("row", generate_test_cases("nia"), ids=generate_test_id)
 def test_northern_ireland_assembly(row):
 
-    expected_date = sopn_publish_date.northern_ireland_assembly(
-        read_date(row["election_date"])
-    )
+    poll_date = read_date(row["election_date"])
+
+    expected_date = NorthernIrelandAssemblyElection(poll_date).sopn_publish_date()
 
     actual_date = read_date(row["sopn_publish_date"])
 

@@ -1,7 +1,7 @@
 from uk_election_timetables.elections import (
     ScottishParliamentElection,
     SeneddCymruElection,
-    GreaterLondonAssemblyElection,
+    NorthernIrelandAssemblyElection,
 )
 
 from uk_election_timetables.sopn import StatementPublishDate
@@ -81,13 +81,6 @@ def test_publish_date_senedd_election_id():
     publish_date = sopn_publish_date.for_id("senedd.c.ceredigion.2016-05-05")
 
     assert publish_date == date(2016, 4, 7)
-
-
-# Reference election: nia.belfast-east.2017-03-02
-def test_publish_date_northern_ireland_assembly():
-    publish_date = sopn_publish_date.northern_ireland_assembly(date(2017, 3, 2))
-
-    assert publish_date == date(2017, 2, 8)
 
 
 # Reference election: pcc.avon-and-somerset.2016-05-05
@@ -200,7 +193,9 @@ def test_christmas_eve_not_counted():
         sopn_publish_date.police_and_crime_commissioner: date(2018, 12, 11),
         sopn_publish_date.uk_parliament: date(2018, 12, 7),
         lambda x: ScottishParliamentElection(x).sopn_publish_date(): date(2018, 12, 3),
-        sopn_publish_date.northern_ireland_assembly: date(2018, 12, 13),
+        lambda x: NorthernIrelandAssemblyElection(x).sopn_publish_date(): date(
+            2018, 12, 13
+        ),
         lambda x: SeneddCymruElection(x).sopn_publish_date(): date(2018, 12, 10),
     }
 

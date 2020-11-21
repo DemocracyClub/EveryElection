@@ -16,13 +16,14 @@ from uk_election_timetables.elections import (
     ScottishParliamentElection,
     SeneddCymruElection,
     GreaterLondonAssemblyElection,
+    NorthernIrelandAssemblyElection,
 )
 
 
 class StatementPublishDate(object):
     def __init__(self):
         self.election_id_lookup = {
-            "nia": self.northern_ireland_assembly,
+            "nia": lambda x: NorthernIrelandAssemblyElection(x).sopn_publish_date(),
             "sp": lambda x: ScottishParliamentElection(x).sopn_publish_date(),
             "naw": lambda x: SeneddCymruElection(x).sopn_publish_date(),
             "senedd": lambda x: SeneddCymruElection(x).sopn_publish_date(),
@@ -65,17 +66,6 @@ class StatementPublishDate(object):
             return self.local(poll_date, country=country)
         elif election_type == "parl":
             return self.uk_parliament(poll_date, country=country)
-
-    def northern_ireland_assembly(self, poll_date: date) -> date:
-        """
-        Calculate the publish date for an election to the Northern Ireland Assembly
-
-        This is set out by Schedule 5, Rules 1 and 2 of `The Northern Ireland Assembly (Elections) (Amendment) Order 2009 <https://www.legislation.gov.uk/uksi/2009/256/made>`_
-
-        :param poll_date: a datetime representing the date of the poll
-        :return: a datetime representing the expected publish date
-        """
-        return working_days_before(poll_date, 16, self.calendar.northern_ireland())
 
     def national_assembly_for_wales(self, poll_date: date) -> date:
         """
