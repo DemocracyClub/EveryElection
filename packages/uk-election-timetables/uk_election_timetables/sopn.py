@@ -18,6 +18,7 @@ from uk_election_timetables.elections import (
     GreaterLondonAssemblyElection,
     NorthernIrelandAssemblyElection,
     LocalElection,
+    UKParliamentElection,
 )
 
 
@@ -66,7 +67,7 @@ class StatementPublishDate(object):
         if election_type == "local":
             return LocalElection(poll_date, country).sopn_publish_date()
         elif election_type == "parl":
-            return self.uk_parliament(poll_date, country=country)
+            return UKParliamentElection(poll_date, country).sopn_publish_date()
 
     def national_assembly_for_wales(self, poll_date: date) -> date:
         """
@@ -105,33 +106,3 @@ class StatementPublishDate(object):
         :return: a datetime representing the expected publish date
         """
         return working_days_before(poll_date, 19, self.calendar.england_and_wales())
-
-    def uk_parliament(self, poll_date: date, country: Country = None):
-        """
-        Calculate the publish date for an election to the Parliament of the United Kingdom
-
-        This is set out in `Representation of the People Act 1983 <https://www.legislation.gov.uk/ukpga/1983/2/contents>`_ and its amendments.
-
-        :param poll_date: a datetime representing the date of the poll
-        :param country: an optional Country representing the country where the election will be held
-        :return: a datetime representing the expected publish date
-        """
-
-        def date_for_country(country_of_election: Country) -> date:
-            calendar = self.calendar.from_country(country_of_election)
-            return working_days_before(poll_date, 19, calendar)
-
-        if country:
-            return date_for_country(country)
-
-        else:
-            possible_dates = [
-                date_for_country(country)
-                for country in [
-                    Country.ENGLAND,
-                    Country.SCOTLAND,
-                    Country.NORTHERN_IRELAND,
-                ]
-            ]
-
-            return min(possible_dates)
