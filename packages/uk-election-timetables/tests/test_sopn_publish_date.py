@@ -3,6 +3,7 @@ from uk_election_timetables.elections import (
     SeneddCymruElection,
     NorthernIrelandAssemblyElection,
     UKParliamentElection,
+    PoliceAndCrimeCommissionerElection,
 )
 
 from uk_election_timetables.sopn import StatementPublishDate
@@ -84,13 +85,6 @@ def test_publish_date_senedd_election_id():
     assert publish_date == date(2016, 4, 7)
 
 
-# Reference election: pcc.avon-and-somerset.2016-05-05
-def test_publish_date_police_and_crime_commissioner():
-    publish_date = sopn_publish_date.police_and_crime_commissioner(date(2016, 5, 5))
-
-    assert publish_date == date(2016, 4, 8)
-
-
 # Reference election: mayor.liverpool-city-ca.2017-05-04
 def test_publish_date_mayor():
     publish_date = sopn_publish_date.mayor(date(2017, 5, 4))
@@ -116,7 +110,9 @@ def test_national_assembly_for_wales_deprecation_warning():
 def test_christmas_eve_not_counted():
 
     election_and_expected_sopn_date = {
-        sopn_publish_date.police_and_crime_commissioner: date(2018, 12, 11),
+        lambda x: PoliceAndCrimeCommissionerElection(x).sopn_publish_date(): date(
+            2018, 12, 11
+        ),
         lambda x: UKParliamentElection(x).sopn_publish_date(): date(2018, 12, 7),
         lambda x: ScottishParliamentElection(x).sopn_publish_date(): date(2018, 12, 3),
         lambda x: NorthernIrelandAssemblyElection(x).sopn_publish_date(): date(

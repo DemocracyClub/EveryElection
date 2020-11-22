@@ -3,6 +3,7 @@ from uk_election_timetables.elections import (
     GreaterLondonAssemblyElection,
     NorthernIrelandAssemblyElection,
     UKParliamentElection,
+    PoliceAndCrimeCommissionerElection,
 )
 from uk_election_timetables.sopn import StatementPublishDate
 from datetime import timedelta, datetime
@@ -103,9 +104,9 @@ def test_greater_london_assembly(row):
 
 @mark.parametrize("row", generate_test_cases("pcc"), ids=generate_test_id)
 def test_police_and_crime_commissioner(row):
-    expected_date = sopn_publish_date.police_and_crime_commissioner(
-        read_date(row["election_date"])
-    )
+    poll_date = read_date(row["election_date"])
+
+    expected_date = PoliceAndCrimeCommissionerElection(poll_date).sopn_publish_date()
 
     actual_date = read_date(row["sopn_publish_date"])
 

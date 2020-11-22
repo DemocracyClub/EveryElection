@@ -19,6 +19,7 @@ from uk_election_timetables.elections import (
     NorthernIrelandAssemblyElection,
     LocalElection,
     UKParliamentElection,
+    PoliceAndCrimeCommissionerElection,
 )
 
 
@@ -30,7 +31,7 @@ class StatementPublishDate(object):
             "naw": lambda x: SeneddCymruElection(x).sopn_publish_date(),
             "senedd": lambda x: SeneddCymruElection(x).sopn_publish_date(),
             "gla": lambda x: GreaterLondonAssemblyElection(x).sopn_publish_date(),
-            "pcc": self.police_and_crime_commissioner,
+            "pcc": lambda x: PoliceAndCrimeCommissionerElection(x).sopn_publish_date(),
             "mayor": self.mayor,
         }
         self.calendar = UnitedKingdomBankHolidays()
@@ -84,17 +85,6 @@ class StatementPublishDate(object):
         )
 
         return working_days_before(poll_date, 19, self.calendar.england_and_wales())
-
-    def police_and_crime_commissioner(self, poll_date: date) -> date:
-        """
-        Calculate the publish date for an election to the position of Police and Crime Commissioner
-
-        This is set out in `The Police and Crime Commissioner Elections (Amendment) Order 2014 <https://www.legislation.gov.uk/uksi/2014/921/article/31/made>`_
-
-        :param poll_date: a datetime representing the date of the poll
-        :return: a datetime representing the expected publish date
-        """
-        return working_days_before(poll_date, 18, self.calendar.england_and_wales())
 
     def mayor(self, poll_date: date) -> date:
         """
