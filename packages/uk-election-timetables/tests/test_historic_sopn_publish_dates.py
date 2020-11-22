@@ -1,16 +1,10 @@
-from uk_election_timetables.elections import (
-    ScottishParliamentElection,
-    GreaterLondonAssemblyElection,
-    NorthernIrelandAssemblyElection,
-    UKParliamentElection,
-    PoliceAndCrimeCommissionerElection,
-    MayoralElection,
-)
-from uk_election_timetables.sopn import StatementPublishDate
-from datetime import timedelta, datetime
 from csv import DictReader
+from datetime import timedelta, datetime
+
 from pytest import mark
-from warnings import catch_warnings, simplefilter
+
+from uk_election_timetables.elections import *
+from uk_election_timetables.sopn import StatementPublishDate
 
 sopn_publish_date = StatementPublishDate()
 
@@ -79,13 +73,10 @@ def test_scottish_parliament(row):
 
 
 @mark.parametrize("row", generate_test_cases("naw"), ids=generate_test_id)
-def test_national_assembly_for_wales(row):
-    with catch_warnings():
-        simplefilter("ignore")
+def test_old_national_assembly_for_wales(row):
+    poll_date = read_date(row["election_date"])
 
-        expected_date = sopn_publish_date.national_assembly_for_wales(
-            read_date(row["election_date"])
-        )
+    expected_date = SeneddCymruElection(poll_date).sopn_publish_date()
 
     actual_date = read_date(row["sopn_publish_date"])
 
