@@ -3,10 +3,15 @@ from datetime import timedelta, datetime
 
 from pytest import mark
 
-from uk_election_timetables.elections import *
-from uk_election_timetables.sopn import StatementPublishDate
-
-sopn_publish_date = StatementPublishDate()
+from uk_election_timetables.elections import (
+    NorthernIrelandAssemblyElection,
+    ScottishParliamentElection,
+    SeneddCymruElection,
+    GreaterLondonAssemblyElection,
+    PoliceAndCrimeCommissionerElection,
+    MayoralElection,
+    UKParliamentElection,
+)
 
 with open("./tests/historic_sopn_data.csv") as f:
     historic_data = list(DictReader(row for row in f if not row.startswith("--")))
