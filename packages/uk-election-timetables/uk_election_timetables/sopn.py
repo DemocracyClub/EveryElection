@@ -32,7 +32,9 @@ class StatementPublishDate(object):
             "senedd": lambda x: SeneddCymruElection(x).sopn_publish_date(),
             "gla": lambda x: GreaterLondonAssemblyElection(x).sopn_publish_date(),
             "pcc": lambda x: PoliceAndCrimeCommissionerElection(x).sopn_publish_date(),
-            "mayor": self.mayor,
+            "mayor": lambda x: PoliceAndCrimeCommissionerElection(
+                x
+            ).sopn_publish_date(),
         }
         self.calendar = UnitedKingdomBankHolidays()
 
@@ -84,15 +86,4 @@ class StatementPublishDate(object):
             DeprecationWarning,
         )
 
-        return working_days_before(poll_date, 19, self.calendar.england_and_wales())
-
-    def mayor(self, poll_date: date) -> date:
-        """
-        Calculate the publish date for an election to the position of Mayor in England and Wales
-
-        This is set out in `The Local Authorities (Mayoral Elections) (England and Wales) (Amendment) Regulations 2014 <https://www.legislation.gov.uk/uksi/2014/370/made>`_
-
-        :param poll_date: a datetime representing the date of the poll
-        :return: a datetime representing the expected publish date
-        """
         return working_days_before(poll_date, 19, self.calendar.england_and_wales())

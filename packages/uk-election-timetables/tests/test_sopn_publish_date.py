@@ -85,13 +85,6 @@ def test_publish_date_senedd_election_id():
     assert publish_date == date(2016, 4, 7)
 
 
-# Reference election: mayor.liverpool-city-ca.2017-05-04
-def test_publish_date_mayor():
-    publish_date = sopn_publish_date.mayor(date(2017, 5, 4))
-
-    assert publish_date == date(2017, 4, 4)
-
-
 def test_national_assembly_for_wales_deprecation_warning():
     with catch_warnings(record=True) as warnings:
         sopn_publish_date.national_assembly_for_wales(date(2020, 1, 1))
