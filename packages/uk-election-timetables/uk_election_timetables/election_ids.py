@@ -1,5 +1,20 @@
 from datetime import datetime, date
 
+from uk_election_timetables.calendars import Country
+
+from uk_election_timetables.election import Election
+
+from uk_election_timetables.elections import (
+    NorthernIrelandAssemblyElection,
+    ScottishParliamentElection,
+    SeneddCymruElection,
+    GreaterLondonAssemblyElection,
+    PoliceAndCrimeCommissionerElection,
+    MayoralElection,
+    LocalElection,
+    UKParliamentElection,
+)
+
 
 class InvalidElectionIdError(BaseException):
     """
@@ -52,3 +67,47 @@ def type_and_poll_date(election_id: str) -> (str, date):
         return election_type, date_of_poll
     except Exception:
         raise InvalidElectionIdError(election_id)
+
+
+def from_election_id(election_id: str, country: Country = None) -> Election:
+    """
+    Calculate the publish date for an election given in `uk-election-ids <https://elections.democracyclub.org.uk/reference_definition/>`_ format and an optional country if necessary (for example, local or parliamentary elections).
+
+    :param election_id: a string representing an election id in uk-election-ids format
+    :param country: an optional Country representing the country where the election will be held
+    :return: a datetime representing the expected publish date
+    """
+    election_id_lookup = {
+        "nia": NorthernIrelandAssemblyElection,
+        "sp": ScottishParliamentElection,
+        "naw": SeneddCymruElection,
+        "senedd": SeneddCymruElection,
+        "gla": GreaterLondonAssemblyElection,
+        "pcc": PoliceAndCrimeCommissionerElection,
+        "mayor": MayoralElection,
+    }
+
+    election_type, poll_date = type_and_poll_date(election_id)
+
+    def valid_election_type(el_type):
+        return el_type in election_id_lookup or el_type in [
+            "local",
+            "parl",
+        ]
+
+    def requires_country(el_type):
+        return el_type in ["local"]
+
+    if not valid_election_type(election_type):
+        raise NoSuchElectionTypeError(election_type)
+
+    if requires_country(election_type) and country is None:
+        raise AmbiguousElectionIdError(election_id)
+
+    if election_type in election_id_lookup:
+        return election_id_lookup[election_type](poll_date)
+
+    if election_type == "local":
+        return LocalElection(poll_date, country)
+    elif election_type == "parl":
+        return UKParliamentElection(poll_date, country)

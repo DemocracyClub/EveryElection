@@ -1,3 +1,14 @@
+from datetime import date
+
+from pytest import raises
+
+from uk_election_timetables.calendars import Country
+from uk_election_timetables.election_ids import from_election_id
+from uk_election_timetables.election_ids import (
+    InvalidElectionIdError,
+    AmbiguousElectionIdError,
+    NoSuchElectionTypeError,
+)
 from uk_election_timetables.elections import (
     ScottishParliamentElection,
     SeneddCymruElection,
@@ -6,65 +17,51 @@ from uk_election_timetables.elections import (
     PoliceAndCrimeCommissionerElection,
 )
 
-from uk_election_timetables.sopn import StatementPublishDate
-from uk_election_timetables.calendars import Country
-from uk_election_timetables.election_ids import (
-    InvalidElectionIdError,
-    AmbiguousElectionIdError,
-    NoSuchElectionTypeError,
-)
-
-from datetime import date
-from pytest import raises
-from warnings import catch_warnings
-
-sopn_publish_date = StatementPublishDate()
-
 
 def test_publish_date_local_id():
 
     with raises(AmbiguousElectionIdError) as err:
-        sopn_publish_date.for_id("local.2019-02-21")
+        from_election_id("local.2019-02-21")
 
     assert str(err.value) == "Cannot derive country from election id [local.2019-02-21]"
 
 
 def test_publish_date_local_id_with_country():
-    publish_date = sopn_publish_date.for_id("local.2019-02-21", country=Country.ENGLAND)
+    election = from_election_id("local.2019-02-21", country=Country.ENGLAND)
 
-    assert publish_date == date(2019, 1, 28)
+    assert election.sopn_publish_date() == date(2019, 1, 28)
 
 
 def test_publish_date_parl_id_with_country():
-    publish_date = sopn_publish_date.for_id("parl.2019-02-21", country=Country.ENGLAND)
+    election = from_election_id("parl.2019-02-21", country=Country.ENGLAND)
 
-    assert publish_date == date(2019, 1, 25)
+    assert election.sopn_publish_date() == date(2019, 1, 25)
 
 
 def test_publish_date_parl_id_without_country():
-    publish_date = sopn_publish_date.for_id("parl.2019-02-21")
+    election = from_election_id("parl.2019-02-21")
 
-    assert publish_date == date(2019, 1, 25)
+    assert election.sopn_publish_date() == date(2019, 1, 25)
 
 
 def test_publish_date_not_an_election_type():
 
     with raises(NoSuchElectionTypeError) as err:
-        sopn_publish_date.for_id("not-an-election.2019-02-21")
+        from_election_id("not-an-election.2019-02-21")
 
     assert str(err.value) == "Election type [not-an-election] does not exist"
 
 
 def test_publish_date_id_that_does_not_need_country():
-    publish_date = sopn_publish_date.for_id("naw.c.ceredigion.2016-05-05")
+    election = from_election_id("naw.c.ceredigion.2016-05-05")
 
-    assert publish_date == date(2016, 4, 7)
+    assert election.sopn_publish_date() == date(2016, 4, 7)
 
 
 def test_publish_date_invalid_id():
 
     with raises(InvalidElectionIdError) as err:
-        sopn_publish_date.for_id("not an election id")
+        from_election_id("not an election id")
 
     assert (
         str(err.value) == "Parameter [not an election id] is not in election id format"
@@ -74,30 +71,26 @@ def test_publish_date_invalid_id():
 def test_publish_date_invalid_date():
 
     with raises(InvalidElectionIdError) as err:
-        sopn_publish_date.for_id("parl.not-a-date")
+        from_election_id("parl.not-a-date")
 
     assert str(err.value) == "Parameter [parl.not-a-date] is not in election id format"
 
 
 def test_publish_date_senedd_election_id():
-    publish_date = sopn_publish_date.for_id("senedd.c.ceredigion.2016-05-05")
+    election = from_election_id("senedd.c.ceredigion.2016-05-05")
 
-    assert publish_date == date(2016, 4, 7)
+    assert election.sopn_publish_date() == date(2016, 4, 7)
 
 
 def test_christmas_eve_not_counted():
 
     election_and_expected_sopn_date = {
-        lambda x: PoliceAndCrimeCommissionerElection(x).sopn_publish_date(): date(
-            2018, 12, 11
-        ),
-        lambda x: UKParliamentElection(x).sopn_publish_date(): date(2018, 12, 7),
-        lambda x: ScottishParliamentElection(x).sopn_publish_date(): date(2018, 12, 3),
-        lambda x: NorthernIrelandAssemblyElection(x).sopn_publish_date(): date(
-            2018, 12, 13
-        ),
-        lambda x: SeneddCymruElection(x).sopn_publish_date(): date(2018, 12, 10),
+        PoliceAndCrimeCommissionerElection: date(2018, 12, 11),
+        UKParliamentElection: date(2018, 12, 7),
+        ScottishParliamentElection: date(2018, 12, 3),
+        NorthernIrelandAssemblyElection: date(2018, 12, 13),
+        SeneddCymruElection: date(2018, 12, 10),
     }
 
-    for sopn_for_election_on, expected_date in election_and_expected_sopn_date.items():
-        assert sopn_for_election_on(date(2019, 1, 10)) == expected_date
+    for election_on, expected_date in election_and_expected_sopn_date.items():
+        assert election_on(date(2019, 1, 10)).sopn_publish_date() == expected_date
