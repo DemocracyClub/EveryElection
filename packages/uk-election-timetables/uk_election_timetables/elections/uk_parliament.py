@@ -9,6 +9,7 @@ class UKParliamentElection(Election):
         self.poll_date = poll_date
         self.country = country
 
+    @property
     def sopn_publish_date(self) -> date:
         """
         Calculate the publish date for an election to the Parliament of the United Kingdom

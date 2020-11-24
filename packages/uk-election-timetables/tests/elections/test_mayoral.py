@@ -7,4 +7,4 @@ from uk_election_timetables.elections import MayoralElection
 def test_publish_date_mayor():
     election = MayoralElection(date(2017, 5, 4))
 
-    assert election.sopn_publish_date() == date(2017, 4, 4)
+    assert election.sopn_publish_date == date(2017, 4, 4)

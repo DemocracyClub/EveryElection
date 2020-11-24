@@ -8,6 +8,7 @@ class GreaterLondonAssemblyElection(Election):
     def __init__(self, poll_date: date):
         self.poll_date = poll_date
 
+    @property
     def sopn_publish_date(self) -> date:
         """
         Calculate the publish date for an election to the Greater London Assembly

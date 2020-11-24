@@ -9,6 +9,7 @@ class LocalElection(Election):
         self.poll_date = poll_date
         self.country = country
 
+    @property
     def sopn_publish_date(self) -> date:
         """
         Calculate the publish date for a local election.

@@ -59,7 +59,7 @@ def test_northern_ireland_assembly(row):
 
     poll_date = read_date(row["election_date"])
 
-    expected_date = NorthernIrelandAssemblyElection(poll_date).sopn_publish_date()
+    expected_date = NorthernIrelandAssemblyElection(poll_date).sopn_publish_date
 
     actual_date = read_date(row["sopn_publish_date"])
 
@@ -70,7 +70,7 @@ def test_northern_ireland_assembly(row):
 def test_scottish_parliament(row):
     poll_date = read_date(row["election_date"])
 
-    expected_date = ScottishParliamentElection(poll_date).sopn_publish_date()
+    expected_date = ScottishParliamentElection(poll_date).sopn_publish_date
 
     actual_date = read_date(row["sopn_publish_date"])
 
@@ -81,7 +81,7 @@ def test_scottish_parliament(row):
 def test_old_national_assembly_for_wales(row):
     poll_date = read_date(row["election_date"])
 
-    expected_date = SeneddCymruElection(poll_date).sopn_publish_date()
+    expected_date = SeneddCymruElection(poll_date).sopn_publish_date
 
     actual_date = read_date(row["sopn_publish_date"])
 
@@ -92,7 +92,7 @@ def test_old_national_assembly_for_wales(row):
 def test_greater_london_assembly(row):
     poll_date = read_date(row["election_date"])
 
-    expected_date = GreaterLondonAssemblyElection(poll_date).sopn_publish_date()
+    expected_date = GreaterLondonAssemblyElection(poll_date).sopn_publish_date
 
     actual_date = read_date(row["sopn_publish_date"])
 
@@ -103,7 +103,7 @@ def test_greater_london_assembly(row):
 def test_police_and_crime_commissioner(row):
     poll_date = read_date(row["election_date"])
 
-    expected_date = PoliceAndCrimeCommissionerElection(poll_date).sopn_publish_date()
+    expected_date = PoliceAndCrimeCommissionerElection(poll_date).sopn_publish_date
 
     actual_date = read_date(row["sopn_publish_date"])
 
@@ -118,7 +118,7 @@ def test_police_and_crime_commissioner(row):
 def test_mayoral(row):
     poll_date = read_date(row["election_date"])
 
-    expected_date = MayoralElection(poll_date).sopn_publish_date()
+    expected_date = MayoralElection(poll_date).sopn_publish_date
 
     actual_date = read_date(row["sopn_publish_date"])
 
@@ -129,7 +129,7 @@ def test_mayoral(row):
 def test_mayor_of_london(row):
     poll_date = read_date(row["election_date"])
 
-    expected_date = GreaterLondonAssemblyElection(poll_date).sopn_publish_date()
+    expected_date = GreaterLondonAssemblyElection(poll_date).sopn_publish_date
 
     actual_date = read_date(row["sopn_publish_date"])
 
@@ -140,7 +140,7 @@ def test_mayor_of_london(row):
 def test_uk_parliament(row):
     poll_date = read_date(row["election_date"])
 
-    expected_date = UKParliamentElection(poll_date).sopn_publish_date()
+    expected_date = UKParliamentElection(poll_date).sopn_publish_date
 
     actual_date = read_date(row["sopn_publish_date"])
 
