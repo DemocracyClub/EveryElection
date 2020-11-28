@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))
+
 project = 'uk-election-timetables'
 copyright = '2020, Alex Wilson'
 author = 'Alex Wilson'
