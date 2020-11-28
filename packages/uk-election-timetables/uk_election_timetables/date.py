@@ -7,7 +7,8 @@ SUNDAY = 6
 
 class DateMatcher:
     """
-    An object that represents a matcher against datetime.date objects, given a day, a month, and an optional year.
+    An object that represents a matcher against datetime.date objects, given a day,
+    a month, and an optional year.
     """
 
     def __init__(self, day: int, month: int, year: int = None, name: str = None):
@@ -21,7 +22,7 @@ class DateMatcher:
         Return whether the input date matches the attributes of this class
 
         :param other: the date being matched against
-        :return a boolean representing whether the input matched against this class's attributes
+        :return: a boolean representing if the input date matches this class's attributes
         """
         if self.day != other.day:
             return False

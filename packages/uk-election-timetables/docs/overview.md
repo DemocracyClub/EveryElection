@@ -1,35 +1,27 @@
 # Overview
 
-*Given the polling day of an election in the UK, when should the Statement of Persons Nominated (SoPN) be published?*
+This library encapsulates timetable legislation for elections run in the United Kingdom and its devolved administrations.
 
-When an election is called in the United Kingdom, the voting public must have access to the list of candidates who have been nominated to that post.
-
-These documents are called Statements of Persons Nominated, and must be published a set number of working days ahead of the actual election date. The number varies based on:
+The election timetable varies based on:
 
  * *Type of Post* - Parliamentary, Local, devolved Government, etc.
  * *Country* - The United Kingdom has up to four different rules for the same type of election, one for each country.
  * *Calendar* - each country has their own unique set of Bank Holidays.
 
-
-This library encapsulates timetable legislation for elections run in the United Kingdom and its devolved administrations.
-
-## Usage
+## Usage (publishing of candidate lists)
 
 ```python
-
-from uk_election_timetables.sopnimport StatementPublishDate
 from datetime import date
+from uk_election_timetables.elections.uk_parliament import UKParliamentElection
 
-publish_date = StatementPublishDate()
+election = UKParliamentElection(date(2019, 2, 21))
 
-print(publish_date.national_assembly_for_wales(date(2016, 5, 5)))
-
-# datetime.date(2016, 4, 7)
+print(election.sopn_publish_date) # date(2019, 1, 25)
 ```
  
 ## Installation
 
-`pip install sopn_publish_date`
+`pip install uk_election_timetables`
  
 ## Third-Party Sources
  
