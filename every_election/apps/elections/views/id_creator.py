@@ -1,6 +1,7 @@
 from django.db import transaction
 from django.http import HttpResponseRedirect
 from django import forms
+from django.utils.functional import cached_property
 from formtools.wizard.views import NamedUrlSessionWizardView
 
 from core.helpers import user_is_moderator
@@ -60,7 +61,7 @@ def date_known(wizard):
 
 
 def select_organisation(wizard):
-    election_type = wizard.get_election_type()
+    election_type = wizard.get_election_type
     if not election_type:
         return False
     qs = ElectedRole.objects.filter(election_type=election_type)
@@ -76,7 +77,7 @@ def select_organisation(wizard):
 
 
 def select_subtype(wizard):
-    election_type = wizard.get_election_type()
+    election_type = wizard.get_election_type
     if not election_type:
         return False
     subtypes = ElectionSubType.objects.filter(election_type=election_type)
@@ -84,10 +85,10 @@ def select_subtype(wizard):
 
 
 def select_organisation_division(wizard):
-    election_type = wizard.get_election_type()
+    election_type = wizard.get_election_type
     if not election_type:
         return False
-    if wizard.get_election_type().election_type in ["mayor", "pcc"]:
+    if wizard.get_election_type.election_type in ["mayor", "pcc"]:
         return False
     return True
 
@@ -105,16 +106,19 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
     def get_template_names(self):
         return [TEMPLATES[self.steps.current]]
 
+    @cached_property
     def get_election_type(self):
         if self.get_cleaned_data_for_step("election_type"):
             return self.get_cleaned_data_for_step("election_type").get("election_type")
 
+    @cached_property
     def get_election_subtypes(self):
         if self.get_cleaned_data_for_step("election_subtype"):
             return self.get_cleaned_data_for_step("election_subtype").get(
                 "election_subtype"
             )
 
+    @cached_property
     def get_organisations(self):
         if self.get_cleaned_data_for_step("election_organisation"):
             return self.get_cleaned_data_for_step("election_organisation").get(
@@ -179,7 +183,7 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         if not "date" in all_data:
             all_data["date"] = None
 
-        all_data["election_organisation"] = self.get_organisations()
+        all_data["election_organisation"] = self.get_organisations
 
         if not all_data.get("election_organisation"):
             all_data.update(self.storage.extra_data)
@@ -189,7 +193,7 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         context["all_data"] = all_data
         if self.kwargs["step"] in ["review", self.done_step_name]:
             all_ids = create_ids_for_each_ballot_paper(
-                all_data, self.get_election_subtypes()
+                all_data, self.get_election_subtypes
             )
             context["all_ids"] = all_ids
         context["user_is_moderator"] = user_is_moderator(self.request.user)
@@ -197,15 +201,15 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
 
     def get_form_kwargs(self, step):
         if step in ["election_organisation", "election_subtype"]:
-            election_type = self.get_election_type()
+            election_type = self.get_election_type
             if election_type:
                 return {
                     "election_type": election_type.election_type,
                     "election_date": self.get_election_date(),
                 }
         if step == "election_organisation_division":
-            organisations = self.get_organisations()
-            election_subtype = self.get_election_subtypes()
+            organisations = self.get_organisations
+            election_subtype = self.get_election_subtypes
 
             return {
                 "organisations": organisations,
