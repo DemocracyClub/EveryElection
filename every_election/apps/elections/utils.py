@@ -13,13 +13,74 @@ from elections.models import (
 )
 from uk_election_ids.election_ids import IdBuilder
 
+CACHE = {
+    "voting_systems": {},
+    "election_types": {},
+    "election_sub_types": {},
+    "valid_election_types": {},
+    "private_elections": {},
+    "elected_roles": {},
+}
+
+
+def get_cached_voting_system(slug):
+    if slug not in CACHE["voting_systems"]:
+        CACHE["voting_systems"][slug] = VotingSystem.objects.get(slug=slug)
+    return CACHE["voting_systems"][slug]
+
+
+def get_cached_election_type(election_type):
+    if election_type not in CACHE["election_types"]:
+        CACHE["election_types"][election_type] = ElectionType.objects.get(
+            election_type=election_type
+        )
+    return CACHE["election_types"][election_type]
+
+
+def get_cached_election_subtype(election_type):
+    if election_type not in CACHE["election_sub_types"]:
+        CACHE["election_sub_types"][election_type] = ElectionSubType.objects.filter(
+            election_type=election_type
+        )
+    return CACHE["election_sub_types"][election_type]
+
+
+def get_cached_valid_election_types(organisation):
+    if organisation not in CACHE["valid_election_types"]:
+        CACHE["valid_election_types"][organisation] = organisation.election_types.all()
+    return CACHE["valid_election_types"][organisation]
+
+
+def get_cached_private_elections(date, election_id):
+    if not date in CACHE["private_elections"]:
+        print("Called")
+        qs = Election.private_objects.filter(poll_open_date=date)
+        CACHE["private_elections"][date] = {e.election_id: e for e in qs}
+    return CACHE["private_elections"][date].get(election_id)
+
+
+def get_cached_elected_role(organisation, election_type):
+    if not election_type in CACHE["elected_roles"]:
+        CACHE["elected_roles"][election_type] = {}
+
+    if not organisation in CACHE["elected_roles"][election_type]:
+        try:
+            CACHE["elected_roles"][election_type][
+                organisation
+            ] = ElectedRole.objects.get(
+                organisation=organisation, election_type=election_type
+            )
+        except ElectedRole.DoesNotExist:
+            CACHE["elected_roles"][election_type][organisation] = None
+    return CACHE["elected_roles"][election_type][organisation]
+
 
 class ElectionBuilder:
     def __init__(self, election_type, date):
 
         # init params
         if type(election_type) == str:
-            election_type = ElectionType.objects.get(election_type=election_type)
+            election_type = get_cached_election_type(election_type)
         self.election_type = election_type
 
         if type(date) == str:
@@ -46,9 +107,7 @@ class ElectionBuilder:
         self.snooped_election_id = None
 
     def with_subtype(self, subtype):
-        valid_subtypes = ElectionSubType.objects.filter(
-            election_type=self.election_type
-        )
+        valid_subtypes = get_cached_election_subtype(self.election_type)
         if subtype not in valid_subtypes:
             raise ElectionSubType.ValidationError(
                 "'%s' is not a valid subtype for election type '%s'"
@@ -60,7 +119,7 @@ class ElectionBuilder:
         return self
 
     def with_organisation(self, organisation):
-        valid_election_types = organisation.election_types.all()
+        valid_election_types = get_cached_valid_election_types(organisation)
         if self.election_type not in valid_election_types:
             raise Organisation.ValidationError(
                 "'%s' is not a valid organisation for election type '%s'"
@@ -136,13 +195,9 @@ class ElectionBuilder:
     def get_elected_role(self):
         if not self.organisation:
             return None
-
-        try:
-            return ElectedRole.objects.get(
-                organisation=self.organisation, election_type=self.election_type
-            )
-        except ElectedRole.DoesNotExist:
-            return None
+        return get_cached_elected_role(
+            self.organisation, election_type=self.election_type
+        )
 
     def get_voting_system(self):
         # Scottish and NI council elections use Single Transferrable Vote
@@ -151,7 +206,7 @@ class ElectionBuilder:
                 self.organisation.territory_code in ("SCT", "NIR")
                 and self.election_type.election_type == "local"
             ):
-                return VotingSystem.objects.get(slug="STV")
+                return get_cached_voting_system("STV")
 
         # The Constituency ballots in an Additional Member System
         # election are essentially FPTP
@@ -160,7 +215,7 @@ class ElectionBuilder:
             and self.subtype
             and self.subtype.election_subtype == "c"
         ):
-            return VotingSystem.objects.get(slug="FPTP")
+            return get_cached_voting_system("FPTP")
 
         # otherwise we can rely on the election type
         return self.election_type.default_voting_system
@@ -238,9 +293,12 @@ class ElectionBuilder:
             d3.update(d2)
             return d3
 
-        try:
-            return Election.private_objects.get(election_id=record["election_id"])
-        except Election.DoesNotExist:
+        existing_election = get_cached_private_elections(
+            self.date, record["election_id"]
+        )
+        if existing_election:
+            return existing_election
+        else:
             # return an instance of elections.models.Election
             # but don't persist it to the DB yet.
             # The calling code is responsible for calling .save()
@@ -413,8 +471,18 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                             "Unrecognised contest_type value '%s'" % contest_type
                         )
         else:
+            all_division_ids = [div.split("__")[1] for div in div_data.keys()]
+            all_division_objects = {
+                str(div.pk): div
+                for div in OrganisationDivision.objects.filter(
+                    pk__in=all_division_ids
+                ).select_related(
+                    "divisionset",
+                    "divisionset__organisation",
+                )
+            }
             for div, contest_type in div_data.items():
-                org_div = OrganisationDivision.objects.get(pk=div.split("__")[1])
+                org_div = all_division_objects[div.split("__")[1]]
 
                 builder = (
                     ElectionBuilder(all_data["election_type"], all_data["date"])
