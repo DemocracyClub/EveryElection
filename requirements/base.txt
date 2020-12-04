@@ -3,7 +3,7 @@ boto3==1.13.14
 django==2.2.16
 django-basicauth==0.5.2
 django-cors-headers==3.3.0
-django-extensions==3.0.9
+django-extensions==3.1.0
 django-filter==2.4.0
 django-formtools==2.2
 django-localflavor==3.0.1
