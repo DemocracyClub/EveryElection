@@ -8,7 +8,7 @@ from organisations.tests.factories import (
     OrganisationDivisionSetFactory,
 )
 
-from .base_tests import BaseElectionCreatorMixIn
+from .base_tests import BaseElectionCreatorMixIn, FuzzyInt
 
 
 class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
@@ -432,13 +432,13 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             "Greater London Assembly elections",
             "Greater London Assembly elections (Additional)",
         ]
-
-        self.run_test_with_data(
-            all_data,
-            expected_ids,
-            expected_titles,
-            subtypes=True,
-        )
+        with self.assertNumQueries(FuzzyInt(24, 25)):
+            self.run_test_with_data(
+                all_data,
+                expected_ids,
+                expected_titles,
+                subtypes=True,
+            )
 
         ballot = Election.private_objects.get(election_id__startswith="gla.a.")
         self.assertIsNone(ballot.group_type)
