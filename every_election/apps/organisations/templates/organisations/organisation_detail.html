@@ -12,7 +12,13 @@
         <h2>Sub-divisions</h2>
         <ul>
         {% for divisionset in object.divisionset.all %}
-            <h3>{{ divisionset.short_title }}</h3>
+            <h3>{{ divisionset.short_title }}
+              {% if request.user.is_staff %}
+              <a href="{% url "admin:organisations_organisationdivisionset_change" object_id=divisionset.pk %}">
+                ({{divisionset.pk}})
+              </a>
+              {%  endif %}
+            </h3>
             <p>Active from {{ divisionset.active_period_text }}.</p>
             {% if divisionset.legislation_url %}
             <p>These sub-divisions were enacted in
