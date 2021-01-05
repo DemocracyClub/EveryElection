@@ -271,7 +271,9 @@ class Election(models.Model):
             return (
                 Onspd.objects.filter(location__within=self.geography.geography)
                 .filter(location__dwithin=(self.geography.geography.centroid, 0.08))
-                .annotate(distance=Distance("location", self.geography.geography))
+                .annotate(
+                    distance=Distance("location", self.geography.geography.centroid)
+                )
                 .order_by("distance")
                 .first()
             )
