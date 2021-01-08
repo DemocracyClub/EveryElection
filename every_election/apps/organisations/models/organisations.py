@@ -36,7 +36,6 @@ class Organisation(models.Model, DateDisplayMixin):
         ("nia", "nia"),
         ("parl", "parl"),
         ("police-area", "police-area"),
-        ("sp", "sp"),
         ("europarl", "europarl"),
     )
 
