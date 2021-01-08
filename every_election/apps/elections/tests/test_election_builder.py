@@ -161,6 +161,69 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
         self.assertEqual(1, election.seats_contested)
         self.assertEqual(3, election.seats_total)
 
+    def test_get_seats_contested(self):
+        sp_election_type = ElectionType.objects.get(election_type="sp")
+        region_sub_type = ElectionSubType.objects.get(
+            election_subtype="r", election_type=sp_election_type
+        )
+        constituency_sub_type = ElectionSubType.objects.get(
+            election_subtype="c", election_type=sp_election_type
+        )
+        sp_org = Organisation.objects.create(
+            official_identifier="sp",
+            organisation_type="sp",
+            official_name="Scottish Parliament",
+            slug="sp",
+            election_name="Scottish parliament election",
+            territory_code="SCT",
+            start_date=date(1999, 5, 6),
+        )
+
+        ElectedRole.objects.create(
+            election_type=sp_election_type,
+            organisation=sp_org,
+            elected_title="Member of the Scottish Parliament",
+            elected_role_name="Member of the Scottish Parliament",
+        )
+
+        sp_div_set = OrganisationDivisionSetFactory(organisation=sp_org)
+
+        sp_r_div = OrganisationDivisionFactory(
+            divisionset=sp_div_set,
+            name="sp Div 1",
+            slug="sp-div-1",
+            seats_total=7,
+            division_election_sub_type="r",
+        )
+        sp_c_div = OrganisationDivisionFactory(
+            divisionset=sp_div_set,
+            name="sp Div 2",
+            slug="sp-div-2",
+            division_election_sub_type="c",
+        )
+
+        builder_1 = (
+            ElectionBuilder("sp", "2021-5-06")
+            .with_organisation(sp_org)
+            .with_division(sp_r_div)
+            .with_subtype(region_sub_type)
+        )
+        builder_2 = (
+            ElectionBuilder("sp", "2021-5-06")
+            .with_organisation(sp_org)
+            .with_division(sp_c_div)
+            .with_subtype(constituency_sub_type)
+        )
+
+        ballot_1 = builder_1.build_ballot(None)
+        ballot_1.save()
+
+        ballot_2 = builder_2.build_ballot(None)
+        ballot_2.save()
+
+        self.assertEqual(7, ballot_1.seats_contested)
+        self.assertEqual(1, ballot_2.seats_contested)
+
     def test_with_groups(self):
         builder = (
             ElectionBuilder("local", "2017-06-08")

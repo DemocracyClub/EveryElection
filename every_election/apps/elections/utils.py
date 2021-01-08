@@ -228,7 +228,10 @@ class ElectionBuilder:
             return 1
 
         if self.election_type.election_type != "local":
-            return 1
+            if self.division and self.division.seats_total:
+                return self.division.seats_total
+            else:
+                return 1
 
         """
         If this is an all-up local election, we can fairly safely
