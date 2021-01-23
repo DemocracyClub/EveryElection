@@ -15,6 +15,11 @@ class Election(metaclass=ABCMeta):
 
     @property
     def timetable(self) -> List[Dict]:
+        """
+        An aggregate of all known dates for the specific election type.
+
+        :return: a list representing the entire timetable for this particular election.
+        """
         return [
             {
                 "label": "List of candidates published",
