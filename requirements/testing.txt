@@ -3,7 +3,6 @@
 black==20.8b1
 mock
 model-mommy
-tox
 pytest
 pluggy
 pytest-django
