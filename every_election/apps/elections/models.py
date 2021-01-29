@@ -263,6 +263,37 @@ class Election(models.Model):
         near_future = date.today() + timedelta(days=settings.CURRENT_FUTURE_DAYS)
         return self.poll_open_date >= recent_past and self.poll_open_date <= near_future
 
+    def get_ballots(self):
+        """
+        If self has a group_type this returns all ballots that are descended from self.
+        If self doesn't have a group_type (i.e. is a 'ballot') it returns itself.
+        """
+        if self.group_type:
+            group, date = self.election_id.rsplit(".", 1)
+            return Election.public_objects.filter(
+                election_id__startswith=group + ".",
+                election_id__endswith=date,
+                group_type=None,
+            )
+
+    @property
+    def group_seats_contested(self):
+        """
+        Returns the sum of the seats_contested property on all ballots that are
+        descended from the election, unless self is a ballot, in which case
+        self.seats_contested is returned.
+        It's likely there are election groups where not every ballot has had
+        seats_contested filled in, so treat with care.
+        """
+        if self.group_type:
+            return (
+                self.get_ballots()
+                .aggregate(models.Sum("seats_contested"))
+                .get("seats_contested__sum")
+            )
+        else:
+            return self.seats_contested
+
     def __str__(self):
         return self.get_id()
 
