@@ -33,5 +33,5 @@ class LocalElection(Election):
         return working_days_before(
             self.poll_date,
             days_prior,
-            type(self).BANK_HOLIDAY_CALENDAR.from_country(self.country),
+            super()._calendar(),
         )

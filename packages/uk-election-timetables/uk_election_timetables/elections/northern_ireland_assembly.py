@@ -18,6 +18,4 @@ class NorthernIrelandAssemblyElection(Election):
         :param poll_date: a datetime representing the date of the poll
         :return: a datetime representing the expected publish date
         """
-        return working_days_before(
-            self.poll_date, 16, type(self).BANK_HOLIDAY_CALENDAR.northern_ireland()
-        )
+        return working_days_before(self.poll_date, 16, super()._calendar())

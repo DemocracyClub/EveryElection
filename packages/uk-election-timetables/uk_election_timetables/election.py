@@ -30,3 +30,6 @@ class Election(metaclass=ABCMeta):
                 "date": self.sopn_publish_date,
             }
         ]
+
+    def _calendar(self):
+        return self.BANK_HOLIDAY_CALENDAR.from_country(self.country)

@@ -18,6 +18,4 @@ class PoliceAndCrimeCommissionerElection(Election):
         :param poll_date: a datetime representing the date of the poll
         :return: a datetime representing the expected publish date
         """
-        return working_days_before(
-            self.poll_date, 18, type(self).BANK_HOLIDAY_CALENDAR.england_and_wales()
-        )
+        return working_days_before(self.poll_date, 18, super()._calendar())
