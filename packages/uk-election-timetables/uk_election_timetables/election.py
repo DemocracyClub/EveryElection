@@ -41,6 +41,10 @@ class Election(metaclass=ABCMeta):
         """
         return [
             {
+                "label": "Register to vote deadline",
+                "date": self.registration_deadline,
+            },
+            {
                 "label": "List of candidates published",
                 "date": self.sopn_publish_date,
             }

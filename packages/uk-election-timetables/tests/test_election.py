@@ -14,5 +14,13 @@ def test_timetable_sopn_publish_date():
     assert sopn_publish_date["date"] == date(2019, 1, 25)
 
 
+def test_timetable_registration_deadline():
+    election = from_election_id("local.2021-05-06", country=Country.ENGLAND)
+
+    sopn_publish_date = lookup(election, "Register to vote deadline")
+
+    assert sopn_publish_date["date"] == date(2021, 4, 19)
+
+
 def lookup(election: Election, label: str) -> Dict:
     return next(entry for entry in election.timetable if entry["label"] == label)
