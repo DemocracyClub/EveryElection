@@ -2,11 +2,15 @@ from abc import ABCMeta, abstractmethod
 from datetime import date
 from typing import Dict, List
 
-from uk_election_timetables.calendars import UnitedKingdomBankHolidays
+from uk_election_timetables.calendars import UnitedKingdomBankHolidays, Country
 
 
 class Election(metaclass=ABCMeta):
     BANK_HOLIDAY_CALENDAR = UnitedKingdomBankHolidays()
+
+    def __init__(self, poll_date: date, country: Country):
+        self.poll_date = poll_date
+        self.country = country
 
     @property
     @abstractmethod

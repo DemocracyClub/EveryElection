@@ -1,4 +1,5 @@
 from datetime import date
+from typing import Optional
 
 from uk_election_timetables.calendars import working_days_before, Country
 from uk_election_timetables.election import Election
@@ -6,8 +7,7 @@ from uk_election_timetables.election import Election
 
 class UKParliamentElection(Election):
     def __init__(self, poll_date: date, country: Country = None):
-        self.poll_date = poll_date
-        self.country = country
+        Election.__init__(self, poll_date, country)
 
     @property
     def sopn_publish_date(self) -> date:
