@@ -23,3 +23,10 @@ def test_publish_date_local_election_england():
     election = LocalElection(date(2019, 6, 6), country=Country.ENGLAND)
 
     assert election.sopn_publish_date == date(2019, 5, 10)
+
+
+# Reference election: local.2021-05-06
+def test_registration_deadline_local_election_england():
+    election = LocalElection(date(2021, 5, 6), country=Country.ENGLAND)
+
+    assert election.registration_deadline == date(2021, 4, 19)

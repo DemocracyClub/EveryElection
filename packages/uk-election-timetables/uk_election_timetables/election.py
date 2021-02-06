@@ -2,7 +2,11 @@ from abc import ABCMeta, abstractmethod
 from datetime import date
 from typing import Dict, List
 
-from uk_election_timetables.calendars import UnitedKingdomBankHolidays, Country
+from uk_election_timetables.calendars import (
+    UnitedKingdomBankHolidays,
+    Country,
+    working_days_before,
+)
 
 
 class Election(metaclass=ABCMeta):
@@ -16,6 +20,17 @@ class Election(metaclass=ABCMeta):
     @abstractmethod
     def sopn_publish_date(self) -> date:
         pass
+
+    @property
+    def registration_deadline(self) -> date:
+        """
+        Calculates the voter registration deadline for this Election
+
+        This explained in a `background note from the Electoral Commission <https://www.electoralcommission.org.uk/media/2457>`_
+
+        :return: a datetime representing the voter registration deadline
+        """
+        return working_days_before(self.poll_date, 12, self._calendar())
 
     @property
     def timetable(self) -> List[Dict]:
