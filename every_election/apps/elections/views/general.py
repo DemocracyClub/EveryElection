@@ -28,9 +28,9 @@ class ReferenceDefinitionView(TemplateView):
         election_types_table = []
         for et_key, et_record in OrderedDict(sorted(ELECTION_TYPES.items())).items():
 
-            # for the moment leave 'ref' and 'eu' types out of the docs
+            # for the moment leave 'ref' out of the docs
             # because our spec for these is incomplete
-            if et_key == "eu" or et_key == "ref":
+            if et_key == "ref":
                 continue
 
             et_record["slug"] = et_key
