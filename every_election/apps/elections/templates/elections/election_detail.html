@@ -35,7 +35,27 @@
             {% endfor %}
             </ul>
         {% endif %}
-        {% if object.get_example_postcode %}
+
+      {% if object.get_timetable %}
+      <h3>Timetable</h3>
+      <table>
+        <thead>
+          <th>Event</th>
+          <th>Date</th>
+        </thead>
+        <tbody>
+          {% for row in object.get_timetable %}
+          <tr>
+          <td>{{ row.label }}</td>
+          <td>{{ row.date }}</td>
+          </tr>
+          {% endfor %}
+
+        </tbody>
+      </table>
+      {% endif %}
+
+      {% if object.get_example_postcode %}
         <h3>Example postcode</h3>
         <p>{{ object.get_example_postcode.pcds }}</p>
         <ul>
