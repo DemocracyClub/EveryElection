@@ -39,6 +39,9 @@
       <dt>Total Seats</dt><dd>{{ object.seats_total }}</dd>
       <dt>Seats Contested</dt><dd>{{ object.seats_contested }}</dd>
     {% endif %}
+    {% if object.group_type %}
+      <dt>Seats Up</dt><dd>{{ object.group_seats_contested }}</dd>
+    {% endif %}
 
     {% if document %}
       {% include './official_document.html' with document=document type=document_type only %}

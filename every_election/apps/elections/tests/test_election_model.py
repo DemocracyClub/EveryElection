@@ -27,6 +27,18 @@ class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
             .with_division(self.org_div_1)
             .build_ballot(self.org_group)
         )
+        self.testshire_org_group = (
+            ElectionBuilder("local", "2017-06-08")
+            .with_organisation(self.testshire_org)
+            .build_organisation_group(self.election_group)
+        )
+
+        self.testshire_ballot = (
+            ElectionBuilder("local", "2017-06-08")
+            .with_organisation(self.testshire_org)
+            .with_division(self.testshire_div)
+            .build_ballot(self.testshire_org_group)
+        )
 
     def test_recursive_save_group(self):
         # table should be empty before we start
@@ -109,3 +121,39 @@ class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
             self.election_group.moderation_status.short_label,
             ModerationStatuses.approved.value,
         )
+
+    def test_get_ballots(self):
+        for election in [
+            self.election_group,
+            self.testshire_org_group,
+            self.testshire_ballot,
+            self.org_group,
+            self.ballot,
+        ]:
+            election.save(status=ModerationStatuses.approved.value)
+
+        self.assertEqual(
+            len(self.org_group.get_ballots()),
+            1,
+        )
+        self.assertEqual(len(self.election_group.get_ballots()), 2)
+
+    def test_group_seats_contested(self):
+
+        for election in [
+            self.election_group,
+            self.testshire_org_group,
+            self.org_group,
+        ]:
+            election.save(status=ModerationStatuses.approved.value)
+
+        for ballot in [
+            self.testshire_ballot,
+            self.ballot,
+        ]:
+            ballot.seats_contested = 3
+            ballot.save(status=ModerationStatuses.approved.value)
+
+        self.assertEqual(self.ballot.group_seats_contested, 3)
+        self.assertEqual(self.org_group.group_seats_contested, 3)
+        self.assertEqual(self.election_group.group_seats_contested, 6)

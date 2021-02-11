@@ -70,6 +70,31 @@ class BaseElectionCreatorMixIn:
             "date": self.date,
         }
 
+        self.testshire_org = Organisation.objects.create(
+            official_identifier="TEST1SHIRE",
+            organisation_type="local-authority",
+            official_name="Testshire County Council",
+            slug="testshire",
+            territory_code="ENG",
+            election_name="Testshire County Council local elections",
+            start_date=date(2016, 10, 1),
+        )
+        ElectedRole.objects.create(
+            election_type=self.election_type1,
+            organisation=self.testshire_org,
+            elected_title="Local Councillor",
+            elected_role_name="Councillor for Testshire Council",
+        )
+        self.testshire_div_set = OrganisationDivisionSetFactory(
+            organisation=self.testshire_org
+        )
+        self.testshire_div = OrganisationDivisionFactory(
+            divisionset=self.testshire_div_set,
+            name="Testshire Div 1",
+            slug="testshire-div",
+            seats_total=3,
+        )
+
     def make_div_id(self, org=None, div=None, subtype=None):
         if not org:
             org = self.org1
