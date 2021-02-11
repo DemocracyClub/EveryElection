@@ -22,5 +22,14 @@ def test_timetable_registration_deadline():
     assert sopn_publish_date["date"] == date(2021, 4, 19)
 
 
+def test_timetable_sort_order():
+    election = from_election_id("local.2021-05-06", country=Country.ENGLAND)
+    assert len(election.timetable) == 2
+    assert [r["date"] for r in election.timetable] == [
+        date(2021, 4, 9),
+        date(2021, 4, 19),
+    ]
+
+
 def lookup(election: Election, label: str) -> Dict:
     return next(entry for entry in election.timetable if entry["label"] == label)

@@ -39,16 +39,19 @@ class Election(metaclass=ABCMeta):
 
         :return: a list representing the entire timetable for this particular election.
         """
-        return [
-            {
-                "label": "Register to vote deadline",
-                "date": self.registration_deadline,
-            },
-            {
-                "label": "List of candidates published",
-                "date": self.sopn_publish_date,
-            }
-        ]
+        return sorted(
+            [
+                {
+                    "label": "Register to vote deadline",
+                    "date": self.registration_deadline,
+                },
+                {
+                    "label": "List of candidates published",
+                    "date": self.sopn_publish_date,
+                },
+            ],
+            key=lambda r: r["date"],
+        )
 
     def _calendar(self):
         return self.BANK_HOLIDAY_CALENDAR.from_country(self.country)
