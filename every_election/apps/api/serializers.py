@@ -166,6 +166,7 @@ election_fields = (
     "cancelled",
     "replaces",
     "replaced_by",
+    "tags",
 )
 
 
