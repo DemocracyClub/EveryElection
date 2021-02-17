@@ -9,6 +9,21 @@ class ScottishParliamentElection(Election):
         Election.__init__(self, poll_date, Country.SCOTLAND)
 
     @property
+    def postal_vote_application_deadline(self) -> date:
+        """
+        Calculates the postal vote application deadline for this Election
+
+        This is set out in `Scottish General Election (Coronavirus) Act 2021 <https://www.legislation.gov.uk/asp/2021/5/crossheading/postal-voting-arrangements-for-2021-election>`_.
+
+        :return: a datetime representing the postal vote application deadline
+        """
+
+        if self.poll_date == date(2021, 5, 6):
+            return working_days_before(self.poll_date, 21, super()._calendar())
+        else:
+            return super().postal_vote_application_deadline
+
+    @property
     def sopn_publish_date(self) -> date:
         """
         Calculate the publish date for an election to the Scottish Parliament

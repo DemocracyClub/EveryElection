@@ -17,3 +17,10 @@ def test_registration_deadline_scottish_parliament():
     election = ScottishParliamentElection(date(2021, 5, 6))
 
     assert election.registration_deadline == date(2021, 4, 19)
+
+
+# Reference election: sp.2021-05-06
+def test_postal_vote_application_deadline_scottish_parliament():
+    election = ScottishParliamentElection(date(2021, 5, 6))
+
+    assert election.postal_vote_application_deadline == date(2021, 4, 6)
