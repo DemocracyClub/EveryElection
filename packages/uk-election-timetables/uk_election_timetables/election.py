@@ -60,6 +60,10 @@ class Election(metaclass=ABCMeta):
                     "label": "List of candidates published",
                     "date": self.sopn_publish_date,
                 },
+                {
+                    "label": "Postal vote application deadline",
+                    "date": self.postal_vote_application_deadline,
+                },
             ],
             key=lambda r: r["date"],
         )
