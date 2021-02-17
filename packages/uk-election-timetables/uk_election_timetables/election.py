@@ -17,6 +17,10 @@ class Election(metaclass=ABCMeta):
         self.country = country
 
     @property
+    def postal_vote_application_deadline(self) -> date:
+        return None
+
+    @property
     @abstractmethod
     def sopn_publish_date(self) -> date:
         pass
