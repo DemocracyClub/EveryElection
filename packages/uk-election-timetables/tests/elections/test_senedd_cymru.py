@@ -15,3 +15,10 @@ def test_registration_deadline_senedd_cymru():
     election = SeneddCymruElection(date(2021, 5, 6))
 
     assert election.registration_deadline == date(2021, 4, 19)
+
+
+# Reference election: senedd.2021-05-06
+def test_postal_vote_application_deadline_senedd_cymru():
+    election = SeneddCymruElection(date(2021, 5, 6))
+
+    assert election.postal_vote_application_deadline == date(2021, 4, 20)

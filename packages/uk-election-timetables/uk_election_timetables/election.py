@@ -18,7 +18,14 @@ class Election(metaclass=ABCMeta):
 
     @property
     def postal_vote_application_deadline(self) -> date:
-        return None
+        """
+        Calculates the postal vote application deadline for this Election
+
+        This is set out in `The Representation of the People (England and Wales) Regulations 2001 <https://www.legislation.gov.uk/uksi/2001/341/regulation/56/made>`_.
+
+        :return: a datetime representing the postal vote application deadline
+        """
+        return working_days_before(self.poll_date, 11, self._calendar())
 
     @property
     @abstractmethod

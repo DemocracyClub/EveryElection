@@ -30,3 +30,10 @@ def test_registration_deadline_local_election_england():
     election = LocalElection(date(2021, 5, 6), country=Country.ENGLAND)
 
     assert election.registration_deadline == date(2021, 4, 19)
+
+
+# Reference election: local.2021-05-06
+def test_postal_vote_application_deadline_local_election_england():
+    election = LocalElection(date(2021, 5, 6), country=Country.ENGLAND)
+
+    assert election.postal_vote_application_deadline == date(2021, 4, 20)

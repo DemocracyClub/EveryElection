@@ -44,3 +44,10 @@ def test_publish_date_uk_parliament_2019():
     election = UKParliamentElection(date(2019, 12, 12))
 
     assert election.sopn_publish_date == date(2019, 11, 14)
+
+
+# Reference election: parl.2019-12-12
+def test_postal_vote_application_deadline_uk_parliament_2019():
+    election = UKParliamentElection(date(2019, 12, 12))
+
+    assert election.postal_vote_application_deadline == date(2019, 11, 26)
