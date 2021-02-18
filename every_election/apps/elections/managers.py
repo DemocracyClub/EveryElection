@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta
 
 from django.conf import settings
+from django.contrib.gis.db.models.functions import PointOnSurface
 from django.db import models
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Point, GEOSGeometry
 from elections.query_helpers import get_point_from_postcode
 
 
@@ -20,6 +21,26 @@ class ElectionQuerySet(models.QuerySet):
     def for_postcode(self, postcode):
         point = get_point_from_postcode(postcode)
         return self.for_point(point)
+
+    def ballots_with_point_in_area(self, area: GEOSGeometry):
+        """
+        Returns all election objects whose 'group_type' is 'None' and where the
+        *centroid* of either the division or organisation (where there is no
+        DivisionGeography) is inside the area
+        """
+        return (
+            self.filter(group_type=None)
+            .annotate(
+                division_centroid=PointOnSurface("division_geography__geography"),
+                organisation_centroid=PointOnSurface(
+                    "organisation_geography__geography"
+                ),
+            )
+            .filter(
+                models.Q(division_centroid__within=area)
+                | models.Q(organisation_centroid__within=area, division_centroid=None)
+            )
+        )
 
     def current(self):
         recent_past = datetime.today() - timedelta(days=settings.CURRENT_PAST_DAYS)

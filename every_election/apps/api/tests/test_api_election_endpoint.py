@@ -352,7 +352,8 @@ class TestElectionAPIQueries(APITestCase):
             "deleted": false,
             "cancelled": false,
             "replaces": null,
-            "replaced_by": null
+            "replaced_by": null,
+            "tags": {}
         }
         """
         )

@@ -215,6 +215,7 @@ class Election(models.Model):
         related_name="_replaced_by",
         on_delete=models.CASCADE,
     )
+    tags = JSONField(default=dict)
 
     @property
     def replaced_by(self):
