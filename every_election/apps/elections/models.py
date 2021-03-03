@@ -21,6 +21,8 @@ from django.urls import reverse
 from django_extensions.db.models import TimeStampedModel
 from django_markdown.models import MarkdownField
 from storages.backends.s3boto3 import S3Boto3Storage
+from uk_election_timetables.calendars import Country
+from uk_election_timetables.election_ids import from_election_id
 from uk_geo_utils.models import Onspd
 
 from .managers import PublicElectionsManager, PrivateElectionsManager
@@ -311,6 +313,27 @@ class Election(models.Model):
             )
         else:
             return None
+
+    @property
+    def get_timetable(self):
+        country_map = {
+            "WLS": Country.WALES,
+            "ENG": Country.ENGLAND,
+            "NIR": Country.NORTHERN_IRELAND,
+            "SCT": Country.SCOTLAND,
+        }
+        area = self.division or self.organisation
+        if not area:
+            return None
+
+        territory_code = area.territory_code or self.organisation.territory_code
+        if not territory_code:
+            return None
+
+        timetable = from_election_id(
+            self.election_id, country=country_map[territory_code]
+        ).timetable
+        return timetable
 
     def get_id(self):
         if self.election_id:
