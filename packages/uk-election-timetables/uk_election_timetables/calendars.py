@@ -78,7 +78,7 @@ class UnitedKingdomBankHolidays(object):
             os.path.dirname(__file__), "bank-holidays.json"
         )
 
-        with open(bank_holiday_json, "r") as data:
+        with open(bank_holiday_json, "r", encoding="utf-8") as data:
             json_calendar = json.loads(data.read())
 
             for country in json_calendar.keys():
