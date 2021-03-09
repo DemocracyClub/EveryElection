@@ -290,7 +290,9 @@ class TestElectionAPIQueries(APITestCase):
         org = OrganisationFactory()
         div_set = OrganisationDivisionSetFactory(organisation=org)
         org_div = OrganisationDivisionFactory(divisionset=div_set, territory_code="ENG")
-        ElectionWithStatusFactory(group=None, organisation=org, division=org_div)
+        ElectionWithStatusFactory(
+            group=None, organisation=org, division=org_div, tags={"FOO": {"bar": "baz"}}
+        )
 
         self.expected_object = json.loads(
             """
@@ -353,7 +355,7 @@ class TestElectionAPIQueries(APITestCase):
             "cancelled": false,
             "replaces": null,
             "replaced_by": null,
-            "tags": {}
+            "tags": {"FOO":{"bar":"baz"}}
         }
         """
         )
