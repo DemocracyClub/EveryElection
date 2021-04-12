@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from datetime import datetime
 from django.http import Http404
 from rest_framework import viewsets
@@ -102,6 +103,46 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
         if not validate(kwargs["election_id"]):
             raise APIInvalidElectionIdException()
         return super().retrieve(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        """
+        Override the base `list` method to remove pagination if we're filtering
+        on `current`.
+
+        In reality, we're unlikely to have more than the page size (100) current
+        elections, however when paging we cause two duplicate queries: one for
+        the count() and one for the data.
+
+        This takes a lot of time, and we're busy people (sometimes).
+
+        Seeing as we're iterating over the data anyawy, we can get the count
+        from len(serializer.data) and add that to the page data ourselves.
+
+        """
+
+        queryset = self.filter_queryset(self.get_queryset())
+        postcode = self.request.query_params.get("postcode", None)
+        current = self.request.query_params.get("current", None)
+        if postcode and current:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(
+                OrderedDict(
+                    [
+                        ("count", len(serializer.data)),
+                        ("next", None),
+                        ("previous", None),
+                        ("results", serializer.data),
+                    ]
+                )
+            )
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class ElectionTypeViewSet(viewsets.ReadOnlyModelViewSet):
