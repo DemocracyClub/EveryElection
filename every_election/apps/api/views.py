@@ -58,6 +58,16 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         queryset = Election.public_objects.all()
+        queryset = queryset.select_related(
+            "election_type",
+            "organisation",
+            "elected_role",
+            "division",
+            "group",
+            "voting_system",
+            "replaces",
+            "metadata",
+        )
 
         if self.request.query_params.get("deleted", None) is not None:
             queryset = Election.private_objects.all().filter_by_status("Deleted")
@@ -92,10 +102,6 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
                 queryset = queryset.filter(group_type=None)
             else:
                 queryset = queryset.filter(group_type=identifier_type)
-
-        queryset = queryset.select_related(
-            "election_type", "organisation", "elected_role", "division"
-        )
 
         return queryset
 
