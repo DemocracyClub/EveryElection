@@ -7,6 +7,27 @@ from django_markdown.admin import MarkdownModelAdmin
 from .models import ElectedRole, Election, Explanation, MetaData, ModerationHistory
 
 
+def mark_current(modeladmin, request, queryset):
+    queryset.update(current=True)
+
+
+mark_current.short_description = "Mark selected elections as 'current'"
+
+
+def mark_not_current(modeladmin, request, queryset):
+    queryset.update(current=False)
+
+
+mark_not_current.short_description = "Mark selected elections as not 'current'"
+
+
+def unset_current(modeladmin, request, queryset):
+    queryset.update(current=None)
+
+
+unset_current.short_description = "Unset 'current' to None"
+
+
 class ElectionAdmin(admin.ModelAdmin):
 
     search_fields = ("election_id",)
@@ -32,6 +53,9 @@ class ElectionAdmin(admin.ModelAdmin):
         "notice",
         "cancellation_notice",
     )
+    list_filter = ["poll_open_date", "current"]
+    list_display = ["election_id", "poll_open_date", "current"]
+    actions = [mark_current, mark_not_current, unset_current]
 
     def get_readonly_fields(self, request, obj=None):
         if obj.identifier_type == "ballot":
