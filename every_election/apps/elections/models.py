@@ -408,6 +408,13 @@ class Election(models.Model):
             pass
         return None
 
+    def get_admin_url(self):
+        """
+        Build URL to the election in the admin
+        """
+        viewname = f"admin:{self._meta.app_label}_{self._meta.model_name}_change"
+        return reverse(viewname=viewname, kwargs={"object_id": self.pk})
+
     def clean(self):
         if not self.identifier_type == "ballot" and self.cancelled:
             raise ValidationError(
