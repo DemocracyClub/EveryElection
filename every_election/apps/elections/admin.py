@@ -53,9 +53,10 @@ class ElectionAdmin(admin.ModelAdmin):
         "notice",
         "cancellation_notice",
     )
-    list_filter = ["poll_open_date", "current"]
+    list_filter = ["current"]
     list_display = ["election_id", "poll_open_date", "current"]
     actions = [mark_current, mark_not_current, unset_current]
+    date_hierarchy = "poll_open_date"
 
     def get_readonly_fields(self, request, obj=None):
         if obj.identifier_type == "ballot":
