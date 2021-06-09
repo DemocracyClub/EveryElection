@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from elections.tests.factories import ElectionWithStatusFactory, related_status
 
@@ -56,3 +57,27 @@ class TestSingleElectionView(TestCase):
         self.assertNotContains(resp, suggested.election_id, html=True)
         self.assertNotContains(resp, rejected.election_id, html=True)
         self.assertNotContains(resp, deleted.election_id, html=True)
+
+    def test_edit_in_admin_link_not_displayed(self):
+        election = ElectionWithStatusFactory()
+        response = self.client.get(election.get_absolute_url())
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "Edit in admin")
+
+        # logged in non-superuser
+        user = get_user_model().objects.create(is_superuser=False)
+        self.client.force_login(user=user)
+        response = self.client.get(election.get_absolute_url())
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "Edit in admin")
+
+    def test_edit_in_admin_is_displayed_for_superuser(self):
+        election = ElectionWithStatusFactory()
+        user = get_user_model().objects.create(is_superuser=True)
+        self.client.force_login(user=user)
+        response = self.client.get(election.get_absolute_url())
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Edit in admin")

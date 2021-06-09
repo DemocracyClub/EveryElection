@@ -157,3 +157,10 @@ class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
         self.assertEqual(self.ballot.group_seats_contested, 3)
         self.assertEqual(self.org_group.group_seats_contested, 3)
         self.assertEqual(self.election_group.group_seats_contested, 6)
+
+    def test_get_admin_url(self):
+        election = Election(pk=2021)
+        self.assertEqual(
+            election.get_admin_url(),
+            f"/admin/elections/election/{election.pk}/change/",
+        )

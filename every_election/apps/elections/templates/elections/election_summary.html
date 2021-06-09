@@ -46,6 +46,11 @@
     {% if document %}
       {% include './official_document.html' with document=document type=document_type only %}
     {% endif %}
+
+    {% if request.user.is_superuser %}
+      <a href="{{ object.get_admin_url }}" class="button" title="Edit in admin">Edit in admin</a>
+    {% endif %}
+
   </dl>
 
   {% if not object.notice and not object.group.notice and user_can_upload_docs and not object.cancelled %}
