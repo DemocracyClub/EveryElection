@@ -25,7 +25,7 @@ def unset_current(modeladmin, request, queryset):
     queryset.update(current=None)
 
 
-unset_current.short_description = "Unset 'current' to None"
+unset_current.short_description = "Unset 'current'"
 
 
 class ElectionAdmin(admin.ModelAdmin):
