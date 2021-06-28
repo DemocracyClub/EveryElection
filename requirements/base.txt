@@ -29,7 +29,7 @@ uk-election-timetables==2.2.1
 
 django-pipeline>=1.6.8,<3.0
 
-importlib-metadata==3.10.1
+importlib-metadata==4.6.0
 
 git+https://github.com/mysociety/django-pipeline-csscompressor
 git+git://github.com/DemocracyClub/dc_base_theme.git@83ffc6de1ca3b81f1866f52a5c6c5bfb552ea77d
