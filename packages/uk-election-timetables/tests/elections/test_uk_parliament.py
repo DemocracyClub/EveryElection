@@ -32,13 +32,6 @@ def test_publish_date_uk_parliament_england():
     assert election.sopn_publish_date == date(2017, 5, 11)
 
 
-# Reference election: parl.aberdeen-north.2015-05-07
-def test_publish_date_uk_parliament_scotland_2015():
-    election = UKParliamentElection(date(2015, 5, 7), Country.SCOTLAND)
-
-    assert election.sopn_publish_date == date(2015, 4, 9)
-
-
 # Reference election: parl.2019-12-12
 def test_publish_date_uk_parliament_2019():
     election = UKParliamentElection(date(2019, 12, 12))
