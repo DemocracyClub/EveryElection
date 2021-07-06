@@ -4,7 +4,14 @@ from django import forms
 from django.contrib import admin
 from django.forms.widgets import Textarea
 from django_markdown.admin import MarkdownModelAdmin
-from .models import ElectedRole, Election, Explanation, MetaData, ModerationHistory
+from .models import (
+    ElectedRole,
+    Election,
+    Explanation,
+    MetaData,
+    ModerationHistory,
+    ModerationStatuses,
+)
 
 
 def mark_current(modeladmin, request, queryset):
@@ -28,6 +35,24 @@ def unset_current(modeladmin, request, queryset):
 unset_current.short_description = "Unset 'current'"
 
 
+def soft_delete(modeladmin, request, queryset):
+    """
+    Admin action to bulk create a ModerationHistory object with a
+    deleted status:
+    https://github.com/DemocracyClub/EveryElection/wiki/Cancelled-Elections-and-Soft-Deletes
+    """
+    for election in queryset:
+        ModerationHistory.objects.create(
+            status_id=ModerationStatuses.deleted.value,
+            election=election,
+            user=request.user,
+            notes="Bulk deleted via admin action",
+        )
+
+
+soft_delete.short_description = "Soft delete"
+
+
 class ElectionAdmin(admin.ModelAdmin):
 
     search_fields = ("election_id",)
@@ -45,6 +70,7 @@ class ElectionAdmin(admin.ModelAdmin):
         "elected_role",
         "division",
         "group",
+        "moderation_status",
     )
     exclude = (
         "geography",
@@ -54,8 +80,8 @@ class ElectionAdmin(admin.ModelAdmin):
         "cancellation_notice",
     )
     list_filter = ["current"]
-    list_display = ["election_id", "poll_open_date", "current"]
-    actions = [mark_current, mark_not_current, unset_current]
+    list_display = ["election_id", "poll_open_date", "current", "moderation_status"]
+    actions = [mark_current, mark_not_current, unset_current, soft_delete]
     date_hierarchy = "poll_open_date"
 
     def get_readonly_fields(self, request, obj=None):
@@ -72,6 +98,13 @@ class ElectionAdmin(admin.ModelAdmin):
             .filter(organisation_id=context["original"].organisation_id)
         )
         return super().render_change_form(request, context, *args, **kwargs)
+
+    def has_delete_permission(self, request, obj=None):
+        """
+        Disabled the built-in hard "delete" action. Instead the soft
+        delete action should be used.
+        """
+        return False
 
 
 class JSONEditor(Textarea):
@@ -112,10 +145,12 @@ class ElectedRoleAdmin(admin.ModelAdmin):
 
 class ModerationHistoryAdmin(admin.ModelAdmin):
 
-    list_display = ("election", "status", "user", "notes")
+    list_display = ("election", "status", "user", "notes", "created")
     list_filter = ("status", "user")
     search_fields = ("election__election_id",)
     raw_id_fields = ("election",)
+    date_hierarchy = "election__poll_open_date"
+    readonly_fields = ["created", "modified"]
 
     # This makes ModerationHistory an append-only log in /admin.
     # We can add a new entry to the log, but
