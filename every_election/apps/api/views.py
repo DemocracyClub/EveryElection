@@ -14,6 +14,7 @@ from .serializers import (
     ElectionSerializer,
     ElectionTypeSerializer,
     ElectionSubTypeSerializer,
+    ElectionWithoutOrganisationSerializer,
     OrganisationSerializer,
     OrganisationDivisionSerializer,
     OrganisationGeoSerializer,
@@ -177,6 +178,18 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
         org = self.get_object(**kwargs)
         serializer = OrganisationGeoSerializer(
             org, read_only=True, context={"request": request}
+        )
+        return Response(serializer.data)
+
+    @action(detail=True, url_path="elections")
+    def elections(self, request, **kwargs):
+        kwargs.pop("format", None)
+        org = self.get_object(**kwargs)
+        serializer = ElectionWithoutOrganisationSerializer(
+            org.election_set.all(),
+            many=True,
+            read_only=True,
+            context={"request": request},
         )
         return Response(serializer.data)
 

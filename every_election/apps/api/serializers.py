@@ -228,6 +228,15 @@ class ElectionSerializer(
         depth = 1
 
 
+class ElectionWithoutOrganisationSerializer(BaseElectionSerializer):
+    class Meta:
+        model = Election
+        fields = list(
+            filter(lambda fieldname: fieldname != "organisation", election_fields)
+        )
+        depth = 1
+
+
 class ElectionGeoSerializer(GeoFeatureModelSerializer, BaseElectionSerializer):
     geography_model = GeometrySerializerMethodField()
 
