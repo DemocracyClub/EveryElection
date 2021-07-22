@@ -19,6 +19,7 @@ from .serializers import (
     OrganisationGeoSerializer,
     ElectionGeoSerializer,
 )
+from api import filters
 
 
 class APIPostcodeException(APIException):
@@ -44,10 +45,7 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ElectionSerializer
     lookup_field = "election_id"
     lookup_value_regex = r"(?!\.json$)[^/]+"
-    filterset_fields = {
-        "group_type": ["exact"],
-        "poll_open_date": ["exact", "gte", "lte"],
-    }
+    filterset_class = filters.ElectionFilter
 
     @action(detail=True, url_path="geo")
     def geo(self, request, election_id=None, format=None):
@@ -179,6 +177,18 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
         org = self.get_object(**kwargs)
         serializer = OrganisationGeoSerializer(
             org, read_only=True, context={"request": request}
+        )
+        return Response(serializer.data)
+
+    @action(detail=True, url_path="elections")
+    def elections(self, request, **kwargs):
+        kwargs.pop("format", None)
+        org = self.get_object(**kwargs)
+        serializer = ElectionSerializer(
+            org.election_set.all(),
+            many=True,
+            read_only=True,
+            context={"request": request},
         )
         return Response(serializer.data)
 

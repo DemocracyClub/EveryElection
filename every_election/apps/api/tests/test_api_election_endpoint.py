@@ -228,6 +228,63 @@ class TestElectionAPIQueries(APITestCase):
         data = resp.json()
         self.assertEqual(0, data["count"])
 
+    def test_organisation_filters(self):
+        adu_election = ElectionWithStatusFactory(
+            group_type="election",
+            moderation_status=related_status("Approved"),
+            organisation__official_identifier="ADU",
+            organisation__start_date="1974-04-01",
+            organisation__end_date="2021-07-20",
+        )
+        adu_election_new_start = ElectionWithStatusFactory(
+            group_type="election",
+            moderation_status=related_status("Approved"),
+            organisation__official_identifier="ADU",
+            organisation__start_date="2021-07-20",
+        )
+        wye_election = ElectionWithStatusFactory(
+            group_type="election",
+            moderation_status=related_status("Approved"),
+            organisation__official_identifier="WYE",
+        )
+        parl_election = ElectionWithStatusFactory(
+            group_type="election",
+            moderation_status=related_status("Approved"),
+            organisation__organisation_type="parl",
+        )
+
+        resp = self.client.get("/api/elections/?organisation_identifier=ADU")
+        data = resp.json()
+        self.assertEqual(2, data["count"])
+        election_ids = [obj["election_id"] for obj in data["results"]]
+        self.assertIn(adu_election.election_id, election_ids)
+        self.assertIn(adu_election_new_start.election_id, election_ids)
+
+        resp = self.client.get(
+            "/api/elections/?organisation_identifier=ADU&organisation_start_date=1974-04-01"
+        )
+        data = resp.json()
+        self.assertEqual(1, data["count"])
+        self.assertEqual(data["results"][0]["election_id"], adu_election.election_id)
+
+        resp = self.client.get("/api/elections/?organisation_identifier=WYE")
+        data = resp.json()
+        self.assertEqual(1, data["count"])
+        self.assertEqual(data["results"][0]["election_id"], wye_election.election_id)
+
+        resp = self.client.get("/api/elections/?organisation_identifier=foo")
+        data = resp.json()
+        self.assertEqual(0, data["count"])
+
+        resp = self.client.get("/api/elections/?organisation_type=parl")
+        data = resp.json()
+        self.assertEqual(1, data["count"])
+        self.assertEqual(data["results"][0]["election_id"], parl_election.election_id)
+
+        resp = self.client.get("/api/elections/?organisation_type=foo")
+        data = resp.json()
+        self.assertEqual(0, data["count"])
+
     def test_child_visibility(self):
         # 4 ballots in the same group with different moderation statuses
         group = ElectionWithStatusFactory(
