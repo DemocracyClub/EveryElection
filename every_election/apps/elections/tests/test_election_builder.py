@@ -258,3 +258,35 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
         self.assertEqual(default_status, ballot.moderation_status.short_label)
         self.assertEqual(default_status, org_group.moderation_status.short_label)
         self.assertEqual(default_status, election_group.moderation_status.short_label)
+
+    def test_can_create_duplicate_groups(self):
+        """
+        Regression test for https://github.com/DemocracyClub/EveryElection/issues/1162
+
+        If an ID exists for the organisation after creating a ballot ID, later
+        attempts to createt another balot ID for the org on the same day failed
+        due to a duplicate key error.
+
+        """
+        # A user submits an election for an organisation and save it
+        builder = (
+            ElectionBuilder("local", "2017-06-08")
+            .with_organisation(self.org1)
+            .with_division(self.org_div_1)
+        )
+        election_group = builder.build_election_group().save()
+        org_group = builder.build_organisation_group(election_group).save()
+        ballot = builder.build_ballot(org_group)
+        ballot.save()
+
+        # Later, a user submits another election for that organisation, on the
+        # same day, in a differnet division
+        builder = (
+            ElectionBuilder("local", "2017-06-08")
+            .with_organisation(self.org1)
+            .with_division(self.org_div_2)
+        )
+        election_group = builder.build_election_group().save()
+        org_group = builder.build_organisation_group(election_group).save()
+        ballot = builder.build_ballot(org_group)
+        ballot.save()

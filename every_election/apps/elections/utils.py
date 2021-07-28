@@ -53,7 +53,6 @@ def get_cached_valid_election_types(organisation):
 
 def get_cached_private_elections(date, election_id):
     if not date in CACHE["private_elections"]:
-        print("Called")
         qs = Election.private_objects.filter(poll_open_date=date)
         CACHE["private_elections"][date] = {e.election_id: e for e in qs}
     return CACHE["private_elections"][date].get(election_id)
@@ -76,6 +75,10 @@ def get_cached_elected_role(organisation, election_type):
 
 
 class ElectionBuilder:
+    def __del__(self):
+        for key in CACHE:
+            CACHE[key] = {}
+
     def __init__(self, election_type, date):
 
         # init params
