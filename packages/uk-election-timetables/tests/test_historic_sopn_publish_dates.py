@@ -13,6 +13,8 @@ from uk_election_timetables.elections import (
     UKParliamentElection,
 )
 
+from uk_election_timetables.date import days_before
+
 with open("./tests/historic_sopn_data.csv") as f:
     historic_data = list(DictReader(row for row in f if not row.startswith("--")))
 
@@ -22,20 +24,17 @@ def read_date(date_as_string):
 
 
 def same_or_next_day(actual_date, expected_date):
-    return actual_date == expected_date or actual_date == (
-        expected_date + timedelta(days=1)
-    )
+    return days_before(actual_date, 1) <= expected_date <= actual_date
 
 
 def no_later_than(actual_date, expected_date):
-    return actual_date == expected_date or actual_date == (
-        expected_date - timedelta(days=1)
-    )
+    # We use "up to 3 days before" as a test heuristic, it's good enough
+    return days_before(expected_date, 3) <= actual_date <= expected_date
 
 
 def within_one_day(actual_date, expected_date):
-    return same_or_next_day(actual_date, expected_date) or actual_date == (
-        expected_date - timedelta(days=1)
+    return same_or_next_day(actual_date, expected_date) or actual_date == days_before(
+        expected_date, 1
     )
 
 
@@ -96,7 +95,7 @@ def test_greater_london_assembly(row):
 
     actual_date = read_date(row["sopn_publish_date"])
 
-    assert within_one_day(actual_date, expected_date)
+    assert no_later_than(actual_date, expected_date)
 
 
 @mark.parametrize("row", generate_test_cases("pcc"), ids=generate_test_id)
