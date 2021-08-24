@@ -49,6 +49,11 @@ class Command(ReadFromFileMixin, BaseCommand):
             dest="layer_index",
             help="Index of layer in dataset",
         )
+        parser.add_argument(
+            "--overwrite",
+            action="store_true",
+            help="Overwrite existing tags where tag_name exists as a top level key",
+        )
         super().add_arguments(parser)
 
     def handle(self, *args, **options):
@@ -64,9 +69,12 @@ class Command(ReadFromFileMixin, BaseCommand):
             for field in field_map:
                 tags[field_map[field]] = feature.get(field)
             self.stdout.write(f"Setting tags: {tag_name} to {tags}...")
+
             ballots = Election.private_objects.ballots_with_point_in_area(
                 feature.geom.geos
             )
+            if not options["overwrite"]:
+                ballots = ballots.exclude(tags__has_key=tag_name)
             self.stdout.write(f"...for {len(ballots)} ballots...")
             ballots.update(
                 tags=JsonbSet(
