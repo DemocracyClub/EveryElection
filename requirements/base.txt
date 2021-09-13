@@ -25,7 +25,7 @@ six==1.15.0
 sqlparse==0.4.1
 uk-election-ids==0.4.1
 uk-geo-utils==0.10.2
-uk-election-timetables==2.2.1
+uk-election-timetables==2.2.3
 
 django-pipeline>=1.6.8,<3.0
 
