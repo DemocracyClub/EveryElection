@@ -17,6 +17,19 @@ class ElectionFilter(django_filters.FilterSet):
         field_name="organisation__start_date",
         lookup_expr="exact",
     )
+    election_id_regex = django_filters.CharFilter(
+        label="Filter elections by their election id using a regular expression",
+        field_name="election_id",
+        lookup_expr="regex",
+        max_length="20",
+    )
+    exclude_election_id_regex = django_filters.CharFilter(
+        label="Exclude elections by their election id using a regular expression",
+        field_name="election_id",
+        lookup_expr="regex",
+        exclude=True,
+        max_length="20",
+    )
 
     class Meta:
         model = Election
