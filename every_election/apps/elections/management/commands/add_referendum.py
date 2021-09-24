@@ -5,6 +5,7 @@ from elections.models import (
     ElectionType,
     ModerationHistory,
     ModerationStatuses,
+    VotingSystem,
 )
 from organisations.models.organisations import Organisation
 
@@ -72,6 +73,19 @@ class Command(BaseCommand):
         election_id = f"ref.{options['council']}.{election_date}"
 
         referendum_type = ElectionType.objects.get(election_type="ref")
+
+        group_election, created = Election.private_objects.update_or_create(
+            election_id=f"ref.{election_date}",
+            defaults={
+                "election_type": referendum_type,
+                "poll_open_date": election_date,
+                "election_title": "Referendum elections",
+                "current": True,
+                "division_id": options["division_id"],
+                "group_type": "election",
+            },
+        )
+
         ref_election, created = Election.private_objects.update_or_create(
             election_id=election_id,
             defaults={
@@ -80,10 +94,17 @@ class Command(BaseCommand):
                 "election_title": options["election_title"],
                 "current": True,
                 "division_id": options["division_id"],
+                "voting_system": VotingSystem.objects.get(slug="FPTP"),
+                "group": group_election,
             },
         )
 
         self.stdout.write(f"{'Created' if created else 'Updated'} {election_id}")
+
+        ModerationHistory.objects.get_or_create(
+            status_id=ModerationStatuses.approved.value,
+            election=group_election,
+        )
 
         ModerationHistory.objects.get_or_create(
             status_id=ModerationStatuses.approved.value,
