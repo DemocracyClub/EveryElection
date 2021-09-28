@@ -1,4 +1,5 @@
 import json
+import pytest
 from datetime import datetime, timedelta
 from urllib.parse import urlencode
 
@@ -389,6 +390,7 @@ class TestElectionAPIQueries(APITestCase):
         self.assertFalse(data["cancelled"])
         self.assertEqual(cancelled.election_id, data["replaces"])
 
+    @pytest.mark.freeze_time("2017-01-23")
     def test_all_expected_fields_returned(self):
 
         OrganisationFactory.reset_sequence(0)
@@ -405,7 +407,7 @@ class TestElectionAPIQueries(APITestCase):
         {
             "group_type": null,
             "identifier_type": "ballot",
-            "current": false,
+            "current": true,
             "poll_open_date": "2017-03-23",
             "election_id": "local.place-name-0.2017-03-23",
             "group": null,
@@ -425,7 +427,9 @@ class TestElectionAPIQueries(APITestCase):
                 "division_subtype": "",
                 "division_type": "test",
                 "official_identifier": "0",
-                "territory_code": "ENG"
+                "territory_code": "ENG",
+                "created": "2017-01-23T00:00:00Z",
+                "modified": "2017-01-23T00:00:00Z"
             },
             "election_type": {
                 "name": "Local elections",
@@ -450,7 +454,9 @@ class TestElectionAPIQueries(APITestCase):
                 "election_name": "",
                 "official_identifier": "0",
                 "start_date": "2016-10-01",
-                "end_date": null
+                "end_date": null,
+                "created": "2017-01-23T00:00:00Z",
+                "modified": "2017-01-23T00:00:00Z"
             },
             "election_title": "Election 0",
             "elected_role": "Councillor",
@@ -461,7 +467,9 @@ class TestElectionAPIQueries(APITestCase):
             "cancelled": false,
             "replaces": null,
             "replaced_by": null,
-            "tags": {"FOO":{"bar":"baz"}}
+            "tags": {"FOO":{"bar":"baz"}},
+            "created": "2017-01-23T00:00:00Z",
+            "modified": "2017-01-23T00:00:00Z"
         }
         """
         )

@@ -1,5 +1,8 @@
 from django.contrib.gis.db import models
 from django.urls import reverse
+
+from django_extensions.db.models import TimeStampedModel
+
 from model_utils import Choices
 from .mixins import DateConstraintMixin, DateDisplayMixin
 
@@ -21,7 +24,7 @@ class OrganisationManager(models.QuerySet):
         )
 
 
-class Organisation(models.Model, DateDisplayMixin):
+class Organisation(TimeStampedModel, DateDisplayMixin):
     """
     An organisation that can hold an election in the UK
     """

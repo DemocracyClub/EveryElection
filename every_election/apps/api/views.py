@@ -163,6 +163,7 @@ class ElectionSubTypeViewSet(viewsets.ReadOnlyModelViewSet):
 class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Organisation.objects.all()
     serializer_class = OrganisationSerializer
+    filterset_fields = ["modified"]
 
     def get_object(self, **kwargs):
         kwargs["date"] = datetime.strptime(kwargs["date"], "%Y-%m-%d").date()
@@ -222,3 +223,4 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
 class OrganisationDivisionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = OrganisationDivision.objects.all()
     serializer_class = OrganisationDivisionSerializer
+    filterset_fields = ["modified"]

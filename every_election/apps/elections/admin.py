@@ -71,6 +71,8 @@ class ElectionAdmin(admin.ModelAdmin):
         "division",
         "group",
         "moderation_status",
+        "created",
+        "modified",
     )
     exclude = (
         "geography",

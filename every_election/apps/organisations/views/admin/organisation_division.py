@@ -44,6 +44,7 @@ class OrganisationDivisionAdmin(admin.ModelAdmin):
     search_fields = ("official_identifier", "name")
     list_filter = [CurrentDivisionFilter, TempIdFilter, "division_type"]
     form = OrganisationDivisionAdminForm
+    readonly_fields = ["created", "modified"]
 
     def get_queryset(self, request):
         return super().get_queryset(request).defer("geography")
