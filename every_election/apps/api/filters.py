@@ -30,6 +30,11 @@ class ElectionFilter(django_filters.FilterSet):
         exclude=True,
         max_length="20",
     )
+    modified = django_filters.IsoDateTimeFilter(
+        field_name="modified",
+        lookup_expr="gt",
+        help_text="An ISO datetime",
+    )
 
     class Meta:
         model = Election
