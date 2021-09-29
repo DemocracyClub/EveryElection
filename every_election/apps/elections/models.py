@@ -100,7 +100,7 @@ class ModerationStatus(models.Model):
 DEFAULT_STATUS = ModerationStatuses.suggested.value
 
 
-class Election(models.Model):
+class Election(TimeStampedModel):
     """
     An election.
     This model should contain everything needed to make the election ID,

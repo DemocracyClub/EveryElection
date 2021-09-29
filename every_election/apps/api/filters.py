@@ -17,6 +17,24 @@ class ElectionFilter(django_filters.FilterSet):
         field_name="organisation__start_date",
         lookup_expr="exact",
     )
+    election_id_regex = django_filters.CharFilter(
+        label="Filter elections by their election id using a regular expression",
+        field_name="election_id",
+        lookup_expr="regex",
+        max_length="20",
+    )
+    exclude_election_id_regex = django_filters.CharFilter(
+        label="Exclude elections by their election id using a regular expression",
+        field_name="election_id",
+        lookup_expr="regex",
+        exclude=True,
+        max_length="20",
+    )
+    modified = django_filters.IsoDateTimeFilter(
+        field_name="modified",
+        lookup_expr="gt",
+        help_text="An ISO datetime",
+    )
 
     class Meta:
         model = Election

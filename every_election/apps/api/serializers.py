@@ -48,6 +48,8 @@ org_fields = (
     "election_name",
     "start_date",
     "end_date",
+    "created",
+    "modified",
 )
 
 
@@ -106,6 +108,8 @@ class OrganisationDivisionSerializer(serializers.ModelSerializer):
             "division_election_sub_type",
             "seats_total",
             "territory_code",
+            "created",
+            "modified",
         )
 
 
@@ -167,6 +171,8 @@ election_fields = (
     "replaces",
     "replaced_by",
     "tags",
+    "created",
+    "modified",
 )
 
 

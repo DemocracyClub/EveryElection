@@ -1,5 +1,7 @@
 import json
+import pytest
 from datetime import datetime, timedelta
+from urllib.parse import urlencode
 
 import vcr
 from rest_framework.test import APITestCase
@@ -15,7 +17,7 @@ from organisations.tests.factories import (
     OrganisationDivisionSetFactory,
     OrganisationDivisionFactory,
 )
-from elections.models import MetaData
+from elections.models import ElectionType, MetaData
 
 
 class TestElectionAPIQueries(APITestCase):
@@ -228,6 +230,54 @@ class TestElectionAPIQueries(APITestCase):
         data = resp.json()
         self.assertEqual(0, data["count"])
 
+    def test_election_id_regex_filters(self):
+        """
+        Test using a simple regex to:
+        - exclude all elections by election type
+        - filter all elections by election type
+        """
+        # create an Election for every ElectionType
+        election_types = list(
+            ElectionType.objects.values_list("election_type", flat=True).distinct()
+        )
+        total_election_types = len(election_types)
+        for election_type in election_types:
+            election = ElectionWithStatusFactory(
+                group_type="election",
+                election_id=f"{election_type}.foo.2021-10-07",
+                moderation_status=related_status("Approved"),
+                election_type__election_type=election_type,
+            )
+            setattr(self, election_type, election)
+
+        # test excluding each election type individually
+        for election_type in election_types:
+            with self.subTest(msg=election_type):
+                regex = f"^{election_type}\..*"
+                params = urlencode({"exclude_election_id_regex": regex})
+                resp = self.client.get(f"/api/elections/?{params}")
+                data = resp.json()
+                election_types_returned = [
+                    result["election_type"]["election_type"]
+                    for result in data["results"]
+                ]
+                self.assertEqual(data["count"], total_election_types - 1)
+                self.assertNotIn(election_type, election_types_returned)
+
+        # test filtering each election type individually
+        for election_type in election_types:
+            with self.subTest(msg=election_type):
+                regex = f"^{election_type}\..*"
+                params = urlencode({"election_id_regex": regex})
+                resp = self.client.get(f"/api/elections/?{params}")
+                data = resp.json()
+                election_types_returned = [
+                    result["election_type"]["election_type"]
+                    for result in data["results"]
+                ]
+                self.assertEqual(data["count"], 1)
+                self.assertIn(election_type, election_types_returned)
+
     def test_organisation_filters(self):
         adu_election = ElectionWithStatusFactory(
             group_type="election",
@@ -340,6 +390,7 @@ class TestElectionAPIQueries(APITestCase):
         self.assertFalse(data["cancelled"])
         self.assertEqual(cancelled.election_id, data["replaces"])
 
+    @pytest.mark.freeze_time("2017-01-23")
     def test_all_expected_fields_returned(self):
 
         OrganisationFactory.reset_sequence(0)
@@ -356,7 +407,7 @@ class TestElectionAPIQueries(APITestCase):
         {
             "group_type": null,
             "identifier_type": "ballot",
-            "current": false,
+            "current": true,
             "poll_open_date": "2017-03-23",
             "election_id": "local.place-name-0.2017-03-23",
             "group": null,
@@ -376,7 +427,9 @@ class TestElectionAPIQueries(APITestCase):
                 "division_subtype": "",
                 "division_type": "test",
                 "official_identifier": "0",
-                "territory_code": "ENG"
+                "territory_code": "ENG",
+                "created": "2017-01-23T00:00:00Z",
+                "modified": "2017-01-23T00:00:00Z"
             },
             "election_type": {
                 "name": "Local elections",
@@ -401,7 +454,9 @@ class TestElectionAPIQueries(APITestCase):
                 "election_name": "",
                 "official_identifier": "0",
                 "start_date": "2016-10-01",
-                "end_date": null
+                "end_date": null,
+                "created": "2017-01-23T00:00:00Z",
+                "modified": "2017-01-23T00:00:00Z"
             },
             "election_title": "Election 0",
             "elected_role": "Councillor",
@@ -412,7 +467,9 @@ class TestElectionAPIQueries(APITestCase):
             "cancelled": false,
             "replaces": null,
             "replaced_by": null,
-            "tags": {"FOO":{"bar":"baz"}}
+            "tags": {"FOO":{"bar":"baz"}},
+            "created": "2017-01-23T00:00:00Z",
+            "modified": "2017-01-23T00:00:00Z"
         }
         """
         )
