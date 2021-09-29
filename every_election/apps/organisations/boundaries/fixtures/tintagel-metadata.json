@@ -3,6 +3,8 @@
         "model": "organisations.organisation",
         "pk": 387,
         "fields": {
+            "created": "2009-04-01T00:00:00Z",
+            "modified": "2021-09-28T15:15:27.180Z",
             "official_identifier": "CON",
             "organisation_type": "local-authority",
             "organisation_subtype": "UA",
@@ -33,6 +35,8 @@
         "model": "organisations.organisationdivision",
         "pk": 15096,
         "fields": {
+            "created": "2013-05-20T00:00:00Z",
+            "modified": "2021-09-28T15:15:27.180Z",
             "divisionset": 115,
             "name": "Tintagel",
             "official_identifier": "gss:E05009271",
