@@ -476,6 +476,20 @@ class ModerationHistory(TimeStampedModel):
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     notes = models.CharField(blank=True, max_length=255)
 
+    def save(self, **kwargs):
+        # no need to check the status if this is initial save
+        # save a db query by returning early
+        if not self.pk:
+            return super().save(**kwargs)
+        # otherwise save
+        super().save(**kwargs)
+        # then check if status is changing to deleted
+        if self.status.pk == ModerationStatuses.deleted.value:
+            # when it is, save the related election to update the modified
+            # timestamp so that it is found by the importer looking for recent
+            # changes
+            self.election.save()
+
     class Meta:
         verbose_name_plural = "Moderation History"
         get_latest_by = "modified"
