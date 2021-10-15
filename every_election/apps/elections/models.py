@@ -434,6 +434,9 @@ class Election(TimeStampedModel):
 
     @transaction.atomic
     def save(self, *args, **kwargs):
+        # used later to determine if we should look for ballots
+        created = not self.pk
+
         status = kwargs.pop("status", None)
         user = kwargs.pop("user", None)
         notes = kwargs.pop("notes", "")[:255]
@@ -461,6 +464,18 @@ class Election(TimeStampedModel):
                 election=self, status_id=status, user=user, notes=notes
             )
             event.save()
+
+        # if the object was created return here to save on unnecessary
+        # db queries
+        if created:
+            return
+
+        # otherwise check if we have related ballots
+        ballots = self.get_ballots()
+        if ballots:
+            # if so update the modified date on them so that we import
+            # the changes made on the parent election
+            ballots.update(modified=self.modified)
 
 
 @receiver(post_save, sender=Election, dispatch_uid="init_status_history")
