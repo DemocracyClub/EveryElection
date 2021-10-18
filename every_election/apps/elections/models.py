@@ -454,7 +454,6 @@ class Election(TimeStampedModel):
             self.group = group_model
 
         super().save(*args, **kwargs)
-
         if (
             status
             and status != DEFAULT_STATUS
@@ -482,7 +481,7 @@ class Election(TimeStampedModel):
 def init_status_history(sender, instance, **kwargs):
     if not ModerationHistory.objects.all().filter(election=instance).exists():
         event = ModerationHistory(election=instance, status_id=DEFAULT_STATUS)
-        event.save()
+        event.save(initial_status=True)
 
 
 class ModerationHistory(TimeStampedModel):
@@ -492,18 +491,14 @@ class ModerationHistory(TimeStampedModel):
     notes = models.CharField(blank=True, max_length=255)
 
     def save(self, **kwargs):
-        # no need to check the status if this is initial save
-        # save a db query by returning early
-        if not self.pk:
+        # if this is the initial status no need to update the related election
+        # so return early
+        if kwargs.pop("initial_status", False):
             return super().save(**kwargs)
-        # otherwise save
         super().save(**kwargs)
-        # then check if status is changing to deleted
-        if self.status.pk == ModerationStatuses.deleted.value:
-            # when it is, save the related election to update the modified
-            # timestamp so that it is found by the importer looking for recent
-            # changes
-            self.election.save()
+        # save the related election to update the modified timestamp so that it
+        # is found by the importer looking for recent changes
+        self.election.save()
 
     class Meta:
         verbose_name_plural = "Moderation History"
