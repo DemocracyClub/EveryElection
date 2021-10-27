@@ -84,13 +84,13 @@ class Command(BaseCommand):
             self.topojson_simplify(tj_path, tj_simple_path)
 
     def topojson_convert(self, source, dest):
-        " Convert GeoJSON to TopoJSON by calling out to the topojson package "
+        "Convert GeoJSON to TopoJSON by calling out to the topojson package"
         subprocess.check_call(
             [os.path.join(TOPOJSON_BIN, "geo2topo"), "-o", dest, source]
         )
 
     def topojson_simplify(self, source, dest):
-        " Simplify a TopoJSON file "
+        "Simplify a TopoJSON file"
         # The toposimplify settings here were arrived at by trial and error to keep the
         # simplified 2018-05-03 local elections topojson below 2.5MB.
         subprocess.check_call(
@@ -106,7 +106,7 @@ class Command(BaseCommand):
         )
 
     def export_election(self, parent):
-        " Return GeoJSON containing all leaf elections below this parent "
+        "Return GeoJSON containing all leaf elections below this parent"
         features = []
         elections = self.get_ballots(parent)
         for election in elections:
@@ -134,7 +134,7 @@ class Command(BaseCommand):
         return geojson.FeatureCollection(features, election_group=parent.election_id)
 
     def get_ballots(self, group):
-        " Return the ballots for a group of elections. "
+        "Return the ballots for a group of elections."
         to_visit = [group]
         leaf_nodes = []
         while len(to_visit) > 0:
