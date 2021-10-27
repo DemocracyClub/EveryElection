@@ -4,6 +4,7 @@ import tempfile
 import urllib
 
 import requests
+from django_extensions.db.models import TimeStampedModel
 
 from storage.s3wrapper import S3Wrapper
 
@@ -81,3 +82,20 @@ class ReadFromCSVMixin(ReadFromFileMixin):
     def read_from_s3(self, filepath):
         f = super().read_from_s3(filepath)
         return self.read_from_local(f.name)
+
+
+class UpdateElectionsTimestampedModel(TimeStampedModel):
+    class Meta:
+        get_latest_by = "modified"
+        abstract = True
+
+    def save(self, **kwargs):
+        """
+        Whenever the object is saved, we update all related elections
+        modified date to have the same date. This is to make sure that
+        changes made on the parent Organisation or
+        OrganisationDivision are picked up by importers looking for
+        changes to the Election made in EE
+        """
+        super().save(**kwargs)
+        self.election_set.update(modified=self.modified)

@@ -1,6 +1,6 @@
 from django.contrib.gis.db import models
 
-from django_extensions.db.models import TimeStampedModel
+from core.mixins import UpdateElectionsTimestampedModel
 
 from .mixins import DateConstraintMixin, DateDisplayMixin
 
@@ -80,7 +80,7 @@ class DivisionManager(models.QuerySet):
         )
 
 
-class OrganisationDivision(TimeStampedModel):
+class OrganisationDivision(UpdateElectionsTimestampedModel):
     """
     Sub parts of an organisation that people can be elected to.
 

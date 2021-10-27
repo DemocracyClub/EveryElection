@@ -434,6 +434,9 @@ class Election(TimeStampedModel):
 
     @transaction.atomic
     def save(self, *args, **kwargs):
+        # used later to determine if we should look for ballots
+        created = not self.pk
+
         status = kwargs.pop("status", None)
         user = kwargs.pop("user", None)
         notes = kwargs.pop("notes", "")[:255]
@@ -451,7 +454,6 @@ class Election(TimeStampedModel):
             self.group = group_model
 
         super().save(*args, **kwargs)
-
         if (
             status
             and status != DEFAULT_STATUS
@@ -462,12 +464,24 @@ class Election(TimeStampedModel):
             )
             event.save()
 
+        # if the object was created return here to save on unnecessary
+        # db queries
+        if created:
+            return
+
+        # otherwise check if we have related ballots
+        ballots = self.get_ballots()
+        if ballots:
+            # if so update the modified date on them so that we import
+            # the changes made on the parent election
+            ballots.update(modified=self.modified)
+
 
 @receiver(post_save, sender=Election, dispatch_uid="init_status_history")
 def init_status_history(sender, instance, **kwargs):
     if not ModerationHistory.objects.all().filter(election=instance).exists():
         event = ModerationHistory(election=instance, status_id=DEFAULT_STATUS)
-        event.save()
+        event.save(initial_status=True)
 
 
 class ModerationHistory(TimeStampedModel):
@@ -475,6 +489,16 @@ class ModerationHistory(TimeStampedModel):
     status = models.ForeignKey(ModerationStatus, on_delete=models.CASCADE)
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     notes = models.CharField(blank=True, max_length=255)
+
+    def save(self, **kwargs):
+        # if this is the initial status no need to update the related election
+        # so return early
+        if kwargs.pop("initial_status", False):
+            return super().save(**kwargs)
+        super().save(**kwargs)
+        # save the related election to update the modified timestamp so that it
+        # is found by the importer looking for recent changes
+        self.election.save()
 
     class Meta:
         verbose_name_plural = "Moderation History"

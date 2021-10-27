@@ -9,6 +9,8 @@ from organisations.tests.factories import (
     OrganisationDivisionSetFactory,
 )
 
+from elections.tests.factories import ElectionFactory
+
 
 class TestOrganisationManager(TestCase):
     def setUp(self):
@@ -149,6 +151,21 @@ class TestOrganisationDivision(TestCase):
             ).format_geography_link(),
         )
 
+    def test_save_calls_update(self):
+        self.division = OrganisationDivisionFactory()
+        ElectionFactory.create_batch(size=10, division=self.division)
+        self.assertNotIn(
+            self.division.modified,
+            self.division.election_set.values_list("modified", flat=True),
+        )
+        self.division.save()
+        modified_dates = (
+            self.division.election_set.values_list("modified", flat=True)
+            .order_by()
+            .distinct()
+        )
+        self.assertEqual([self.division.modified], list(modified_dates))
+
 
 class TestDateConstraints(TestCase):
     def setUp(self):
@@ -219,3 +236,21 @@ class TestDateConstraints(TestCase):
             )
         except ValidationError:
             self.fail("ValidationError raised unexpectedly!")
+
+
+class TestOrganisation(TestCase):
+    def setUp(self):
+        self.org = OrganisationFactory()
+        ElectionFactory.create_batch(size=10, organisation=self.org)
+
+    def test_save_calls_update(self):
+        self.assertNotIn(
+            self.org.modified, self.org.election_set.values_list("modified", flat=True)
+        )
+        self.org.save()
+        modified_dates = (
+            self.org.election_set.values_list("modified", flat=True)
+            .order_by()
+            .distinct()
+        )
+        self.assertEqual([self.org.modified], list(modified_dates))
