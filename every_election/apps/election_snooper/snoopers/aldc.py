@@ -13,11 +13,10 @@ class ALDCScraper(BaseSnooper):
         print(url)
         soup = self.get_soup(url)
         for tile in soup.find_all("article"):
-
             title = tile.find("h2").text.strip()
             detail_url = url + "#" + tile["id"]
             date = tile.find("date").text.strip()
-            content = tile.find("div", {"class": "c-editor"}).find_all("p")
+            content = tile.find("div", {"class": ""}).find_all("p")
 
             if content and content[0].text.lower().count("cause") == 1:
                 seat_control, cause = content[0].text.lower().split("cause")
