@@ -324,6 +324,7 @@ class Election(TimeStampedModel):
             "ENG": Country.ENGLAND,
             "NIR": Country.NORTHERN_IRELAND,
             "SCT": Country.SCOTLAND,
+            "GBN": None,
         }
         area = self.division or self.organisation
         if not area:
