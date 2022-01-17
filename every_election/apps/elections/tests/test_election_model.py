@@ -1,3 +1,6 @@
+from freezegun import freeze_time
+
+from django.utils import timezone
 from django.test import TestCase
 from elections.models import (
     DEFAULT_STATUS,
@@ -5,6 +8,7 @@ from elections.models import (
     ModerationHistory,
     ModerationStatuses,
 )
+from elections.tests.factories import ElectionFactory
 from elections.utils import ElectionBuilder
 from .base_tests import BaseElectionCreatorMixIn
 
@@ -164,3 +168,15 @@ class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
             election.get_admin_url(),
             f"/admin/elections/election/{election.pk}/change/",
         )
+
+
+class TestModified(TestCase):
+    def test_update_changes_modified(self):
+        election = ElectionFactory()
+
+        future = timezone.datetime(2022, 5, 5, 12, 0, 0, tzinfo=timezone.utc)
+        with freeze_time("2022-5-5 12:00:00"):
+            self.assertNotEqual(election.modified, future)
+            Election.private_objects.update()
+            election.refresh_from_db()
+            self.assertEqual(election.modified, future)
