@@ -2,8 +2,10 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib.gis.db.models.functions import PointOnSurface
+from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.contrib.gis.geos import Point, GEOSGeometry
+from django.utils import timezone
 from elections.query_helpers import get_point_from_postcode
 
 
@@ -71,6 +73,16 @@ class ElectionQuerySet(models.QuerySet):
             )
             .order_by("election_id")
         )
+
+    def update(self, update_modified=True, **kwargs):
+        """
+        By default updates the modified timestamp for objects in the QuerySet
+        whenever update is called. Allows timestamp to be specified in the
+        kwargs or defaults to current time.
+        """
+        if update_modified:
+            kwargs["modified"] = kwargs.get("modified", timezone.now())
+        return super().update(**kwargs)
 
 
 class PublicElectionsManager(models.Manager.from_queryset(ElectionQuerySet)):

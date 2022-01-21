@@ -6,7 +6,7 @@ from django.db import migrations
 def remove_gla_a_subtype(apps, schema_editor):
     Election = apps.get_model("elections", "Election")
     qs = Election.private_objects.filter(election_id__startswith="gla.a.")
-    qs.update(group_type=None)
+    qs.update(group_type=None, update_modified=False)
 
 
 class Migration(migrations.Migration):
