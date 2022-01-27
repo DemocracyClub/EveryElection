@@ -48,15 +48,24 @@ class ElectionFilter(django_filters.FilterSet):
         # Yorkshire County Council.
         if og.geography.area < 2:
             # See https://en.wikipedia.org/wiki/DE-9IM for magic string
-            magic_string = "T*****T**"
+            magic_string = "T********"
             return queryset.filter(
-                division_geography__geography__relate=(
-                    og_qs.get().geography,
-                    magic_string,
+                Q(
+                    division_geography__geography__relate=(
+                        og_qs.get().geography,
+                        magic_string,
+                    )
+                )
+                | Q(
+                    organisation_geography__geography__relate=(
+                        og_qs.get().geography,
+                        magic_string,
+                    )
                 )
             )
         return queryset.filter(
-            division_geography__geography__bboverlaps=og_qs.get().geography
+            Q(division_geography__geography__bboverlaps=og_qs.get().geography)
+            | Q(organisation_geography__geography__bboverlaps=og_qs.get().geography)
         )
 
     organisation_identifier = django_filters.CharFilter(
