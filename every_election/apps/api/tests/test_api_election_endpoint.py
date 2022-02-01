@@ -16,6 +16,8 @@ from organisations.tests.factories import (
     OrganisationFactory,
     OrganisationDivisionSetFactory,
     OrganisationDivisionFactory,
+    OrganisationGeographyFactory,
+    DivisionGeographyFactory,
 )
 from elections.models import ElectionType, MetaData
 
@@ -488,3 +490,68 @@ class TestElectionAPIQueries(APITestCase):
         )
         data = resp.json()
         self.assertEqual(data["properties"], self.expected_object)
+
+    def test_election_intersects_local_authority_filter(self):
+        """
+        For all diagrams the organisation is represented
+        """
+        OrganisationGeographyFactory(
+            organisation=OrganisationFactory(
+                official_identifier="TEST1",
+                official_name="Foo & Bar District Council",
+                organisation_type="local-authority",
+            ),
+            geography="MultiPolygon (((0 0, 0 0.3, 0.3 0.3, 0.3 0, 0 0)))",  # noqa
+        )
+        OrganisationGeographyFactory(
+            organisation=OrganisationFactory(
+                official_identifier="BIG_TEST1",
+                official_name="Foo & Bar District Council",
+                organisation_type="local-authority",
+            ),
+            geography="MultiPolygon (((0 0, 0 3, 3 3, 3 0, 0 0)))",  # noqa
+        )
+        elections = [
+            (
+                "overlaps",
+                "MultiPolygon (((0.2 0.2, 0.2 0.4, 0.4 0.4, 0.4 0.2, 0.2 0.2)))",
+            ),
+            ("same", "MultiPolygon (((0 0, 0 0.3, 0.3 0.3, 0.3 0, 0 0)))"),
+            (
+                "contains",
+                "MultiPolygon (((-0.1 -0.1, -0.1 0.4, 0.4 0.4, 0.4 -0.1, -0.1 -0.1)))",
+            ),
+            (
+                "within",
+                "MultiPolygon (((0.1 0.1, 0.1 0.2, 0.2 0.2, 0.2 0.1, 0.1 0.1)))",
+            ),
+        ]
+        for title, geom in elections:
+            ElectionWithStatusFactory(
+                election_title=title,
+                moderation_status=related_status("Approved"),
+                division_geography=DivisionGeographyFactory(
+                    geography=geom,  # noqa
+                ),
+            )
+
+        resp = self.client.get(
+            "/api/elections/?election_intersects_local_authority=TEST1",
+            content_type="application/json",
+        )
+        data = resp.json()
+        self.assertListEqual(
+            ["overlaps", "same", "contains", "within"],
+            [e["election_title"] for e in data["results"]],
+        )
+
+        # BIG_TEST1 has an area bigger than 2. So should hoover up everything
+        resp = self.client.get(
+            "/api/elections/?election_intersects_local_authority=BIG_TEST1",
+            content_type="application/json",
+        )
+        data = resp.json()
+        self.assertListEqual(
+            ["overlaps", "same", "contains", "within"],
+            [e["election_title"] for e in data["results"]],
+        )
