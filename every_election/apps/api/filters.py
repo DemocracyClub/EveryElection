@@ -35,34 +35,14 @@ class ElectionFilter(django_filters.FilterSet):
             )
 
         try:
-            og = og_qs.get()
+            og_qs.get()
         except OrganisationGeography.MultipleObjectsReturned:
             raise ValidationError(
                 """Organisation has more than one geography,
                 please specify a `poll_open_date` or organisation_start_date""",
                 code="invalid",
             )
-        # Large geographies don't perform well with the __relate filter.
-        # If the area of the organisation is larger than "2", use a different
-        # method. "2" is less than the highlands but greater than North
-        # Yorkshire County Council.
-        if og.geography.area < 2:
-            # See https://en.wikipedia.org/wiki/DE-9IM for magic string
-            magic_string = "T********"
-            return queryset.filter(
-                Q(
-                    division_geography__geography__relate=(
-                        og_qs.get().geography,
-                        magic_string,
-                    )
-                )
-                | Q(
-                    organisation_geography__geography__relate=(
-                        og_qs.get().geography,
-                        magic_string,
-                    )
-                )
-            )
+
         return queryset.filter(
             Q(division_geography__geography__bboverlaps=og_qs.get().geography)
             | Q(organisation_geography__geography__bboverlaps=og_qs.get().geography)

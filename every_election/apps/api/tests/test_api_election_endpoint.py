@@ -492,25 +492,23 @@ class TestElectionAPIQueries(APITestCase):
         self.assertEqual(data["properties"], self.expected_object)
 
     def test_election_intersects_local_authority_filter(self):
-        """
-        For all diagrams the organisation is represented
-        """
         OrganisationGeographyFactory(
             organisation=OrganisationFactory(
                 official_identifier="TEST1",
                 official_name="Foo & Bar District Council",
                 organisation_type="local-authority",
             ),
-            geography="MultiPolygon (((0 0, 0 0.3, 0.3 0.3, 0.3 0, 0 0)))",  # noqa
+            geography="MultiPolygon (((0 0, 0 0.3, 0.3 0.3, 0.3 0, 0 0)))",
         )
         OrganisationGeographyFactory(
             organisation=OrganisationFactory(
                 official_identifier="BIG_TEST1",
-                official_name="Foo & Bar District Council",
+                official_name="Big Foo & Bar District Council",
                 organisation_type="local-authority",
             ),
-            geography="MultiPolygon (((0 0, 0 3, 3 3, 3 0, 0 0)))",  # noqa
+            geography="MultiPolygon (((0 0, 0 3, 3 3, 3 0, 0 0)))",
         )
+
         elections = [
             (
                 "overlaps",
