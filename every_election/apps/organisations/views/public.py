@@ -41,8 +41,8 @@ class OrganisationDetailView(TemplateView):
     def get_context_data(self, **kwargs):
         kwargs["date"] = datetime.strptime(kwargs["date"], "%Y-%m-%d").date()
 
-        mayor_q = Q(election_id__startswith="pcc")
-        pcc_q = Q(election_id__startswith="mayor")
+        mayor_q = Q(election_id__startswith="mayor")
+        pcc_q = Q(election_id__startswith="pcc")
         others_q = Q(group_type__isnull=False) & ~Q(group_type="subtype")
         elections = Election.public_objects.filter(others_q | pcc_q | mayor_q)
 
