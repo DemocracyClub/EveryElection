@@ -43,8 +43,9 @@ class OrganisationDetailView(TemplateView):
 
         mayor_q = Q(election_id__startswith="mayor")
         pcc_q = Q(election_id__startswith="pcc")
+        ref_q = Q(election_id__startswith="ref")
         others_q = Q(group_type__isnull=False) & ~Q(group_type="subtype")
-        elections = Election.public_objects.filter(others_q | pcc_q | mayor_q)
+        elections = Election.public_objects.filter(others_q | pcc_q | mayor_q | ref_q)
 
         try:
             obj = (
