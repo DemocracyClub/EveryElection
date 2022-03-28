@@ -1,6 +1,7 @@
 import django_filters
 from django.core.exceptions import ValidationError
 from django.db.models import Q
+from django.utils.timezone import now
 
 from elections.models import Election
 from organisations.models import OrganisationGeography
@@ -13,6 +14,11 @@ class ElectionFilter(django_filters.FilterSet):
             organisation__official_identifier=value,
             organisation__organisation_type="local-authority",
         ).select_related("organisation")
+
+        if self.data.get("future", False):
+            og_qs = og_qs.filter(start_date__lt=now()).filter(
+                Q(end_date__gt=now()) | Q(end_date=None)
+            )
 
         if not og_qs.exists():
             raise ValidationError(
