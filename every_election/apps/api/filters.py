@@ -15,15 +15,15 @@ class ElectionFilter(django_filters.FilterSet):
             organisation__organisation_type="local-authority",
         ).select_related("organisation")
 
-        if self.data.get("future", False):
-            og_qs = og_qs.filter(start_date__lt=now()).filter(
-                Q(end_date__gt=now()) | Q(end_date=None)
-            )
-
         if not og_qs.exists():
             raise ValidationError(
                 """Only local authorities supported""",
                 code="invalid",
+            )
+
+        if self.data.get("future", False):
+            og_qs = og_qs.filter(Q(end_date__gt=now()) | Q(end_date=None)).filter(
+                Q(start_date__lt=now()) | Q(start_date=None)
             )
 
         if "poll_open_date" in self.data and self.data["poll_open_date"]:
@@ -48,6 +48,8 @@ class ElectionFilter(django_filters.FilterSet):
                 please specify a `poll_open_date` or organisation_start_date""",
                 code="invalid",
             )
+        except OrganisationGeography.DoesNotExist:
+            return og_qs
 
         return queryset.filter(
             Q(division_geography__geography__bboverlaps=og_qs.get().geography)
