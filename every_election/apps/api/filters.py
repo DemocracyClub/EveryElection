@@ -48,6 +48,8 @@ class ElectionFilter(django_filters.FilterSet):
                 please specify a `poll_open_date` or organisation_start_date""",
                 code="invalid",
             )
+        except OrganisationGeography.DoesNotExist:
+            return og_qs
 
         return queryset.filter(
             Q(division_geography__geography__bboverlaps=og_qs.get().geography)
