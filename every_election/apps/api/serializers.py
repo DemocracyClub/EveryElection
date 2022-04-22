@@ -64,6 +64,19 @@ class OrganisationSerializer(serializers.ModelSerializer):
         fields = org_fields
 
 
+class OrganisationStandaloneSerializer(OrganisationSerializer):
+    class Meta:
+        model = Organisation
+        fields = list(org_fields) + [
+            "next_election_to_organisation",
+        ]
+
+    next_election_to_organisation = serializers.SerializerMethodField()
+
+    def get_next_election_to_organisation(self, object):
+        return object.next_election_to_organisation
+
+
 class OrganisationGeoSerializer(GeoFeatureModelSerializer):
 
     geography_model = GeometrySerializerMethodField()
