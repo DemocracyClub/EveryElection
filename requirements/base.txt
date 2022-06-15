@@ -1,5 +1,5 @@
 beautifulsoup4==4.10.0
-boto3==1.21.25
+boto3==1.24.9
 django==2.2.27
 django-basicauth==0.5.3
 django-cors-headers==3.10.0
