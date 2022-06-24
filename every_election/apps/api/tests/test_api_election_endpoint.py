@@ -553,3 +553,28 @@ class TestElectionAPIQueries(APITestCase):
             ["overlaps", "same", "contains", "within"],
             [e["election_title"] for e in data["results"]],
         )
+
+    def test_ordering_filter(self):
+        ElectionWithStatusFactory(election_title="old", poll_open_date="2017-03-23")
+        ElectionWithStatusFactory(election_title="middle", poll_open_date="2017-03-24")
+        ElectionWithStatusFactory(election_title="recent", poll_open_date="2017-03-25")
+
+        resp = self.client.get(
+            "/api/elections/?ordering=recent",
+            content_type="application/json",
+        )
+        data = resp.json()
+        self.assertListEqual(
+            ["recent", "middle", "old"],
+            [e["election_title"] for e in data["results"]],
+        )
+
+        resp = self.client.get(
+            "/api/elections/?ordering=older",
+            content_type="application/json",
+        )
+        data = resp.json()
+        self.assertListEqual(
+            ["old", "middle", "recent"],
+            [e["election_title"] for e in data["results"]],
+        )
