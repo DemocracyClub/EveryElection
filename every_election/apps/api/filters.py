@@ -1,6 +1,7 @@
 import django_filters
 from django.core.exceptions import ValidationError
 from django.db.models import Q
+from django.forms import Select
 from django.utils.timezone import now
 
 from elections.models import Election
@@ -55,6 +56,29 @@ class ElectionFilter(django_filters.FilterSet):
             Q(division_geography__geography__bboverlaps=og_qs.get().geography)
             | Q(organisation_geography__geography__bboverlaps=og_qs.get().geography)
         )
+
+    def filter_by_order(self, queryset, name, value):
+        if value == "recent":
+            return queryset.order_by("-poll_open_date")
+        elif value == "older":
+            return queryset.order_by("poll_open_date")
+
+        return queryset
+
+    CHOICES = (
+        ("recent", "Show recent poll dates first"),
+        ("older", "Show oldest poll dates first"),
+    )
+
+    ordering = django_filters.ChoiceFilter(
+        label="Ordering",
+        choices=CHOICES,
+        method="filter_by_order",
+        empty_label=None,
+        widget=Select(attrs={"autocomplete": "off"}),
+    )
+
+    default_ordering = "older"
 
     organisation_identifier = django_filters.CharFilter(
         field_name="organisation__official_identifier",
