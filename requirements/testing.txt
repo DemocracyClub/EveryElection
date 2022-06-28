@@ -1,6 +1,6 @@
 -r base.txt
 
-black==22.1.0
+black==22.6.0
 mock
 model-mommy
 pytest
