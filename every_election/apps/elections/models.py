@@ -503,13 +503,17 @@ class ModerationHistory(TimeStampedModel):
 
     def save(self, **kwargs):
         # if this is the initial status no need to update the related election
-        # so return early
+        # so return early. This is because the default status is identical on
+        # both this model and the Election model
         if kwargs.pop("initial_status", False):
             return super().save(**kwargs)
-        super().save(**kwargs)
+
         # save the related election to update the modified timestamp so that it
         # is found by the importer looking for recent changes
-        self.election.save()
+        if self.election.current_status != self.status.short_label:
+            self.election.current_status = self.status.short_label
+            self.election.save()
+        super().save(**kwargs)
 
     class Meta:
         verbose_name_plural = "Moderation History"
