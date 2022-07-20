@@ -141,6 +141,13 @@ class Election(TimeStampedModel):
         null=True,
         choices=[(req, ID_REQUIREMENTS[req]["name"]) for req in ID_REQUIREMENTS.keys()],
     )
+    current_status = models.CharField(
+        blank=False,
+        max_length=32,
+        choices=[(x, x.value) for x in ModerationStatuses],
+        default=DEFAULT_STATUS,
+        db_index=True,
+    )
 
     def get_children(self, manager):
         """
