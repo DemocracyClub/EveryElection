@@ -79,6 +79,7 @@ class ElectionAdmin(admin.ModelAdmin):
         "organisation_geography",
         "notice",
         "cancellation_notice",
+        "current_status",
     )
     list_filter = ["current"]
     list_display = ["election_id", "poll_open_date", "current", "moderation_status"]
