@@ -21,8 +21,10 @@ id_creator_wizard = IDCreatorWizard.as_view(
 
 
 urlpatterns = [
-    url(r"^election_types/$", ElectionTypesView.as_view(), name="election_types_view"),
-    url(
+    re_path(
+        r"^election_types/$", ElectionTypesView.as_view(), name="election_types_view"
+    ),
+    re_path(
         r"^reference_definition/$",
         ReferenceDefinitionView.as_view(),
         name="reference_definition_view",

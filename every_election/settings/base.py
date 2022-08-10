@@ -28,7 +28,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_filters",
-    "django_markdown",
     "dc_signup_form",
     "corsheaders",
     "uk_geo_utils",
@@ -243,3 +242,5 @@ except ImportError:
 # importing test settings file if necessary
 if IN_TESTING:
     from .testing import *  # noqa
+
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"

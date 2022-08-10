@@ -3,7 +3,6 @@ from copy import deepcopy
 from django import forms
 from django.contrib import admin
 from django.forms.widgets import Textarea
-from django_markdown.admin import MarkdownModelAdmin
 from .models import (
     ElectedRole,
     Election,
@@ -166,6 +165,5 @@ class ModerationHistoryAdmin(admin.ModelAdmin):
 
 admin.site.register(ElectedRole, ElectedRoleAdmin)
 admin.site.register(Election, ElectionAdmin)
-admin.site.register(Explanation, MarkdownModelAdmin)
 admin.site.register(MetaData, MetaDataAdmin)
 admin.site.register(ModerationHistory, ModerationHistoryAdmin)

@@ -14,7 +14,6 @@ urlpatterns = [
     url(r"^organisations/", include("organisations.urls")),
     url(r"", include("elections.urls")),
     url(r"^api/", include(("api.urls", "api"), namespace="api")),
-    url("^markdown/", include("django_markdown.urls")),
     url(r"^election_radar/", include("election_snooper.urls")),
     url(r"^email/", include("dc_signup_form.urls")),
     url(

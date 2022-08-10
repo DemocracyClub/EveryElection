@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.db.models.deletion
-import django_markdown.models
 
 
 class Migration(migrations.Migration):
@@ -25,7 +24,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("description", models.CharField(max_length=100)),
-                ("explanation", django_markdown.models.MarkdownField()),
+                ("explanation", models.TextField(max_length=100)),
             ],
         ),
         migrations.AddField(

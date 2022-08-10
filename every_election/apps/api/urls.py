@@ -3,9 +3,9 @@ from django.conf.urls import url, include
 from rest_framework import routers
 
 from .views import (
-    ElectionViewSet,
-    ElectionTypeViewSet,
     ElectionSubTypeViewSet,
+    ElectionTypeViewSet,
+    ElectionViewSet,
     OrganisationViewSet,
 )
 

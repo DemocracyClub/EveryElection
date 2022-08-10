@@ -10,7 +10,7 @@ jobs:
         environment:
           CIRCLECI: true
           PGHOST: 127.0.0.1
-      - image: cimg/postgres:10.21-postgis
+      - image: cimg/postgres:11.17-postgis
         environment:
           POSTGRES_USER: postgres
           POSTGRES_DB: every_election
