@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.urls import re_path
 
 from .views import (
     AllElectionsView,
@@ -29,13 +29,13 @@ urlpatterns = [
         ReferenceDefinitionView.as_view(),
         name="reference_definition_view",
     ),
-    url(r"^elections/$", AllElectionsView.as_view(), name="elections_view"),
-    url(
+    re_path(r"^elections/$", AllElectionsView.as_view(), name="elections_view"),
+    re_path(
         r"^elections/(?P<election_id>.+)/$",
         SingleElection.as_view(),
         name="single_election_view",
     ),
-    url(r"^id_creator/(?P<step>.+)/$", id_creator_wizard, name="id_creator_step"),
-    url(r"^id_creator/$", id_creator_wizard, name="id_creator"),
-    url(r"^sync/$", get_election_fixture),
+    re_path(r"^id_creator/(?P<step>.+)/$", id_creator_wizard, name="id_creator_step"),
+    re_path(r"^id_creator/$", id_creator_wizard, name="id_creator"),
+    re_path(r"^sync/$", get_election_fixture),
 ]

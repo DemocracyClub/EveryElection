@@ -1,5 +1,4 @@
-from django.conf.urls import url, include
-
+from django.urls import include, re_path
 from rest_framework import routers
 
 from .views import (
@@ -31,20 +30,20 @@ router.register(r"organisations", OrganisationViewSet)
 routes = router.get_urls()
 
 urlpatterns = [
-    url(r"^", include(routes)),
-    url(
+    re_path(r"^", include(routes)),
+    re_path(
         r"^organisations/(?P<organisation_type>[-\w]+)/$",
         OrganisationViewSet.as_view({"get": "filter"}),
     ),
-    url(
+    re_path(
         r"^organisations/(?P<organisation_type>[-\w]+)\.(?P<format>[a-z0-9]+)/?$",
         OrganisationViewSet.as_view({"get": "filter"}),
     ),
-    url(
+    re_path(
         r"^organisations/(?P<organisation_type>[-\w]+)/(?P<official_identifier>[-\w]+)/$",
         OrganisationViewSet.as_view({"get": "filter"}),
     ),
-    url(
+    re_path(
         r"^organisations/(?P<organisation_type>[-\w]+)/(?P<official_identifier>[-\w]+)\.(?P<format>[a-z0-9]+)/?$",
         OrganisationViewSet.as_view({"get": "filter"}),
     ),

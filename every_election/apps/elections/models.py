@@ -7,7 +7,7 @@ from enum import Enum, unique
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.gis.db.models.functions import Distance
-from django.contrib.postgres.fields import JSONField
+from django.db.models import JSONField
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.files import File
 from django.db import models, transaction
@@ -167,7 +167,7 @@ class Election(TimeStampedModel):
     metadata = models.ForeignKey(
         "elections.MetaData", null=True, blank=True, on_delete=models.SET_NULL
     )
-    current = models.NullBooleanField()
+    current = models.BooleanField(null=True)
 
     """
     election.moderation_statuses.all() is not a terribly useful call
