@@ -255,7 +255,7 @@ class TestElectionAPIQueries(APITestCase):
         # test excluding each election type individually
         for election_type in election_types:
             with self.subTest(msg=election_type):
-                regex = f"^{election_type}\..*"
+                regex = f"^{election_type}\\..*"
                 params = urlencode({"exclude_election_id_regex": regex})
                 resp = self.client.get(f"/api/elections/?{params}")
                 data = resp.json()
@@ -269,7 +269,7 @@ class TestElectionAPIQueries(APITestCase):
         # test filtering each election type individually
         for election_type in election_types:
             with self.subTest(msg=election_type):
-                regex = f"^{election_type}\..*"
+                regex = f"^{election_type}\\..*"
                 params = urlencode({"election_id_regex": regex})
                 resp = self.client.get(f"/api/elections/?{params}")
                 data = resp.json()
