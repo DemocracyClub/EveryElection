@@ -1,6 +1,8 @@
 import os
 import sys
 
+import dc_design_system
+
 # PATH vars
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -31,6 +33,7 @@ INSTALLED_APPS = [
     "dc_signup_form",
     "corsheaders",
     "uk_geo_utils",
+    "dc_design_system",
 ]
 
 PROJECT_APPS = [
@@ -134,6 +137,8 @@ from dc_theme.settings import STATICFILES_STORAGE, STATICFILES_FINDERS  # noqa
 PIPELINE = get_pipeline_settings(
     extra_css=["css/styles.scss"], extra_js=["js/date.format.js"]
 )
+
+PIPELINE["SASS_ARGUMENTS"] += " -I " + dc_design_system.DC_SYSTEM_PATH + "/system"
 
 INTERNAL_IPS = ("127.0.0.1",)
 

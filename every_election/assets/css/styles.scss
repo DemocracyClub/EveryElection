@@ -1,49 +1,108 @@
-@import 'dc_base';
-
-
-body {
-    background: #eee;
+// DC Design System
+// Main files
+@import 'partials/_fonts.scss';
+@import 'partials/_variables.scss';
+@import 'partials/_type.scss';
+@import 'partials/_forms.scss';
+@import 'partials/_description-lists.scss';
+@import 'partials/_button.scss';
+@import 'partials/_call-to-action.scss';
+@import 'partials/_details.scss';
+@import 'partials/_stack.scss';
+@import 'partials/_cluster.scss';
+@import 'partials/_grid.scss';
+@import 'partials/_sidebar.scss';
+@import 'partials/_breadcrumbs.scss';
+@import 'partials/_card.scss';
+@import 'partials/_table.scss';
+@import 'partials/_language.scss';
+@import 'partials/_header.scss';
+@import 'partials/_subnav.scss';
+@import 'partials/_footer.scss';
+@import 'partials/_radio.scss';
+@import 'partials/_checkbox.scss';
+@import 'partials/_filter.scss';
+@import 'partials/_codeblock.scss';
+@import 'partials/_dark.scss';
+@import 'partials/_page.scss';
+@import 'partials/_utilities.scss';
+@import 'partials/_status.scss';
+@import 'partials/_logo.scss';
+@import 'partials/_showcase.scss';
+@import 'partials/_switcher.scss';
+$scope: false;
+@mixin optional-styles {
+    @include description-lists;
+    @include button;
+    @include cta;
+    @include cluster;
+    @include grid;
+    @include sidebar;
+    @include details;
+    @include card;
+    @include breadcrumbs;
+    @include table;
+    @include language;
+    @include header;
+    @include subnav;
+    @include footer;
+    @include radio;
+    @include checkbox;
+    @include filter;
+    @include codeblock;
+    @include status;
+    @include logo;
+    @include showcase;
+    @include switcher;
 }
 
-footer {
-  margin-top: 2em;
-
-  .dc-logo {
-      height: 45px;
-      margin-left: .5em;
-  }
-
-}
-
-.election {
-    h1 {
-        font-size: 1.8em;
+@if $scope {
+    .ds-scope {
+        font-size: clamp(#{$s1}, 2vw, #{$s2});
+        @include fontMain;
+        @include type;
+        @include forms;
+        @include stack;
+        @include optional-styles;
+        @include page;
+        @include utilities;
+    }
+    .ds-scope *,
+    .ds-scope *::before,
+    .ds-scope *::after {
+        box-sizing: border-box;
     }
 
-    h2 {
-        font-size: 1.4em;
+    body {
+        margin: 0;
     }
 }
 
-dt {
-    float: left;
+@else {
+     body {
+        //font-size: 100%;
+        @include fontMain;
+        font-size: clamp(#{$s1}, 2vw, #{$s2});
+    }
+  body *,
+  body *::before,
+  body *::after {
+        box-sizing: border-box;
+    }
+    body {
+        margin: 0;
+    }
+    @include type;
+    @include forms;
+    @include stack;
+    @include optional-styles;
+    @include dark;
+    @include page;
+    @include utilities;
 }
 
-dt::after{
-    content: ":";
+.form-date {
+    span {
+        display: flex;
+    }
 }
-
-dd {
-    margin-left: 40%;
-}
-
-dd::after {
-    content: " ";
-    display:block;
-    clear: left;
-}
-
-body {
-//    background-color:blue !important;
-}
-

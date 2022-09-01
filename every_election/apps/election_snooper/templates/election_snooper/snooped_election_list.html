@@ -3,15 +3,14 @@
 
 {% block content %}
 
-<div class="row">
-<section class="columns large-12 large-centered">
+<div>
     {% include "election_snooper/sub_menu.html" %}
-
+</div>
     {% for form in objects %}
-    <div class="card postcode_card">
+<div class="ds-card">
+  <div class="ds-card-body">
         <h3>{{ form.instance.title }}</h3>
-        <div class="row">
-            <div class="columns large-8">
+        <div>
                 {{ form.instance.detail }}
                 <p>
                     {% if form.instance.snooper_name == "ALDC" %}
@@ -25,7 +24,7 @@
                   <a href="{% url 'id_creator' %}?radar_id={{ form.instance.id }}">Create an ID for this election</a>
                 {% endif %}
             </div>
-            <div class="columns large-4">
+            <div>
               {% if form.instance.status == 'id_created' %}
                 &nbsp;
               {% else %}
@@ -33,7 +32,7 @@
                 {% csrf_token %}
                 {{ form|dc_form }}
                 <input type=hidden name="pk" value={{ form.instance.pk }}>
-                <button type="submit" class="button">Save</button>
+                <button type="submit" class="ds-button">Save</button>
                 </form>
               {% endif %}
             </div>
@@ -41,13 +40,13 @@
     </div>
 
     {% empty %}
-    <div class="card">
+    <div class="ds-card">
       No items!
     </div>
     {% endfor %}
 
     {% include "core/pagination_links.html" %}
 
-</section>
+  </div>
 </div>
 {% endblock content %}

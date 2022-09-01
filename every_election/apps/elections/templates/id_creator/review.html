@@ -1,47 +1,54 @@
 {% extends "id_creator/id_creator_base.html" %}
 
 {% block form_page_header %}
-<h1>Your election IDs</h1>
 
-{% if not user_is_moderator %}
-<p>
-  Thanks for your submission.
-  This is a preview of the IDs that will be created
-  once your submission is approved by a moderator.
-</p>
-{% endif %}
+<div class="ds-stack">
+    <h1>Your election IDs</h1>
 
-
-
-<h2>Group IDs</h2>
-{% for election in all_ids %}
-    {% if not election.identifier_type == "ballot" %}
-    <h3><code>{{ election.election_id }}</code></h3>
+    {% if not user_is_moderator %}
+    <p>
+    Thanks for your submission.
+    This is a preview of the IDs that will be created
+    once your submission is approved by a moderator.
+    </p>
     {% endif %}
-{% endfor %}
-
-
-<h2>Ballot paper IDs</h2>
-{% regroup all_ids by election_title as elections_by_title %}
-{% for election_group in elections_by_title %}
-    {% if election_group.grouper %}
-    <h3>{{ election_group.grouper }}</h3>
-    {% for election in election_group.list %}
-        {% if election.identifier_type == "ballot" %}
-        <h3><code>{{ election.election_id }}</code></h3>
+    
+    <h2>Group IDs</h2>
+    <ul>
+    {% for election in all_ids %}
+        {% if not election.identifier_type == "ballot" %}
+        <li><code>{{ election.election_id }}</code></li>
         {% endif %}
     {% endfor %}
-    {% endif %}
-{% endfor %}
+    </ul>
 
+    
+    <h2>Ballot paper IDs</h2>
+    {% regroup all_ids by election_title as elections_by_title %}
+    {% for election_group in elections_by_title %}
+        {% if election_group.grouper %}
+        <h5>{{ election_group.grouper }}</h5>
+        <ul>
+        {% for election in election_group.list %}
+            {% if election.identifier_type == "ballot" %}
+            <li><code>{{ election.election_id }}</code></li>
+            {% endif %}
+        {% endfor %}
+        </ul>
 
-{% endblock form_page_header %}
+        {% endif %}
+    {% endfor %}
+</div>
 
-{% block wizard_buttons %}
-<input type="submit" class="button" value="Create IDs" />
-    <button name="wizard_goto_step" type="submit" class="button" value="{{ wizard.steps.first }}">
+    {% endblock form_page_header %}
+
+    {% block wizard_buttons %}
+    <button type="submit" class="ds-button" value="Create IDs" />Create IDs</button>
+    <button name="wizard_goto_step" type="submit" class="ds-button-blue" value="{{ wizard.steps.first }}">
         Start again
     </button>
-{% endblock wizard_buttons %}
+    {% endblock wizard_buttons %}
+
+
 
 

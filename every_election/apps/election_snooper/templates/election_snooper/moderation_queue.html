@@ -3,39 +3,37 @@
 
 {% block content %}
 
-<div class="row">
-<section class="columns large-12 large-centered">
+<div class="ds-stack">
     {% include "election_snooper/sub_menu.html" %}
 
     {% for form in forms %}
-    <div class="card postcode_card">
-        <h3>{{ form.instance.election.election_id }}</h3>
-        <div class="row">
-            <div class="columns large-8">
-              <li><strong>election_type</strong>: {{ form.instance.election.election_type }}</li>
-              <li><strong>election_subtype</strong>: {{ form.instance.election.election_subtype }}</li>
-              <li><strong>poll_open_date</strong>: {{ form.instance.election.poll_open_date }}</li>
-              <li><strong>organisation</strong>: {{ form.instance.election.organisation }}</li>
-              <li><strong>division</strong>: {{ form.instance.election.division }}</li>
-            </div>
-
-            <div class="columns large-4">
-                <form method=post>
-                  {% csrf_token %}
-                  {{ form|dc_form }}
-                  <input type=hidden name="election" value={{ form.instance.election.pk }}>
-                  <button type="submit" class="button">Save</button>
-                </form>
-            </div>
+    <div class="ds-card">
+      <div class="ds-card-body">
+        <h3>{{ form.instance.election.election_id }}</h3> 
+        <div>
+          <li><strong>election_type</strong>: {{ form.instance.election.election_type }}</li>
+          <li><strong>election_subtype</strong>: {{ form.instance.election.election_subtype }}</li>
+          <li><strong>poll_open_date</strong>: {{ form.instance.election.poll_open_date }}</li>
+          <li><strong>organisation</strong>: {{ form.instance.election.organisation }}</li>
+          <li><strong>division</strong>: {{ form.instance.election.division }}</li>
         </div>
+
+        <div>
+            <form method=post>
+              {% csrf_token %}
+              {{ form|dc_form }}
+              <input type=hidden name="election" value={{ form.instance.election.pk }}>
+              <button type="submit" class="ds-button">Save</button>
+            </form>
+        </div>
+      </div>
     </div>
 
     {% empty %}
-    <div class="card">
+    <div class="ds-card">
       No items!
     </div>
     {% endfor %}
 
-</section>
 </div>
 {% endblock content %}

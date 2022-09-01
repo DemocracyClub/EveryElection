@@ -1,38 +1,40 @@
-<ul class="menu">
-  <li
-    {% if 'moderation_queue' not in request.path and not request.GET.status and not request.GET.pk %}
-      class="active"
-    {% endif %} >
-    <a href="{% url "snooped_election_view" %}">All</a>
-  </li>
-  <li
-    {% if 'moderation_queue' not in request.path and request.GET.status == 'new' %}
-      class="active"
-    {% endif %} >
-    <a href="{% url "snooped_election_view" %}?status=new">New</a>
-  </li>
-  <li
-    {% if 'moderation_queue' not in request.path and request.GET.status == 'election' %}
-      class="active"
-    {% endif %} >
-    <a href="{% url "snooped_election_view" %}?status=election">Elections</a>
-  </li>
-  <li
-    {% if 'moderation_queue' not in request.path and request.GET.status == 'out_of_scope' %}
-      class="active"
-    {% endif %} >
-    <a href="{% url "snooped_election_view" %}?status=out_of_scope">Out of scope</a>
-  </li>
-  <li
-    {% if 'moderation_queue' not in request.path and request.GET.status == 'duplicate' %}
-      class="active"
-    {% endif %} >
-    <a href="{% url "snooped_election_view" %}?status=duplicate">Duplicate</a>
-  </li>
-  <li
-    {% if 'moderation_queue' in request.path %}
-      class="active"
-    {% endif %} >
-    <a href="{% url "election_moderation_queue" %}">Moderation</a>
-  </li>
-</ul>
+<nav class="ds-subnav">
+  <ul>
+    <li
+      {% if 'moderation_queue' not in request.path and not request.GET.status and not request.GET.pk %}
+        class="active"
+      {% endif %}>
+      <a href="{% url "snooped_election_view" %}">All</a>
+    </li>
+    <li
+      {% if 'moderation_queue' not in request.path and request.GET.status == 'new' %}
+        class="active"
+      {% endif %} >
+      <a href="{% url "snooped_election_view" %}?status=new">New</a>
+    </li>
+    <li
+      {% if 'moderation_queue' not in request.path and request.GET.status == 'election' %}
+        class="active"
+      {% endif %} >
+      <a href="{% url "snooped_election_view" %}?status=election">Elections</a>
+    </li>
+    <li
+      {% if 'moderation_queue' not in request.path and request.GET.status == 'out_of_scope' %}
+        class="active"
+      {% endif %} >
+      <a href="{% url "snooped_election_view" %}?status=out_of_scope">Out of scope</a>
+    </li>
+    <li
+      {% if 'moderation_queue' not in request.path and request.GET.status == 'duplicate' %}
+        class="active"
+      {% endif %} >
+      <a href="{% url "snooped_election_view" %}?status=duplicate">Duplicate</a>
+    </li>
+    <li
+      {% if 'moderation_queue' in request.path %}
+        class="active"
+      {% endif %} >
+      <a href="{% url "election_moderation_queue" %}">Moderation</a>
+    </li>
+  </ul>
+</nav>

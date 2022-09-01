@@ -18,7 +18,7 @@
 fallback.ready(function() {
 
     $("form").prepend(
-      $("<button type='button' class='button'>Mark all seats as contested (can't be undone)</button>")
+      $("<button type='button' class='ds-button'>Mark all seats as contested (can't be undone)</button>")
         .on('click', function() {
           $('input[value=seats_contested]').prop("checked", true);
           $('input[value=seats_contested]').parent().addClass("selected");
