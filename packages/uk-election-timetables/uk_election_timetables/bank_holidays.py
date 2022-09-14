@@ -1,3 +1,7 @@
+import os
+import json
+import requests
+
 from typing import Dict, List
 
 
@@ -35,3 +39,13 @@ def combine_bank_holiday_lists(existing_dataset: Dict, new_dataset: Dict) -> Dic
 
     return combined_dataset
 
+
+def update_bank_holidays() -> None:
+    bank_holiday_json_path: str = os.path.join( os.path.dirname(__file__), "bank-holidays.json")
+    with open(bank_holiday_json_path, "r") as file:
+        current_data: Dict = json.load(file)
+
+    gov_data: Dict = requests.get("https://www.gov.uk/bank-holidays.json").json()
+    updated_dataset = combine_bank_holiday_lists(current_data, gov_data)
+    with open(bank_holiday_json_path, "w") as file:
+        file.write(json.dumps(updated_dataset))
