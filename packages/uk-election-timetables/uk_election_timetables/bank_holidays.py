@@ -41,11 +41,15 @@ def combine_bank_holiday_lists(existing_dataset: Dict, new_dataset: Dict) -> Dic
 
 
 def update_bank_holidays() -> None:
+    """
+    Fetch bank holiday data from our master file and .gov source and perform update
+    :return: None
+    """
     bank_holiday_json_path: str = os.path.join( os.path.dirname(__file__), "bank-holidays.json")
     with open(bank_holiday_json_path, "r") as file:
         current_data: Dict = json.load(file)
 
     gov_data: Dict = requests.get("https://www.gov.uk/bank-holidays.json").json()
-    updated_dataset = combine_bank_holiday_lists(current_data, gov_data)
+    updated_dataset: Dict = combine_bank_holiday_lists(current_data, gov_data)
     with open(bank_holiday_json_path, "w") as file:
-        file.write(json.dumps(updated_dataset))
+        file.write(json.dumps(updated_dataset, indent=4))
