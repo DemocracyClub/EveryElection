@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  node: circleci/node@4.1.0
+  node: circleci/node@5.0.2
 
 jobs:
   build:
@@ -10,7 +10,7 @@ jobs:
         environment:
           CIRCLECI: true
           PGHOST: 127.0.0.1
-      - image: circleci/postgres:10.5-postgis-ram
+      - image: cimg/postgres:10.21-postgis
         environment:
           POSTGRES_USER: postgres
           POSTGRES_DB: every_election
@@ -24,7 +24,8 @@ jobs:
           key: every_election-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}
 
 
-      - node/install
+      - node/install:
+          node-version: '10.19.0'
       - node/install-packages:
           cache-path: ~/repo/node_modules
           override-ci-command: npm install
