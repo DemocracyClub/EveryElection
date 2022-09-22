@@ -101,8 +101,48 @@ $scope: false;
     @include utilities;
 }
 
-.form-date {
-    span {
-        display: flex;
+.form-group {
+    display: block;
+    padding-bottom: 2px;
+
+}
+
+.form-label-bold {
+    display: block;
+    padding-bottom: 2px;
+    margin: 0;
+}
+
+// id_creator date component
+#main > form div.ds-field > label > div { 
+    display: flex;
+    flex-direction: row; 
+    flex-wrap: wrap;
+    div.form-group {
+        label {
+            display: block;
+            margin: 10px 15px 0 0;
+            text-align: left;
+            font-size: $s1;
+        } 
+        input {
+            box-sizing: border-box;
+            width: 100%;
+            height: $s6;
+            margin: 10px 15px 5px 0;
+            border: 2px solid #0b0c0c;
+            padding: 5px;
+            border-radius: 0;
+            appearance: none;
+            font-size: $s2;
+            max-width: $s8;
+        }
     }
+}
+
+#main > form > div.ds-field > label > div.ds-error {
+    margin: 0.5rem 0 0.5rem 0;
+}    
+.date-submit {
+    margin: 0.5rem 0 0.5rem 0;
 }

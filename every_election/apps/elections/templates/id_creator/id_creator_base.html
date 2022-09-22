@@ -1,38 +1,35 @@
 {% extends "base.html" %}
 {% load dc_forms %}
-
 {% block content %}
-<div class="ds-card">
-    <div class="ds-card-body">
-        <div class="ds-field">
-            {# <p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p> #}
-            {% block form_page_header %}{% endblock form_page_header %}
-            <form action="" method="post" {% block form_tag_extra %}{% endblock form_tag_extra %}>
-                {% csrf_token %}
-                {{ wizard.management_form }}
 
-                {% block form_content %}
-                    {% if wizard.form.forms %}
-                        {{ wizard.form.management_form }}
-                        {% for form in wizard.form.forms %}
-                            {{ form|dc_form }}
-                        {% endfor %}
-                    {% else %}
-                        {{ wizard.form.errors }}
-                        {{ wizard.form|dc_form }}
-                    {% endif %}
-                {% endblock form_content %}
+    {# <p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p> #}
+{% block form_page_header %}{% endblock form_page_header %}
+<form action="" method="post" {% block form_tag_extra %}{% endblock form_tag_extra %}>
+        {% csrf_token %}
+        {{ wizard.management_form }}
 
-            {% block wizard_buttons %}
-                <div class="form-group">
-                    <input type="submit" class="ds-button" value="Submit" />
-                    <p><a href="{% url "id_creator" %}?reset" class="ds-button">Start again</a></p>
-                </div>
+        {% block form_content %}
+            {% if wizard.form.forms %}
+                {{ wizard.form.management_form }}
+                {% for form in wizard.form.forms %}
+                    {{ form|dc_form }}
+                {% endfor %}
+            {% else %}
+                {{ wizard.form.errors }}
+                {{ wizard.form|dc_form }}
+            {% endif %}
+        {% endblock form_content %} 
 
     {% block wizard_buttons %}
         <div class="form-group date-submit">
-            <button type="submit" class="ds-button">Submit</button>
+            <button type="button" class="ds-button">Submit</button>
         </div>
-    </div>
-</div>
+        <a href="{% url 'id_creator' %}?reset">Start again</a>
+
+    {% endblock wizard_buttons %}
+
+</form>
+
+
+
 {% endblock content %}

@@ -31,6 +31,6 @@ django-pipeline==2.0.8
 importlib-metadata==4.12.0
 
 git+https://github.com/mysociety/django-pipeline-csscompressor
-git+https://github.com/DemocracyClub/dc_base_theme.git@0.3.17
 git+https://github.com/DemocracyClub/dc_signup_form.git@2.1.3
 git+https://github.com/DemocracyClub/design-system.git@0.2.2
+git+https://github.com/DemocracyClub/dc_django_utils.git@0.1.13

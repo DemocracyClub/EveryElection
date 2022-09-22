@@ -34,12 +34,12 @@ INSTALLED_APPS = [
     "corsheaders",
     "uk_geo_utils",
     "dc_design_system",
+    # "dc_utils",
 ]
 
 PROJECT_APPS = [
     "api",
     "core",
-    "dc_theme",
     "elections",
     "organisations",
     "organisations.boundaries",
@@ -49,6 +49,7 @@ PROJECT_APPS = [
     "storages",
     "django_extensions",
     "election_snooper",
+    "dc_utils",
 ]
 
 INSTALLED_APPS += PROJECT_APPS
@@ -130,12 +131,11 @@ STATICFILES_DIRS = (root("assets"),)
 STATIC_ROOT = root("static")
 
 
-from dc_theme.settings import get_pipeline_settings
-from dc_theme.settings import STATICFILES_STORAGE, STATICFILES_FINDERS  # noqa
-
+from dc_utils.settings.pipeline import *  # noqa
+from dc_utils.settings.pipeline import get_pipeline_settings
 
 PIPELINE = get_pipeline_settings(
-    extra_css=["css/styles.scss"], extra_js=["js/date.format.js"]
+    extra_css=["scss/styles.scss"], extra_js=["js/date.format.js"]
 )
 
 PIPELINE["SASS_ARGUMENTS"] += " -I " + dc_design_system.DC_SYSTEM_PATH + "/system"
@@ -151,7 +151,6 @@ TEMPLATES = [
         "OPTIONS": {
             "debug": DEBUG,
             "context_processors": [
-                "dc_theme.context_processors.dc_theme_context",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "django.template.context_processors.debug",
@@ -162,6 +161,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "dc_signup_form.context_processors.signup_form",
                 "core.context_processors.global_settings",
+                "dc_utils.context_processors.dc_django_utils",
             ],
         },
     }

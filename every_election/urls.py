@@ -6,6 +6,7 @@ from django.views.generic import TemplateView
 
 from core.views import HomeView
 
+handler500 = "dc_utils.urls.dc_server_error"
 
 urlpatterns = [
     re_path(r"^admin/", admin.site.urls),
@@ -28,5 +29,4 @@ urlpatterns += static(
 
 if settings.DEBUG:
     from dc_utils.urls import dc_utils_testing_patterns
-
     urlpatterns += dc_utils_testing_patterns
