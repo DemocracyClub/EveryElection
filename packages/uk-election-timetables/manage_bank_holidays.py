@@ -11,6 +11,7 @@ if __name__ == '__main__':
     if args.diff:
         try:
             additions_count: int = diff_bank_holidays()
+            print(f"No. of additions: {additions_count}")
             sys.exit(additions_count)
         except Exception as ex:
             print(f"Unable to diff files")
