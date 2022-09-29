@@ -1,11 +1,24 @@
 import sys
 import argparse
-from uk_election_timetables.bank_holidays import diff_bank_holidays, update_bank_holidays
+from uk_election_timetables.bank_holidays import (
+    diff_bank_holidays,
+    update_bank_holidays,
+)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-d", "--diff", action="store_true", help="Get number of additions in new .gov dataset")
-    parser.add_argument("-u", "--update", action="store_true", help="Update bank-holidays.json with .gov additions")
+    parser.add_argument(
+        "-d",
+        "--diff",
+        action="store_true",
+        help="Get number of additions in new .gov dataset",
+    )
+    parser.add_argument(
+        "-u",
+        "--update",
+        action="store_true",
+        help="Update bank-holidays.json with .gov additions",
+    )
     args = parser.parse_args()
 
     if args.diff:
