@@ -5,11 +5,6 @@
 
 {% block extra_site_css %}
     {% stylesheet 'styles' %}
-<style>
-  .callout.success {
-    margin-top: 2rem;
-  }
-</style>
 {% endblock extra_site_css %}
 
 
@@ -20,7 +15,7 @@
         {% block site_menu %}
           <header class="ds-header">
             <a class="ds-logo" href="/">
-              <img src="{%  static 'images/logo_icon.svg' %}" alt="" width="{{ SITE_LOGO_WIDTH|default:"100" }}" />
+              <img src="{%  static 'images/logo_icon.svg' %}" alt="" width="100" />
               <span>Every Election</span>
             </a>
             <nav> 
@@ -87,7 +82,7 @@
               </div>
             <div class="ds-copyright ds-width-full">
               <a class="ds-logo" href="https://democracyclub.org.uk/">
-                  <img src="{%  static "images/logo_icon.svg" %}" alt="" width="{{ SITE_LOGO_WIDTH|default:"100" }}"/>
+                  <img src="{%  static "images/logo_icon.svg" %}" alt="" width="100"/>
                   <span class="ds-text-left">democracy<br>club</span>
               </a>
               <p>Copyright &copy; {% now 'Y' %} Democracy Club</p>
