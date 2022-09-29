@@ -5,9 +5,8 @@
 {% endblock form_page_header %}
 
 
-{% block extra_javascript %}
-{{ block.super }}
-<script>
+{% block in_page_javascript %}
+<script type="text/javascript">
 fallback.ready(function() { 
     var day = document.getElementById('id_date-date_0')
     var month = document.getElementById('id_date-date_1')
@@ -49,4 +48,4 @@ fallback.ready(function() {
 });
 
 </script>
-{% endblock extra_javascript %}
+{% endblock in_page_javascript %}
