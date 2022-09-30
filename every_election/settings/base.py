@@ -248,4 +248,4 @@ except ImportError:
 if IN_TESTING:
     from .testing import *  # noqa
 
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"

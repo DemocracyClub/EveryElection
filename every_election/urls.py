@@ -29,4 +29,5 @@ urlpatterns += static(
 
 if settings.DEBUG:
     from dc_utils.urls import dc_utils_testing_patterns
+
     urlpatterns += dc_utils_testing_patterns

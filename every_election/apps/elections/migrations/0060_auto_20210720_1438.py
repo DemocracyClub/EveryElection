@@ -14,8 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="election",
             name="tags",
-            field=JSONField(
-                blank=True, default=dict
-            ),
+            field=JSONField(blank=True, default=dict),
         ),
     ]
