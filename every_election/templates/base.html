@@ -53,7 +53,9 @@
     {% endblock messages %}
     
     {% block content %}
-      {% block page_content %}{% endblock page_content %}
+      {% block page_content %}
+        {% block base_title %}{% block page_title %}{% endblock page_title %} | Democracy Club Elections{% endblock base_title %}
+      {% endblock page_content %}
     {% endblock content %}
   </main>
 {% endblock main_base %}
