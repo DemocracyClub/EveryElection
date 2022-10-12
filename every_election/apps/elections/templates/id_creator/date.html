@@ -1,46 +1,52 @@
 {% extends "id_creator/id_creator_base.html" %}
+{% block page_title %}Poll Date{% endblock page_title %}
 
 {% block form_page_header %}
 <h1>Poll date</h1>
 {% endblock form_page_header %}
 
 
-{% block extra_javascript %}
-{{ block.super }}
-<script>
-fallback.ready(function() {
-    var day = $('#id_date-date_0');
-    var month = $('#id_date-date_1');
-    var year = $('#id_date-date_2');
+{% block in_page_javascript %}
+<script type="text/javascript">
+fallback.ready(function() { 
+    var day = document.getElementById('id_date-date_0')
+    var month = document.getElementById('id_date-date_1')
+    var year = document.getElementById('id_date-date_2')
+    var form_date = document.getElementById('form-date');
 
     var CheckDOW = function () {
-        if (day.val().length >= 1) {
-            if (month.val().length >= 1) {
-                if (year.val().length == 4) {
-                    d = new Date([year.val(), month.val(), day.val(),].join('-'))
+        if (day.value.length >= 1) {
+            if (month.value.length >= 1) {
+                if (year.value.length == 4) { 
+                    d = new Date([year.value, month.value, day.value])
+                    var date_string = d.format("mmmm dS yyyy");
+                    var day_of_the_week = d.format("dddd");
                     if (d.getDay() != 4) {
-                        NotThursdayWarning('add', d);
+                        NotThursdayWarning('add', date_string, day_of_the_week);
                     } else {
-                        NotThursdayWarning('remove', d);
+                       NotThursdayWarning('remove', date_string, day_of_the_week);
                     }
                 }
             }
         }
     }
 
-    var NotThursdayWarning = function (method, date) {
-        $('.date_warning').remove();
+    var NotThursdayWarning = function (method, date_string, day_of_the_week) {
+        if (document.querySelectorAll(".ds-error"))
+            document.querySelectorAll(".ds-error").forEach(el => el.remove()); {
+        } 
+
         if (method == 'add') {
-            var date_string = date.format("mmmm dS yyyy");
-            var day = date.format("dddd");
-            $('.form-date').append('<div class="error date_warning" style="clear:both">UK elections are almost always on a Thursday<br>'+date_string+' is a '+ day +' not a Thursday. Are you sure that\'s right?</div>')
-        }
+            var warning = '<div class="ds-error ds-padded" style="clear:both">UK elections are almost always on a Thursday<br>'+date_string+' is a '+ day_of_the_week +' not a Thursday. Are you sure that\'s right?</div>';
+            form_date.insertAdjacentHTML('afterend', warning);
+       }
 
     }
 
-    $('.form-date').on('change keyup', CheckDOW);
-    CheckDOW()
+    year.addEventListener('change', CheckDOW);
+    month.addEventListener('change', CheckDOW);
+    day.addEventListener('change', CheckDOW);
 });
 
 </script>
-{% endblock extra_javascript %}
+{% endblock in_page_javascript %}

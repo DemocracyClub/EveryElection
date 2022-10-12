@@ -1,0 +1,148 @@
+// DC Design System
+// Main files
+@import 'partials/_fonts.scss';
+@import 'partials/_variables.scss';
+@import 'partials/_type.scss';
+@import 'partials/_forms.scss';
+@import 'partials/_description-lists.scss';
+@import 'partials/_button.scss';
+@import 'partials/_call-to-action.scss';
+@import 'partials/_details.scss';
+@import 'partials/_stack.scss';
+@import 'partials/_cluster.scss';
+@import 'partials/_grid.scss';
+@import 'partials/_sidebar.scss';
+@import 'partials/_breadcrumbs.scss';
+@import 'partials/_card.scss';
+@import 'partials/_table.scss';
+@import 'partials/_language.scss';
+@import 'partials/_header.scss';
+@import 'partials/_subnav.scss';
+@import 'partials/_footer.scss';
+@import 'partials/_radio.scss';
+@import 'partials/_checkbox.scss';
+@import 'partials/_filter.scss';
+@import 'partials/_codeblock.scss';
+@import 'partials/_dark.scss';
+@import 'partials/_page.scss';
+@import 'partials/_utilities.scss';
+@import 'partials/_status.scss';
+@import 'partials/_logo.scss';
+@import 'partials/_showcase.scss';
+@import 'partials/_switcher.scss';
+$scope: false;
+@mixin optional-styles {
+    @include description-lists;
+    @include button;
+    @include cta;
+    @include cluster;
+    @include grid;
+    @include sidebar;
+    @include details;
+    @include card;
+    @include breadcrumbs;
+    @include table;
+    @include language;
+    @include header;
+    @include subnav;
+    @include footer;
+    @include radio;
+    @include checkbox;
+    @include filter;
+    @include codeblock;
+    @include status;
+    @include logo;
+    @include showcase;
+    @include switcher;
+}
+
+@if $scope {
+    .ds-scope {
+        font-size: clamp(#{$s1}, 2vw, #{$s2});
+        @include fontMain;
+        @include type;
+        @include forms;
+        @include stack;
+        @include optional-styles;
+        @include page;
+        @include utilities;
+    }
+    .ds-scope *,
+    .ds-scope *::before,
+    .ds-scope *::after {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+    }
+}
+
+@else {
+     body {
+        //font-size: 100%;
+        @include fontMain;
+        font-size: clamp(#{$s1}, 2vw, #{$s2});
+    }
+  body *,
+  body *::before,
+  body *::after {
+        box-sizing: border-box;
+    }
+    body {
+        margin: 0;
+    }
+    @include type;
+    @include forms;
+    @include stack;
+    @include optional-styles;
+    @include dark;
+    @include page;
+    @include utilities;
+}
+
+.form-group {
+    display: block;
+    padding-bottom: 2px;
+
+}
+
+.form-label-bold {
+    display: block;
+    padding-bottom: 2px;
+    margin: 0;
+}
+
+// id_creator date component
+#main > form div.ds-field > label > div { 
+    display: flex;
+    flex-direction: row; 
+    flex-wrap: wrap;
+    div.form-group {
+        label {
+            display: block;
+            margin: 10px 15px 0 0;
+            text-align: left;
+            font-size: $s1;
+        } 
+        input {
+            box-sizing: border-box;
+            width: 100%;
+            height: $s6;
+            margin: 10px 15px 5px 0;
+            border: 2px solid #0b0c0c;
+            padding: 5px;
+            border-radius: 0;
+            appearance: none;
+            font-size: $s2;
+            max-width: $s8;
+        }
+    }
+}
+
+#main > form > div.ds-field > label > div.ds-error {
+    margin: 0.5rem 0 0.5rem 0;
+}    
+.date-submit {
+    margin: 0.5rem 0 0.5rem 0;
+}

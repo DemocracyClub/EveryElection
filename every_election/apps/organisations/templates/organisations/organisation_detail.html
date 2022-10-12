@@ -1,11 +1,10 @@
 {% extends "base.html" %}
+{% block page_title %}Organisation Detail{% endblock page_title %}
 
 
 {% block content %}
-<div class="row">
-<section class="columns large-10 large-centered">
-
-    <div class="card postcode_card">
+<div class="ds-card">
+    <div class="ds-card-body">
 
         {% include "organisations/organisation_summary.html" %}
 
@@ -32,7 +31,7 @@
             {% endif %}
 
             <p>{{ divisionset.notes }}</p>
-            <table>
+            <table class="ds-table">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -88,7 +87,6 @@
         {% endif %}
         </ul>
     </div>
-</section>
 </div>
 
 {% endblock content %}

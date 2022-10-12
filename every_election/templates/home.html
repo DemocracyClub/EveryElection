@@ -5,53 +5,33 @@
 
 
 {% block content %}
-<div class="row">
-    <section class="columns large-12 large-centered">
-
-      <div class="card text-center">
-          <h1>Help build the free database of UK elections</h1>
-          <h2 class="large-10 large-centered">We want to know of every distinct council level election and above</h2>
-      </div>
-
-    <div class="row">
-
-        <div class="columns large-6" >
-            <div class="card">
-                <h3>Upcoming elections</h3>
-                <ul>
-                {% for election in upcoming_elections  %}
-                    <li>
-                        <a href="{{ election.get_absolute_url }}">{{ election }}</a> 
-                        ( {{ election.election_type }} {{ election.poll_open_date }} ) 
-                    </li>
-                {% endfor %}
-                </ul>
-            </div>
-        </div>
-
-        <div class="columns large-6">
-            <div class="card">
+<section>
+    <div class="ds-stack">
+        <h1 class="ds-text-centered">Help build the free database of UK elections</h1>
+        <h3 class="ds-text-centered" >We want to know of every distinct council level election and above</h3>
+    
+        <h3>Upcoming elections</h3>
+        <ul>
+        {% for election in upcoming_elections  %}
+            <li>
+                <a href="{{ election.get_absolute_url }}">{{ election }}</a> 
+                ( {{ election.election_type }} {{ election.poll_open_date }} ) 
+            </li>
+        {% endfor %}
+        </ul>
+         
+        
                 <h3>Heard about a new election?</h3>
-                <a href="{% url "id_creator" %}" class="button">Add a new election</a>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="row">
-        <div class="columns large-12">
-            <div class="card">
+                <a href="{% url "id_creator" %}" class="ds-cta">Add a new election</a>
+           
+       
+      
                 <h3>The data is open to all</h3>
                 <p><a href="{% url "api:api-root" %}">We are building an API</a> that you can start using.
                     It's very new and will change a bit, so it's best
                     to <a href="https://democracyclub.org.uk/contact/">get in touch</a>
                     if you're interested in using that data.</p>
-            </div>
-        </div>
+           
     </div>
-
-    </section>
-
-</div>
-
+</section>
 {% endblock content %}

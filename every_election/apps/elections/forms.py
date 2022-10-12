@@ -7,7 +7,7 @@ from organisations.models import OrganisationDivisionSet
 
 from .models import ElectionSubType, ElectionType
 
-from dc_theme import forms as dc_forms
+from dc_utils import forms as dc_forms
 
 
 #

@@ -1,35 +1,29 @@
 {% extends "base.html" %}
 
+{% block page_title %}Election Types{% endblock page_title %}
 
 {% block content %}
-<div class="row">
-<section class="columns large-10 large-centered">
 
-  <div class="card postcode_card">
-      <h2>Election Types</h2>
+    <h2>Election Types</h2>
 
-      {% for object in object_list %}
-      <h3>{{ object.name }}</h3>
-      <p>Election type: <code>{{ object.election_type }}</code></p>
+    {% for object in object_list %}
+    <h3>{{ object.name }}</h3>
+    <p>Election type: <code>{{ object.election_type }}</code></p>
 
-      <h5>Example Election ID:</h5>
-      <p>
-          <code>{{ object.election_type }}{% if object.subtype.all %}.{{ object.subtype.all.0.election_subtype }}{% endif %}{% if object.organisation_set.all.count > 1 %}.{{ object.organisation_set.all.0.slug }}{% endif %}.2016-05-05</code>
-      </p>
+    <h5>Example Election ID:</h5>
+    <p>
+        <code>{{ object.election_type }}{% if object.subtype.all %}.{{ object.subtype.all.0.election_subtype }}{% endif %}{% if object.organisation_set.all.count > 1 %}.{{ object.organisation_set.all.0.slug }}{% endif %}.2016-05-05</code>
+    </p>
 
-      {% if object.subtype.all %}
-          <h5>Subtypes</h5>
-          <ul>
-          {% for subtype in object.subtype.all %}
-              <li>{{ subtype.name }}: <code>{{ subtype.election_subtype }}</code></li>
-          {% endfor %}
-          </ul>
-      {% endif %}
-      {% endfor %}
+    {% if object.subtype.all %}
+        <h5>Subtypes</h5>
+        <ul>
+        {% for subtype in object.subtype.all %}
+            <li>{{ subtype.name }}: <code>{{ subtype.election_subtype }}</code></li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% endfor %}
 
 
-  </div>
-
-</section>
-</div>
 {% endblock content %}

@@ -1,11 +1,9 @@
 {% extends "base.html" %}
+{% block page_title %}Election Identifier Reference{% endblock page_title %}
 
 
 {% block content %}
-<div class="row">
-<section class="columns large-10 large-centered">
 
-  <div class="card postcode_card">
     <h2>Election Identifier Reference</h2>
 
     <p>An election code starts with an election type string. It may optionally
@@ -26,7 +24,7 @@
     </p>
 
     <h3>Segments</h3>
-    <table>
+    <table class="ds-table">
       <tr>
         <td><strong>Election type</strong></td><td>Required, text</td>
       </tr>
@@ -91,7 +89,7 @@
     <p>By-elections are indicated with the segment <code>by</code>.</p>
 
     <h3>Identifier Types</h3>
-    <table>
+    <table class="ds-table">
         <tr>
           <th>Type</th>
           <th>Subtype</th>
@@ -139,8 +137,5 @@
     validation rules for creating identifiers that conform to this specification.
     </p>
 
-  </div>
 
-</section>
-</div>
 {% endblock content %}

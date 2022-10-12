@@ -1,16 +1,18 @@
 {% extends "base.html" %}
 {% load dc_forms %}
-
+{% block page_title %}Login{% endblock page_title %}
 {% block content %}
-<section class="columns large-6 large-centered">
-  <div class="card postcode_card">
-    <h2>Login</h2>
-    <form method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button class="button" type="submit">Login</button>
-    </form>
-    <a href="{% url "password_reset"%}">Forgot password?</a>
+<section>
+  <div class="ds-card">
+    <div class="ds-card-body">
+      <h2>Login</h2>
+      <form method="post">
+        {% csrf_token %}
+        {{ form | dc_form }}
+        <button class="ds-button" type="submit">Login</button>
+      </form>
+      <a href="{% url 'password_reset'%}">Forgot password?</a>
+    </div>
   </div>
 </section>
 {% endblock content %}

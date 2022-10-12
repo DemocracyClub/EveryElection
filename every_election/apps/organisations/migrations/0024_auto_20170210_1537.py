@@ -11,9 +11,7 @@ class Migration(migrations.Migration):
     dependencies = [("organisations", "0023_auto_20170203_1802")]
 
     operations = [
-        migrations.AlterField(
-            model_name="divisiongeography",
-            name="geography",
-            field=django.contrib.gis.db.models.fields.MultiPolygonField(srid=4326),
+        migrations.RunSQL(
+            'ALTER TABLE "organisations_divisiongeography" ALTER COLUMN "geography" TYPE geometry(MULTIPOLYGON,4326) USING geography::geometry(MultiPolygon,4326);'
         )
     ]

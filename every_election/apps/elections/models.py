@@ -7,7 +7,7 @@ from enum import Enum, unique
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.gis.db.models.functions import Distance
-from django.contrib.postgres.fields import JSONField
+from django.db.models import JSONField
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.files import File
 from django.db import models, transaction
@@ -19,7 +19,6 @@ from django.dispatch import receiver
 from django.urls import reverse
 
 from django_extensions.db.models import TimeStampedModel
-from django_markdown.models import MarkdownField
 from storages.backends.s3boto3 import S3Boto3Storage
 from uk_election_timetables.calendars import Country
 from uk_election_timetables.election_ids import (
@@ -168,7 +167,7 @@ class Election(TimeStampedModel):
     metadata = models.ForeignKey(
         "elections.MetaData", null=True, blank=True, on_delete=models.SET_NULL
     )
-    current = models.NullBooleanField()
+    current = models.BooleanField(null=True)
 
     """
     election.moderation_statuses.all() is not a terribly useful call
@@ -520,7 +519,7 @@ class VotingSystem(models.Model):
 
 class Explanation(models.Model):
     description = models.CharField(blank=False, max_length=100)
-    explanation = MarkdownField(blank=False)
+    explanation = models.CharField(blank=False, max_length=100)
 
     def __str__(self):
         return self.description
