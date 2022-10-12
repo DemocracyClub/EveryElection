@@ -28,7 +28,7 @@ uk-geo-utils==0.10.5
 
 django-pipeline==2.0.8
 
-importlib-metadata==4.12.0
+importlib-metadata==5.0.0
 
 git+https://github.com/mysociety/django-pipeline-csscompressor
 git+https://github.com/DemocracyClub/dc_signup_form.git@2.1.3
