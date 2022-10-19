@@ -108,3 +108,6 @@ every_election/assets-src/vendor/
 
 # pytest cache
 .pytest_cache/
+
+# PyCharm
+.idea/
