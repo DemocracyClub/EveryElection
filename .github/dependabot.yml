@@ -9,4 +9,4 @@ updates:
   - dependency-name: django
     versions:
     - ">= 3.a"
-    - "< 4"
+    - "< 4.2"
