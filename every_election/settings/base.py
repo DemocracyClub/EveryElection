@@ -44,7 +44,6 @@ PROJECT_APPS = [
     "organisations",
     "organisations.boundaries",
     "rest_framework",
-    # 'static_precompiler',
     "pipeline",
     "storages",
     "django_extensions",
