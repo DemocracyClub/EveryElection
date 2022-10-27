@@ -6,7 +6,7 @@ orbs:
 jobs:
   build:
     docker:
-      - image: cimg/python:3.8.12
+      - image: cimg/python:3.10
         environment:
           CIRCLECI: true
           PGHOST: 127.0.0.1
@@ -21,7 +21,7 @@ jobs:
       - checkout
 
       - restore_cache:
-          key: every_election-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}
+          key: v2--dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}
 
 
       - node/install:
@@ -33,8 +33,8 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            sudo apt update && sudo apt install -y python3-venv gdal-bin python3-gdal python3-dev
-            python3 -m venv .venv
+            sudo apt update && sudo apt install -y gdal-bin python3-gdal python3-dev
+            python -m venv .venv
             . .venv/bin/activate
             pip install --upgrade pip
             pip install coveralls wheel
@@ -43,7 +43,7 @@ jobs:
           paths:
             - ./.venv
             - ./node_modules
-          key: every_election-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}
+          key: v2-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}
 
       - run:
           name: Tests
