@@ -46,9 +46,11 @@
   <main id="main" tabindex="-1" class="ds-stack"> 
     {% block messages %} 
     {% if SERVER_ENVIRONMENT == 'test' or SERVER_ENVIRONMENT == 'staging' %}
-      <div class="callout warning">
-        <p class="text-center">This is a staging site.</p>
-      </div>
+      <aside class="ds-status" aria-label="Status">
+        <ul class="ds-stack">
+          <li class="ds-status-message">This is a staging site.</li>
+        </ul>
+      </aside>
       {% endif %}
     {% endblock messages %}
     
