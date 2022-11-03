@@ -23,22 +23,26 @@
     {% endfor %}
     </ul>
 
-    
-    <h2>Ballot paper IDs</h2>
-    {% regroup all_ids by election_title as elections_by_title %}
-    {% for election_group in elections_by_title %}
-        {% if election_group.grouper %}
-        <h5>{{ election_group.grouper }}</h5>
-        <ul>
-        {% for election in election_group.list %}
-            {% if election.identifier_type == "ballot" %}
-            <li><code>{{ election.election_id }}</code></li>
-            {% endif %}
-        {% endfor %}
-        </ul>
-
-        {% endif %}
-    {% endfor %}
+        {% regroup all_ids by election_title as elections_by_title %}
+        <div class="ds-table">
+            <table>  
+                <tr>
+                    <th>Election Name</th>
+                    <th>Ballot paper ID</th>
+                </tr> 
+            {% for election_group in elections_by_title %} 
+                {% for election in election_group.list %}
+                    {% if election.identifier_type == "ballot" %} 
+                         
+                        <tr> 
+                            <td>{{ election.division }}</td>
+                            <td><code>{{ election.election_id }}</code></td>
+                        </tr>
+                    {% endif %}
+                {% endfor %} 
+            {% endfor %} 
+            </table> 
+        </div>
 </div>
 
     {% endblock form_page_header %}
