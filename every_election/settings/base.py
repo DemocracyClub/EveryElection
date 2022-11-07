@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "uk_geo_utils",
     "dc_design_system",
-    # "dc_utils",
+    "dc_utils",
 ]
 
 PROJECT_APPS = [
@@ -49,7 +49,6 @@ PROJECT_APPS = [
     "storages",
     "django_extensions",
     "election_snooper",
-    "dc_utils",
 ]
 
 INSTALLED_APPS += PROJECT_APPS
@@ -160,8 +159,8 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "dc_signup_form.context_processors.signup_form",
-                "core.context_processors.global_settings",
                 "dc_utils.context_processors.dc_django_utils",
+                "core.context_processors.global_settings",
             ],
         },
     }
@@ -181,6 +180,7 @@ AUTH_PASSWORD_VALIDATORS = [
 DATA_UPLOAD_MAX_NUMBER_FIELDS = None
 
 SITE_TITLE = "Every Election"
+SITE_LOGO_WIDTH = "100"
 
 DATA_CACHE_DIR = root("data_cache")
 

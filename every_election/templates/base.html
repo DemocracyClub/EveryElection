@@ -7,60 +7,49 @@
     {% stylesheet 'styles' %}
 {% endblock extra_site_css %}
 
-{% block header_base %} 
-    <header class="ds-header">
-      <a class="ds-logo" href="/">
-        <img src="{%  static 'images/logo_icon.svg' %}" alt="" width="100" />
-        <span>Every Election</span>
-      </a>
-    {% block site_menu %}
-      <nav> 
-        <ul>
-          <li><a href="{% url "home"%}">Home</a></li>
-          <li><a href="{% url "organisations_view"%}">Organisations</a></li>
-          <li><a href="{% url "election_types_view"%}">Election Types</a></li>
-          <li><a href="{% url "reference_definition_view"%}">Reference Definition</a></li>
-          <li><a href="{% url "elections_view"%}">Elections</a></li>
-          <li><a href="{% url "id_creator"%}">ID Creator</a></li>
-          {% if not user.is_authenticated %}
-            <li>|</li>
-            <li><a href="{% url "login"%}">Log In</a></li>
-          {% endif %}
-        </ul>
-            
-        {% if user.is_authenticated %}
-          <ul>
-            <li><a href="{% url "snooped_election_view"%}">Election Radar</a></li>
-            <li><a href="{% url "election_moderation_queue"%}">Moderation</a></li>
-            <li>|</li>
-            <li><a href="{% url "logout"%}">Log Out {{ user }}</a></li>
-            <li><a href="{% url "password_change"%}">Change Password</a></li>
-          </ul>
-        {% endif %}
-      </nav>
-    {% endblock site_menu %}
-    </header>  
-{% endblock header_base %}
-
-{% block main_base %}
-  <main id="main" tabindex="-1" class="ds-stack"> 
-    {% block messages %} 
-    {% if SERVER_ENVIRONMENT == 'test' or SERVER_ENVIRONMENT == 'staging' %}
-      <aside class="ds-status" aria-label="Status">
-        <ul class="ds-stack">
-          <li class="ds-status-message">This is a staging site.</li>
-        </ul>
-      </aside>
+{% block site_menu %}
+  <nav> 
+    <ul>
+      <li><a href="{% url "home"%}">Home</a></li>
+      <li><a href="{% url "organisations_view"%}">Organisations</a></li>
+      <li><a href="{% url "election_types_view"%}">Election Types</a></li>
+      <li><a href="{% url "reference_definition_view"%}">Reference Definition</a></li>
+      <li><a href="{% url "elections_view"%}">Elections</a></li>
+      <li><a href="{% url "id_creator"%}">ID Creator</a></li>
+      {% if not user.is_authenticated %}
+        <li>|</li>
+        <li><a href="{% url "login"%}">Log In</a></li>
       {% endif %}
-    {% endblock messages %}
-    
-    {% block content %}
-      {% block page_content %}
-        {% block base_title %}{% block page_title %}{% endblock page_title %} | Democracy Club Elections{% endblock base_title %}
-      {% endblock page_content %}
-    {% endblock content %}
-  </main>
-{% endblock main_base %}
+    </ul>
+        
+    {% if user.is_authenticated %}
+      <ul>
+        <li><a href="{% url "snooped_election_view"%}">Election Radar</a></li>
+        <li><a href="{% url "election_moderation_queue"%}">Moderation</a></li>
+        <li>|</li>
+        <li><a href="{% url "logout"%}">Log Out {{ user }}</a></li>
+        <li><a href="{% url "password_change"%}">Change Password</a></li>
+      </ul>
+    {% endif %}
+  </nav>
+{% endblock site_menu %}
+
+
+{% block messages %} 
+  {% if SERVER_ENVIRONMENT == 'test' or SERVER_ENVIRONMENT == 'staging' %}
+    <aside class="ds-status" aria-label="Status">
+      <ul class="ds-stack">
+        <li class="ds-status-message">This is a staging site.</li>
+      </ul>
+    </aside>
+  {% endif %}
+{% endblock messages %}
+
+{% block content %}
+  {% block page_content %}
+    {% block base_title %}{% block page_title %}{% endblock page_title %} | Democracy Club Elections{% endblock base_title %}
+  {% endblock page_content %}
+{% endblock content %}
 
 {% block footer_base %}
   <footer class="ds-footer">
