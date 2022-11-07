@@ -135,6 +135,9 @@ $scope: false;
             border-radius: 0;
             appearance: none;
             font-size: $s2;
+            max-width: $s7; 
+        }
+        input#id_date-date_2 {
             max-width: $s8;
         }
     }
