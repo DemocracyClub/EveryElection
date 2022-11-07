@@ -15,7 +15,6 @@
                     {{ form|dc_form }}
                 {% endfor %}
             {% else %}
-                {{ wizard.form.errors }}
                 {{ wizard.form|dc_form }}
             {% endif %}
         {% endblock form_content %} 

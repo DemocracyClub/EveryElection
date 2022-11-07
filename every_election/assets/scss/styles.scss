@@ -135,7 +135,8 @@ $scope: false;
             border-radius: 0;
             appearance: none;
             font-size: $s2;
-            max-width: $s7; 
+            max-width: $s7;
+            color: black; 
         }
         input#id_date-date_2 {
             max-width: $s8;
@@ -145,7 +146,13 @@ $scope: false;
 
 #main > form > div.ds-field > label > div.ds-error {
     margin: 0.5rem 0 0.5rem 0;
-}    
+}   
+ 
 .date-submit {
     margin: 0.5rem 0 0.5rem 0;
 }
+
+#main > form > div.ds-error > div > label > span {
+    padding-top:0;
+}
+
