@@ -1,0 +1,24 @@
+{% regroup all_ids by organisation.name as elections_by_title %}
+{% for election_group in elections_by_title %}
+    {% regroup election_group.list by election_title as elections_by_title %} 
+    {% if not election_group.grouper == None %} 
+        <div class="ds-table">
+            <table> 
+            <caption>{{election_group.grouper }}</caption>
+                <tr>
+                    <th>Election Name</th>
+                    <th>Ballot paper ID</th>
+                </tr>  
+                {% for election in election_group.list %}
+                    {% if election.identifier_type == "ballot" %} 
+                         
+                        <tr> 
+                            <td>{{ election.division }}</td>
+                            <td><code>{{ election.election_id }}</code></td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}  
+            </table>
+        </div>
+	{% endif %}
+{% endfor %}

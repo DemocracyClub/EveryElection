@@ -22,27 +22,13 @@
         {% endif %}
     {% endfor %}
     </ul>
-
-        {% regroup all_ids by election_title as elections_by_title %}
-        <div class="ds-table">
-            <table>  
-                <tr>
-                    <th>Election Name</th>
-                    <th>Ballot paper ID</th>
-                </tr> 
-            {% for election_group in elections_by_title %} 
-                {% for election in election_group.list %}
-                    {% if election.identifier_type == "ballot" %} 
-                         
-                        <tr> 
-                            <td>{{ election.division }}</td>
-                            <td><code>{{ election.election_id }}</code></td>
-                        </tr>
-                    {% endif %}
-                {% endfor %} 
-            {% endfor %} 
-            </table> 
-        </div>
+        {% if all_ids.0.election_type.election_type in election_types_with_subtypes %}
+            {% include "id_creator/election_subtype_group.html" %}  
+        {% elif all_ids.0.election_type.election_type == "local" %}
+            {% include "id_creator/local_elections.html" %}
+        {% else %}
+            {% include "id_creator/elections_group.html" %} 
+        {% endif %}
 </div>
 
     {% endblock form_page_header %}
