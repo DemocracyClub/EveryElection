@@ -1,0 +1,40 @@
+name: InstallApp
+description: Installs the EE Django app
+schemaVersion: 1.0
+component_version: 0.0.8
+parameters:
+  - git_branch:
+      type: string
+      default: master
+      description: Git branch to pull when building the image
+  - username:
+      type: string
+      default: ee
+      description: Username to use when installing the app
+phases:
+  - name: build
+    steps:
+      - name: install_apt_packages
+        action: ExecuteBash
+        inputs:
+          commands:
+            - sudo apt-get install -y postgresql-client postgresql-common python3-dev libpq-dev gdal-bin libproj-dev
+      - name: make_directories
+        action: ExecuteBash
+        inputs:
+          commands:
+            - sudo mkdir -p /var/www/{{ username }}
+            - sudo chown -R {{ username }} /var/www/{{ username }}
+      - name: clone_project_and_make_venv
+        action: ExecuteBash
+        inputs:
+          commands:
+            - sudo su {{ username }}
+            - cd /var/www/{{ username }}
+            - git clone https://github.com/DemocracyClub/EveryElection.git repo
+            - cd repo
+            - git checkout {{ git_branch }}
+            - python3 -m venv .venv
+            - . .venv/bin/activate
+            - pip install -U pip
+            - pip install -r requirements/production.txt

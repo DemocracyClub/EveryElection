@@ -1,0 +1,16 @@
+name: AddUser
+description: Adds a system user
+schemaVersion: 1.0
+component_version: 0.0.3
+parameters:
+  - username:
+      type: string
+      description: Username to create
+phases:
+  - name: build
+    steps:
+      - name: create_user_account
+        action: ExecuteBash
+        inputs:
+          commands:
+            - sudo useradd {{ username }} -m -s /bin/bash
