@@ -1,7 +1,7 @@
 {
   "name": "everyelection",
   "version": "1.0.0",
-  "description": "[![Build Status](https://travis-ci.org/DemocracyClub/EveryElection.svg?branch=master)](https://travis-ci.org/DemocracyClub/EveryElection) [![Coverage Status](https://coveralls.io/repos/github/DemocracyClub/EveryElection/badge.svg?branch=master)](https://coveralls.io/github/DemocracyClub/EveryElection?branch=master)",
+  "description": "[![Build Status](https://app.circleci.com/pipelines/github/DemocracyClub/EveryElection)](https://app.circleci.com/pipelines/github/DemocracyClub/EveryElection) [![Coverage Status](https://coveralls.io/repos/github/DemocracyClub/EveryElection/badge.svg?branch=master)](https://coveralls.io/github/DemocracyClub/EveryElection?branch=master)",
   "directories": {
     "doc": "docs"
   },

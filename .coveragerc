@@ -1,6 +1,5 @@
 [run]
 omit =
-    */.tox/*
     */tests/*
     */apps.py
     */migrations/*
