@@ -12,7 +12,7 @@ jobs:
           PGHOST: 127.0.0.1
       - image: cimg/postgres:11.17-postgis
         environment:
-          POSTGRES_USER: postgres
+          POSTGRES_USER: every_election
           POSTGRES_DB: every_election
 
     working_directory: ~/repo
