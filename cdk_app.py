@@ -10,9 +10,7 @@ app = cdk.App()
 EEImageUpdater(
     app,
     "EEImageUpdater",
-    env=cdk.Environment(
-        account=os.getenv("CDK_DEFAULT_ACCOUNT"), region="eu-west-2"
-    ),
+    env=cdk.Environment(account=os.getenv("CDK_DEFAULT_ACCOUNT"), region="eu-west-2"),
 )
 
 

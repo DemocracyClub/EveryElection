@@ -10,10 +10,12 @@ root = lambda *x: os.path.join(BASE_DIR, *x)
 
 sys.path.insert(0, root("apps"))
 
+
 def str_bool_to_bool(str_bool):
     if not str_bool:
         return False
     return str_bool in ["1", "True", "true", "TRUE"]
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("EE_SECRET_KEY", "CHANGE THIS!!!")
@@ -22,9 +24,7 @@ SECRET_KEY = os.environ.get("EE_SECRET_KEY", "CHANGE THIS!!!")
 DEBUG = str_bool_to_bool(os.environ.get("EE_DEBUG", False))
 IN_TESTING = sys.argv[1:2] == "test" or sys.argv[0].endswith("pytest")
 
-ALLOWED_HOSTS = [
-    os.environ.get("EE_HOSTNAME", None)
-]
+ALLOWED_HOSTS = [os.environ.get("EE_HOSTNAME", None)]
 
 # Application definition
 

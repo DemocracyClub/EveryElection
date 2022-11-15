@@ -1,11 +1,11 @@
 name: InstallApp
 description: Installs the EE Django app
 schemaVersion: 1.0
-component_version: 0.0.8
+component_version: 0.0.12
 parameters:
   - git_branch:
       type: string
-      default: master
+      default: ubuntu-22.04-upgrade
       description: Git branch to pull when building the image
   - username:
       type: string
@@ -18,14 +18,21 @@ phases:
         action: ExecuteBash
         inputs:
           commands:
-            - sudo apt-get install -y postgresql-client postgresql-common python3-dev libpq-dev gdal-bin libproj-dev
+            - sudo apt-get install -y postgresql-client postgresql-common python3-dev libpq-dev gdal-bin libproj-dev jq postgresql-14-postgis-3
       - name: make_directories
         action: ExecuteBash
         inputs:
           commands:
             - sudo mkdir -p /var/www/{{ username }}
-            - sudo chown -R {{ username }} /var/www/{{ username }}
-      - name: clone_project_and_make_venv
+      - name: make_database_user
+        action: ExecuteBash
+        inputs:
+          commands:
+            - |
+              cd /tmp/
+              su postgres -c 'createuser {{ username }} --superuser || true'
+              su postgres -c 'createdb {{ username }}  || true'
+      - name: clone_project_and_install_reqs
         action: ExecuteBash
         inputs:
           commands:
@@ -34,7 +41,123 @@ phases:
             - git clone https://github.com/DemocracyClub/EveryElection.git repo
             - cd repo
             - git checkout {{ git_branch }}
+            - git pull --rebase origin {{ git_branch }}
+            - git branch
             - python3 -m venv .venv
+            - sudo chown -R {{ username }} /var/www/{{ username }}
             - . .venv/bin/activate
             - pip install -U pip
             - pip install -r requirements/production.txt
+            - pip install gevent
+      - name: CreateEnvWriterFile
+        action: CreateFile
+        inputs:
+          - path: /usr/local/bin/write_{{ username }}_env_file
+            permissions: 755
+            owner: "{{ username }}"
+            group: "{{ username }}"
+            content: |
+              #!/usr/bin/env bash
+              cd /var/www/{{ username }}/repo/
+              aws ssm get-parameters-by-path --path "/" --recursive | jq '.Parameters[] | (.Name | sub(".*/"; "")) + " = " + .Value | @text' --raw-output > .env
+      - name: CreateSSMEnvFileServiceFile
+        action: CreateFile
+        inputs:
+          - path: /etc/systemd/system/{{ username }}_ssm_env_file_maker.service
+            content: |
+              [Unit]
+              Description={{ username }} .env file writer
+              After=network.target
+              [Service]
+              User={{ username }}
+              Group={{ username }}
+              WorkingDirectory=/var/www/{{ username }}/repo/
+              Type=oneshot
+              RemainAfterExit=true
+              ExecStart=/usr/local/bin/write_{{ username }}_env_file
+      - name: StartAndEnableSSMEnvFileService
+        action: ExecuteBash
+        inputs:
+          commands:
+            - sudo systemctl start {{ username }}_ssm_env_file_maker.service
+            - sudo systemctl enable {{ username }}_ssm_env_file_maker.service
+            - sudo systemctl status {{ username }}_ssm_env_file_maker.service
+            - sudo journalctl -u {{ username }}_ssm_env_file_maker.service
+            - sudo systemctl daemon-reload
+            - sudo systemctl restart {{ username }}_ssm_env_file_maker.service
+      - name: CreateGunicornServiceFile
+        action: CreateFile
+        inputs:
+          - path: /etc/systemd/system/gunicorn_{{ username }}.service
+            content: |
+              [Unit]
+              Description={{ username }} gunicorn daemon
+              After={{ username }}_ssm_env_file_maker.service
+              [Service]
+              User={{ username }}
+              Group={{ username }}
+              WorkingDirectory=/var/www/{{ username }}/repo/
+              ExecStart=/var/www/{{ username }}/repo/.venv/bin/gunicorn \
+                        --access-logfile - \
+                        --workers 3 \
+                        --bind 127.0.0.1:8001 \
+                        --worker-class=gevent \
+                        {{ username }}.wsgi:application
+              ExecReload=/bin/kill -s HUP $MAINPID
+              ExecStop=/bin/kill -s TERM $MAINPID
+              [Install]
+              WantedBy=multi-user.target            
+
+      - name: StartAndEnableGunicornService
+        action: ExecuteBash
+        inputs:
+          commands:
+            - sudo systemctl enable gunicorn_{{ username }}
+            - sudo systemctl start gunicorn_{{ username }}
+            - sudo systemctl status gunicorn_{{ username }}
+            - sudo journalctl -u gunicorn_{{ username }}
+            - sudo systemctl daemon-reload
+            - sudo systemctl restart gunicorn_{{ username }}
+      - name: make_django_setup_script
+        action: CreateFile
+        inputs:
+          - path: /var/www/{{ username }}/setup_django.sh
+            permissions: 755
+            owner: "{{ username }}"
+            group: "{{ username }}"
+            content: |
+              #!/usr/bin/env bash
+              cd /var/www/{{ username }}/repo/
+              . .venv/bin/activate
+              python manage.py migrate
+      - name: django_setup
+        action: ExecuteBash
+        inputs:
+          commands:
+            - sudo su {{ username }} -c /var/www/{{ username }}/setup_django.sh
+  - name: test
+    steps:
+      - name: make_django_check_script
+        action: CreateFile
+        inputs:
+          - path: /var/www/{{ username }}/check_django.sh
+            permissions: 755
+            owner: "{{ username }}"
+            group: "{{ username }}"
+            content: |
+              #!/usr/bin/env bash
+              cd /var/www/{{ username }}/repo/
+              . .venv/bin/activate
+              python manage.py check
+              python manage.py makemigrations --check
+
+      - name: django_check
+        action: ExecuteBash
+        inputs:
+          commands:
+            - sudo su {{ username }} -c /var/www/{{ username }}/check_django.sh
+      - name: curl_localhost
+        action: ExecuteBash
+        inputs:
+          commands:
+            - curl 127.0.0.1:8001 --fail

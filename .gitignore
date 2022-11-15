@@ -110,3 +110,6 @@ every_election/assets-src/vendor/
 
 # PyCharm
 .idea/
+
+# CDK
+cdk.out

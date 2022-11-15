@@ -10,7 +10,7 @@ from aws_cdk.aws_ssm import StringParameter
 
 
 COMPONENTS = [
-    {"name": "add_user", "file": "add_user.yml", "context": {"username": "ee"}},
+    {"name": "add_user", "file": "add_user.yml", "context": {"username": "every_election"}},
     {
         "name": "instance_connect",
         "file": "instance_connect.yml",
@@ -19,7 +19,7 @@ COMPONENTS = [
         "name": "install_app",
         "file": "install_app.yml",
         "context": {
-            "username": "ee",
+            "username": "every_election",
             "git_branch": "ubuntu-22.04-upgrade",
         },
     },
@@ -47,8 +47,8 @@ class EEImageUpdater(Stack):
 
         pipeline = image_builder.CfnImagePipeline(
             self,
-            validate_name(f"EE_Pipeline"),
-            name=validate_name(f"ee_image"),
+            validate_name("EE_Pipeline"),
+            name=validate_name("ee_image"),
             image_recipe_arn=recipe.attr_arn,
             infrastructure_configuration_arn=infra_config.attr_arn,
             distribution_configuration_arn=distribution.attr_arn,
@@ -87,7 +87,7 @@ class EEImageUpdater(Stack):
                     }
                 )
         print(components_list)
-        name = validate_name(f"EEImage_ubuntu")
+        name = validate_name("EEImage_ubuntu")
         return image_builder.CfnImageRecipe(
             self,
             name,
@@ -181,7 +181,7 @@ class EEImageUpdater(Stack):
 
     def make_distribution(self):
         org_id = StringParameter.value_for_string_parameter(self, "OrganisationID")
-        dist_name = validate_name(f"EE-distribution")
+        dist_name = validate_name("EE-distribution")
         return image_builder.CfnDistributionConfiguration(
             self,
             dist_name,
