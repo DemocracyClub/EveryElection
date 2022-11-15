@@ -10,15 +10,21 @@ root = lambda *x: os.path.join(BASE_DIR, *x)
 
 sys.path.insert(0, root("apps"))
 
+def str_bool_to_bool(str_bool):
+    if not str_bool:
+        return False
+    return str_bool in ["1", "True", "true", "TRUE"]
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "CHANGE THIS!!!"
+SECRET_KEY = os.environ.get("EE_SECRET_KEY", "CHANGE THIS!!!")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = str_bool_to_bool(os.environ.get("EE_DEBUG", False))
 IN_TESTING = sys.argv[1:2] == "test" or sys.argv[0].endswith("pytest")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    os.environ.get("EE_HOSTNAME", None)
+]
 
 # Application definition
 
@@ -34,7 +40,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "uk_geo_utils",
     "dc_design_system",
-    # "dc_utils",
 ]
 
 PROJECT_APPS = [
@@ -99,11 +104,11 @@ WSGI_APPLICATION = "every_election.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "NAME": "every_election",
-        "USER": "postgres",
-        "PASSWORD": "",
-        "HOST": "",
-        "PORT": "",
+        "NAME": os.environ.get("EE_DATABASE_NAME", "every_election"),
+        "USER": os.environ.get("EE_DATABASE_USER", "every_election"),
+        "PASSWORD": os.environ.get("EE_DATABASE_PASSWORD", ""),
+        "HOST": os.environ.get("EE_DATABASE_HOST", ""),
+        "PORT": os.environ.get("EE_DATABASE_PORT", ""),
     }
 }
 
