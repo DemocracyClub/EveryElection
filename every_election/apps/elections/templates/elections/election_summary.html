@@ -14,6 +14,10 @@
       <h3>{{ object.election_subtype }}</h3>
     {% endif %}
 
+    {% if object.geography %}
+      {% include "./division_map.html" %}
+    {% endif %}
+
     <dl class="ds-descriptions">
     <div>
       <dt>ID</dt>
