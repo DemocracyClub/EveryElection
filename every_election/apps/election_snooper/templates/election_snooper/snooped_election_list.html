@@ -3,50 +3,48 @@
 
 {% block content %}
 
-<div>
-    {% include "election_snooper/sub_menu.html" %}
-</div>
+    <div>
+            {% include "election_snooper/sub_menu.html" %}
+    </div>
     {% for form in objects %}
-<div class="ds-card">
-  <div class="ds-card-body">
-        <h3>{{ form.instance.title }}</h3>
-        <div>
-                {{ form.instance.detail }}
-                <p>
-                    {% if form.instance.snooper_name == "ALDC" %}
-                        <a href="{{ form.instance.source }}">{{ form.instance.source }}</a>
-                    {% else %}
-                        <a href="{{ form.instance.detail_url }}">{{ form.instance.detail_url }}</a>
+        <div class="ds-card">
+            <div class="ds-card-body">
+                <h3>{{ form.instance.title }}</h3>
+                <div>
+                    {{ form.instance.detail }}
+                    <p>
+                        {% if form.instance.snooper_name == "ALDC" %}
+                            <a href="{{ form.instance.source }}">{{ form.instance.source }}</a>
+                        {% else %}
+                            <a href="{{ form.instance.detail_url }}">{{ form.instance.detail_url }}</a>
+                        {% endif %}
+                    </p>
+                    <p>Found via <code>{{ form.instance.snooper_name }}</code></p>
+                    {% if form.instance.status == 'election' %}
+                        <a href="{% url 'id_creator' %}?radar_id={{ form.instance.id }}">Create an ID for this election</a>
                     {% endif %}
-                </p>
-                <p>Found via <code>{{ form.instance.snooper_name }}</code></p>
-                {% if form.instance.status == 'election' %}
-                  <a href="{% url 'id_creator' %}?radar_id={{ form.instance.id }}">Create an ID for this election</a>
-                {% endif %}
-            </div>
-            <div>
-              {% if form.instance.status == 'id_created' %}
-                &nbsp;
-              {% else %}
-                <form method=post>
-                {% csrf_token %}
-                {{ form|dc_form }}
-                <input type=hidden name="pk" value={{ form.instance.pk }}>
-                <button type="submit" class="ds-button">Save</button>
-                </form>
-              {% endif %}
+                </div>
+                <div>
+                    {% if form.instance.status == 'id_created' %}
+                        &nbsp;
+                    {% else %}
+                        <form method=post>
+                            {% csrf_token %}
+                            {{ form|dc_form }}
+                            <input type=hidden name="pk" value={{ form.instance.pk }}>
+                            <button type="submit" class="ds-button">Save</button>
+                        </form>
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </div>
 
     {% empty %}
-    <div class="ds-card">
-      No items!
-    </div>
+        <div class="ds-card">
+                  No items!
+        </div>
     {% endfor %}
 
     {% include "core/pagination_links.html" %}
 
-  </div>
-</div>
 {% endblock content %}
