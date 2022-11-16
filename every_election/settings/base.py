@@ -147,8 +147,7 @@ STATIC_URL = "/static/"
 
 # Additional locations of static files
 
-STATICFILES_DIRS = (root("assets"),)
-
+STATICFILES_DIRS = (root("assets"), root("../node_modules"))
 STATIC_ROOT = root("static")
 
 
@@ -165,6 +164,30 @@ PIPELINE = get_pipeline_settings(
 )
 
 PIPELINE["SASS_ARGUMENTS"] += " -I " + dc_design_system.DC_SYSTEM_PATH + "/system"
+
+PIPELINE["STYLESHEETS"].update(
+    {
+        "map": {
+            "source_filenames": [
+                "css/map.css",
+                "leaflet/dist/leaflet.css",
+            ],
+            "output_filename": "css/map.css",
+        },
+    }
+)
+
+PIPELINE["JAVASCRIPT"].update(
+    {
+        "map": {
+            "source_filenames": [
+                "leaflet/dist/leaflet.js",
+            ],
+            "output_filename": "js/map.js",
+        }
+    }
+)
+
 
 INTERNAL_IPS = ("127.0.0.1",)
 

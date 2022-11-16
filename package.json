@@ -20,6 +20,7 @@
   "homepage": "https://github.com/DemocracyClub/EveryElection#readme",
   "dependencies": {
     "topojson": "^3.0.2",
-    "aws-cdk": "2.50.0"
+    "aws-cdk": "2.50.0",
+    "leaflet": "^1.9.2"
   }
 }
