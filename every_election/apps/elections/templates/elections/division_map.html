@@ -35,11 +35,13 @@
 
                 function onEachFeature(feature, layer) {
                     if (feature.properties.division) {
-                        layer.bindPopup(feature.properties.organisation["official_name"] + " - " + feature.properties.division["name"])
+                        popup = feature.properties.organisation["official_name"] + " - " + feature.properties.division["name"]
                     } else {
-                        layer.bindPopup(feature.properties.organisation["common_name"])
+                        popup = feature.properties.organisation["common_name"]
                     }
-                }
+                layer.bindPopup(
+                    `<a href={% url 'api:election-geo' election_id=object.election_id format='json' %} download=\'{{object.election_title }}.geojson\'>${popup}</a>`)
+                };
 
                 fetch("{% url 'api:election-geo' election_id=object.election_id format='json' %}").then((response) => {
                     response.json().then((json) => {
@@ -55,6 +57,6 @@
                 });
             },
             {once:true}
-        )
+        );
     </script>
 {% endblock in_page_javascript %}
