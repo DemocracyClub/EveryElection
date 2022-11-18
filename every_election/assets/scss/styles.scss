@@ -28,9 +28,7 @@
 @import 'partials/_utilities.scss';
 @import 'partials/_status.scss';
 @import 'partials/_logo.scss';
-@import 'partials/_showcase.scss';
-@import 'partials/_switcher.scss';
-@import 'partials/_date-form.scss';
+@import 'partials/_date-picker.scss';
 $scope: false;
 @mixin optional-styles {
     @include description-lists;
@@ -53,9 +51,7 @@ $scope: false;
     @include codeblock;
     @include status;
     @include logo;
-    @include showcase;
-    @include switcher;
-    @include date-form;
+    @include date-picker;
 }
 
 @if $scope {
