@@ -1,0 +1,8 @@
+aws-cdk.core==1.181.0
+aws-cdk.aws-imagebuilder==1.180.0
+aws-cdk.aws-iam==1.181.0
+aws-cdk.aws-ssm==1.181.0
+aws-cdk.aws-autoscaling==1.181.0
+aws-cdk.aws-ec2==1.181.0
+aws-cdk.aws-codedeploy==1.181.0
+pyyaml==6.0

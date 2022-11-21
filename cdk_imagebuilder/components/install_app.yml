@@ -1,7 +1,7 @@
 name: InstallApp
 description: Installs the EE Django app
 schemaVersion: 1.0
-component_version: 0.0.12
+component_version: 0.0.13
 parameters:
   - git_branch:
       type: string
@@ -100,7 +100,7 @@ phases:
               ExecStart=/var/www/{{ username }}/repo/.venv/bin/gunicorn \
                         --access-logfile - \
                         --workers 3 \
-                        --bind 127.0.0.1:8001 \
+                        --bind 0.0.0.0:8001 \
                         --worker-class=gevent \
                         {{ username }}.wsgi:application
               ExecReload=/bin/kill -s HUP $MAINPID
