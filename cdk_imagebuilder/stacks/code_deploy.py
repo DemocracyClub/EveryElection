@@ -91,7 +91,6 @@ class EECodeDeployment(Stack):
             application=application,
             deployment_group_name="EEDeploymentGroup",
             auto_scaling_groups=[asg],
-
             # adds EC2 instances matching tags
             # ec2_instance_tags=codedeploy.InstanceTagSet(
             #     {

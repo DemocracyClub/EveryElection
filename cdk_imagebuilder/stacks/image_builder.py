@@ -10,7 +10,11 @@ from aws_cdk.aws_ssm import StringParameter
 
 
 COMPONENTS = [
-    {"name": "add_user", "file": "add_user.yml", "context": {"username": "every_election"}},
+    {
+        "name": "add_user",
+        "file": "add_user.yml",
+        "context": {"username": "every_election"},
+    },
     {
         "name": "instance_connect",
         "file": "instance_connect.yml",

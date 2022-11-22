@@ -15,11 +15,7 @@ EEImageUpdater(
     "EEImageUpdater",
     env=cdk.Environment(account=os.getenv("CDK_DEFAULT_ACCOUNT"), region="eu-west-2"),
 )
-EECodeDeployment(
-    app,
-    "EECodeDeployment",
-    env=env
-)
+EECodeDeployment(app, "EECodeDeployment", env=env)
 
 
 app.synth()
