@@ -43,11 +43,6 @@ class EECodeDeployment(Stack):
         )
 
         self.target_group = self.create_target_group()
-        self.auto_scaling_group = self.create_scaling_group(
-            vpc=self.default_vpc,
-            launch_template=self.launch_template,
-            target_group=self.target_group,
-        )
 
         self.alb = self.create_alb(
             security_group=self.alb_security_group,
@@ -55,62 +50,11 @@ class EECodeDeployment(Stack):
             https=False,
         )
 
-        self.code_deploy = self.create_code_deploy(asg=self.auto_scaling_group)
+        self.code_deploy = self.create_code_deploy()
 
-    def create_scaling_group(
-        self,
-        vpc: ec2.Vpc,
-        launch_template,
-        target_group: elbv2.ApplicationTargetGroup,
-    ):
-        scaling_group = autoscaling.AutoScalingGroup(
-            self,
-            "ASG",
-            vpc=vpc,
-            launch_template=launch_template,
-            min_capacity=1,
-            max_capacity=10,
-            desired_capacity=1,
-            health_check=autoscaling.HealthCheck.elb(grace=Duration.seconds(300)),
-            termination_policies=[
-                autoscaling.TerminationPolicy.OLDEST_LAUNCH_TEMPLATE,
-                autoscaling.TerminationPolicy.CLOSEST_TO_NEXT_INSTANCE_HOUR,
-            ],
-        )
-        scaling_group.attach_to_application_target_group(target_group=target_group)
-        return scaling_group
-
-    def create_code_deploy(self, asg):
+    def create_code_deploy(self):
         application = codedeploy.ServerApplication(
             self, "CodeDeployApplicationID", application_name="EECodeDeploy"
-        )
-
-        deployment_group = codedeploy.ServerDeploymentGroup(
-            self,
-            "EEDeploymentGroup",
-            application=application,
-            deployment_group_name="EEDeploymentGroup",
-            auto_scaling_groups=[asg],
-            # adds EC2 instances matching tags
-            # ec2_instance_tags=codedeploy.InstanceTagSet(
-            #     {
-            #         # any instance with tags satisfying
-            #         # key1=v1 or key1=v2 or key2 (any value) or value v3 (any key)
-            #         # will match this group
-            #         "key1": ["v1", "v2"],
-            #         "key2": [],
-            #         "": ["v3"],
-            #     }
-            # ),
-            # ignore_poll_alarms_failure=False,
-            # auto-rollback configuration
-            # auto_rollback=codedeploy.AutoRollbackConfig(
-            #     failed_deployment=True,
-            #     default: true
-            # stopped_deployment=True,
-            # default: false
-            # deployment_in_alarm=True,
-            # ),
         )
 
     def create_launch_template(
