@@ -14,7 +14,7 @@ def check_deployment_group():
     Attempt to get default deployment group.
     TODO allow this to accept args
     """
-    client = session.client("codedeploy")
+    client = session.client("codedeploy", region_name=os.environ.get("AWS_REGION"))
     return client.get_deployment_group(
         applicationName="EECodeDeploy",
         deploymentGroupName="EEDefaultDeploymentGroup",

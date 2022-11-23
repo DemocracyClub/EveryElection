@@ -4,9 +4,9 @@ orbs:
   node: circleci/node@5.0.2
 
 jobs:
-  build:
+  build_and_test:
     docker:
-      - image: cimg/python:3.10
+      - image: cimg/python:3.10.7
         environment:
           CIRCLECI: true
           PGHOST: 127.0.0.1
@@ -21,7 +21,7 @@ jobs:
       - checkout
 
       - restore_cache:
-          key: v2--dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}
+          key: v3-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}
 
 
       - node/install:
@@ -31,7 +31,7 @@ jobs:
           override-ci-command: npm install
 
       - run:
-          name: install dependencies
+          name: Install app dependencies
           command: |
             sudo apt update && sudo apt install -y gdal-bin python3-gdal python3-dev
             python -m venv .venv
@@ -39,11 +39,17 @@ jobs:
             pip install --upgrade pip
             pip install coveralls wheel
             pip install -r requirements/testing.txt
+      - run:
+          name: Install CDK Python dependencies
+          command: |
+            . .venv/bin/activate
+            pip install -r requirements/cdk.txt
+
       - save_cache:
           paths:
             - ./.venv
             - ./node_modules
-          key: v2-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}
+          key: v3-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
 
       - run:
           name: Tests
@@ -62,3 +68,87 @@ jobs:
             . .venv/bin/activate
             pytest --cov-report= --cov=every_election
             coveralls
+  cdk_synth:
+    docker:
+      - image: cimg/python:3.10.7-node
+        environment:
+          CIRCLECI: true
+          PGHOST: 127.0.0.1
+    working_directory: ~/repo
+
+    steps:
+    - checkout
+    - restore_cache:
+        key: v3-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
+    - run:
+        name: CDK version
+        command: |
+          npx cdk --version
+    - run:
+        name: CDK synth
+        command: |
+          . .venv/bin/activate
+          npx cdk synth --all
+
+    - persist_to_workspace:
+        root: ~/repo/
+        paths: [ cdk.out ]
+
+  cdk_deploy:
+    docker:
+      - image: cimg/python:3.10.7-node
+        environment:
+          CIRCLECI: true
+          PGHOST: 127.0.0.1
+    working_directory: ~/repo
+
+    steps:
+    - checkout
+    - restore_cache:
+        key: v3-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
+    - run:
+        name: CDK deploy
+        command: |
+          . .venv/bin/activate
+          npx cdk deploy --all
+
+  code_deploy:
+    docker:
+      - image: cimg/python:3.10.7-node
+        environment:
+          CIRCLECI: true
+          PGHOST: 127.0.0.1
+    working_directory: ~/repo
+
+    steps:
+    - checkout
+    - restore_cache:
+        key: v3-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
+    - run:
+        name: "Code Deploy: Create deployment group"
+        command: |
+          . .venv/bin/activate
+          python deployscripts/create_deployment_group.py
+    - run:
+        name: "Code Deploy: Create deployment"
+        command: |
+          . .venv/bin/activate
+          COMMIT_SHA=$CIRCLE_SHA1 python deployscripts/create_deployment.py
+
+workflows:
+  version: 2
+  test_build_deploy:
+    jobs:
+    - build_and_test
+    - cdk_synth:
+        requires:
+        - build_and_test
+        context: [deployment-development-ee]
+    - cdk_deploy:
+        requires:
+        - cdk_synth
+        context: [deployment-development-ee]
+    - code_deploy:
+        requires:
+        - cdk_deploy
+        context: [deployment-development-ee]
