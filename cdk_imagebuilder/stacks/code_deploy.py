@@ -1,11 +1,15 @@
 from aws_cdk.core import Stack, Construct, Duration
 
 import aws_cdk.aws_ec2 as ec2
-import aws_cdk.aws_autoscaling as autoscaling
 import aws_cdk.aws_iam as iam
 import aws_cdk.aws_elasticloadbalancingv2 as elbv2
 from aws_cdk.aws_ssm import StringParameter
 import aws_cdk.aws_codedeploy as codedeploy
+import aws_cdk.aws_cloudfront as cloudfront
+import aws_cdk.aws_cloudfront_origins as origins
+import aws_cdk.aws_certificatemanager as acm
+import aws_cdk.aws_route53 as route_53
+import aws_cdk.aws_route53_targets as route_53_target
 
 from cdk_imagebuilder.stacks.code_deploy_policies import (
     EE_DEPLOYER_POLICY,
@@ -51,6 +55,8 @@ class EECodeDeployment(Stack):
         )
 
         self.code_deploy = self.create_code_deploy()
+
+        self.cloudfront = self.create_cloudfront(self.alb)
 
     def create_code_deploy(self):
         application = codedeploy.ServerApplication(
@@ -267,3 +273,40 @@ class EECodeDeployment(Stack):
         )
 
         return roles
+
+    def create_cloudfront(self, alb: elbv2.ApplicationLoadBalancer):
+
+        # Hard code the ARN due to a bug with CDK that means we can't run synth
+        # with the placeholder values the SSM interface produces :(
+        cert = acm.Certificate.from_certificate_arn(
+            self,
+            "CertArn",
+            certificate_arn="arn:aws:acm:us-east-1:427217546102:certificate/e47eb373-80c0-47eb-8ff1-122004c132f3",
+        )
+
+        fqdn = StringParameter.value_from_lookup(
+            self,
+            "FQDN",
+        )
+
+        cloudfront_dist = cloudfront.Distribution(
+            self,
+            "EECloudFront",
+            default_behavior=cloudfront.BehaviorOptions(
+                origin=origins.LoadBalancerV2Origin(alb)
+            ),
+            certificate=cert,
+            domain_names=[fqdn],
+        )
+
+        hosted_zone = route_53.HostedZone.from_lookup(
+            self, "EEDomain", domain_name=fqdn, private_zone=False
+        )
+        a_record = route_53.ARecord(
+            self,
+            "FQDN_A_RECORD_TO_CF",
+            zone=hosted_zone,
+            target=route_53.RecordTarget.from_alias(
+                route_53_target.CloudFrontTarget(cloudfront_dist)
+            ),
+        )
