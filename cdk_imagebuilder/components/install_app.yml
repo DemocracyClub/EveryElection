@@ -1,7 +1,7 @@
 name: InstallApp
 description: Installs the EE Django app
 schemaVersion: 1.0
-component_version: 0.0.14
+component_version: 0.0.15
 parameters:
   - git_branch:
       type: string
@@ -97,12 +97,12 @@ phases:
               User={{ username }}
               Group={{ username }}
               WorkingDirectory=/var/www/{{ username }}/repo/
-              ExecStart=/var/www/{{ username }}/repo/.venv/bin/gunicorn \
-                        --access-logfile - \
-                        --workers 3 \
-                        --bind 0.0.0.0:8001 \
-                        --worker-class=gevent \
-                        {{ username }}.wsgi:application
+              ExecStart=/bin/bash -c 'PATH=/var/www/{{ username }}/repo/.venv/bin/:$PATH exec /var/www/{{ username }}/repo/.venv/bin/gunicorn \
+                  --access-logfile - \
+                  --workers 3 \
+                  --bind 0.0.0.0:8001 \
+                  --worker-class=gevent \
+                  every_election.wsgi:application'
               ExecReload=/bin/kill -s HUP $MAINPID
               ExecStop=/bin/kill -s TERM $MAINPID
               [Install]
