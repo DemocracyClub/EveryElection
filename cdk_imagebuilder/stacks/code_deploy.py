@@ -18,7 +18,7 @@ from cdk_imagebuilder.stacks.code_deploy_policies import (
     EE_CODE_DEPLOY_LAUNCH_TEMPLATE_POLICY,
 )
 
-EE_IMAGE = "ami-07f241317e951630b"
+EE_IMAGE = "ami-0be60c85eea65b701"
 
 
 class EECodeDeployment(Stack):
