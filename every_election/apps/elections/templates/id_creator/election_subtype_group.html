@@ -1,7 +1,7 @@
 {% regroup all_ids by organisation.name as elections_by_title %}
 {% for election_group in elections_by_title %}
-        {% regroup election_group.list by election_subtype as elections_by_subtype %} 
-        {% for election_subtype_group in elections_by_subtype %}
+    {% regroup election_group.list by election_subtype as elections_by_subtype %} 
+    {% for election_subtype_group in elections_by_subtype %}
         {% if election_subtype_group.grouper and election_subtype_group.list|length > 1 %}
         <div class="ds-table">
             <table> 
@@ -22,5 +22,5 @@
             </table>
         </div>
         {% endif %}
-        {% endfor %}  
-        {% endfor %}
+    {% endfor %}  
+{% endfor %}
