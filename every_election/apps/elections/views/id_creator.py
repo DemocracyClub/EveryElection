@@ -197,6 +197,7 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             )
             context["all_ids"] = all_ids
         context["user_is_moderator"] = user_is_moderator(self.request.user)
+        context["election_types_with_subtypes"] = ["sp", "senedd", "gla"]
         return context
 
     def get_form_kwargs(self, step):

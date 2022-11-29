@@ -22,23 +22,13 @@
         {% endif %}
     {% endfor %}
     </ul>
-
-    
-    <h2>Ballot paper IDs</h2>
-    {% regroup all_ids by election_title as elections_by_title %}
-    {% for election_group in elections_by_title %}
-        {% if election_group.grouper %}
-        <h5>{{ election_group.grouper }}</h5>
-        <ul>
-        {% for election in election_group.list %}
-            {% if election.identifier_type == "ballot" %}
-            <li><code>{{ election.election_id }}</code></li>
-            {% endif %}
-        {% endfor %}
-        </ul>
-
+        {% if all_ids.0.election_type.election_type in election_types_with_subtypes %}
+            {% include "id_creator/election_subtype_group.html" %}  
+        {% elif all_ids.0.election_type.election_type == "local" %}
+            {% include "id_creator/local_elections.html" %}
+        {% else %}
+            {% include "id_creator/elections_group.html" %} 
         {% endif %}
-    {% endfor %}
 </div>
 
     {% endblock form_page_header %}

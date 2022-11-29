@@ -171,7 +171,7 @@ class ElectionOrganisationDivisionForm(forms.Form):
         field_id = "__".join([str(x) for x in [organisation.pk, div.pk, subtype] if x])
         field = forms.ChoiceField(
             choices=self.choices,
-            widget=forms.RadioSelect,
+            widget=dc_forms.RadioSelectCluster,
             label=div.name,
             initial="no_seats",
             required=False,

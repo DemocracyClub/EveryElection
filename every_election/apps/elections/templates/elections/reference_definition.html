@@ -89,7 +89,8 @@
     <p>By-elections are indicated with the segment <code>by</code>.</p>
 
     <h3>Identifier Types</h3>
-    <table class="ds-table">
+    <div class="ds-table">
+      <table>
         <tr>
           <th>Type</th>
           <th>Subtype</th>
@@ -108,7 +109,8 @@
           <td align="center">{% if record.can_have_divs %}✔️{% else %}&nbsp;{% endif %}</td>
         </tr>
       {% endfor %}
-    </table>
+      </table>
+    </div>
 
     <h3>Hierarchy</h3>
     <p>Election ids are hierarchical. The lowest level (or most detailed)
