@@ -59,7 +59,7 @@ phases:
             content: |
               #!/usr/bin/env bash
               cd /var/www/{{ username }}/repo/
-              aws ssm get-parameters-by-path --path "/" --recursive | jq '.Parameters[] | (.Name | sub(".*/"; "")) + " = " + .Value | @text' --raw-output > .env
+              aws ssm get-parameters-by-path --path "/" --recursive | jq '.Parameters[] | (.Name | sub(".*/"; "")) + "=" + .Value | @text' --raw-output > .env
       - name: CreateSSMEnvFileServiceFile
         action: CreateFile
         inputs:
