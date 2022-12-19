@@ -75,6 +75,18 @@ class EECodeDeployment(Stack):
             launch_template_name="ee-launch-template",
             role=role,
             security_group=security_group,
+            block_devices=[
+                ec2.BlockDevice(
+                    device_name="/dev/sda1",
+                    volume=ec2.BlockDeviceVolume(
+                        ec2.EbsDeviceProps(
+                            iops=6000,
+                            volume_type=ec2.EbsDeviceVolumeType.GP3,
+                            volume_size=20,
+                        )
+                    ),
+                )
+            ],
         )
         return lt
 
