@@ -2,6 +2,7 @@
 import os
 
 from aws_cdk import core as cdk
+from aws_cdk.core import Tags
 
 from cdk_imagebuilder.stacks.code_deploy import EECodeDeployment
 from cdk_imagebuilder.stacks.image_builder import EEImageUpdater
@@ -17,5 +18,6 @@ EEImageUpdater(
 )
 EECodeDeployment(app, "EECodeDeployment", env=env)
 
+Tags.of(app).add("dc-product", "ee")
 
 app.synth()
