@@ -1,3 +1,4 @@
+from aws_cdk.aws_cloudfront import PriceClass
 from aws_cdk.core import Stack, Construct, Duration
 
 import aws_cdk.aws_ec2 as ec2
@@ -293,10 +294,14 @@ class EECodeDeployment(Stack):
             self,
             "EECloudFront",
             default_behavior=cloudfront.BehaviorOptions(
-                origin=origins.LoadBalancerV2Origin(alb)
+                origin=origins.LoadBalancerV2Origin(
+                    alb,
+                    http_port=80,
+                ),
             ),
             certificate=cert,
             domain_names=[fqdn],
+            price_class=PriceClass.PRICE_CLASS_100,
         )
 
         hosted_zone = route_53.HostedZone.from_lookup(
