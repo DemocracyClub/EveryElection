@@ -34,6 +34,7 @@ jobs:
           name: Install app dependencies
           command: |
             sudo apt update && sudo apt install -y gdal-bin python3-gdal python3-dev
+            pyenv local $(ls ~/.pyenv/versions/)
             python -m venv .venv
             . .venv/bin/activate
             pip install --upgrade pip
@@ -82,7 +83,21 @@ jobs:
     steps:
     - checkout
     - restore_cache:
-        key: v3-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
+        key: v3-machine-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
+    - run:
+        name: Install CDK Python dependencies
+        command: |
+          pyenv local $(ls -1 /opt/circleci/.pyenv/versions | grep 3.10)
+          python -m venv .venv
+          . .venv/bin/activate
+          pip install -r requirements/cdk.txt
+
+    - save_cache:
+        paths:
+          - ./.venv
+          - ./node_modules
+        key: v3-machine-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
+
     - run:
         name: CDK version
         command: |
@@ -111,10 +126,11 @@ jobs:
     steps:
     - checkout
     - restore_cache:
-        key: v3-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
+        key: v3-machine-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
     - run:
         name: CDK deploy
         command: |
+          pyenv local $(ls -1 /opt/circleci/.pyenv/versions | grep 3.10)
           . .venv/bin/activate
           npx cdk deploy --all
 
@@ -139,6 +155,7 @@ jobs:
     - run:
         name: "Code Deploy: Create deployment group"
         command: |
+          pyenv local $(ls ~/.pyenv/versions/)
           . .venv/bin/activate
           python deployscripts/create_deployment_group.py
     - run:
