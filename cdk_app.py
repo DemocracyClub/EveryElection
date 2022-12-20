@@ -39,5 +39,6 @@ EECodeDeployment(app, "EECodeDeployment", env=env)
 EEOncePerTagCommandRunner(app, "EEOncePerTagCommandRunner", env=env)
 
 Tags.of(app).add("dc-product", "ee")
+Tags.of(app).add("dc-environment", dc_environment)
 
 app.synth()
