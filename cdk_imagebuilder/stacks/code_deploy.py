@@ -99,7 +99,7 @@ class EECodeDeployment(Stack):
             health_check=elbv2.HealthCheck(
                 enabled=True,
                 healthy_threshold_count=2,
-                interval=Duration.seconds(100),
+                interval=Duration.seconds(30),
                 port="traffic-port",
                 path="/",
                 protocol=elbv2.Protocol.HTTP,
