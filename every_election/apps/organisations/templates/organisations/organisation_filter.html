@@ -2,18 +2,18 @@
 
 
 {% block content %}
-<section>
+    <section>
 
-{% for object in objects %}
-  <div class="ds-card postcode_card">
-    <div class="ds-card-body">
-      {% include "organisations/organisation_summary.html" %}
-    </div>
-  </div>
-{% endfor %}
+        {% for object in objects %}
+            <div class="ds-card postcode_card">
+                <div class="ds-card-body">
+                    {% include "organisations/organisation_summary.html" %}
+                </div>
+            </div>
+        {% endfor %}
 
-{% include "core/pagination_links.html" %}
+        {% include "core/pagination_links.html" %}
 
-</section>
+    </section>
 
 {% endblock content %}

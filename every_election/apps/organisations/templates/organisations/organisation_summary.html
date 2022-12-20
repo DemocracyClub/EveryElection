@@ -5,10 +5,10 @@
 <p>The official identifier is <code>{{ object.official_identifier }}</code></p>
 <p>The organisation type is <code>{{ object.organisation_type }}</code></p>
 {% if object.election_types.all %}
-  <p>This organisation supports the following election types:</p>
-  <ul>
-    {% for election_type in object.election_types.all %}
-      <li><code>{{ election_type.election_type }}</code></li>
-    {% endfor %}
-  </ul>
+    <p>This organisation supports the following election types:</p>
+    <ul>
+        {% for election_type in object.election_types.all %}
+            <li><code>{{ election_type.election_type }}</code></li>
+        {% endfor %}
+    </ul>
 {% endif %}

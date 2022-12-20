@@ -4,30 +4,30 @@
 {% block form_tag_extra %}class="large_legends inline_radios"{% endblock form_tag_extra %}
 {% block page_title %}Election Organisation{% endblock page_title %}
 {% block form_page_header %}
-<h1>Election Organisation</h1>
+    <h1>Election Organisation</h1>
 
-<p>Enter the organisation(s) holding <strong>{{ all_data.election_type }}</strong>
-    on <strong>{{ all_data.date|date }}</strong></p>
+    <p>Enter the organisation(s) holding <strong>{{ all_data.election_type }}</strong>
+        on <strong>{{ all_data.date|date }}</strong></p>
 
 {% endblock form_page_header %}
 
 
 {% block extra_javascript %}
-{{ block.super }}
-<script>
-fallback.ready(function() {
+    {{ block.super }}
+    <script>
+        fallback.ready(function() {
 
-    $("form").prepend(
-      $("<button type='button' class='ds-button'>Mark all seats as contested (can't be undone)</button>")
-        .on('click', function() {
-          $('input[value=seats_contested]').prop("checked", true);
-          $('input[value=seats_contested]').parent().addClass("selected");
-          $('input[value=no_seats]').parent().removeClass("selected");
-          $('input[value=by_election]').parent().removeClass("selected");
-        })
-    );
+            $("form").prepend(
+                $("<button type='button' class='ds-button'>Mark all seats as contested (can't be undone)</button>")
+                    .on('click', function() {
+                    $('input[value=seats_contested]').prop("checked", true);
+                    $('input[value=seats_contested]').parent().addClass("selected");
+                    $('input[value=no_seats]').parent().removeClass("selected");
+                    $('input[value=by_election]').parent().removeClass("selected");
+                })
+            );
 
-});
+        });
 
-</script>
+    </script>
 {% endblock extra_javascript %}

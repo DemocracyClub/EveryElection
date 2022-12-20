@@ -1,21 +1,21 @@
 <div class="card">
-  <ul class="pagination" role="navigation" aria-label="Pagination">
-    <span class="step-links">
-      {% if objects.has_previous %}
-        <li class="pagination-previous">
-          <a href="?page={{ objects.previous_page_number }}">previous</a>
-        </li>
-      {% endif %}
+    <ul class="pagination" role="navigation" aria-label="Pagination">
+        <span class="step-links">
+            {% if objects.has_previous %}
+                <li class="pagination-previous">
+                    <a href="?page={{ objects.previous_page_number }}">previous</a>
+                </li>
+            {% endif %}
 
-      <li class="current">
-        Page {{ objects.number }} of {{ objects.paginator.num_pages }}.
-      </li>
+            <li class="current">
+                Page {{ objects.number }} of {{ objects.paginator.num_pages }}.
+            </li>
 
-      {% if objects.has_next %}
-        <li class="pagination-next">
-          <a href="?page={{ objects.next_page_number }}">next</a>
-        </li>
-      {% endif %}
-    </span>
-  </ul>
+            {% if objects.has_next %}
+                <li class="pagination-next">
+                    <a href="?page={{ objects.next_page_number }}">next</a>
+                </li>
+            {% endif %}
+        </span>
+    </ul>
 </div>

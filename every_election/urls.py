@@ -23,11 +23,12 @@ urlpatterns = [
     ),
 ]
 
-urlpatterns += static(
-    settings.STATIC_URL, document_root=settings.STATIC_ROOT, show_indexes=True
-)
 
 if settings.DEBUG:
+    urlpatterns += static(
+        settings.STATIC_URL, document_root=settings.STATIC_ROOT, show_indexes=True
+    )
+
     from dc_utils.urls import dc_utils_testing_patterns
 
     urlpatterns += dc_utils_testing_patterns

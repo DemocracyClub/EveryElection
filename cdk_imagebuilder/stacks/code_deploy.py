@@ -309,8 +309,27 @@ class EECodeDeployment(Stack):
                 origin=origins.LoadBalancerV2Origin(
                     alb,
                     http_port=80,
+                    protocol_policy=cloudfront.OriginProtocolPolicy.HTTP_ONLY,
                 ),
             ),
+            additional_behaviors={
+                "/static/*": cloudfront.BehaviorOptions(
+                    origin=origins.LoadBalancerV2Origin(
+                        alb,
+                        http_port=80,
+                        protocol_policy=cloudfront.OriginProtocolPolicy.HTTP_ONLY,
+                    ),
+                    cache_policy=cloudfront.CachePolicy(
+                        self,
+                        "long_cache_static",
+                        default_ttl=Duration.days(2000),
+                        min_ttl=Duration.minutes(1),
+                        max_ttl=Duration.days(2000),
+                        enable_accept_encoding_brotli=True,
+                        enable_accept_encoding_gzip=True,
+                    ),
+                )
+            },
             certificate=cert,
             domain_names=[fqdn],
             price_class=PriceClass.PRICE_CLASS_100,

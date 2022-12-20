@@ -4,7 +4,7 @@
 {% block content %}
 
     <div>
-            {% include "election_snooper/sub_menu.html" %}
+        {% include "election_snooper/sub_menu.html" %}
     </div>
     {% for form in objects %}
         <div class="ds-card">
@@ -41,7 +41,7 @@
 
     {% empty %}
         <div class="ds-card">
-                  No items!
+            No items!
         </div>
     {% endfor %}
 

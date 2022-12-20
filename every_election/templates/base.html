@@ -7,122 +7,122 @@
     {% stylesheet 'styles' %}
 {% endblock extra_site_css %}
 
-{% block header_base %} 
+{% block header_base %}
     <header class="ds-header">
-      <a class="ds-logo" href="/">
-        <img src="{%  static 'images/logo_icon.svg' %}" alt="" width="100" />
-        <span>Every Election</span>
-      </a>
-    {% block site_menu %}
-      <nav> 
-        <ul>
-          <li><a href="{% url "home"%}">Home</a></li>
-          <li><a href="{% url "organisations_view"%}">Organisations</a></li>
-          <li><a href="{% url "election_types_view"%}">Election Types</a></li>
-          <li><a href="{% url "reference_definition_view"%}">Reference Definition</a></li>
-          <li><a href="{% url "elections_view"%}">Elections</a></li>
-          <li><a href="{% url "id_creator"%}">ID Creator</a></li>
-          {% if not user.is_authenticated %}
-            <li>|</li>
-            <li><a href="{% url "login"%}">Log In</a></li>
-          {% endif %}
-        </ul>
-            
-        {% if user.is_authenticated %}
-          <ul>
-            <li><a href="{% url "snooped_election_view"%}">Election Radar</a></li>
-            <li><a href="{% url "election_moderation_queue"%}">Moderation</a></li>
-            <li>|</li>
-            <li><a href="{% url "logout"%}">Log Out {{ user }}</a></li>
-            <li><a href="{% url "password_change"%}">Change Password</a></li>
-          </ul>
-        {% endif %}
-      </nav>
-    {% endblock site_menu %}
-    </header>  
+        <a class="ds-logo" href="/">
+            <img src="{%  static 'images/logo_icon.svg' %}" alt="" width="100" />
+            <span>Every Election</span>
+        </a>
+        {% block site_menu %}
+            <nav>
+                <ul>
+                    <li><a href="{% url "home"%}">Home</a></li>
+                    <li><a href="{% url "organisations_view"%}">Organisations</a></li>
+                    <li><a href="{% url "election_types_view"%}">Election Types</a></li>
+                    <li><a href="{% url "reference_definition_view"%}">Reference Definition</a></li>
+                    <li><a href="{% url "elections_view"%}">Elections</a></li>
+                    <li><a href="{% url "id_creator"%}">ID Creator</a></li>
+                    {% if not user.is_authenticated %}
+                        <li>|</li>
+                        <li><a href="{% url "login"%}">Log In</a></li>
+                    {% endif %}
+                </ul>
+
+                {% if user.is_authenticated %}
+                    <ul>
+                        <li><a href="{% url "snooped_election_view"%}">Election Radar</a></li>
+                        <li><a href="{% url "election_moderation_queue"%}">Moderation</a></li>
+                        <li>|</li>
+                        <li><a href="{% url "logout"%}">Log Out {{ user }}</a></li>
+                        <li><a href="{% url "password_change"%}">Change Password</a></li>
+                    </ul>
+                {% endif %}
+            </nav>
+        {% endblock site_menu %}
+    </header>
 {% endblock header_base %}
 
 {% block main_base %}
-  <main id="main" tabindex="-1" class="ds-stack"> 
-    {% block messages %} 
-    {% if SERVER_ENVIRONMENT == 'test' or SERVER_ENVIRONMENT == 'staging' %}
-      <aside class="ds-status" aria-label="Status">
-        <ul class="ds-stack">
-          <li class="ds-status-message">This is a staging site.</li>
-        </ul>
-      </aside>
-      {% endif %}
-    {% endblock messages %}
-    
-    {% block content %}
-      {% block page_content %}
-        {% block base_title %}{% block page_title %}{% endblock page_title %} | Democracy Club Elections{% endblock base_title %}
-      {% endblock page_content %}
-    {% endblock content %}
-  </main>
+    <main id="main" tabindex="-1" class="ds-stack">
+        {% block messages %}
+            {% if SERVER_ENVIRONMENT == 'test' or SERVER_ENVIRONMENT == 'staging' %}
+                <aside class="ds-status" aria-label="Status">
+                    <ul class="ds-stack">
+                        <li class="ds-status-message">This is a staging site.</li>
+                    </ul>
+                </aside>
+            {% endif %}
+        {% endblock messages %}
+
+        {% block content %}
+            {% block page_content %}
+                {% block base_title %}{% block page_title %}{% endblock page_title %} | Democracy Club Elections{% endblock base_title %}
+            {% endblock page_content %}
+        {% endblock content %}
+    </main>
 {% endblock main_base %}
 
 {% block footer_base %}
-  <footer class="ds-footer">
-    <div class="ds-block-centered ds-text-centered ds-stack">
-      <div class="ds-cluster-center">
-        <ul>
-          <li><a href="{% url 'home' %}">Home</a></li>
-          <li><a href="https://democracyclub.org.uk/about/">About</a></li>
-          <li><a href="https://democracyclub.org.uk/privacy/">Privacy</a></li>
-          <li><a href="https://democracyclub.org.uk/blog/">Blog</a></li>
-          <li><a href="https://democracyclub.org.uk/contact/">Contact</a></li>
-          <li><a href="https://democracyclub.org.uk/donate/">Donate</a></li>
-          <li><a href="https://www.facebook.com/democracyclub/">Facebook</a></li>
-          <li><a href="https://twitter.com/democlub">Twitter</a></li>
-          <li><a href="https://github.com/DemocracyClub/EveryElection">GitHub</a></li>  
-        </ul>
-        <div>
-          <p>Democracy Club is a UK based Community Interest Company that builds
-            the digital infrastructure needed for a 21st century democracy</p>
-          </div>
-        <div class="ds-copyright ds-width-full">
-          <a class="ds-logo" href="https://democracyclub.org.uk/">
-              <img src="{%  static "images/logo_icon.svg" %}" alt="" width="100"/>
-              <span class="ds-text-left">democracy<br>club</span>
-          </a>
-          <p>Copyright &copy; {% now 'Y' %} Democracy Club</p>
-          <p>Community Interest Company</p>
-          <p>Company No: <a href="https://beta.companieshouse.gov.uk/company/09461226">09461226</a></p> 
+    <footer class="ds-footer">
+        <div class="ds-block-centered ds-text-centered ds-stack">
+            <div class="ds-cluster-center">
+                <ul>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="https://democracyclub.org.uk/about/">About</a></li>
+                    <li><a href="https://democracyclub.org.uk/privacy/">Privacy</a></li>
+                    <li><a href="https://democracyclub.org.uk/blog/">Blog</a></li>
+                    <li><a href="https://democracyclub.org.uk/contact/">Contact</a></li>
+                    <li><a href="https://democracyclub.org.uk/donate/">Donate</a></li>
+                    <li><a href="https://www.facebook.com/democracyclub/">Facebook</a></li>
+                    <li><a href="https://twitter.com/democlub">Twitter</a></li>
+                    <li><a href="https://github.com/DemocracyClub/EveryElection">GitHub</a></li>
+                </ul>
+                <div>
+                    <p>Democracy Club is a UK based Community Interest Company that builds
+                        the digital infrastructure needed for a 21st century democracy</p>
+                </div>
+                <div class="ds-copyright ds-width-full">
+                    <a class="ds-logo" href="https://democracyclub.org.uk/">
+                        <img src="{%  static "images/logo_icon.svg" %}" alt="" width="100"/>
+                        <span class="ds-text-left">democracy<br>club</span>
+                    </a>
+                    <p>Copyright &copy; {% now 'Y' %} Democracy Club</p>
+                    <p>Community Interest Company</p>
+                    <p>Company No: <a href="https://beta.companieshouse.gov.uk/company/09461226">09461226</a></p>
 
-          <p>Contains OS data © Crown copyright and database right {% now 'Y' %}</p> 
-          <p>Contains Royal Mail data © Royal Mail copyright and database right {% now 'Y' %}</p>
-          <p>Contains National Statistics data © Crown copyright and database right {% now 'Y' %}</p>
+                    <p>Contains OS data © Crown copyright and database right {% now 'Y' %}</p>
+                    <p>Contains Royal Mail data © Royal Mail copyright and database right {% now 'Y' %}</p>
+                    <p>Contains National Statistics data © Crown copyright and database right {% now 'Y' %}</p>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </footer>
+    </footer>
 {% endblock footer_base %}
 
 {% block extra_site_js %}
-  {% if debug %}
-      <script>
-      // shim fallback in debug mode
-      if (typeof fallback == 'undefined') {
-          var fallback = {
-              ready: function(l, f) {
-                  if (typeof l == "function") {
-                      l()
-                  } else {
-                      f();
-                  }
-              }
-          }
-      }
-      </script>
-      {% javascript 'scripts' %}
-  {% else %}
-      <script type="text/javascript">
-          fallback.load({
-              scripts: [
-                  '{% static "js/scripts.js" %}'
-              ],
-          });
-      </script>
-  {% endif %}
+    {% if debug %}
+        <script>
+            // shim fallback in debug mode
+            if (typeof fallback == 'undefined') {
+                var fallback = {
+                    ready: function(l, f) {
+                        if (typeof l == "function") {
+                            l()
+                        } else {
+                            f();
+                        }
+                    }
+                }
+            }
+        </script>
+        {% javascript 'scripts' %}
+    {% else %}
+        <script type="text/javascript">
+            fallback.load({
+                scripts: [
+                    '{% static "js/scripts.js" %}'
+                ],
+            });
+        </script>
+    {% endif %}
 {% endblock extra_site_js %}

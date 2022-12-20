@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "uk_geo_utils",
     "dc_design_system",
+    "whitenoise",
 ]
 
 PROJECT_APPS = [
@@ -137,6 +138,11 @@ STATIC_ROOT = root("static")
 
 from dc_utils.settings.pipeline import *  # noqa
 from dc_utils.settings.pipeline import get_pipeline_settings
+from dc_utils.settings.whitenoise import whitenoise_add_middleware
+
+
+MIDDLEWARE = whitenoise_add_middleware(MIDDLEWARE)
+WHITENOISE_MAX_AGE = 60 * 60 * 24 * 40
 
 PIPELINE = get_pipeline_settings(
     extra_css=["scss/styles.scss"], extra_js=["js/date.format.js"]

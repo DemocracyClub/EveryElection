@@ -3,29 +3,29 @@
 
 {% block content %}
 
-<section>
-  <div class="ds-card">
-    <div class="ds-card-body">
-        <h2>Supported Organisations</h2>
-        <p>The following is a list of organisations that this project supports.</p>
-        <p>That means, we track elections for organisations on this list</p>
+    <section>
+        <div class="ds-card">
+            <div class="ds-card-body">
+                <h2>Supported Organisations</h2>
+                <p>The following is a list of organisations that this project supports.</p>
+                <p>That means, we track elections for organisations on this list</p>
 
-        {% regroup object_list by organisation_type as grouped_list %}
+                {% regroup object_list by organisation_type as grouped_list %}
 
-        {% for group in grouped_list %}
-        <details>
-        <summary><code>{{ group.grouper }}</code></summary>
-        <ul>
-            {% for object in group.list %}
-            <li><a href="{{ object.get_absolute_url }}">{{ object.name }}</a></li>
-            {% endfor %}
+                {% for group in grouped_list %}
+                    <details>
+                        <summary><code>{{ group.grouper }}</code></summary>
+                        <ul>
+                            {% for object in group.list %}
+                                <li><a href="{{ object.get_absolute_url }}">{{ object.name }}</a></li>
+                            {% endfor %}
 
-        </ul>
-        </details>
-        {% endfor %}
+                        </ul>
+                    </details>
+                {% endfor %}
 
-    </div>
-  </div>
-</section>
+            </div>
+        </div>
+    </section>
 
 {% endblock content %}
