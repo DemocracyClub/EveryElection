@@ -5,6 +5,7 @@ from aws_cdk import core as cdk
 from aws_cdk.core import Tags
 
 from cdk_imagebuilder.stacks.code_deploy import EECodeDeployment
+from cdk_imagebuilder.stacks.command_runner import EEOncePerTagCommandRunner
 from cdk_imagebuilder.stacks.image_builder import EEImageUpdater
 
 valid_environments = (
@@ -31,9 +32,11 @@ assert (
 EEImageUpdater(
     app,
     "EEImageUpdater",
-    env=cdk.Environment(account=os.getenv("CDK_DEFAULT_ACCOUNT"), region="eu-west-2"),
+    env=env,
 )
 EECodeDeployment(app, "EECodeDeployment", env=env)
+
+EEOncePerTagCommandRunner(app, "EEOncePerTagCommandRunner", env=env)
 
 Tags.of(app).add("dc-product", "ee")
 
