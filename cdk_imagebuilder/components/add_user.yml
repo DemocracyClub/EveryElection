@@ -1,7 +1,7 @@
 name: AddUser
 description: Adds a system user
 schemaVersion: 1.0
-component_version: 0.0.3
+component_version: 0.0.4
 parameters:
   - username:
       type: string
