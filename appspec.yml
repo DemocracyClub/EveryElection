@@ -82,7 +82,7 @@ hooks:
     - location: deployscripts/write_envfile.sh
       timeout: 300
       runas: root
-    - location: managementscripts/rebuild_local_db.sh
+    - location: serverscripts/rebuild_local_db.sh
       timeout: 900
       runas: every_election
     - location: deployscripts/install_crontab.sh
