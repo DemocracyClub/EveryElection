@@ -100,29 +100,5 @@
 {% endblock footer_base %}
 
 {% block extra_site_js %}
-    {% if debug %}
-        <script>
-            // shim fallback in debug mode
-            if (typeof fallback == 'undefined') {
-                var fallback = {
-                    ready: function(l, f) {
-                        if (typeof l == "function") {
-                            l()
-                        } else {
-                            f();
-                        }
-                    }
-                }
-            }
-        </script>
-        {% javascript 'scripts' %}
-    {% else %}
-        <script type="text/javascript">
-            fallback.load({
-                scripts: [
-                    '{% static "js/scripts.js" %}'
-                ],
-            });
-        </script>
-    {% endif %}
+    {% static "js/scripts.js" %}
 {% endblock extra_site_js %}
