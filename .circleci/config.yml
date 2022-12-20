@@ -69,11 +69,8 @@ jobs:
             pytest --cov-report= --cov=every_election
             coveralls
   cdk_synth:
-    docker:
-      - image: cimg/python:3.10.7-node
-        environment:
-          CIRCLECI: true
-          PGHOST: 127.0.0.1
+    machine:
+      image: ubuntu-2204:2022.10.2
     working_directory: ~/repo
     parameters:
       dc-environment:
@@ -101,11 +98,8 @@ jobs:
         paths: [ cdk.out ]
 
   cdk_deploy:
-    docker:
-      - image: cimg/python:3.10.7-node
-        environment:
-          CIRCLECI: true
-          PGHOST: 127.0.0.1
+    machine:
+      image: ubuntu-2204:2022.10.2
     working_directory: ~/repo
     parameters:
       dc-environment:
