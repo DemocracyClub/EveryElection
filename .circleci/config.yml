@@ -75,6 +75,12 @@ jobs:
           CIRCLECI: true
           PGHOST: 127.0.0.1
     working_directory: ~/repo
+    parameters:
+      dc-environment:
+        type: enum
+        enum: [ development, staging, production ]
+    environment:
+      DC_ENVIRONMENT: "<<parameters.dc-environment>>"
 
     steps:
     - checkout
@@ -101,6 +107,12 @@ jobs:
           CIRCLECI: true
           PGHOST: 127.0.0.1
     working_directory: ~/repo
+    parameters:
+      dc-environment:
+        type: enum
+        enum: [ development, staging, production ]
+    environment:
+      DC_ENVIRONMENT: "<<parameters.dc-environment>>"
 
     steps:
     - checkout
@@ -119,6 +131,12 @@ jobs:
           CIRCLECI: true
           PGHOST: 127.0.0.1
     working_directory: ~/repo
+    parameters:
+      dc-environment:
+        type: enum
+        enum: [ development, staging, production ]
+    environment:
+      DC_ENVIRONMENT: "<<parameters.dc-environment>>"
 
     steps:
     - checkout
@@ -141,14 +159,20 @@ workflows:
     jobs:
     - build_and_test
     - cdk_synth:
+        name: "CDK Synth"
         requires:
         - build_and_test
         context: [deployment-development-ee]
+        dc-environment: development
     - cdk_deploy:
+        name: "Development: CDK Deploy"
         requires:
-        - cdk_synth
+        - "CDK Synth"
         context: [deployment-development-ee]
+        dc-environment: development
     - code_deploy:
+        name: "Development: AWS CodeDeploy"
         requires:
-        - cdk_deploy
+        - "Development: CDK Deploy"
         context: [deployment-development-ee]
+        dc-environment: development
