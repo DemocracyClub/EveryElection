@@ -9,6 +9,8 @@ import boto3
 
 
 def reduce_alb_size(tag_name, tag_value, at_most=0, region="eu-west-2"):
+    if not isinstance(at_most, int):
+        at_most = int(at_most)
     client = boto3.client("autoscaling", region_name=region)
     asg_list = client.describe_auto_scaling_groups(
         Filters=[{"Name": f"tag:{tag_name}", "Values": [tag_value]}]
