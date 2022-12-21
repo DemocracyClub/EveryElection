@@ -232,6 +232,9 @@ class EECodeDeployment(Stack):
                         "AmazonSSMManagedInstanceCore",
                     ),
                     iam.ManagedPolicy.from_aws_managed_policy_name(
+                        "AmazonSSMReadOnlyAccess",
+                    ),
+                    iam.ManagedPolicy.from_aws_managed_policy_name(
                         "AmazonS3ReadOnlyAccess",
                     ),
                     iam.ManagedPolicy.from_aws_managed_policy_name(

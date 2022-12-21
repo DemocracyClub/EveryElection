@@ -90,7 +90,6 @@ class EEImageUpdater(Stack):
                         "componentArn": self.make_component(component),
                     }
                 )
-        print(components_list)
         name = validate_name("EEImage_ubuntu")
         return image_builder.CfnImageRecipe(
             self,

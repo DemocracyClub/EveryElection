@@ -68,7 +68,7 @@ def create_default_asg():
             {"Key": "CodeDeploy"},
             {"Key": "dc-product", "Value": "ee"},
             {
-                "Key": "dc-environmnet",
+                "Key": "dc-environment",
                 "Value": os.environ.get("DC_ENVIRONMENT"),
             },
         ],

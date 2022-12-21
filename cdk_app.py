@@ -7,6 +7,7 @@ from aws_cdk.core import Tags
 from cdk_stacks.stacks.code_deploy import EECodeDeployment
 from cdk_stacks.stacks.command_runner import EEOncePerTagCommandRunner
 from cdk_stacks.stacks.image_builder import EEImageUpdater
+from cdk_stacks.stacks.power_off_at_end_of_day import PowerOffAtEndOfDay
 
 valid_environments = (
     "development",
@@ -38,6 +39,8 @@ if dc_environment == "production":
 EECodeDeployment(app, "EECodeDeployment", env=env)
 
 EEOncePerTagCommandRunner(app, "EEOncePerTagCommandRunner", env=env)
+PowerOffAtEndOfDay(app, "PowerOffAtEndOfDay", env=env)
+
 
 Tags.of(app).add("dc-product", "ee")
 Tags.of(app).add("dc-environment", dc_environment)
