@@ -132,7 +132,7 @@ jobs:
         command: |
           pyenv local $(ls -1 /opt/circleci/.pyenv/versions | grep 3.10)
           . .venv/bin/activate
-          npx cdk deploy --all
+          npx cdk deploy --all --require-approval never --concurrency 3
 
   code_deploy:
     docker:
@@ -187,3 +187,15 @@ workflows:
         - "Development: CDK Deploy"
         context: [deployment-development-ee]
         dc-environment: development
+    - cdk_deploy:
+        name: "Staging: CDK Deploy"
+        requires:
+        - "CDK Synth"
+        context: [deployment-staging-ee]
+        dc-environment: staging
+    - code_deploy:
+        name: "Staging: AWS CodeDeploy"
+        requires:
+        - "Staging: CDK Deploy"
+        context: [deployment-staging-ee]
+        dc-environment: staging

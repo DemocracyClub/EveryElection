@@ -26,6 +26,8 @@ class EECodeDeployment(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
+        self.dc_environment = self.node.try_get_context("dc-environment")
+
         # self.ami = ec2.MachineImage.lookup(name=EE_IMAGE, owners=["self"])
         self.ami = ec2.MachineImage.generic_linux(ami_map={"eu-west-2": EE_IMAGE})
 
@@ -50,9 +52,7 @@ class EECodeDeployment(Stack):
         self.target_group = self.create_target_group()
 
         self.alb = self.create_alb(
-            security_group=self.alb_security_group,
-            target_group=self.target_group,
-            https=False,
+            security_group=self.alb_security_group, target_group=self.target_group
         )
 
         self.code_deploy = self.create_code_deploy()
@@ -155,7 +155,6 @@ class EECodeDeployment(Stack):
         self,
         security_group: ec2.SecurityGroup,
         target_group: elbv2.ApplicationTargetGroup,
-        https=True,
     ) -> elbv2.ApplicationLoadBalancer:
         """
         Creates an Application Load Balancer (ALB).
@@ -178,40 +177,14 @@ class EECodeDeployment(Stack):
             load_balancer_name="ee-alb",
         )
 
-        if https:
-            # Listen on HTTPS
-            alb.add_listener(
-                "https-listener-id",
-                certificates=[
-                    elbv2.ListenerCertificate.from_arn(
-                        StringParameter.value_from_lookup(
-                            self,
-                            "SSL_CERTIFICATE_ARN",
-                        )
-                    )
-                ],
-                port=443,
-                protocol=elbv2.ApplicationProtocol.HTTPS,
-                default_action=elbv2.ListenerAction.forward([self.ee_alb_tg]),
-            )
-
         # Listen on HTTP
         http_listener = alb.add_listener(
             "http-listener-id", port=80, protocol=elbv2.ApplicationProtocol.HTTP
         )
 
-        if https:
-            # Redirect from HTTP to HTTPS
-            http_listener.add_action(
-                "redirect-http-to-https-id",
-                action=elbv2.ListenerAction.redirect(
-                    port="443", protocol="HTTPS", permanent=True
-                ),
-            )
-        else:
-            http_listener.add_target_groups(
-                "http-target-groups-id", target_groups=[target_group]
-            )
+        http_listener.add_target_groups(
+            "http-target-groups-id", target_groups=[target_group]
+        )
 
         return alb
 
@@ -256,7 +229,10 @@ class EECodeDeployment(Stack):
                 role_name="CodeDeployEC2InstanceProfile",
                 managed_policies=[
                     iam.ManagedPolicy.from_aws_managed_policy_name(
-                        "AmazonSSMReadOnlyAccess",
+                        "AmazonSSMManagedInstanceCore",
+                    ),
+                    iam.ManagedPolicy.from_aws_managed_policy_name(
+                        "AmazonS3ReadOnlyAccess",
                     ),
                     iam.ManagedPolicy.from_aws_managed_policy_name(
                         "CloudWatchAgentServerPolicy",
@@ -291,10 +267,14 @@ class EECodeDeployment(Stack):
 
         # Hard code the ARN due to a bug with CDK that means we can't run synth
         # with the placeholder values the SSM interface produces :(
+        cert_arns = {
+            "development": "arn:aws:acm:us-east-1:427217546102:certificate/e47eb373-80c0-47eb-8ff1-122004c132f3",
+            "staging": "arn:aws:acm:us-east-1:828522531355:certificate/2fe5f310-94a2-48eb-8f16-a15f069de00a",
+        }
         cert = acm.Certificate.from_certificate_arn(
             self,
             "CertArn",
-            certificate_arn="arn:aws:acm:us-east-1:427217546102:certificate/e47eb373-80c0-47eb-8ff1-122004c132f3",
+            certificate_arn=cert_arns.get(self.dc_environment),
         )
 
         fqdn = StringParameter.value_from_lookup(
