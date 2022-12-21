@@ -133,6 +133,11 @@ jobs:
           pyenv local $(ls -1 /opt/circleci/.pyenv/versions | grep 3.10)
           . .venv/bin/activate
           npx cdk deploy --all --require-approval never --concurrency 3
+    - save_cache:
+      paths:
+        - .cdk.out
+      key: v3-machine-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
+
 
   code_deploy:
     docker:
