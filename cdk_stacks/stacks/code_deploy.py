@@ -110,6 +110,7 @@ class EECodeDeployment(Stack):
             target_group_name="ee-alb-tg",
             target_type=elbv2.TargetType.INSTANCE,
             vpc=self.default_vpc,
+            deregistration_delay=Duration.seconds(5),
         )
 
     def create_instance_security_groups(
