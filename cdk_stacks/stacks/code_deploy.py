@@ -12,7 +12,7 @@ import aws_cdk.aws_certificatemanager as acm
 import aws_cdk.aws_route53 as route_53
 import aws_cdk.aws_route53_targets as route_53_target
 
-from cdk_imagebuilder.stacks.code_deploy_policies import (
+from cdk_stacks.stacks.code_deploy_policies import (
     EE_DEPLOYER_POLICY,
     EE_CODE_DEPLOY_POLICY,
     EE_CODE_DEPLOY_EC2_POLICY,

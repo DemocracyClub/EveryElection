@@ -106,9 +106,7 @@ class EEImageUpdater(Stack):
         if component.get("arn"):
             return component.get("arn")
 
-        component_path = (
-            Path() / "cdk_imagebuilder" / "components" / component.get("file")
-        )
+        component_path = Path() / "cdk_stacks" / "components" / component.get("file")
         component_yaml = yaml.safe_load(component_path.read_text())
 
         name = f"{component['name']}".replace(".", "-").replace(" ", "-")

@@ -35,7 +35,7 @@ class EEOncePerTagCommandRunner(Stack):
             self,
             "once_per_tag_command_runner",
             function_name="once_per_tag_command_runner",
-            entry="./cdk_imagebuilder/aws_lambda_functions/ssm_run_command_once",
+            entry="./cdk_stacks/aws_lambda_functions/ssm_run_command_once",
             index="main.py",
             runtime=aws_lambda.Runtime.PYTHON_3_9,
             timeout=core.Duration.minutes(2),

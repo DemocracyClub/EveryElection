@@ -4,9 +4,9 @@ import os
 from aws_cdk import core as cdk
 from aws_cdk.core import Tags
 
-from cdk_imagebuilder.stacks.code_deploy import EECodeDeployment
-from cdk_imagebuilder.stacks.command_runner import EEOncePerTagCommandRunner
-from cdk_imagebuilder.stacks.image_builder import EEImageUpdater
+from cdk_stacks.stacks.code_deploy import EECodeDeployment
+from cdk_stacks.stacks.command_runner import EEOncePerTagCommandRunner
+from cdk_stacks.stacks.image_builder import EEImageUpdater
 
 valid_environments = (
     "development",
