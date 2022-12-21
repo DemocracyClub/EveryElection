@@ -29,11 +29,12 @@ assert (
     dc_environment in valid_environments
 ), f"context `dc-environment` must be one of {valid_environments}"
 
-EEImageUpdater(
-    app,
-    "EEImageUpdater",
-    env=env,
-)
+if dc_environment == "production":
+    EEImageUpdater(
+        app,
+        "EEImageUpdater",
+        env=env,
+    )
 EECodeDeployment(app, "EECodeDeployment", env=env)
 
 EEOncePerTagCommandRunner(app, "EEOncePerTagCommandRunner", env=env)
