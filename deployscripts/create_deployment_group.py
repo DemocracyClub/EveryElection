@@ -25,7 +25,7 @@ def get_subnet_ids():
     """
     Returns a list of all subnet ids in the AWS account
     """
-    client = session.client("ec2")
+    client = session.client("ec2", region_name=os.environ.get("AWS_REGION"))
     response = client.describe_subnets()
     return [subnet["SubnetId"] for subnet in response["Subnets"]]
 
@@ -34,7 +34,7 @@ def get_target_group_arn():
     """
     Returns the arn of the ELB target group defined in sam-template.yaml
     """
-    client = session.client("elbv2")
+    client = session.client("elbv2", region_name=os.environ.get("AWS_REGION"))
     response = client.describe_target_groups(Names=[TARGET_GROUP_NAME])
     return response["TargetGroups"][0]["TargetGroupArn"]
 
@@ -43,7 +43,7 @@ def create_default_asg():
     """
     Get or create the default auto scaling group
     """
-    client = session.client("autoscaling")
+    client = session.client("autoscaling", region_name=os.environ.get("AWS_REGION"))
     subnet_ids = get_subnet_ids()
     target_group_arn = get_target_group_arn()
 
@@ -85,7 +85,7 @@ def get_service_role():
     """
     Use IAM client to return details of the CodeDeployServiceRole
     """
-    client = boto3.client("iam")
+    client = boto3.client("iam", region_name=os.environ.get("AWS_REGION"))
     response = client.get_role(RoleName="CodeDeployServiceRole")
     return response["Role"]
 
@@ -94,7 +94,7 @@ def create_deployment_group():
     """
     Creates a default deployment group in CodeDeploy
     """
-    client = session.client("codedeploy")
+    client = session.client("codedeploy", region_name=os.environ.get("AWS_REGION"))
     service_role = get_service_role()
     return client.create_deployment_group(
         applicationName="EECodeDeploy",
