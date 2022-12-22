@@ -69,6 +69,7 @@ jobs:
             . .venv/bin/activate
             pytest --cov-report= --cov=every_election
             coveralls
+
   cdk_synth:
     machine:
       image: ubuntu-2204:2022.10.2
@@ -134,9 +135,9 @@ jobs:
           . .venv/bin/activate
           npx cdk deploy --all --require-approval never --concurrency 3
     - save_cache:
-      paths:
+        paths:
         - .cdk.out
-      key: v3-machine-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
+        key: v3-machine-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
 
 
   code_deploy:
