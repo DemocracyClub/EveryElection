@@ -295,6 +295,24 @@ class EECodeDeployment(Stack):
                     http_port=80,
                     protocol_policy=cloudfront.OriginProtocolPolicy.HTTP_ONLY,
                 ),
+                allowed_methods=cloudfront.AllowedMethods.ALLOW_ALL,
+                cache_policy=cloudfront.CachePolicy(
+                    self,
+                    "short_cache_not_authenticated",
+                    default_ttl=Duration.minutes(10),
+                    min_ttl=Duration.minutes(0),
+                    max_ttl=Duration.minutes(120),
+                    enable_accept_encoding_brotli=True,
+                    enable_accept_encoding_gzip=True,
+                    cookie_behavior=cloudfront.CacheCookieBehavior.all(),
+                    header_behavior=cloudfront.CacheHeaderBehavior.allow_list(
+                        "x-csrfmiddlewaretoken",
+                        "Accept",
+                        "Accept-Language",
+                        "Cache-Control",
+                        "Referer",
+                    ),
+                ),
             ),
             additional_behaviors={
                 "/static/*": cloudfront.BehaviorOptions(
