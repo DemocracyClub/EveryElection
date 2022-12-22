@@ -15,10 +15,37 @@ def check_deployment_group():
     TODO allow this to accept args
     """
     client = session.client("codedeploy", region_name=os.environ.get("AWS_REGION"))
-    return client.get_deployment_group(
+    deployment_group = client.get_deployment_group(
         applicationName="EECodeDeploy",
         deploymentGroupName="EEDefaultDeploymentGroup",
     )
+    asg_name = deployment_group["deploymentGroupInfo"]["autoScalingGroups"][0]["name"]
+    autoscale_client = session.client(
+        "autoscaling", region_name=os.environ.get("AWS_REGION")
+    )
+    autoscale_client.describe_auto_scaling_groups(AutoScalingGroupNames=[asg_name])[
+        "AutoScalingGroups"
+    ][0]
+    asg_info = autoscale_client.describe_auto_scaling_groups(
+        AutoScalingGroupNames=[asg_name]
+    )["AutoScalingGroups"][0]
+    instance_count = len(asg_info["Instances"])
+
+    if not instance_count:
+        # There's no instances in this ASG, so we need to start one
+        # before we can deploy
+        autoscale_client.set_desired_capacity(
+            AutoScalingGroupName=asg_name, DesiredCapacity=1
+        )
+        while instance_count < 1:
+            time.sleep(5)
+            print("Checking for ASG instances")
+            asg_info = autoscale_client.describe_auto_scaling_groups(
+                AutoScalingGroupNames=[asg_name]
+            )["AutoScalingGroups"][0]
+            instance_count = len(asg_info["Instances"])
+
+    print("ASG now has an instance running. Continuing with deploy")
 
 
 def get_subnet_ids():
