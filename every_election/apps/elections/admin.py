@@ -123,6 +123,9 @@ class MetaDataAdmin(admin.ModelAdmin):
     def get_form(self, *args, **kwargs):
         self.form = deepcopy(self.form)
         form = super().get_form(*args, **kwargs)
+        form.base_fields[
+            "data"
+        ].help_text = "Meta Data should only be added to an election in exceptional circumstances and should not repeat existing template text."
         form.base_fields["data"].widget = JSONEditor()
         return form
 
