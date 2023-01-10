@@ -22,7 +22,11 @@ from botocore.exceptions import ClientError
 from django.conf import settings
 from django.contrib.gis.gdal import DataSource
 from django.core.management.base import BaseCommand
-from organisations.importers import DivisionSetGeographyImporter, DiffException
+from organisations.importers import (
+    DivisionSetGeographyImporter,
+    DiffException,
+    MapCreationNeededException,
+)
 from organisations.models import Organisation, OrganisationDivisionSet
 from storage.s3wrapper import S3Wrapper
 from storage.zipfile import unzip
@@ -72,7 +76,7 @@ class Command(BaseCommand):
 
     def import_data(self, data, divset, name_column, name_map, srid):
         importer = DivisionSetGeographyImporter(
-            data, divset, name_column, name_map, srid, "lgbce"
+            data, divset, name_column, name_map, srid, "lgbce", stdout=self.stdout
         )
         try:
             importer.import_data()
@@ -84,6 +88,8 @@ class Command(BaseCommand):
             errorstr += "with the structure:\n"
             errorstr += '{\n  "oldname1": "newname1",\n  "oldname2": "newname2"\n}'
             self.stderr.write(errorstr)
+        except MapCreationNeededException:
+            self.stderr.write("Stopping as a map file is needed.")
 
     def get_data(self, filepath):
         s3 = S3Wrapper(settings.LGBCE_BUCKET)
