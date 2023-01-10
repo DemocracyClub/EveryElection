@@ -16,7 +16,7 @@ SECRET_KEY = "CHANGE THIS!!!"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-IN_TESTING = sys.argv[1:2] == ["test"]
+IN_TESTING = sys.argv[1:2] == "test" or sys.argv[0].endswith("pytest")
 
 ALLOWED_HOSTS = []
 
