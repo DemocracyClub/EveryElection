@@ -274,6 +274,7 @@ class EECodeDeployment(Stack):
         cert_arns = {
             "development": "arn:aws:acm:us-east-1:427217546102:certificate/e47eb373-80c0-47eb-8ff1-122004c132f3",
             "staging": "arn:aws:acm:us-east-1:828522531355:certificate/2fe5f310-94a2-48eb-8f16-a15f069de00a",
+            "production": "arn:aws:acm:us-east-1:732292556707:certificate/3f56a526-7c50-4356-a7db-76ba48d4bf01",
         }
         cert = acm.Certificate.from_certificate_arn(
             self,

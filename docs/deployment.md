@@ -26,7 +26,7 @@ The application is written in Django and served with Gunicorn over port `8001`.
 
 EC2 Instances are managed by a mix of CodeDeploy, a Launch Template and an Auto Scaling Group (ASG).
 
-The process for each depoyment is:
+The process for each deployment is:
 
 1. Call `deployscripts/create_deployment_group.py` to create the initial deployment group
 2. Call `COMMIT_SHA=[SHA] deployscripts/create_deployment.py`.
@@ -42,21 +42,7 @@ The process for each depoyment is:
 Assuming you can authenticate against the account locally. If you're using  
 AWS SSO then this means passing `--profile [env]-ee-dc` to CDK and other AWS CLI commands.
 
-
-### bootstrap CDK
-
-```shell
-
-cdk bootstrap --context dc-environment=[development|staging|production]
-```
-
-CDK will create various AWS resources that are needed to deploy the stacks. This includes
-an S3 bucket and some IAM roles.
-
-See [CDK bootstrapping](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html) for more.
-
-
-### AWS Deployment user
+### 1 AWS Deployment user
 
 We need a user that can deploy the application.
 
@@ -68,7 +54,7 @@ access. This is typically a bad idea, but it's very hard to get CloudFormation w
 3. Attach the existing `AdministratorAccess` policy
 4. Continue and download the CSV with the access keys
 
-### Domain name and TLS certificate
+### 2 Domain name and TLS certificate
 
 #### DNS
 1. Make a new hosted zone in the target account
@@ -80,7 +66,7 @@ Once the Domain nam is set up, use AWS Certificate Manager to create a cert.
 NOTE: This MUST be in the `us-east-1` account to work with CloudFront. You will have to delete and re-create
 the cert if you make it in the wrong region.
 
-### AWS Parameter Store
+### 3 AWS Parameter Store
 
 The CDK Stack requires some parameters that are taken from the SSM Parameter Store:
 
@@ -88,7 +74,20 @@ The CDK Stack requires some parameters that are taken from the SSM Parameter Sto
 * `SSL_CERTIFICATE_ARN`: the ARN of the ACM cert you made above
 * `OrganisationID` the ID of the AWS organisation this is sitting in. Used for Image Builder to share AMIs
 
-### CircleCI context
+
+### 4 Bootstrap CDK
+
+```shell
+
+cdk bootstrap --context dc-environment=[development|staging|production]
+```
+
+CDK will create various AWS resources that are needed to deploy the stacks. This includes
+an S3 bucket and some IAM roles.
+
+See [CDK bootstrapping](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html) for more.
+
+### 5 CircleCI context
 
 In order for CircleCI to run deployments, we need a new context. This is a set of private 
 data that Circle can inject in to jobs when they run.
