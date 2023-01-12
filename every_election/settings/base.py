@@ -25,6 +25,12 @@ DEBUG = str_bool_to_bool(os.environ.get("EE_DEBUG", False))
 IN_TESTING = sys.argv[1:2] == "test" or sys.argv[0].endswith("pytest")
 
 ALLOWED_HOSTS = [os.environ.get("EE_HOSTNAME", None)]
+USE_X_FORWARDED_HOST = True
+
+if fqdn := os.environ.get("FQDN"):
+    CSRF_TRUSTED_ORIGINS = [
+        f"https://{fqdn}",
+    ]
 
 # Application definition
 

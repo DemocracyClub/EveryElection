@@ -294,6 +294,10 @@ class EECodeDeployment(Stack):
                     alb,
                     http_port=80,
                     protocol_policy=cloudfront.OriginProtocolPolicy.HTTP_ONLY,
+                    custom_headers={
+                        "X-Forwarded-Host": fqdn,
+                        "X-Forwarded-Proto": "https",
+                    },
                 ),
                 allowed_methods=cloudfront.AllowedMethods.ALLOW_ALL,
                 cache_policy=cloudfront.CachePolicy(
@@ -305,6 +309,7 @@ class EECodeDeployment(Stack):
                     enable_accept_encoding_brotli=True,
                     enable_accept_encoding_gzip=True,
                     cookie_behavior=cloudfront.CacheCookieBehavior.all(),
+                    query_string_behavior=cloudfront.CacheQueryStringBehavior.all(),
                     header_behavior=cloudfront.CacheHeaderBehavior.allow_list(
                         "x-csrfmiddlewaretoken",
                         "Accept",
