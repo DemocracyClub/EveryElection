@@ -56,7 +56,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         srid = int(options["srid"])
         divset = self.get_division_set(options["org"])
-
+        tempdir = None
         try:
             (tempdir, data) = self.get_data(options["s3"])
             name_map = self.get_name_map(options["s3"])
@@ -156,6 +156,8 @@ class Command(BaseCommand):
         return divset
 
     def cleanup(self, tempdir):
+        if not tempdir:
+            return
         # clean up the temp files we created
         try:
             shutil.rmtree(tempdir)
