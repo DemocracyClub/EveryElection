@@ -2,6 +2,7 @@ import os
 import sys
 
 import dc_design_system
+import requests
 
 # PATH vars
 
@@ -24,7 +25,16 @@ SECRET_KEY = os.environ.get("EE_SECRET_KEY", "CHANGE THIS!!!")
 DEBUG = str_bool_to_bool(os.environ.get("EE_DEBUG", False))
 IN_TESTING = sys.argv[1:2] == "test" or sys.argv[0].endswith("pytest")
 
-ALLOWED_HOSTS = [os.environ.get("EE_HOSTNAME", None)]
+ALLOWED_HOSTS = [
+    os.environ.get("FQDN", None),
+    "localhost",
+    "127.0.0.1",
+]
+try:
+    EC2_IP = requests.get("http://169.254.169.254/latest/meta-data/local-ipv4").text
+    ALLOWED_HOSTS.append(EC2_IP)
+except requests.exceptions.RequestException:
+    pass
 USE_X_FORWARDED_HOST = True
 
 if fqdn := os.environ.get("FQDN"):
