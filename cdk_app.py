@@ -39,7 +39,9 @@ if dc_environment == "production":
 EECodeDeployment(app, "EECodeDeployment", env=env)
 
 EEOncePerTagCommandRunner(app, "EEOncePerTagCommandRunner", env=env)
-PowerOffAtEndOfDay(app, "PowerOffAtEndOfDay", env=env)
+
+if dc_environment != "production":
+    PowerOffAtEndOfDay(app, "PowerOffAtEndOfDay", env=env)
 
 
 Tags.of(app).add("dc-product", "ee")

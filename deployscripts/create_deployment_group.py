@@ -73,8 +73,13 @@ def create_default_asg():
     client = session.client("autoscaling", region_name=os.environ.get("AWS_REGION"))
     subnet_ids = get_subnet_ids()
     target_group_arn = get_target_group_arn()
-
-    response = client.create_auto_scaling_group(
+    existing_asgs = [
+        asg["AutoScalingGroupName"]
+        for asg in client.describe_auto_scaling_groups()["AutoScalingGroups"]
+    ]
+    if "default" in existing_asgs:
+        return
+    return client.create_auto_scaling_group(
         AutoScalingGroupName="default",
         AvailabilityZones=[
             "eu-west-2a",
@@ -105,7 +110,6 @@ def create_default_asg():
         ],
         VPCZoneIdentifier=",".join(subnet_ids),
     )
-    return response
 
 
 def get_service_role():
@@ -123,33 +127,42 @@ def create_deployment_group():
     """
     client = session.client("codedeploy", region_name=os.environ.get("AWS_REGION"))
     service_role = get_service_role()
-    return client.create_deployment_group(
-        applicationName="EECodeDeploy",
-        deploymentGroupName="EEDefaultDeploymentGroup",
-        autoScalingGroups=[
-            "default",
-        ],
-        deploymentConfigName="CodeDeployDefault.AllAtOnce",
-        serviceRoleArn=service_role["Arn"],
-        deploymentStyle={
-            "deploymentType": "BLUE_GREEN",
-            "deploymentOption": "WITH_TRAFFIC_CONTROL",
-        },
-        blueGreenDeploymentConfiguration={
-            "terminateBlueInstancesOnDeploymentSuccess": {
-                "action": "TERMINATE",
-                "terminationWaitTimeInMinutes": 0,
+    app_name = "EECodeDeploy"
+    deployment_group_name = "EEDefaultDeploymentGroup"
+    try:
+        return client.get_deployment_group(
+            applicationName=app_name,
+            deploymentGroupName=deployment_group_name,
+        )
+    except client.exceptions.DeploymentGroupDoesNotExistException:
+
+        return client.create_deployment_group(
+            applicationName=app_name,
+            deploymentGroupName=deployment_group_name,
+            autoScalingGroups=[
+                "default",
+            ],
+            deploymentConfigName="CodeDeployDefault.AllAtOnce",
+            serviceRoleArn=service_role["Arn"],
+            deploymentStyle={
+                "deploymentType": "BLUE_GREEN",
+                "deploymentOption": "WITH_TRAFFIC_CONTROL",
             },
-            "deploymentReadyOption": {
-                "actionOnTimeout": "CONTINUE_DEPLOYMENT",
-                # 'waitTimeInMinutes': 0
+            blueGreenDeploymentConfiguration={
+                "terminateBlueInstancesOnDeploymentSuccess": {
+                    "action": "TERMINATE",
+                    "terminationWaitTimeInMinutes": 0,
+                },
+                "deploymentReadyOption": {
+                    "actionOnTimeout": "CONTINUE_DEPLOYMENT",
+                    # 'waitTimeInMinutes': 0
+                },
+                "greenFleetProvisioningOption": {"action": "COPY_AUTO_SCALING_GROUP"},
             },
-            "greenFleetProvisioningOption": {"action": "COPY_AUTO_SCALING_GROUP"},
-        },
-        loadBalancerInfo={
-            "targetGroupInfoList": [{"name": TARGET_GROUP_NAME}],
-        },
-    )
+            loadBalancerInfo={
+                "targetGroupInfoList": [{"name": TARGET_GROUP_NAME}],
+            },
+        )
 
 
 def main():
@@ -157,7 +170,7 @@ def main():
     # assume codedeploy is already configured and nothing to do
     try:
         return check_deployment_group()
-    except ClientError:
+    except (ClientError, IndexError):
         pass
 
     # an error means this is likely the initial setup of a new account

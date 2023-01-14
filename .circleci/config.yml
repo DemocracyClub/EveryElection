@@ -209,6 +209,7 @@ workflows:
         name: "Production: CDK Deploy"
         requires:
         - "CDK Synth"
+        - "Staging: AWS CodeDeploy"
         context: [deployment-production-ee]
         dc-environment: production
     - code_deploy:
