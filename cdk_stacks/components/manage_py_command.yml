@@ -1,0 +1,36 @@
+name: InstallApp
+description: Installs the EE Django app
+schemaVersion: 1.0
+component_version: 0.0.1
+parameters:
+  - command_name:
+      type: string
+      default: "manage-py-command"
+      description: The executable to write to disk
+  - venv_root:
+      type: string
+      description: Path to the venv of the project
+  - manage_py_location:
+      type: string
+      description: Path to the venv of the project
+phases:
+  - name: build
+    steps:
+      - name: InstallManagePyCommand
+        action: CreateFile
+        inputs:
+          - path: /usr/local/bin/{{ command_name }}
+            permissions: 755
+            owner: root
+            group: root
+            content: |
+              #!/bin/sh
+              #
+              # This is a script that makes running manage.py inside a virtualenv from
+              # cron easier.
+              # It does a few things:
+              #     1. It wraps commands in `output-on-error` TODO
+              #     2. It calls the manage.py with the virtualenv's python
+              # It requires manage.py to be at {{ manage_py_location }}
+              #
+              {{venv_root}}/bin/python {{ manage_py_location }} "$@"

@@ -27,6 +27,15 @@ COMPONENTS = [
             "git_branch": "ubuntu-22.04-upgrade",
         },
     },
+    {
+        "name": "add_manage_py_command",
+        "file": "manage_py_command.yml",
+        "context": {
+            "command_name": "ee-manage-py-command",
+            "venv_root": "/var/www/every_election/repo/.venv",
+            "manage_py_location": "/var/www/every_election/repo/manage.py",
+        },
+    },
 ]
 
 
