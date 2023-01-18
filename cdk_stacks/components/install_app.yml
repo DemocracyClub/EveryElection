@@ -1,7 +1,7 @@
 name: InstallApp
 description: Installs the EE Django app
 schemaVersion: 1.0
-component_version: 0.0.17
+component_version: 0.0.18
 parameters:
   - git_branch:
       type: string
@@ -18,7 +18,7 @@ phases:
         action: ExecuteBash
         inputs:
           commands:
-            - sudo apt-get install -y postgresql-client postgresql-common python3-dev libpq-dev gdal-bin libproj-dev jq postgresql-14-postgis-3 nodejs
+            - sudo apt-get install -y postgresql-client postgresql-common python3-dev libpq-dev gdal-bin libproj-dev jq postgresql-14-postgis-3 nodejs npm
       - name: make_directories
         action: ExecuteBash
         inputs:
@@ -49,6 +49,7 @@ phases:
             - pip install -U pip
             - pip install -r requirements/production.txt
             - pip install gevent
+            - npm install
       - name: CreateEnvWriterFile
         action: CreateFile
         inputs:
