@@ -9,7 +9,7 @@ class Command(ReadFromCSVMixin, BaseCommand):
 
     SEATS_CONTESTED_FIELD = "seats_contested"
     SEATS_TOTAL_FIELD = "seats_total"
-    ELECTION_ID_FIELD = "id"
+    ELECTION_ID_FIELD = "election_id"
     CREATED_FIELD = "created"
 
     help = """
@@ -17,8 +17,7 @@ class Command(ReadFromCSVMixin, BaseCommand):
     election.
 
     Expected CSV format is, e.g:
-
-    ORG Name,ORG GSS,REG,geography_curie,ward name,seats_total,has_election,seats_contested,created,id,problem/note
+    ORG Name,ORG GSS,REG,geography_curie,ward name,seats_total,has_election,seats_contested,created,election_id,problem/note
     Eastleigh,E07000086,EAT,EAT:bishopstoke,Bishopstoke,3,yes,3,yes,local.eastleigh.bishopstoke.2018-05-03,
     Eastleigh,E07000086,EAT,EAT:botley,Botley,2,yes,2,yes,local.eastleigh.botley.2018-05-03,
 
@@ -93,9 +92,15 @@ class Command(ReadFromCSVMixin, BaseCommand):
         for line in data:
             if line[self.CREATED_FIELD].lower() == "yes":
 
-                election = Election.public_objects.get(
-                    election_id=line[self.ELECTION_ID_FIELD]
-                )
+                try:
+                    election = Election.public_objects.get(
+                        election_id=line[self.ELECTION_ID_FIELD]
+                    )
+                except Election.DoesNotExist:
+                    self.stdout.write(
+                        f"No election found with id {line[self.ELECTION_ID_FIELD]}. (org: {line['ORG Name']}; division: {line['ward name']} ({line['EE Division ID']}))"
+                    )
+
                 seats_contested = self.get_seats_contested(line)
 
                 seats_total = self.get_seats_total(election, line, trust_csv=trust_csv)

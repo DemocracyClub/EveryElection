@@ -23,7 +23,7 @@ class TestAttachPostsPerWard(TestCase):
             self.fake_csv_data.append(
                 {
                     "created": "yes",
-                    "id": election.election_id,
+                    "election_id": election.election_id,
                     "seats_contested": 1,
                     "seats_total": 2,
                 }
@@ -63,7 +63,7 @@ class TestAttachPostsPerWard(TestCase):
         fake_data = [
             {
                 "created": "yes",
-                "id": election.election_id,
+                "election_id": election.election_id,
                 "seats_contested": 200,
                 "seats_total": 1,
             }
@@ -84,7 +84,7 @@ class TestAttachPostsPerWard(TestCase):
         fake_data = [
             {
                 "created": "yes",
-                "id": election.election_id,
+                "election_id": election.election_id,
                 "seats_contested": None,
                 "seats_total": None,
             }
