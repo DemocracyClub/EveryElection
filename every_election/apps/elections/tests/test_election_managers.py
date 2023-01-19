@@ -42,6 +42,10 @@ class TestElectionGeoQueries(TestCase):
         ElectionWithStatusFactory(
             group=None, poll_open_date=datetime.today() - timedelta(days=60)
         )
+        # Elections in the far future are always current
+        ElectionWithStatusFactory(
+            group=None, poll_open_date=datetime.today() + timedelta(days=400)
+        )
         # This is implicetly not current, but current manually set
         ElectionWithStatusFactory(
             group=None,
@@ -54,7 +58,7 @@ class TestElectionGeoQueries(TestCase):
             poll_open_date=datetime.today() - timedelta(days=1),
             current=False,
         )
-        assert Election.public_objects.current().count() == 2
+        assert Election.public_objects.current().count() == 3
 
     def test_future_elections(self):
         ElectionWithStatusFactory(group=None, poll_open_date=datetime.today())
