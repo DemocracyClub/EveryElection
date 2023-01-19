@@ -13,3 +13,4 @@ pytest-freezegun
 factory_boy
 vcrpy
 pytest-xdist
+safety

@@ -45,13 +45,16 @@ jobs:
           command: |
             . .venv/bin/activate
             pip install -r requirements/cdk.txt
-
+      - run:
+          name: Pip safety check
+          command: |
+            . .venv/bin/activate
+            safety check
       - save_cache:
           paths:
             - ./.venv
             - ./node_modules
           key: v3-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
-
 
       - run:
           name: Pre-test checks
@@ -59,7 +62,6 @@ jobs:
             . .venv/bin/activate
             python --version
             python manage.py --version
-            pip check
             black --check .
             python manage.py check
             python manage.py makemigrations --check
