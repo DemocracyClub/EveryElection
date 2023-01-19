@@ -21,7 +21,7 @@ jobs:
       - checkout
 
       - restore_cache:
-          key: v3-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}
+          key: v3-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
 
 
       - node/install:
