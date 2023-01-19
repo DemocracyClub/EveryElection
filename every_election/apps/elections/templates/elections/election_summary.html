@@ -1,88 +1,88 @@
 
 
 <div class="ds-card">
-  <div class="ds-card-body">
-    <h1>
-      {% firstof object.election_title object.election_id %}
+    <div class="ds-card-body">
+        <h1>
+            {% firstof object.election_title object.election_id %}
 
-      {% if object.cancelled %}
-        <span class="ds-status-message">cancelled</span>
-      {% endif %}
-    </h1>
+            {% if object.cancelled %}
+                <span class="ds-status-message">cancelled</span>
+            {% endif %}
+        </h1>
 
-    {% if object.election_subtype %}
-      <h3>{{ object.election_subtype }}</h3>
-    {% endif %}
-
-    <dl class="ds-descriptions">
-    <div>
-      <dt>ID</dt>
-      <dd>{{ object.election_id }}</dd>
-    </div>
-    <div>
-      <dt>Type</dt>
-      <dd>{{ object.election_type }}</dd>
-    </div>
-    <div>
-      <dt>Date</dt>
-      <dd>{{ object.poll_open_date }}</dd>
-    </div>
-
-      {% if object.organisation %}
-      <div>
-        <dt>Organisation</dt>
-        <dd><a href="{{ object.organisation.get_absolute_url }}">
-        {{ object.organisation }}</a></dd>
-      </div>
-      {% endif %}
-
-      {% if object.division %}
-      <div>
-        <dt>Division</dt>
-        <dd>{{ geography_html }}</dd>
-      </div>
-      {% endif %}
-
-      {% if object.identifier_type == "organisation" or object.identifier_type == "ballot" %}
-        {% if object.voting_system %}
-        <div>
-          <dt>Voting system</dt>
-          <dd><a href="{{ object.voting_system.wikipedia_url }}">{{ object.voting_system }}</a></dd>
-        </div>
+        {% if object.election_subtype %}
+            <h3>{{ object.election_subtype }}</h3>
         {% endif %}
-        {# Only do this for non-group IDs #}
-      {% endif %}
 
-      {% if object.seats_total and object.seats_contested %}
-      <div>
-        <dt>Total Seats</dt><dd>{{ object.seats_total }}</dd>
-      </div>
-      <div>
-        <dt>Seats Contested</dt><dd>{{ object.seats_contested }}</dd>
-      </div>
-      {% endif %}
-      {% if object.group_type %}
-      <div>
-        <dt>Seats Up</dt>
-        <dd>{{ object.group_seats_contested }}</dd>
-      </div>
-      {% endif %}
+        <dl class="ds-descriptions">
+            <div>
+                <dt>ID</dt>
+                <dd>{{ object.election_id }}</dd>
+            </div>
+            <div>
+                <dt>Type</dt>
+                <dd>{{ object.election_type }}</dd>
+            </div>
+            <div>
+                <dt>Date</dt>
+                <dd>{{ object.poll_open_date }}</dd>
+            </div>
 
-      {% if document %}
-        {% include './official_document.html' with document=document type=document_type only %}
-      {% endif %}
+            {% if object.organisation %}
+                <div>
+                    <dt>Organisation</dt>
+                    <dd><a href="{{ object.organisation.get_absolute_url }}">
+                        {{ object.organisation }}</a></dd>
+                </div>
+            {% endif %}
 
-      {% if request.user.is_superuser %}
-        <div>
-          <a href="{{ object.get_admin_url }}" class="button" title="Edit in admin">Edit in admin</a>
-        </div> 
-      {% endif %}
+            {% if object.division %}
+                <div>
+                    <dt>Division</dt>
+                    <dd>{{ geography_html }}</dd>
+                </div>
+            {% endif %}
 
-    </dl>
+            {% if object.identifier_type == "organisation" or object.identifier_type == "ballot" %}
+                {% if object.voting_system %}
+                    <div>
+                        <dt>Voting system</dt>
+                        <dd><a href="{{ object.voting_system.wikipedia_url }}">{{ object.voting_system }}</a></dd>
+                    </div>
+                {% endif %}
+                {# Only do this for non-group IDs #}
+            {% endif %}
 
-    {% if not object.notice and not object.group.notice and user_can_upload_docs and not object.cancelled %}
-      <hr />
-      {% include "./election_form.html" %}
-    {% endif %}
-  </div>
+            {% if object.seats_total and object.seats_contested %}
+                <div>
+                    <dt>Total Seats</dt><dd>{{ object.seats_total }}</dd>
+                </div>
+                <div>
+                    <dt>Seats Contested</dt><dd>{{ object.seats_contested }}</dd>
+                </div>
+            {% endif %}
+            {% if object.group_type %}
+                <div>
+                    <dt>Seats Up</dt>
+                    <dd>{{ object.group_seats_contested }}</dd>
+                </div>
+            {% endif %}
+
+            {% if document %}
+                {% include './official_document.html' with document=document type=document_type only %}
+            {% endif %}
+
+            {% if request.user.is_superuser %}
+                <div>
+                    <a href="{{ object.get_admin_url }}" class="button" title="Edit in admin">Edit in admin</a>
+                </div>
+            {% endif %}
+
+        </dl>
+
+        {% if not object.notice and not object.group.notice and user_can_upload_docs and not object.cancelled %}
+            <hr />
+            {% include "./election_form.html" %}
+        {% endif %}
+    </div>
 </div>

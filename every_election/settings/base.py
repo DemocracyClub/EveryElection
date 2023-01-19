@@ -2,6 +2,7 @@ import os
 import sys
 
 import dc_design_system
+import requests
 
 # PATH vars
 
@@ -11,14 +12,35 @@ root = lambda *x: os.path.join(BASE_DIR, *x)
 sys.path.insert(0, root("apps"))
 
 
+def str_bool_to_bool(str_bool):
+    if not str_bool:
+        return False
+    return str_bool in ["1", "True", "true", "TRUE"]
+
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "CHANGE THIS!!!"
+SECRET_KEY = os.environ.get("EE_SECRET_KEY", "CHANGE THIS!!!")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = str_bool_to_bool(os.environ.get("EE_DEBUG", False))
 IN_TESTING = sys.argv[1:2] == "test" or sys.argv[0].endswith("pytest")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    os.environ.get("FQDN", None),
+    "localhost",
+    "127.0.0.1",
+]
+try:
+    EC2_IP = requests.get("http://169.254.169.254/latest/meta-data/local-ipv4").text
+    ALLOWED_HOSTS.append(EC2_IP)
+except requests.exceptions.RequestException:
+    pass
+USE_X_FORWARDED_HOST = True
+
+if fqdn := os.environ.get("FQDN"):
+    CSRF_TRUSTED_ORIGINS = [
+        f"https://{fqdn}",
+    ]
 
 # Application definition
 
@@ -34,7 +56,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "uk_geo_utils",
     "dc_design_system",
-    # "dc_utils",
+    "whitenoise",
 ]
 
 PROJECT_APPS = [
@@ -44,7 +66,6 @@ PROJECT_APPS = [
     "organisations",
     "organisations.boundaries",
     "rest_framework",
-    # 'static_precompiler',
     "pipeline",
     "storages",
     "django_extensions",
@@ -100,11 +121,11 @@ WSGI_APPLICATION = "every_election.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "NAME": "every_election",
-        "USER": "postgres",
-        "PASSWORD": "",
-        "HOST": "",
-        "PORT": "",
+        "NAME": os.environ.get("EE_DATABASE_NAME", "every_election"),
+        "USER": os.environ.get("EE_DATABASE_USER", "every_election"),
+        "PASSWORD": os.environ.get("EE_DATABASE_PASSWORD", ""),
+        "HOST": os.environ.get("EE_DATABASE_HOST", ""),
+        "PORT": os.environ.get("EE_DATABASE_PORT", ""),
     }
 }
 
@@ -133,6 +154,11 @@ STATIC_ROOT = root("static")
 
 from dc_utils.settings.pipeline import *  # noqa
 from dc_utils.settings.pipeline import get_pipeline_settings
+from dc_utils.settings.whitenoise import whitenoise_add_middleware
+
+
+MIDDLEWARE = whitenoise_add_middleware(MIDDLEWARE)
+WHITENOISE_MAX_AGE = 60 * 60 * 24 * 40
 
 PIPELINE = get_pipeline_settings(
     extra_css=["scss/styles.scss"], extra_js=["js/date.format.js"]

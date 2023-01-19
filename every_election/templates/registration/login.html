@@ -2,17 +2,17 @@
 {% load dc_forms %}
 {% block page_title %}Login{% endblock page_title %}
 {% block content %}
-<section>
-  <div class="ds-card">
-    <div class="ds-card-body">
-      <h2>Login</h2>
-      <form method="post">
-        {% csrf_token %}
-        {{ form | dc_form }}
-        <button class="ds-button" type="submit">Login</button>
-      </form>
-      <a href="{% url 'password_reset'%}">Forgot password?</a>
-    </div>
-  </div>
-</section>
+    <section>
+        <div class="ds-card">
+            <div class="ds-card-body">
+                <h2>Login</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form | dc_form }}
+                    <button class="ds-button" type="submit">Login</button>
+                </form>
+                <a href="{% url 'password_reset'%}">Forgot password?</a>
+            </div>
+        </div>
+    </section>
 {% endblock content %}

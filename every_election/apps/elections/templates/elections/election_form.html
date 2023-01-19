@@ -1,11 +1,11 @@
 {% load dc_forms %}
 
 <form action="" method="post">
-  {% csrf_token %}
-  <div class="form-group">
-      {{ form|dc_form }}
-  </div>
-  <div class="form-group">
-      <input type="submit" class="button" value="Submit" />
-  </div>
+    {% csrf_token %}
+    <div class="form-group">
+        {{ form|dc_form }}
+    </div>
+    <div class="form-group">
+        <input type="submit" class="button" value="Submit" />
+    </div>
 </form>
