@@ -12,4 +12,4 @@ pytest-cov
 pytest-freezegun
 factory_boy
 vcrpy
-
+pytest-xdist
