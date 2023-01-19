@@ -31,7 +31,9 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
 ]
 try:
-    EC2_IP = requests.get("http://169.254.169.254/latest/meta-data/local-ipv4").text
+    EC2_IP = requests.get(
+        "http://169.254.169.254/latest/meta-data/local-ipv4", timeout=2
+    ).text
     ALLOWED_HOSTS.append(EC2_IP)
 except requests.exceptions.RequestException:
     pass
