@@ -98,6 +98,14 @@ EE_CODE_DEPLOY_EC2_POLICY = {
             "Effect": "Allow",
             "Resource": "arn:aws:s3:::aws-codedeploy-eu-west-2/*",
         },
+        {
+            "Action": ["s3:*"],
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:s3:::dc-ee-production-database-backups/*",
+                "arn:aws:s3:::dc-ee-production-database-backups",
+            ],
+        },
     ],
 }
 

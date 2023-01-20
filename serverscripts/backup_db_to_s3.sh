@@ -12,7 +12,7 @@ EXPIRE=true
 
 # set backup directory variables
 DESTDIR='every_election'
-SHORT_TERM_BUCKET='dc-ee-short-term-backups'
+SHORT_TERM_BUCKET='dc-ee-production-database-backups'
 #### END CONFIGURATION ####
 
 BACKUP_PG_DUMP_CONNECTION_STRING="-d every_election -H $EE_DATABASE_HOST -Fc"
