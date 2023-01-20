@@ -163,7 +163,7 @@ MIDDLEWARE = whitenoise_add_middleware(MIDDLEWARE)
 WHITENOISE_MAX_AGE = 60 * 60 * 24 * 40
 
 PIPELINE = get_pipeline_settings(
-    extra_css=["scss/styles.scss"], extra_js=["js/date.format.js"]
+    extra_css=["scss/styles.scss"], extra_js=["js/date.format.js", "js/scripts.js"]
 )
 
 PIPELINE["SASS_ARGUMENTS"] += " -I " + dc_design_system.DC_SYSTEM_PATH + "/system"
