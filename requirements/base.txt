@@ -28,7 +28,7 @@ uk-geo-utils==0.11.0
 
 django-pipeline==2.0.8
 
-importlib-metadata==4.12.0
+importlib-metadata==6.0.0
 
 git+https://github.com/DemocracyClub/dc_signup_form.git@2.1.3
 git+https://github.com/DemocracyClub/design-system.git@0.2.4
