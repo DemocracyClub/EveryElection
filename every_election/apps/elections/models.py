@@ -265,8 +265,7 @@ class Election(TimeStampedModel):
             return model_current
 
         recent_past = date.today() - timedelta(days=settings.CURRENT_PAST_DAYS)
-        near_future = date.today() + timedelta(days=settings.CURRENT_FUTURE_DAYS)
-        return self.poll_open_date >= recent_past and self.poll_open_date <= near_future
+        return self.poll_open_date >= recent_past
 
     def get_ballots(self):
         """
