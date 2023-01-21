@@ -1,5 +1,10 @@
 from collections import OrderedDict
 from datetime import datetime
+
+from django.db.models import (
+    Subquery,
+    OuterRef,
+)
 from django.http import Http404
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -18,6 +23,7 @@ from .serializers import (
     OrganisationDivisionSerializer,
     OrganisationGeoSerializer,
     ElectionGeoSerializer,
+    OrganisationStandaloneSerializer,
 )
 from api import filters
 
@@ -161,8 +167,19 @@ class ElectionSubTypeViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Organisation.objects.all()
-    serializer_class = OrganisationSerializer
+    subquery = Subquery(
+        Election.public_objects.filter(group_type="organisation")
+        .future()
+        .filter(organisation=OuterRef("id"))
+        .order_by("poll_open_date")
+        .values("poll_open_date")[:1]
+    )
+
+    queryset = Organisation.objects.all().annotate(
+        next_election_to_organisation=subquery
+    )
+
+    serializer_class = OrganisationStandaloneSerializer
     filterset_fields = ["modified"]
 
     def get_object(self, **kwargs):
