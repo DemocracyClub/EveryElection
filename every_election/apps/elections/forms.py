@@ -133,7 +133,7 @@ class ElectionOrganisationDivisionForm(forms.Form):
                 # There is no active division set for this organisation
                 # on this date
                 no_divs_field = forms.CharField(
-                    widget=forms.TextInput(attrs={"class": "hide"}),
+                    widget=forms.TextInput(attrs={"class": "ds-visually-hidden"}),
                     required=False,
                     label="""
                         There are no active divisions for this organisation.

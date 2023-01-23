@@ -256,6 +256,13 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             notes = "auto approved for user {}".format(self.request.user)
 
         for election in context["all_ids"]:
+            # Mop up and pre-ECO metadata
+            if election.group_type == "organisation":
+                if (
+                    election.metadata
+                    and election.metadata.description == "Pre-ECO election"
+                ):
+                    election.metadata = None
             election.save(status=status, user=self.request.user, notes=notes)
 
         if not user_is_moderator(self.request.user) and len(context["all_ids"]) > 0:

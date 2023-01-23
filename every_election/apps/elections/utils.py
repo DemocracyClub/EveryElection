@@ -10,6 +10,7 @@ from elections.models import (
     ElectionSubType,
     ElectionType,
     VotingSystem,
+    MetaData,
 )
 from uk_election_ids.election_ids import IdBuilder
 
@@ -378,6 +379,21 @@ class ElectionBuilder:
         )
 
 
+def get_or_create_eco_group_metadata():
+    return MetaData.objects.get_or_create(
+        description="Pre-ECO election",
+        defaults={
+            "data": {
+                "pre_eco": {
+                    "title": "This area is expecting a boundary change.",
+                    "detail": "Full details of wards will be available soon",
+                    "url": None,
+                }
+            }
+        },
+    )[0]
+
+
 def create_ids_for_each_ballot_paper(all_data, subtypes=None):
     all_ids = []
     for organisation in all_data.get("election_organisation", []):
@@ -416,6 +432,19 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                     all_ids.append(group_id)
             else:
                 group_id = date_id
+
+        # Special case where we have no divs for an org that should have them.
+        # This is generally due to an upcoming ECO that's not been Made yet.
+        # In this case, we want to make an org ID but no div IDs
+        if f"{organisation.pk}_no_divs" in all_data:
+            group_id = (
+                ElectionBuilder(all_data["election_type"], all_data["date"])
+                .with_organisation(organisation)
+                .build_organisation_group(date_id)
+            )
+            group_id.group_type = None
+            group_id.metadata = get_or_create_eco_group_metadata()
+            all_ids.append(group_id)
 
         if all_data["election_type"].election_type in ["mayor", "pcc"]:
             group_id = date_id
