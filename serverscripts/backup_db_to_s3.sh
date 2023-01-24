@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -x
 cd /var/www/every_election/repo
 #### BEGIN CONFIGURATION ####
@@ -15,7 +15,8 @@ DESTDIR='every_election'
 SHORT_TERM_BUCKET='dc-ee-production-database-backups'
 #### END CONFIGURATION ####
 
-BACKUP_PG_DUMP_CONNECTION_STRING="-d every_election -H $EE_DATABASE_HOST -Fc"
+BACKUP_PG_DUMP_CONNECTION_STRING="-d every_election -h $EE_DATABASE_HOST -Fc"
+export PGPASSWORD=$EE_DATABASE_PASSWORD
 
 if  [ $DAY_OF_MONTH = 01 ] ;
 then
