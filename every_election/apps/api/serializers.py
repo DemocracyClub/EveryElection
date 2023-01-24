@@ -10,7 +10,6 @@ from elections.models import (
     ElectionType,
     ElectionSubType,
     ModerationStatuses,
-    VotingSystem,
 )
 from organisations.models import (
     Organisation,
@@ -125,12 +124,6 @@ class ElectionSubTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ElectionSubType
         fields = ("name", "election_subtype")
-
-
-class VotingSystemSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = VotingSystem
-        fields = ("slug", "name", "uses_party_lists")
 
 
 class ElectedRoleField(serializers.RelatedField):

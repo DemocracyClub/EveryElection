@@ -5,7 +5,6 @@ from elections.models import (
     ElectionType,
     ModerationHistory,
     ModerationStatuses,
-    VotingSystem,
 )
 from organisations.models.organisations import Organisation
 
@@ -94,7 +93,7 @@ class Command(BaseCommand):
                 "election_title": options["election_title"],
                 "current": True,
                 "division_id": options["division_id"],
-                "voting_system": VotingSystem.objects.get(slug="FPTP"),
+                "voting_system": "FPTP",
                 "group": group_election,
             },
         )

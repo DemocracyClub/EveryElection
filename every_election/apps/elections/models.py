@@ -35,9 +35,6 @@ class ElectionType(models.Model):
 
     name = models.CharField(blank=True, max_length=100)
     election_type = models.CharField(blank=True, max_length=100, unique=True)
-    default_voting_system = models.ForeignKey(
-        "elections.VotingSystem", null=True, on_delete=models.CASCADE
-    )
 
     def __str__(self):
         return self.name
@@ -506,17 +503,6 @@ class ModerationHistory(TimeStampedModel):
         verbose_name_plural = "Moderation History"
         get_latest_by = "modified"
         ordering = ("election", "-modified")
-
-
-class VotingSystem(models.Model):
-    slug = models.SlugField(primary_key=True)
-    name = models.CharField(blank=True, max_length=100)
-    wikipedia_url = models.URLField(blank=True)
-    description = models.TextField(blank=True)
-    uses_party_lists = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.name
 
 
 class Explanation(models.Model):

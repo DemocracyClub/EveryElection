@@ -13,7 +13,6 @@ from elections.models import (
     ElectedRole,
     ElectionSubType,
     ElectionType,
-    VotingSystem,
     MetaData,
 )
 from uk_election_ids.election_ids import IdBuilder
