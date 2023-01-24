@@ -20,6 +20,7 @@ from django.urls import reverse
 
 from django_extensions.db.models import TimeStampedModel
 from storages.backends.s3boto3 import S3Boto3Storage
+from uk_election_ids.datapackage import VOTING_SYSTEMS
 from uk_election_timetables.calendars import Country
 from uk_election_timetables.election_ids import (
     from_election_id,
@@ -158,8 +159,10 @@ class Election(TimeStampedModel):
         raise ValueError("Unknown manager {}".format(manager))
 
     group_type = models.CharField(blank=True, max_length=100, null=True)
-    voting_system = models.ForeignKey(
-        "elections.VotingSystem", null=True, on_delete=models.CASCADE
+    voting_system = models.CharField(
+        max_length=100,
+        null=True,
+        choices=[(vs, VOTING_SYSTEMS[vs]["name"]) for vs in VOTING_SYSTEMS.keys()],
     )
     explanation = models.ForeignKey(
         "elections.Explanation", null=True, blank=True, on_delete=models.SET_NULL

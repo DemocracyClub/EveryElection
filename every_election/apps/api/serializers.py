@@ -3,6 +3,7 @@ from rest_framework_gis.serializers import (
     GeoFeatureModelSerializer,
     GeometrySerializerMethodField,
 )
+from uk_election_ids.datapackage import VOTING_SYSTEMS
 
 from elections.models import (
     Election,
@@ -205,7 +206,7 @@ class BaseElectionSerializer(serializers.ModelSerializer):
             or obj.group_type == "subtype"
             or not obj.group_type
         ):
-            return VotingSystemSerializer(obj.voting_system).data
+            return VOTING_SYSTEMS.get(obj.voting_system, None)
         return None
 
     def get_children(self, obj):

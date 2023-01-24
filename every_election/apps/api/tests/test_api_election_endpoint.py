@@ -438,11 +438,7 @@ class TestElectionAPIQueries(APITestCase):
                 "election_type": "local"
             },
             "explanation": null,
-            "voting_system": {
-                "slug": "",
-                "name": "",
-                "uses_party_lists": false
-            },
+            "voting_system": null,
             "children": [],
             "election_subtype": null,
             "organisation": {

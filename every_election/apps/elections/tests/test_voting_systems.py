@@ -32,7 +32,7 @@ class TestElectoralSystems(BaseElectionCreatorMixIn, TestCase):
             .build_election_group()
         )
 
-        assert election_id.voting_system.slug == "FPTP"
+        assert election_id.voting_system == "FPTP"
 
         scot_org = OrganisationFactory(territory_code="SCT")
 
@@ -43,10 +43,10 @@ class TestElectoralSystems(BaseElectionCreatorMixIn, TestCase):
             elected_role_name="MSP for Foo Town",
         )
 
-        # Scotish local elections are STV
+        # Scottish local elections are STV
         scot_id = (
             ElectionBuilder("local", "2017-05-04")
             .with_organisation(scot_org)
             .build_organisation_group(None)
         )
-        assert scot_id.voting_system.slug == "STV"
+        assert scot_id.voting_system == "STV"

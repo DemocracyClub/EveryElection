@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from uk_election_ids.datapackage import VOTING_SYSTEMS
 from uk_election_ids.metadata_tools import VotingSystemMatcher
 
 from organisations.models import (
@@ -25,12 +26,6 @@ CACHE = {
     "private_elections": {},
     "elected_roles": {},
 }
-
-
-def get_cached_voting_system(slug):
-    if slug not in CACHE["voting_systems"]:
-        CACHE["voting_systems"][slug] = VotingSystem.objects.get(slug=slug)
-    return CACHE["voting_systems"][slug]
 
 
 def get_cached_election_type(election_type):
@@ -212,7 +207,7 @@ class ElectionBuilder:
         slug = VotingSystemMatcher(
             self.id.ids[-1], nation=self.organisation.territory_code
         ).get_voting_system()
-        return get_cached_voting_system(slug)
+        return slug
 
     def get_seats_contested(self):
         if self.contest_type == "by":
