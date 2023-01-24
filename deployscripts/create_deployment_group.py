@@ -29,7 +29,9 @@ def check_deployment_group():
     asg_info = autoscale_client.describe_auto_scaling_groups(
         AutoScalingGroupNames=[asg_name]
     )["AutoScalingGroups"][0]
-    instance_count = len(asg_info["Instances"])
+    instance_count = len(
+        [i for i in asg_info["Instances"] if i["LifecycleState"] == "InService"]
+    )
 
     if not instance_count:
         # There's no instances in this ASG, so we need to start one
@@ -43,7 +45,9 @@ def check_deployment_group():
             asg_info = autoscale_client.describe_auto_scaling_groups(
                 AutoScalingGroupNames=[asg_name]
             )["AutoScalingGroups"][0]
-            instance_count = len(asg_info["Instances"])
+            instance_count = len(
+                [i for i in asg_info["Instances"] if i["LifecycleState"] == "InService"]
+            )
 
     print("ASG now has an instance running. Continuing with deploy")
 
