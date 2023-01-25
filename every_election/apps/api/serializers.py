@@ -3,13 +3,13 @@ from rest_framework_gis.serializers import (
     GeoFeatureModelSerializer,
     GeometrySerializerMethodField,
 )
+from uk_election_ids.datapackage import VOTING_SYSTEMS
 
 from elections.models import (
     Election,
     ElectionType,
     ElectionSubType,
     ModerationStatuses,
-    VotingSystem,
 )
 from organisations.models import (
     Organisation,
@@ -126,12 +126,6 @@ class ElectionSubTypeSerializer(serializers.ModelSerializer):
         fields = ("name", "election_subtype")
 
 
-class VotingSystemSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = VotingSystem
-        fields = ("slug", "name", "uses_party_lists")
-
-
 class ElectedRoleField(serializers.RelatedField):
     def to_representation(self, value):
         return value.elected_title
@@ -205,7 +199,7 @@ class BaseElectionSerializer(serializers.ModelSerializer):
             or obj.group_type == "subtype"
             or not obj.group_type
         ):
-            return VotingSystemSerializer(obj.voting_system).data
+            return VOTING_SYSTEMS.get(obj.voting_system, None)
         return None
 
     def get_children(self, obj):

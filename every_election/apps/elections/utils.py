@@ -1,4 +1,8 @@
 from datetime import datetime
+
+from uk_election_ids.datapackage import VOTING_SYSTEMS
+from uk_election_ids.metadata_tools import VotingSystemMatcher
+
 from organisations.models import (
     Organisation,
     OrganisationDivision,
@@ -9,7 +13,6 @@ from elections.models import (
     ElectedRole,
     ElectionSubType,
     ElectionType,
-    VotingSystem,
     MetaData,
 )
 from uk_election_ids.election_ids import IdBuilder
@@ -22,12 +25,6 @@ CACHE = {
     "private_elections": {},
     "elected_roles": {},
 }
-
-
-def get_cached_voting_system(slug):
-    if slug not in CACHE["voting_systems"]:
-        CACHE["voting_systems"][slug] = VotingSystem.objects.get(slug=slug)
-    return CACHE["voting_systems"][slug]
 
 
 def get_cached_election_type(election_type):
@@ -204,25 +201,12 @@ class ElectionBuilder:
         )
 
     def get_voting_system(self):
-        # Scottish and NI council elections use Single Transferrable Vote
-        if self._use_org:
-            if (
-                self.organisation.territory_code in ("SCT", "NIR")
-                and self.election_type.election_type == "local"
-            ):
-                return get_cached_voting_system("STV")
-
-        # The Constituency ballots in an Additional Member System
-        # election are essentially FPTP
-        if (
-            self.election_type.default_voting_system.slug == "AMS"
-            and self.subtype
-            and self.subtype.election_subtype == "c"
-        ):
-            return get_cached_voting_system("FPTP")
-
-        # otherwise we can rely on the election type
-        return self.election_type.default_voting_system
+        if not self.organisation:
+            return None
+        slug = VotingSystemMatcher(
+            self.id.ids[-1], nation=self.organisation.territory_code
+        ).get_voting_system()
+        return slug
 
     def get_seats_contested(self):
         if self.contest_type == "by":

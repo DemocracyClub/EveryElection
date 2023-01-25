@@ -20,6 +20,7 @@ from django.urls import reverse
 
 from django_extensions.db.models import TimeStampedModel
 from storages.backends.s3boto3 import S3Boto3Storage
+from uk_election_ids.datapackage import VOTING_SYSTEMS
 from uk_election_timetables.calendars import Country
 from uk_election_timetables.election_ids import (
     from_election_id,
@@ -34,9 +35,6 @@ class ElectionType(models.Model):
 
     name = models.CharField(blank=True, max_length=100)
     election_type = models.CharField(blank=True, max_length=100, unique=True)
-    default_voting_system = models.ForeignKey(
-        "elections.VotingSystem", null=True, on_delete=models.CASCADE
-    )
 
     def __str__(self):
         return self.name
@@ -158,8 +156,10 @@ class Election(TimeStampedModel):
         raise ValueError("Unknown manager {}".format(manager))
 
     group_type = models.CharField(blank=True, max_length=100, null=True)
-    voting_system = models.ForeignKey(
-        "elections.VotingSystem", null=True, on_delete=models.CASCADE
+    voting_system = models.CharField(
+        max_length=100,
+        null=True,
+        choices=[(vs, VOTING_SYSTEMS[vs]["name"]) for vs in VOTING_SYSTEMS.keys()],
     )
     explanation = models.ForeignKey(
         "elections.Explanation", null=True, blank=True, on_delete=models.SET_NULL
@@ -503,17 +503,6 @@ class ModerationHistory(TimeStampedModel):
         verbose_name_plural = "Moderation History"
         get_latest_by = "modified"
         ordering = ("election", "-modified")
-
-
-class VotingSystem(models.Model):
-    slug = models.SlugField(primary_key=True)
-    name = models.CharField(blank=True, max_length=100)
-    wikipedia_url = models.URLField(blank=True)
-    description = models.TextField(blank=True)
-    uses_party_lists = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.name
 
 
 class Explanation(models.Model):

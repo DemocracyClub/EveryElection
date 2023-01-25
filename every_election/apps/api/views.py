@@ -62,7 +62,6 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
             "elected_role",
             "division",
             "group",
-            "voting_system",
             "replaces",
             "metadata",
         )

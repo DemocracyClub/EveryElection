@@ -22,7 +22,7 @@ requests==2.28.1
 retry2==0.9.5
 six==1.16.0
 sqlparse==0.4.3
-uk-election-ids==0.5.1
+uk-election-ids==0.6.1
 uk-election-timetables==2.3.0
 uk-geo-utils==0.11.0
 

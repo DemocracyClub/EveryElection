@@ -4,28 +4,10 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 
-from elections import constants
-
 
 class Migration(migrations.Migration):
 
     dependencies = [("elections", "0020_auto_20170110_1556")]
-
-    def add_default_voting_systems(apps, schema_editor):
-        VotingSystem = apps.get_model("elections", "VotingSystem")
-
-        for system in constants.VOTING_SYSTEMS:
-            VotingSystem.objects.update_or_create(
-                slug=system["slug"],
-                defaults={
-                    "name": system["name"],
-                    "wikipedia_url": system["wikipedia_url"],
-                    "description": system["description"],
-                },
-            )
-
-    def do_nothing(apps, schema_editor):
-        pass
 
     operations = [
         migrations.CreateModel(
@@ -37,5 +19,4 @@ class Migration(migrations.Migration):
                 ("description", models.TextField(blank=True)),
             ],
         ),
-        migrations.RunPython(add_default_voting_systems, do_nothing),
     ]
