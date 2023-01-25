@@ -2,7 +2,7 @@
 set -x
 cd /var/www/every_election/repo
 #### BEGIN CONFIGURATION ####
-./serverscripts/setenv.sh .env
+source .env
 
 # set dates for backup rotation
 NOWDATE=`date +%Y-%m-%d-%H`
