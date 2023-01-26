@@ -7,7 +7,7 @@ aws-cdk.aws-ec2==1.189.0
 aws-cdk.aws-cloudfront==1.189.0
 aws-cdk.aws-cloudfront-origins==1.189.0
 aws-cdk.aws-codedeploy==1.189.0
-aws-cdk.aws_certificatemanager==1.189.0
+aws-cdk.aws_certificatemanager==1.190.0
 aws-cdk.aws-route53==1.189.0
 aws-cdk.aws-route53-targets==1.189.0
 aws-cdk.aws-lambda-python==1.189.0
