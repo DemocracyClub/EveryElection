@@ -28,6 +28,17 @@ class Election(metaclass=ABCMeta):
         return working_days_before(self.poll_date, 11, self._calendar())
 
     @property
+    def vac_application_deadline(self) -> date:
+        """
+        Calculates the Voter Authority Certificate (VAC) application deadline for this Election
+
+        This is set out by the Electoral Commission here: https://www.electoralcommission.org.uk/cy/node/25624
+
+        :return: datetime.date representing the VAC application deadline
+        """
+        return working_days_before(self.poll_date, 6, self._calendar())
+
+    @property
     @abstractmethod
     def sopn_publish_date(self) -> date:
         pass
@@ -63,6 +74,10 @@ class Election(metaclass=ABCMeta):
                 {
                     "label": "Postal vote application deadline",
                     "date": self.postal_vote_application_deadline,
+                },
+                {
+                    "label": "VAC application deadline",
+                    "date": self.vac_application_deadline,
                 },
             ],
             key=lambda r: r["date"],

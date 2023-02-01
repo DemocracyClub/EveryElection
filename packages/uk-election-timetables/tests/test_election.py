@@ -17,40 +17,50 @@ def test_timetable_sopn_publish_date():
 def test_timetable_registration_deadline():
     election = from_election_id("local.2021-05-06", country=Country.ENGLAND)
 
-    sopn_publish_date = lookup(election, "Register to vote deadline")
+    electoral_registration_deadline = lookup(election, "Register to vote deadline")
 
-    assert sopn_publish_date["date"] == date(2021, 4, 19)
+    assert electoral_registration_deadline["date"] == date(2021, 4, 19)
 
 
 def test_timetable_postal_vote_application_deadline():
     election = from_election_id("local.2021-05-06", country=Country.ENGLAND)
 
-    sopn_publish_date = lookup(election, "Postal vote application deadline")
+    postal_vote_dealine = lookup(election, "Postal vote application deadline")
 
-    assert sopn_publish_date["date"] == date(2021, 4, 20)
+    assert postal_vote_dealine["date"] == date(2021, 4, 20)
+
+
+def test_timetable_vac_application_deadline():
+    election = from_election_id("parl.2023-05-04", country=Country.ENGLAND)
+
+    vac_deadline = lookup(election, "VAC application deadline")
+
+    assert vac_deadline["date"] == date(2023, 4, 25)
 
 
 def test_timetable_sort_order():
     election = from_election_id("local.2021-05-06", country=Country.ENGLAND)
 
-    assert len(election.timetable) == 3
+    assert len(election.timetable) == 4
 
-    assert [r["date"] for r in election.timetable] == [
-        date(2021, 4, 9),
-        date(2021, 4, 19),
-        date(2021, 4, 20),
+    assert election.timetable == [
+        {"label": "List of candidates published", "date": date(2021, 4, 9)},
+        {"label": "Register to vote deadline", "date": date(2021, 4, 19)},
+        {"label": "Postal vote application deadline", "date": date(2021, 4, 20)},
+        {"label": "VAC application deadline", "date": date(2021, 4, 27)},
     ]
 
 
 def test_timetable_sort_order_scottish_parliament_postal_vote():
     election = from_election_id("sp.c.2021-05-06")
 
-    assert len(election.timetable) == 3
+    assert len(election.timetable) == 4
 
-    assert [r["date"] for r in election.timetable] == [
-        date(2021, 4, 1),
-        date(2021, 4, 6),
-        date(2021, 4, 19),
+    assert election.timetable == [
+        {"label": "List of candidates published", "date": date(2021, 4, 1)},
+        {"label": "Postal vote application deadline", "date": date(2021, 4, 6)},
+        {"label": "Register to vote deadline", "date": date(2021, 4, 19)},
+        {"label": "VAC application deadline", "date": date(2021, 4, 27)},
     ]
 
 
