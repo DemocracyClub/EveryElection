@@ -199,7 +199,10 @@ class BaseElectionSerializer(serializers.ModelSerializer):
             or obj.group_type == "subtype"
             or not obj.group_type
         ):
-            return VOTING_SYSTEMS.get(obj.voting_system, None)
+            system = VOTING_SYSTEMS.get(obj.voting_system, None)
+            if system:
+                system["slug"] = obj.voting_system
+            return system
         return None
 
     def get_children(self, obj):
