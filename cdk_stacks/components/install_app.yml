@@ -1,11 +1,11 @@
 name: InstallApp
 description: Installs the EE Django app
 schemaVersion: 1.0
-component_version: 0.0.18
+component_version: 0.0.19
 parameters:
   - git_branch:
       type: string
-      default: ubuntu-22.04-upgrade
+      default: master
       description: Git branch to pull when building the image
   - username:
       type: string

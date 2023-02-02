@@ -24,7 +24,7 @@ COMPONENTS = [
         "file": "install_app.yml",
         "context": {
             "username": "every_election",
-            "git_branch": "ubuntu-22.04-upgrade",
+            "git_branch": "master",
         },
     },
     {
