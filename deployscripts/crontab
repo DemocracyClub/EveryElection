@@ -1,4 +1,6 @@
 # WARNING: Commands in this file will run on *every* instance in *every* environment
+# HOWEVER: these commands will NOT run on instances booted from the EE AMI
 # If you want to have a command run only once per env / once globally, use SSM Run Command
 0 2 * * * every_election cd /var/www/every_election/repo && ./serverscripts/rebuild_local_db.sh
 30 2 * * * every_election cd /var/www/every_election/repo && ./serverscripts/add_nuts1.sh
+0 1 * * * ee-manage-py-command dumpdata elections election_snooper --indent 4 -o /var/www/every_election/repo/every_election/data/elections.json

@@ -28,6 +28,7 @@ def create_deployment():
     deployment = client.create_deployment(
         applicationName="EECodeDeploy",
         deploymentGroupName="EEDefaultDeploymentGroup",
+        ignoreApplicationStopFailures=True,
         revision={
             "revisionType": "GitHub",
             "gitHubLocation": {
