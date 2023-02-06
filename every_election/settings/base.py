@@ -257,7 +257,7 @@ CORS_URLS_REGEX = r"^/api/.*$"
 CORS_ALLOW_METHODS = ("GET", "OPTIONS")
 
 UPSTREAM_SYNC_URL = "https://elections.democracyclub.org.uk/sync/"
-
+GCS_API_KEY = os.environ.get("GCS_API_KEY", "")
 
 NOTICE_OF_ELECTION_BUCKET = "notice-of-election"
 LGBCE_BUCKET = "lgbce-mirror"
