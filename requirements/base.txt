@@ -32,9 +32,10 @@ importlib-metadata==6.0.0
 
 git+https://github.com/DemocracyClub/dc_signup_form.git@2.1.3
 git+https://github.com/DemocracyClub/design-system.git@0.2.4
-git+https://github.com/DemocracyClub/dc_django_utils.git@2.1.2
+git+https://github.com/DemocracyClub/dc_django_utils.git@2.1.3
 
 django-dotenv==1.4.2
 
 
 setuptools>=65.5.1
+
