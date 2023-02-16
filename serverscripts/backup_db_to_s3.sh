@@ -7,9 +7,10 @@ source .env
 # set backup directory variables
 DESTDIR='every_election'
 SHORT_TERM_BUCKET='dc-ee-production-database-backups'
+NOWDATE=`date +%Y-%m-%d-%H`
 #### END CONFIGURATION ####
 
-BACKUP_PG_DUMP_CONNECTION_STRING="-d every_election -h $EE_DATABASE_HOST -Fc"
+BACKUP_PG_DUMP_CONNECTION_STRING="-U every_election -d every_election -h $EE_DATABASE_HOST -Fc"
 export PGPASSWORD=$EE_DATABASE_PASSWORD
 pg_dump $BACKUP_PG_DUMP_CONNECTION_STRING > /tmp/ee-backup.dump
 
