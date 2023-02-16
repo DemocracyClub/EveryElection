@@ -68,7 +68,8 @@ class RunOncePerTagRunCommandClient:
             if status == "Success":
                 print(response["StandardOutputContent"])
             if status == "Failed":
-                raise ValueError("Command filed")
+                # print(response["StandardOutputContent"]) - uncomment when debugging remote scripts
+                raise ValueError("Command failed")
 
 
 if __name__ == "__main__":
