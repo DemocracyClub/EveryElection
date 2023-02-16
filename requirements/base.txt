@@ -13,7 +13,7 @@ django-storages==1.13.2
 djangorestframework==3.14.0
 djangorestframework-gis==1.0
 djangorestframework-jsonp==1.0.2
-geojson==2.5.0
+geojson==3.0.1
 glob2==0.7
 markdown==3.4.1
 psutil==5.9.4
