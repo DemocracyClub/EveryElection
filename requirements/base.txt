@@ -1,4 +1,4 @@
-beautifulsoup4==4.11.1
+beautifulsoup4==4.11.2
 boto3==1.26.56
 Django==4.1.7
 django-basicauth==0.5.3
