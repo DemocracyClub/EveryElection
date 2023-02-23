@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  node: circleci/node@5.0.2
+  node: circleci/node@5.1.0
 
 jobs:
   build_and_test:
@@ -25,7 +25,7 @@ jobs:
 
 
       - node/install:
-          node-version: '10.19.0'
+          node-version: '19.7.0'
       - node/install-packages:
           cache-path: ~/repo/node_modules
           override-ci-command: npm install
