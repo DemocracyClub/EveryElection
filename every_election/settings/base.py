@@ -20,6 +20,7 @@ def str_bool_to_bool(str_bool):
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("EE_SECRET_KEY", "CHANGE THIS!!!")
+SLACK_WEBHOOK_URL = os.environ.get("SLACK_WEBHOOK_URL", None)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = str_bool_to_bool(os.environ.get("EE_DEBUG", False))
