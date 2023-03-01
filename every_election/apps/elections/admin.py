@@ -147,6 +147,18 @@ class ElectedRoleAdmin(admin.ModelAdmin):
     form = ElectedRoleAdminForm
 
 
+class ExplanationAdminForm(forms.ModelForm):
+    class Meta:
+        model = Explanation
+        fields = "__all__"
+
+        widgets = {"explanation": admin.widgets.AdminTextareaWidget}
+
+
+class ExplanationAdmin(admin.ModelAdmin):
+    form = ExplanationAdminForm
+
+
 class ModerationHistoryAdmin(admin.ModelAdmin):
 
     list_display = ("election", "status", "user", "notes", "created")
@@ -168,5 +180,6 @@ class ModerationHistoryAdmin(admin.ModelAdmin):
 
 admin.site.register(ElectedRole, ElectedRoleAdmin)
 admin.site.register(Election, ElectionAdmin)
+admin.site.register(Explanation, ExplanationAdmin)
 admin.site.register(MetaData, MetaDataAdmin)
 admin.site.register(ModerationHistory, ModerationHistoryAdmin)

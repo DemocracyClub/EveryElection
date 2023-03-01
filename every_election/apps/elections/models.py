@@ -507,7 +507,7 @@ class ModerationHistory(TimeStampedModel):
 
 class Explanation(models.Model):
     description = models.CharField(blank=False, max_length=100)
-    explanation = models.CharField(blank=False, max_length=100)
+    explanation = models.TextField()
 
     def __str__(self):
         return self.description
