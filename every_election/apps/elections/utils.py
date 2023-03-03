@@ -1,7 +1,8 @@
 from datetime import datetime
+from typing import Optional
 
 from uk_election_ids.datapackage import VOTING_SYSTEMS
-from uk_election_ids.metadata_tools import VotingSystemMatcher
+from uk_election_ids.metadata_tools import VotingSystemMatcher, IDRequirementsMatcher
 
 from organisations.models import (
     Organisation,
@@ -15,6 +16,7 @@ from elections.models import (
     ElectionType,
     MetaData,
 )
+
 from uk_election_ids.election_ids import IdBuilder
 
 CACHE = {
@@ -25,6 +27,22 @@ CACHE = {
     "private_elections": {},
     "elected_roles": {},
 }
+
+
+def get_voter_id_requirement(election: Election) -> Optional[str]:
+    """
+    Given an Election object, if eligible for voter ID return the related voter ID legislation code
+    """
+    if not election.division:
+        return None
+
+    nation = election.division.territory_code
+    if not nation:
+        return None
+
+    matcher = IDRequirementsMatcher(election.election_id, nation)
+
+    return matcher.get_id_requirements()
 
 
 def get_cached_election_type(election_type):
