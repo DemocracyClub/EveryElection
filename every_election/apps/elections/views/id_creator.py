@@ -18,6 +18,7 @@ from elections.forms import (
 )
 from election_snooper.helpers import post_to_slack
 from election_snooper.models import SnoopedElection
+from elections.utils import get_voter_id_requirement
 
 
 FORMS = [
@@ -263,6 +264,9 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                     and election.metadata.description == "Pre-ECO election"
                 ):
                     election.metadata = None
+
+            election.requires_voter_id = get_voter_id_requirement(election)
+
             election.save(status=status, user=self.request.user, notes=notes)
 
         if not user_is_moderator(self.request.user) and len(context["all_ids"]) > 0:
