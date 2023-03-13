@@ -53,6 +53,19 @@ To populate the database from a dumpfile, run:
 pg_restore -d every_election -C backup.dump
 ```
 
+If you have a DC AWS account, you can grab the latest production db backup like so:
+```
+export AWS_PROFILE=dev-ee-dc #  you may need to configure this profile
+# Drop and re-create the local DB
+dropdb every_election
+createdb every_election
+
+# Pipe the latest backup into the local DB
+LATEST_FILE=`aws s3 ls s3://dc-ee-production-database-backups/every_election/ | sort | tail -n 1 | rev | cut -d' ' -f 1 | rev`
+aws s3 cp s3://dc-ee-production-database-backups/every_election/$LATEST_FILE - | pg_restore -d every_election --if-exists --clean
+```
+_We strongly advise you to create a local backup before dropping your database!_
+
 ## Run the tests
 This project uses pytest. 
 
@@ -82,4 +95,3 @@ To run a project-wide reformat, run:
 ```commandline
 black .
 ```
-

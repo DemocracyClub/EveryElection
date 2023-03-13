@@ -20,7 +20,7 @@ from django.urls import reverse
 
 from django_extensions.db.models import TimeStampedModel
 from storages.backends.s3boto3 import S3Boto3Storage
-from uk_election_ids.datapackage import VOTING_SYSTEMS
+from uk_election_ids.datapackage import VOTING_SYSTEMS, ID_REQUIREMENTS
 from uk_election_timetables.calendars import Country
 from uk_election_timetables.election_ids import (
     from_election_id,
@@ -135,6 +135,11 @@ class Election(TimeStampedModel):
     seats_total = models.IntegerField(blank=True, null=True)
     group = models.ForeignKey(
         "Election", null=True, related_name="_children_qs", on_delete=models.CASCADE
+    )
+    requires_voter_id = models.CharField(
+        max_length=100,
+        null=True,
+        choices=[(req, ID_REQUIREMENTS[req]["name"]) for req in ID_REQUIREMENTS.keys()],
     )
 
     def get_children(self, manager):
