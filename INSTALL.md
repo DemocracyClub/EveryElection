@@ -95,3 +95,7 @@ To run a project-wide reformat, run:
 ```commandline
 black .
 ```
+
+## Development Notes
+
+- If adding any new fields to EveryElection, you may also need to add them to the EE API app within this project.
