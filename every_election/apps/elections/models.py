@@ -141,13 +141,6 @@ class Election(TimeStampedModel):
         null=True,
         choices=[(req, ID_REQUIREMENTS[req]["name"]) for req in ID_REQUIREMENTS.keys()],
     )
-    current_status = models.CharField(
-        blank=False,
-        max_length=32,
-        choices=[(x, x.value) for x in ModerationStatuses],
-        default=DEFAULT_STATUS,
-        db_index=True,
-    )
 
     def get_children(self, manager):
         """
@@ -182,17 +175,40 @@ class Election(TimeStampedModel):
     current = models.BooleanField(null=True)
 
     """
+    ## Statuses
+    
+    Elections can have various statuses. 
+    
+    We track these in `ModerationStatus`. Using this model we can 
+    get the moderation history of each object, including the current 
+    status.
+    
+    However this query is somewhat slow, and most of the time (e.g 
+    for public use) we want to filter on the current status.
+    
+    Because of this, we denormalize the current status into a 
+    `current_status` field.
+    
     election.moderation_statuses.all() is not a terribly useful call
     to reference directly because it just gives us a list of all the
     statuses an election object has ever been assigned
     (but not when they were assigned or or which is the most recent).
 
-    Use election.moderation_status to get the current status of an election
-    or Election.private_objects.all.filter_by_status()
-    to select elections based on their most recent status value.
+    `ModerationHistory.objects.all().filter(election=self).latest().status` 
+    will get the latest status, but this should always be the same as 
+    `self.current_status`.
     """
     moderation_statuses = models.ManyToManyField(
         ModerationStatus, through="ModerationHistory"
+    )
+    # Don't modify this field directly. Add a ModerationStatus event and save it
+    # to change this value.
+    current_status = models.CharField(
+        blank=False,
+        max_length=32,
+        choices=[(x, x.value) for x in ModerationStatuses],
+        default=DEFAULT_STATUS,
+        db_index=True,
     )
 
     # where did we hear about this election
