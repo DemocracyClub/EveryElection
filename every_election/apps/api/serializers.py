@@ -157,6 +157,7 @@ election_fields = (
     "seats_contested",
     "division",
     "voting_system",
+    "requires_voter_id",
     "current",
     "explanation",
     "metadata",
