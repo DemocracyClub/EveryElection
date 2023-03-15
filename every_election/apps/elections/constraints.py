@@ -1,4 +1,4 @@
-from elections.models import ModerationHistory, ModerationStatuses
+from elections.models import ModerationHistory, ModerationStatuses, Election
 
 
 class ViolatedConstraint(Exception):
@@ -14,25 +14,19 @@ def has_approved_parents(election):
     # True if all of this election's parent groups are approved
     if (
         election.group
-        and election.group.moderation_status.short_label
-        != ModerationStatuses.approved.value
+        and election.group.current_status != ModerationStatuses.approved.value
     ):
         return False
     if (
         election.group.group
-        and election.group.group.moderation_status.short_label
-        != ModerationStatuses.approved.value
+        and election.group.group.current_status != ModerationStatuses.approved.value
     ):
         return False
     return True
 
 
-def has_related_status(election):
-    try:
-        election.moderation_status
-        return True
-    except ModerationHistory.DoesNotExist:
-        return False
+def has_related_status(election: Election):
+    return election.moderationhistory_set.exists()
 
 
 def check_constraints(election):
@@ -43,7 +37,7 @@ def check_constraints(election):
 
     if (
         election.group
-        and election.moderation_status.short_label == ModerationStatuses.approved.value
+        and election.current_status == ModerationStatuses.approved.value
         and not has_approved_parents(election)
     ):
         raise ViolatedConstraint(

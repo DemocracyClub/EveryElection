@@ -175,17 +175,40 @@ class Election(TimeStampedModel):
     current = models.BooleanField(null=True)
 
     """
+    ## Statuses
+    
+    Elections can have various statuses. 
+    
+    We track these in `ModerationStatus`. Using this model we can 
+    get the moderation history of each object, including the current 
+    status.
+    
+    However this query is somewhat slow, and most of the time (e.g 
+    for public use) we want to filter on the current status.
+    
+    Because of this, we denormalize the current status into a 
+    `current_status` field.
+    
     election.moderation_statuses.all() is not a terribly useful call
     to reference directly because it just gives us a list of all the
     statuses an election object has ever been assigned
     (but not when they were assigned or or which is the most recent).
 
-    Use election.moderation_status to get the current status of an election
-    or Election.private_objects.all.filter_by_status()
-    to select elections based on their most recent status value.
+    `ModerationHistory.objects.all().filter(election=self).latest().status` 
+    will get the latest status, but this should always be the same as 
+    `self.current_status`.
     """
     moderation_statuses = models.ManyToManyField(
         ModerationStatus, through="ModerationHistory"
+    )
+    # Don't modify this field directly. Add a ModerationStatus event and save it
+    # to change this value.
+    current_status = models.CharField(
+        blank=False,
+        max_length=32,
+        choices=[(x, x.value) for x in ModerationStatuses],
+        default=DEFAULT_STATUS,
+        db_index=True,
     )
 
     # where did we hear about this election
@@ -353,10 +376,6 @@ class Election(TimeStampedModel):
             return self.tmp_election_id
 
     @property
-    def moderation_status(self):
-        return ModerationHistory.objects.all().filter(election=self).latest().status
-
-    @property
     def geography(self):
         if self.identifier_type == "ballot" and self.division:
             return self.division_geography
@@ -458,11 +477,7 @@ class Election(TimeStampedModel):
             self.group = group_model
 
         super().save(*args, **kwargs)
-        if (
-            status
-            and status != DEFAULT_STATUS
-            and status != self.moderation_status.short_label
-        ):
+        if status and status != DEFAULT_STATUS and status != self.current_status:
             event = ModerationHistory(
                 election=self, status_id=status, user=user, notes=notes
             )
@@ -496,13 +511,17 @@ class ModerationHistory(TimeStampedModel):
 
     def save(self, **kwargs):
         # if this is the initial status no need to update the related election
-        # so return early
+        # so return early. This is because the default status is identical on
+        # both this model and the Election model
         if kwargs.pop("initial_status", False):
             return super().save(**kwargs)
-        super().save(**kwargs)
+
         # save the related election to update the modified timestamp so that it
         # is found by the importer looking for recent changes
-        self.election.save()
+        if self.election.current_status != self.status.short_label:
+            self.election.current_status = self.status.short_label
+            self.election.save()
+        super().save(**kwargs)
 
     class Meta:
         verbose_name_plural = "Moderation History"

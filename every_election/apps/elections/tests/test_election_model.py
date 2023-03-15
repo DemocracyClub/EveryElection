@@ -116,13 +116,11 @@ class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
 
     def test_save_with_status(self):
         self.election_group.save()
-        self.assertEqual(
-            self.election_group.moderation_status.short_label, DEFAULT_STATUS
-        )
+        self.assertEqual(self.election_group.current_status, DEFAULT_STATUS)
 
         self.election_group.save(status=ModerationStatuses.approved.value)
         self.assertEqual(
-            self.election_group.moderation_status.short_label,
+            self.election_group.current_status,
             ModerationStatuses.approved.value,
         )
 

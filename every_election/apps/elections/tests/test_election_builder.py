@@ -255,9 +255,9 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
 
         default_status = DEFAULT_STATUS
 
-        self.assertEqual(default_status, ballot.moderation_status.short_label)
-        self.assertEqual(default_status, org_group.moderation_status.short_label)
-        self.assertEqual(default_status, election_group.moderation_status.short_label)
+        self.assertEqual(default_status, ballot.current_status)
+        self.assertEqual(default_status, org_group.current_status)
+        self.assertEqual(default_status, election_group.current_status)
 
     def test_can_create_duplicate_groups(self):
         """

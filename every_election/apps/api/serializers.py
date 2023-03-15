@@ -188,8 +188,8 @@ class BaseElectionSerializer(serializers.ModelSerializer):
     replaced_by = serializers.SlugRelatedField(slug_field="election_id", read_only=True)
     tags = serializers.JSONField()
 
-    def get_deleted(self, obj):
-        return obj.moderation_status.short_label == ModerationStatuses.deleted.value
+    def get_deleted(self, obj: Election):
+        return obj.current_status == ModerationStatuses.deleted.value
 
     def get_current(self, obj):
         return obj.get_current

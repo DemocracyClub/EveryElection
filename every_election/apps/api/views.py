@@ -1,5 +1,7 @@
 from collections import OrderedDict
 from datetime import datetime
+
+from django.db.models import Prefetch
 from django.http import Http404
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -55,19 +57,33 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
         )
 
     def get_queryset(self):
-        queryset = Election.public_objects.all()
-        queryset = queryset.select_related(
+        select_related = [
             "election_type",
+            "election_subtype",
             "organisation",
             "elected_role",
             "division",
+            "division__divisionset",
             "group",
             "replaces",
             "metadata",
+        ]
+
+        queryset = Election.public_objects.all()
+        queryset = queryset.select_related(*select_related).prefetch_related(
+            "_replaced_by"
         )
 
         if self.request.query_params.get("deleted", None) is not None:
-            queryset = Election.private_objects.all().filter_by_status("Deleted")
+            queryset = (
+                Election.private_objects.all()
+                .select_related(*select_related)
+                .filter_by_status("Deleted")
+            )
+        else:
+            queryset = queryset.prefetch_related(
+                Prefetch("_children_qs", Election.public_objects.all())
+            )
 
         postcode = self.request.query_params.get("postcode", None)
         if postcode is not None:

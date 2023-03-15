@@ -55,19 +55,12 @@ class ElectionQuerySet(models.QuerySet):
 
     def filter_by_status(self, status):
         if isinstance(status, list):
-            query = models.Q(moderationhistory__status__short_label__in=status)
+            query = models.Q(current_status__in=status)
         elif isinstance(status, str):
-            query = models.Q(moderationhistory__status__short_label=status)
+            query = models.Q(current_status=status)
         else:
             raise TypeError("Expected list or str found {}".format(type(status)))
-
-        return (
-            self.annotate(latest_status=models.Max("moderationhistory__modified"))
-            .filter(
-                query & models.Q(moderationhistory__modified=models.F("latest_status"))
-            )
-            .order_by("election_id")
-        )
+        return self.filter(query).order_by("election_id")
 
     def update(self, update_modified=True, **kwargs):
         """
