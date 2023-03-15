@@ -2,6 +2,8 @@ import json
 from copy import deepcopy
 from django import forms
 from django.contrib import admin
+from django.db import models
+from django.db.models import Manager
 from django.forms.widgets import Textarea
 from .models import (
     ElectedRole,
@@ -178,8 +180,39 @@ class ModerationHistoryAdmin(admin.ModelAdmin):
         return False
 
 
+class ElectionStatusProblemManager(Manager):
+    def get_queryset(self):
+        qs = super().get_queryset()
+        latest_statuses = models.Subquery(
+            ModerationHistory.objects.filter(
+                election_id=models.OuterRef("id"),
+            )
+            .order_by("-modified")
+            .values("status")[:1]
+        )
+        qs = qs.annotate(latest_status=latest_statuses).exclude(
+            latest_status=models.F("current_status")
+        )
+
+        return qs
+
+
+class ElectionStatusProblem(Election):
+
+    objects = ElectionStatusProblemManager()
+
+    class Meta:
+        verbose_name_plural = "⚠️ Current status Problems"
+        proxy = True
+
+
+class ElectionStatusProblemAdmin(ElectionAdmin):
+    list_display_links = None
+
+
 admin.site.register(ElectedRole, ElectedRoleAdmin)
 admin.site.register(Election, ElectionAdmin)
 admin.site.register(Explanation, ExplanationAdmin)
 admin.site.register(MetaData, MetaDataAdmin)
 admin.site.register(ModerationHistory, ModerationHistoryAdmin)
+admin.site.register(ElectionStatusProblem, ElectionStatusProblemAdmin)
