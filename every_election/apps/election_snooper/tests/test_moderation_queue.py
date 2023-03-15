@@ -60,9 +60,10 @@ class TestSingleElectionView(TestCase):
                 "{}-status".format(suggested_child.pk): "Approved",
             },
         )
-
+        suggested_child.refresh_from_db()
+        suggested_parent.refresh_from_db()
         # approving the child should
         # implicitly approve the parent
         # if it is not already approved
-        self.assertEqual("Approved", suggested_child.moderation_status.short_label)
-        self.assertEqual("Approved", suggested_parent.moderation_status.short_label)
+        self.assertEqual("Approved", suggested_child.current_status)
+        self.assertEqual("Approved", suggested_parent.current_status)

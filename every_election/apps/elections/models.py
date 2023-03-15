@@ -376,10 +376,6 @@ class Election(TimeStampedModel):
             return self.tmp_election_id
 
     @property
-    def moderation_status(self):
-        return ModerationHistory.objects.all().filter(election=self).latest().status
-
-    @property
     def geography(self):
         if self.identifier_type == "ballot" and self.division:
             return self.division_geography
@@ -481,11 +477,7 @@ class Election(TimeStampedModel):
             self.group = group_model
 
         super().save(*args, **kwargs)
-        if (
-            status
-            and status != DEFAULT_STATUS
-            and status != self.moderation_status.short_label
-        ):
+        if status and status != DEFAULT_STATUS and status != self.current_status:
             event = ModerationHistory(
                 election=self, status_id=status, user=user, notes=notes
             )

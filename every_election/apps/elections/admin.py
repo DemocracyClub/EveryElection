@@ -69,7 +69,6 @@ class ElectionAdmin(admin.ModelAdmin):
         "elected_role",
         "division",
         "group",
-        "moderation_status",
         "created",
         "modified",
     )
@@ -82,7 +81,7 @@ class ElectionAdmin(admin.ModelAdmin):
         "current_status",
     )
     list_filter = ["current"]
-    list_display = ["election_id", "poll_open_date", "current", "moderation_status"]
+    list_display = ["election_id", "poll_open_date", "current", "current_status"]
     actions = [mark_current, mark_not_current, unset_current, soft_delete]
     date_hierarchy = "poll_open_date"
 
