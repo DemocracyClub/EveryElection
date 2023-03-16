@@ -8,7 +8,7 @@ aws-cdk.aws-cloudfront==1.191.0
 aws-cdk.aws-cloudfront-origins==1.191.0
 aws-cdk.aws-codedeploy==1.191.0
 aws-cdk.aws_certificatemanager==1.191.0
-aws-cdk.aws-route53==1.191.0
+aws-cdk.aws-route53==1.197.0
 aws-cdk.aws-route53-targets==1.191.0
 aws-cdk.aws-lambda-python==1.191.0
 aws-cdk.aws-events-targets==1.191.0
