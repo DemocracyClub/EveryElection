@@ -160,7 +160,7 @@ class Election(TimeStampedModel):
                 return child_manager_cls(self)
         raise ValueError("Unknown manager {}".format(manager))
 
-    group_type = models.CharField(blank=True, max_length=100, null=True)
+    group_type = models.CharField(blank=True, max_length=100, null=True, db_index=True)
     voting_system = models.CharField(
         max_length=100,
         null=True,
@@ -172,7 +172,7 @@ class Election(TimeStampedModel):
     metadata = models.ForeignKey(
         "elections.MetaData", null=True, blank=True, on_delete=models.SET_NULL
     )
-    current = models.BooleanField(null=True)
+    current = models.BooleanField(null=True, db_index=True)
 
     """
     ## Statuses

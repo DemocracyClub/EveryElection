@@ -47,7 +47,7 @@ class ElectionQuerySet(models.QuerySet):
     def current(self):
         recent_past = datetime.today() - timedelta(days=settings.CURRENT_PAST_DAYS)
         return self.filter(
-            (models.Q(poll_open_date__gte=recent_past)) | models.Q(current=True)
+            models.Q(poll_open_date__gte=recent_past) | models.Q(current=True)
         ).exclude(current=False)
 
     def future(self):

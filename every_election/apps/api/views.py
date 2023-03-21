@@ -81,9 +81,11 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
                 .filter_by_status("Deleted")
             )
         else:
-            queryset = queryset.prefetch_related(
-                Prefetch("_children_qs", Election.public_objects.all())
-            )
+            identifier_type = self.request.query_params.get("identifier_type", None)
+            if identifier_type != "ballot":
+                queryset = queryset.prefetch_related(
+                    Prefetch("_children_qs", Election.public_objects.all())
+                )
 
         postcode = self.request.query_params.get("postcode", None)
         if postcode is not None:
@@ -115,7 +117,7 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
                 queryset = queryset.filter(group_type=None)
             else:
                 queryset = queryset.filter(group_type=identifier_type)
-
+        queryset = queryset.order_by()
         return queryset
 
     def retrieve(self, request, *args, **kwargs):
@@ -141,8 +143,9 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
 
         queryset = self.filter_queryset(self.get_queryset())
         postcode = self.request.query_params.get("postcode", None)
+        coords = self.request.query_params.get("coords", None)
         current = self.request.query_params.get("current", None)
-        if postcode and current:
+        if (postcode or coords) and current:
             serializer = self.get_serializer(queryset, many=True)
             return Response(
                 OrderedDict(

@@ -535,9 +535,9 @@ class TestElectionAPIQueries(APITestCase):
             content_type="application/json",
         )
         data = resp.json()
-        self.assertListEqual(
-            ["overlaps", "same", "contains", "within"],
-            [e["election_title"] for e in data["results"]],
+        self.assertSetEqual(
+            set(["overlaps", "same", "contains", "within"]),
+            set([e["election_title"] for e in data["results"]]),
         )
 
         # BIG_TEST1 has an area bigger than 2. So should hoover up everything
@@ -546,7 +546,7 @@ class TestElectionAPIQueries(APITestCase):
             content_type="application/json",
         )
         data = resp.json()
-        self.assertListEqual(
-            ["overlaps", "same", "contains", "within"],
-            [e["election_title"] for e in data["results"]],
+        self.assertSetEqual(
+            set(["overlaps", "same", "contains", "within"]),
+            set([e["election_title"] for e in data["results"]]),
         )
