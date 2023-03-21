@@ -54,7 +54,7 @@ class ElectionFilter(django_filters.FilterSet):
         return queryset.filter(
             Q(division_geography__geography__bboverlaps=og_qs.get().geography)
             | Q(organisation_geography__geography__bboverlaps=og_qs.get().geography)
-        )
+        ).prefetch_related("_children_qs")
 
     organisation_identifier = django_filters.CharFilter(
         field_name="organisation__official_identifier",
