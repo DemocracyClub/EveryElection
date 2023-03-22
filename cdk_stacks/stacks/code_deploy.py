@@ -287,19 +287,21 @@ class EECodeDeployment(Stack):
             "FQDN",
         )
 
+        app_origin = origins.LoadBalancerV2Origin(
+            alb,
+            http_port=80,
+            protocol_policy=cloudfront.OriginProtocolPolicy.HTTP_ONLY,
+            custom_headers={
+                "X-Forwarded-Host": fqdn,
+                "X-Forwarded-Proto": "https",
+            },
+        )
+
         cloudfront_dist = cloudfront.Distribution(
             self,
             "EECloudFront",
             default_behavior=cloudfront.BehaviorOptions(
-                origin=origins.LoadBalancerV2Origin(
-                    alb,
-                    http_port=80,
-                    protocol_policy=cloudfront.OriginProtocolPolicy.HTTP_ONLY,
-                    custom_headers={
-                        "X-Forwarded-Host": fqdn,
-                        "X-Forwarded-Proto": "https",
-                    },
-                ),
+                origin=app_origin,
                 allowed_methods=cloudfront.AllowedMethods.ALLOW_ALL,
                 cache_policy=cloudfront.CachePolicy(
                     self,
@@ -336,7 +338,30 @@ class EECodeDeployment(Stack):
                         enable_accept_encoding_brotli=True,
                         enable_accept_encoding_gzip=True,
                     ),
-                )
+                ),
+                "/api/*": cloudfront.BehaviorOptions(
+                    origin=app_origin,
+                    cache_policy=cloudfront.CachePolicy(
+                        self,
+                        "short_cache_api",
+                        default_ttl=Duration.seconds(60),
+                        min_ttl=Duration.seconds(0),
+                        max_ttl=Duration.seconds(60),
+                        enable_accept_encoding_brotli=True,
+                        enable_accept_encoding_gzip=True,
+                        query_string_behavior=cloudfront.CacheQueryStringBehavior.all(),
+                    ),
+                ),
+                "/id_creator/*": cloudfront.BehaviorOptions(
+                    origin=app_origin,
+                    cache_policy=cloudfront.CachePolicy(
+                        self,
+                        "disable_cache_id_creator",
+                        default_ttl=Duration.seconds(0),
+                        min_ttl=Duration.seconds(0),
+                        max_ttl=Duration.seconds(0),
+                    ),
+                ),
             },
             certificate=cert,
             domain_names=[fqdn],

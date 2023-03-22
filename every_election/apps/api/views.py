@@ -89,6 +89,7 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
 
         postcode = self.request.query_params.get("postcode", None)
         if postcode is not None:
+            postcode = postcode.replace(" ", "")
             try:
                 queryset = queryset.for_postcode(postcode)
             except PostcodeError:
