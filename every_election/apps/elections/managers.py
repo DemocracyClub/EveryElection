@@ -12,6 +12,9 @@ from elections.query_helpers import get_point_from_postcode
 class ElectionQuerySet(models.QuerySet):
     def for_point(self, point):
         return self.filter(
+            models.Q(division_geography__geography__bbcontains=point)
+            | models.Q(organisation_geography__geography__bbcontains=point)
+        ).filter(
             models.Q(division_geography__geography__contains=point)
             | models.Q(organisation_geography__geography__contains=point)
         )
