@@ -12,6 +12,9 @@ from elections.query_helpers import get_point_from_postcode
 class ElectionQuerySet(models.QuerySet):
     def for_point(self, point):
         return self.filter(
+            models.Q(division_geography__geography__bbcontains=point)
+            | models.Q(organisation_geography__geography__bbcontains=point)
+        ).filter(
             models.Q(division_geography__geography__contains=point)
             | models.Q(organisation_geography__geography__contains=point)
         )
@@ -47,7 +50,7 @@ class ElectionQuerySet(models.QuerySet):
     def current(self):
         recent_past = datetime.today() - timedelta(days=settings.CURRENT_PAST_DAYS)
         return self.filter(
-            (models.Q(poll_open_date__gte=recent_past)) | models.Q(current=True)
+            models.Q(poll_open_date__gte=recent_past) | models.Q(current=True)
         ).exclude(current=False)
 
     def future(self):
