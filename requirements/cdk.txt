@@ -6,7 +6,7 @@ aws-cdk.aws-autoscaling==1.191.0
 aws-cdk.aws-ec2==1.191.0
 aws-cdk.aws-cloudfront==1.191.0
 aws-cdk.aws-cloudfront-origins==1.191.0
-aws-cdk.aws-codedeploy==1.191.0
+aws-cdk.aws-codedeploy==1.198.0
 aws-cdk.aws_certificatemanager==1.191.0
 aws-cdk.aws-route53==1.191.0
 aws-cdk.aws-route53-targets==1.191.0
