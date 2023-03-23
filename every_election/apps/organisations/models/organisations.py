@@ -159,3 +159,19 @@ class OrganisationGeography(DateConstraintMixin, DateDisplayMixin, models.Model)
         This is defined in
         organisations/migrations/0040_end_date_constraint.py
         """
+
+
+class OrganisationGeographySubdivided(models.Model):
+    geography = models.PolygonField(db_index=True, spatial_index=True)
+    organisation_geography = models.ForeignKey(
+        OrganisationGeography,
+        on_delete=models.CASCADE,
+        related_name="subdivided",
+    )
+
+    POPULATE_SQL = """
+    TRUNCATE organisations_organisationgeographysubdivided;
+    INSERT INTO organisations_organisationgeographysubdivided (geography, og_id)
+        SELECT st_subdivide(geography) as geography, id as og_id 
+        FROM organisations_organisationgeography;
+    """
