@@ -171,7 +171,7 @@ class OrganisationGeographySubdivided(models.Model):
 
     POPULATE_SQL = """
     TRUNCATE organisations_organisationgeographysubdivided;
-    INSERT INTO organisations_organisationgeographysubdivided (geography, og_id)
-        SELECT st_subdivide(geography) as geography, id as og_id 
+    INSERT INTO organisations_organisationgeographysubdivided (geography, organisation_geography_id)
+        SELECT st_subdivide(geography) as geography, id as organisation_geography_id 
         FROM organisations_organisationgeography;
     """

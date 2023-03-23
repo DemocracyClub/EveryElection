@@ -1,11 +1,14 @@
 from datetime import date
+
 from django.test import TestCase
 
 from elections.models import ElectedRole, Election, ElectionType, ElectionSubType
-from organisations.models import Organisation, DivisionGeography, OrganisationGeography
+from organisations.models import Organisation
 from organisations.tests.factories import (
     OrganisationDivisionFactory,
     OrganisationDivisionSetFactory,
+    DivisionGeographyFactory,
+    OrganisationGeographyFactory,
 )
 
 from .base_tests import BaseElectionCreatorMixIn, FuzzyInt
@@ -321,10 +324,10 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
     def test_election_with_organisation_geography(self):
         all_data = self.base_data
 
-        geog = OrganisationGeography()
-        geog.organisation = all_data["election_organisation"][0]
-        geog.geography = self.test_polygon
-        geog.save()
+        OrganisationGeographyFactory(
+            organisation=all_data["election_organisation"][0],
+            geography=self.test_polygon,
+        )
 
         all_data.update(
             {
@@ -362,10 +365,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
     def test_election_with_division_geography(self):
         all_data = self.base_data
 
-        geog = DivisionGeography()
-        geog.division = self.org_div_2
-        geog.geography = self.test_polygon
-        geog.save()
+        DivisionGeographyFactory(division=self.org_div_2, geography=self.test_polygon)
 
         all_data.update(
             {

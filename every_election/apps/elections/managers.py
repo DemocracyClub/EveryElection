@@ -2,21 +2,29 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib.gis.db.models.functions import PointOnSurface
-from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.contrib.gis.geos import Point, GEOSGeometry
 from django.utils import timezone
+
 from elections.query_helpers import get_point_from_postcode
+from organisations.models import (
+    OrganisationGeographySubdivided,
+    DivisionGeographySubdivided,
+)
 
 
 class ElectionQuerySet(models.QuerySet):
     def for_point(self, point):
+
+        div_ids = DivisionGeographySubdivided.objects.filter(
+            geography__contains=point
+        ).values("division_geography_id")
+        org_ids = OrganisationGeographySubdivided.objects.filter(
+            geography__contains=point
+        ).values("organisation_geography_id")
         return self.filter(
-            models.Q(division_geography__geography__bbcontains=point)
-            | models.Q(organisation_geography__geography__bbcontains=point)
-        ).filter(
-            models.Q(division_geography__geography__contains=point)
-            | models.Q(organisation_geography__geography__contains=point)
+            models.Q(division_geography_id__in=div_ids)
+            | models.Q(organisation_geography_id__in=org_ids)
         )
 
     def for_lat_lng(self, lat, lng):
