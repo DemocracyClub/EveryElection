@@ -74,6 +74,7 @@ PROJECT_APPS = [
     "django_extensions",
     "election_snooper",
     "dc_utils",
+    "og_images",
 ]
 
 INSTALLED_APPS += PROJECT_APPS

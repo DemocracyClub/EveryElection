@@ -8,6 +8,7 @@ from core.helpers import user_is_moderator
 from elections.constants import ELECTION_TYPES
 from elections.forms import NoticeOfElectionForm
 from elections.models import ElectionType, Election, Document
+from og_images.svg_maker import SVGGenerator
 
 
 class ElectionTypesView(ListView):
@@ -117,6 +118,8 @@ class SingleElection(AccessMixin, DetailView):
         )
         context["form"] = form
         context["user_can_upload_docs"] = user_is_moderator(self.request.user)
+        if not self.object.group_type:
+            context["svg"] = SVGGenerator(self.object).svg()
         return context
 
     def post(self, *args, **kwargs):
