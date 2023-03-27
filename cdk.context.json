@@ -38,5 +38,10 @@
         ]
       }
     ]
+  },
+  "ssm:account=427217546102:parameterName=FQDN:region=eu-west-2": "every-election.womblelabs.co.uk",
+  "hosted-zone:account=427217546102:domainName=every-election.womblelabs.co.uk:privateZone=false:region=eu-west-2": {
+    "Id": "/hostedzone/Z04406562NZECYJ0RAVBF",
+    "Name": "every-election.womblelabs.co.uk."
   }
 }
