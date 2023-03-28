@@ -139,3 +139,19 @@ class DivisionGeography(models.Model):
     )
     geography = models.MultiPolygonField()
     source = models.CharField(blank=True, max_length=255)
+
+
+class DivisionGeographySubdivided(models.Model):
+    geography = models.PolygonField(db_index=True, spatial_index=True)
+    division_geography = models.ForeignKey(
+        DivisionGeography,
+        on_delete=models.CASCADE,
+        related_name="subdivided",
+    )
+
+    POPULATE_SQL = """
+    TRUNCATE organisations_divisiongeographysubdivided;
+    INSERT INTO organisations_divisiongeographysubdivided (geography, dg_id)
+        SELECT st_subdivide(geography) as geography, id as dg_id 
+        FROM organisations_divisiongeography;
+    """
