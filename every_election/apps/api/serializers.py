@@ -54,7 +54,6 @@ org_fields = (
 
 
 class OrganisationSerializer(serializers.ModelSerializer):
-
     url = OrganisationHyperlinkedIdentityField(
         view_name="api:organisation-detail", read_only=True
     )
@@ -65,7 +64,6 @@ class OrganisationSerializer(serializers.ModelSerializer):
 
 
 class OrganisationGeoSerializer(GeoFeatureModelSerializer):
-
     geography_model = GeometrySerializerMethodField()
     url = OrganisationHyperlinkedIdentityField(
         view_name="api:organisation-geo", read_only=True

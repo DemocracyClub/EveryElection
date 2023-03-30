@@ -10,7 +10,6 @@ import elections.managers
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("elections", "0046_update_status")]
 
     operations = [

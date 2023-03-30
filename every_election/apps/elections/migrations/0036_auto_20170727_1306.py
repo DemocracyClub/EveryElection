@@ -7,7 +7,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("elections", "0035_election_snooped_election")]
 
     operations = [

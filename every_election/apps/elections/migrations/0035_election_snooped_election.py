@@ -7,7 +7,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("election_snooper", "0007_remove_snoopedelection_election"),
         ("elections", "0034_auto_20170727_1146"),

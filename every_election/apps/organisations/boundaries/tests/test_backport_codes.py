@@ -17,7 +17,6 @@ def count_divs_by_prefix(prefix):
 
 
 class BackportCodesTests(TestCase):
-
     fixtures = ["croydon-metadata-tempcodes.json", "croydon-geographies.json"]
 
     def setUp(self):

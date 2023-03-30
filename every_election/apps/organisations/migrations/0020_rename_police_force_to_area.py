@@ -14,7 +14,6 @@ def rename(apps, new_name="police_area", old_name="police_force"):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("organisations", "0019_auto_20170118_1425")]
 
     def to_police_area(apps, schema_editor):

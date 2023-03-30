@@ -32,7 +32,6 @@ from .managers import PublicElectionsManager, PrivateElectionsManager
 
 
 class ElectionType(models.Model):
-
     name = models.CharField(blank=True, max_length=100)
     election_type = models.CharField(blank=True, max_length=100, unique=True)
 
@@ -41,7 +40,6 @@ class ElectionType(models.Model):
 
 
 class ElectionSubType(models.Model):
-
     name = models.CharField(blank=True, max_length=100)
     election_type = models.ForeignKey(
         "ElectionType", related_name="subtype", on_delete=models.CASCADE
@@ -420,7 +418,6 @@ class Election(TimeStampedModel):
 
         try:
             if self.identifier_type == "ballot":
-
                 if self.division:
                     return None
 

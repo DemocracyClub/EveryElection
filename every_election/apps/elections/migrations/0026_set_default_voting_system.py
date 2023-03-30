@@ -8,7 +8,6 @@ from elections import constants
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("elections", "0025_election_geography")]
 
     operations = [

@@ -10,7 +10,6 @@ class DivisionProblemForm(forms.ModelForm):
 
 
 class DivisionProblemAdmin(admin.ModelAdmin):
-
     actions = None
 
     ordering = ("divisionset", "name")

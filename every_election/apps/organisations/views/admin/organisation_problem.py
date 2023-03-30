@@ -2,7 +2,6 @@ from django.contrib import admin
 
 
 class OrganisationProblemAdmin(admin.ModelAdmin):
-
     actions = None
 
     ordering = (

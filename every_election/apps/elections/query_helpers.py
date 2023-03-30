@@ -41,7 +41,6 @@ class ONSPDPostcodeLookup(BasePostcodeLookup):
 
 
 def get_point_from_postcode(postcode):
-
     validator = GBPostcodeField()
     try:
         postcode = validator.clean(postcode)

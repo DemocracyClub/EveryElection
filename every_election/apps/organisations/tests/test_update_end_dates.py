@@ -178,7 +178,6 @@ class UpdateEndDatesTests(TestCase):
         self.assertNoChanges()
 
     def test_overwrite_param(self):
-
         # set end dates so it is not null
         ods = OrganisationDivisionSet.objects.get(
             organisation=self.org1, start_date="2004-12-02"

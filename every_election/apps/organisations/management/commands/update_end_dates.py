@@ -30,7 +30,6 @@ from organisations.models import Organisation, OrganisationDivisionSet
 
 
 class Command(ReadFromCSVMixin, BaseCommand):
-
     EXPECTED_COLS = ["org", "start_date", "end_date"]
     Record = namedtuple("Record", EXPECTED_COLS)
     S3_BUCKET_NAME = settings.LGBCE_BUCKET

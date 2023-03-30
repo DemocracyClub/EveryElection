@@ -5,7 +5,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("organisations", "0045_organisation_legislation_url")]
 
     operations = [

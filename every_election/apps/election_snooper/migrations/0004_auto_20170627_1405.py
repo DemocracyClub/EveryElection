@@ -9,7 +9,6 @@ import model_utils.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("election_snooper", "0003_snoopedelection_extra")]
 
     operations = [

@@ -139,7 +139,6 @@ def create_deployment_group():
             deploymentGroupName=deployment_group_name,
         )
     except client.exceptions.DeploymentGroupDoesNotExistException:
-
         return client.create_deployment_group(
             applicationName=app_name,
             deploymentGroupName=deployment_group_name,

@@ -5,7 +5,6 @@ from election_snooper.snoopers.customsearch import CustomSearchScraper
 
 
 class Command(BaseCommand):
-
     # def add_arguments(self, parser):
     #     parser.add_argument('sample', nargs='+')
 

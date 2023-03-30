@@ -7,7 +7,6 @@ import elections.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("elections", "0033_election_source")]
 
     operations = [

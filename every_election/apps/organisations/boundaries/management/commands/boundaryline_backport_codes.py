@@ -25,7 +25,6 @@ from organisations.boundaries.management.base import BaseBoundaryLineCommand
 
 
 class Command(BaseBoundaryLineCommand):
-
     help = """
     Use BoundaryLine to try and retrospectively attach codes
     to divisions imported from LGBCE with pseudo-identifiers.

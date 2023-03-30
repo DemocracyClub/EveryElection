@@ -25,7 +25,6 @@ AREA_TYPE_TO_FILE = [
 
 
 def get_area_type_lookup(filter=lambda x: True, group=False):
-
     filtered = [a for a in AREA_TYPE_TO_FILE if filter(a[0])]
 
     if group == True:

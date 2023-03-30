@@ -9,7 +9,6 @@ from organisations.models import OrganisationGeography
 
 class ElectionFilter(django_filters.FilterSet):
     def election_intersects_local_authority_filter(self, queryset, name, value):
-
         og_qs = OrganisationGeography.objects.filter(
             organisation__official_identifier=value,
             organisation__organisation_type="local-authority",

@@ -82,7 +82,6 @@ class EEOncePerTagCommandRunner(Stack):
         tag_name="dc-product",
         tag_value="ee",
     ):
-
         _command = aws_events.Rule(
             self,
             command_name,

@@ -96,7 +96,6 @@ class ElectionBuilder:
             CACHE[key] = {}
 
     def __init__(self, election_type, date):
-
         # init params
         if type(election_type) == str:
             election_type = get_cached_election_type(election_type)

@@ -30,7 +30,6 @@ def remove_initial_election_types(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("elections", "0002_auto_20161011_0741")]
 
     operations = [

@@ -36,7 +36,6 @@ class Command(BaseCommand):
 
         self.stdout.write("Organisations")
         for org in Organisation.objects.all().order_by("official_name"):
-
             if org.geographies.count() == 0:
                 self.output_org(org)
                 continue

@@ -48,7 +48,6 @@ class DivisionProblemManager(Manager):
 
 
 class DivisionProblem(OrganisationDivision):
-
     objects = DivisionProblemManager()
 
     @property
@@ -118,7 +117,6 @@ class OrganisationProblemManager(Manager):
 
 
 class OrganisationProblem(Organisation):
-
     objects = OrganisationProblemManager()
 
     @property
@@ -174,7 +172,6 @@ class OrganisationGeographyProblemManager(Manager):
 
 
 class OrganisationGeographyProblem(OrganisationGeography):
-
     objects = OrganisationGeographyProblemManager()
 
     @property

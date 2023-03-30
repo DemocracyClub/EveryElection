@@ -24,7 +24,6 @@ def split_geography_field(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("organisations", "0040_end_date_constraint"),
         ("elections", "0041_auto_20180607_1141"),

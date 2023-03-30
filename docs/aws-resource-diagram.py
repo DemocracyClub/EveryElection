@@ -18,7 +18,6 @@ from diagrams.onprem.database import PostgreSQL
 from diagrams.programming.framework import Django
 
 with Diagram("AWS deployment resources", filename="docs/aws-resources", show=False):
-
     with Cluster("Manual setup"):
         cert = CertificateManager("TLS Certificate")
 
@@ -30,7 +29,6 @@ with Diagram("AWS deployment resources", filename="docs/aws-resources", show=Fal
         ami >> Organizations("Shared DC wide")
 
     with Cluster("Application hosting"):
-
         with Cluster("CDK Managed"):
             web = InternetAlt1("Web")
             dns = Route53("DNS")

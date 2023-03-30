@@ -24,7 +24,6 @@ def add_created_date(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("organisations", "0061_auto_20210928_1509"),
     ]

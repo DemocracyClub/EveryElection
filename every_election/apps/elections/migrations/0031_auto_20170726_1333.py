@@ -8,7 +8,6 @@ import storages.backends.s3boto3
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("elections", "0030_merge_20170424_1402")]
 
     operations = [

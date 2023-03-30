@@ -394,7 +394,6 @@ class TestElectionAPIQueries(APITestCase):
 
     @pytest.mark.freeze_time("2017-01-23")
     def test_all_expected_fields_returned(self):
-
         OrganisationFactory.reset_sequence(0)
         OrganisationDivisionFactory.reset_sequence(0)
         org = OrganisationFactory()

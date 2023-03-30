@@ -17,7 +17,6 @@ The files can be a local file, a URL or on an S3 bucket.
 
 
 class ReadFromFileMixin:
-
     S3_BUCKET_NAME = None
 
     def add_arguments(self, parser):
@@ -57,7 +56,6 @@ class ReadFromFileMixin:
 
 
 class ReadFromCSVMixin(ReadFromFileMixin):
-
     ENCODING = "utf-8"
     DELIMITER = ","
 

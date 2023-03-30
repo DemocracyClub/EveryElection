@@ -27,7 +27,6 @@ class ReferenceDefinitionView(TemplateView):
         # which is more optimised for generating HTML in a template:
         election_types_table = []
         for et_key, et_record in OrderedDict(sorted(ELECTION_TYPES.items())).items():
-
             # for the moment leave 'ref' out of the docs
             # because our spec for these is incomplete
             if et_key == "ref":

@@ -141,7 +141,6 @@ class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
         self.assertEqual(len(self.election_group.get_ballots()), 2)
 
     def test_group_seats_contested(self):
-
         for election in [
             self.election_group,
             self.testshire_org_group,

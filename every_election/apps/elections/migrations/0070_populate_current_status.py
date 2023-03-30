@@ -21,7 +21,6 @@ def populate_current_status(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("elections", "0069_add_current_status"),
     ]

@@ -6,7 +6,6 @@ import elections.managers
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("elections", "0070_populate_current_status"),
     ]

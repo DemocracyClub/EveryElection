@@ -15,7 +15,6 @@ from organisations.models import (
 
 class ElectionQuerySet(models.QuerySet):
     def for_point(self, point):
-
         div_ids = DivisionGeographySubdivided.objects.filter(
             geography__contains=point
         ).values("division_geography_id")

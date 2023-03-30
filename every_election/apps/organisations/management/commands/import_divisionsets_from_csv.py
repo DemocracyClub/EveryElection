@@ -133,7 +133,6 @@ class Command(ReadFromCSVMixin, BaseCommand):
         return PARENT_TO_CHILD_AREAS[self.org_curie_to_area_type[curie]][0]
 
     def create_div_from_line(self, div_set, identifier, line):
-
         # just in case...
         if "geography_curie" in line and line["geography_curie"]:
             raise ValueError(
