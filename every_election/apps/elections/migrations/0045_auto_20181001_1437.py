@@ -7,7 +7,6 @@ import django.db.models.manager
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("elections", "0044_auto_20181001_1114")]
 
     operations = [

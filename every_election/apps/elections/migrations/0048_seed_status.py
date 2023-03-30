@@ -25,7 +25,6 @@ def delete_init_data(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("elections", "0047_auto_20181005_1320")]
 
     operations = [migrations.RunPython(load_init_data, delete_init_data)]

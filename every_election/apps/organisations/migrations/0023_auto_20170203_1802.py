@@ -7,7 +7,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("organisations", "0022_divisiongeography")]
 
     operations = [

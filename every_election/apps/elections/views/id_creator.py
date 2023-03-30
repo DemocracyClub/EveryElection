@@ -139,7 +139,6 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
 
     def get_form_initial(self, step):
         if step == "source":
-
             # init the 'source' form with details of a SnoopedElection record
             radar_id = self.request.GET.get("radar_id", False)
             if radar_id:
@@ -170,7 +169,6 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             if isinstance(
                 self.storage.extra_data, dict
             ) and self.storage.extra_data.get("radar_date", False):
-
                 radar_date = self.storage.extra_data["radar_date"]
                 if isinstance(radar_date, list):
                     return {"date": radar_date}
@@ -270,7 +268,6 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             election.save(status=status, user=self.request.user, notes=notes)
 
         if not user_is_moderator(self.request.user) and len(context["all_ids"]) > 0:
-
             ballots = [e for e in context["all_ids"] if e.group_type == None]
             if len(ballots) == 1:
                 message = """
@@ -293,7 +290,6 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         if isinstance(self.storage.extra_data, dict) and self.storage.extra_data.get(
             "radar_id", False
         ):
-
             se = SnoopedElection.objects.get(pk=self.storage.extra_data["radar_id"])
             se.status = "id_created"
             se.save()

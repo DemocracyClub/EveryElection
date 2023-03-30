@@ -7,7 +7,6 @@ import elections.managers
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("elections", "0050_auto_20181005_1425")]
 
     operations = [

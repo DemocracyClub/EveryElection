@@ -24,7 +24,6 @@ def delete_status_data(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("elections", "0048_seed_status")]
 
     operations = [migrations.RunPython(copy_status_data, delete_status_data)]

@@ -6,7 +6,6 @@ from elections.models import Election
 
 
 class Command(ReadFromCSVMixin, BaseCommand):
-
     SEATS_CONTESTED_FIELD = "seats_contested"
     SEATS_TOTAL_FIELD = "seats_total"
     ELECTION_ID_FIELD = "election_id"
@@ -91,7 +90,6 @@ class Command(ReadFromCSVMixin, BaseCommand):
         updated_elections = []
         for line in data:
             if line[self.CREATED_FIELD].lower() == "yes":
-
                 try:
                     election = Election.public_objects.get(
                         election_id=line[self.ELECTION_ID_FIELD]

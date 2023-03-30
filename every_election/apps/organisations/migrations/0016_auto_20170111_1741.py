@@ -6,7 +6,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("organisations", "0015_organisationdivisionset_mapit_generation_id")
     ]

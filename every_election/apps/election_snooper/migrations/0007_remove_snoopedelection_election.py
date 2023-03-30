@@ -6,7 +6,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("election_snooper", "0006_auto_20170717_1355")]
 
     operations = [migrations.RemoveField(model_name="snoopedelection", name="election")]

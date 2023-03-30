@@ -75,7 +75,6 @@ class EEImageUpdater(Stack):
     def make_recipe(self, base_ami_id, version):
         components_list = []
         for component in COMPONENTS:
-
             if component.get("context"):
                 component_arn = self.make_component(component)
                 params = []
@@ -110,7 +109,6 @@ class EEImageUpdater(Stack):
         )
 
     def make_component(self, component):
-
         if component.get("arn"):
             return component.get("arn")
 

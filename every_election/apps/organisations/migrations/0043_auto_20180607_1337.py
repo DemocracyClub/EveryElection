@@ -7,7 +7,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("organisations", "0042_cleanup_old_geogs")]
 
     operations = [

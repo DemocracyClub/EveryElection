@@ -16,7 +16,6 @@ def add_moderator_group(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("auth", "0008_alter_user_username_max_length")]
 
     operations = [migrations.RunPython(add_moderator_group)]

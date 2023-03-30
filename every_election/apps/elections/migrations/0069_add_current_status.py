@@ -5,7 +5,6 @@ import elections.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("elections", "0068_backfill_voter_id_requirements"),
     ]

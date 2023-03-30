@@ -18,7 +18,6 @@ def count_divs_by_source(source):
 
 
 class ImportBoundariesTests(TestCase):
-
     fixtures = [
         "croydon-metadata-gsscodes.json",
         "croydon-geographies.json",
@@ -184,7 +183,6 @@ class ImportBoundariesTests(TestCase):
             self.run_command_with_test_data()
 
     def test_import_multiple_matches(self):
-
         # to set this test up, we need a slightly more contrived example
         # so I'm going to overwrite gss:E05000148 with gss:E05011464
         div = OrganisationDivision.objects.all().get(

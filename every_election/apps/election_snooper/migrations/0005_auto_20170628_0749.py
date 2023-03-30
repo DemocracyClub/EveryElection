@@ -8,7 +8,6 @@ import model_utils.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("elections", "0030_merge_20170424_1402"),
         ("election_snooper", "0004_auto_20170627_1405"),

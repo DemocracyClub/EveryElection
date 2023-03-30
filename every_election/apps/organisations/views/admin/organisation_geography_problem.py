@@ -10,7 +10,6 @@ class OrganisationGeographyProblemAdminForm(forms.ModelForm):
 
 
 class OrganisationGeographyProblemAdmin(admin.ModelAdmin):
-
     actions = None
 
     ordering = ("source", "gss", "start_date")

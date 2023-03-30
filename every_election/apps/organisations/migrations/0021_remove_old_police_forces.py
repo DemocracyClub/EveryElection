@@ -8,7 +8,6 @@ from organisations import constants
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("organisations", "0020_rename_police_force_to_area")]
 
     def remove_old_areas(apps, schema_editor):

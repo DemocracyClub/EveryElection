@@ -18,7 +18,6 @@ def undo_rename_mayor_type(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("elections", "0014_auto_20170107_1605")]
 
     operations = [migrations.RunPython(rename_mayor_type, undo_rename_mayor_type)]

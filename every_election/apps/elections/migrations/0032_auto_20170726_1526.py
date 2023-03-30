@@ -7,7 +7,6 @@ import elections.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("elections", "0031_auto_20170726_1333")]
 
     operations = [

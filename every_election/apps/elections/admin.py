@@ -55,7 +55,6 @@ soft_delete.short_description = "Soft delete"
 
 
 class ElectionAdmin(admin.ModelAdmin):
-
     search_fields = ("election_id",)
 
     def has_add_permission(self, request):
@@ -162,7 +161,6 @@ class ExplanationAdmin(admin.ModelAdmin):
 
 
 class ModerationHistoryAdmin(admin.ModelAdmin):
-
     list_display = ("election", "status", "user", "notes", "created")
     list_filter = ("status", "user")
     search_fields = ("election__election_id",)
@@ -198,7 +196,6 @@ class ElectionStatusProblemManager(Manager):
 
 
 class ElectionStatusProblem(Election):
-
     objects = ElectionStatusProblemManager()
 
     class Meta:

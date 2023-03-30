@@ -231,7 +231,6 @@ def fix_old_election_titles(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("elections", "0056_cleanup_group_types"),
     ]

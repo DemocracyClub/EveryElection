@@ -116,7 +116,6 @@ class EECodeDeployment(Stack):
     def create_instance_security_groups(
         self, alb_security_group: ec2.SecurityGroup
     ) -> ec2.SecurityGroup:
-
         instance_security_group = ec2.SecurityGroup(
             self,
             "instance-security-group",
@@ -268,7 +267,6 @@ class EECodeDeployment(Stack):
         return roles
 
     def create_cloudfront(self, alb: elbv2.ApplicationLoadBalancer):
-
         # Hard code the ARN due to a bug with CDK that means we can't run synth
         # with the placeholder values the SSM interface produces :(
         cert_arns = {

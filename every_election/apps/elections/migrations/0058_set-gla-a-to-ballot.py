@@ -10,7 +10,6 @@ def remove_gla_a_subtype(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("elections", "0057_cleanup_mayor_subtype_titles")]
 
     operations = [migrations.RunPython(remove_gla_a_subtype, migrations.RunPython.noop)]

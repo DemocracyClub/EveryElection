@@ -15,7 +15,6 @@ def set_voter_id_requirements(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("elections", "0067_election_requires_voter_id"),
     ]
