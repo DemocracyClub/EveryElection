@@ -6,6 +6,10 @@ updates:
     interval: daily
   open-pull-requests-limit: 10
   ignore:
+  - dependency-name: boto3
+    update-types: ["version-update:semver-patch"]
+  - dependency-name: botocore
+    update-types: ["version-update:semver-patch"]
   - dependency-name: django
     versions:
     - ">= 3.a"
