@@ -5,7 +5,7 @@ aws-cdk.aws-ssm==1.198.0
 aws-cdk.aws-autoscaling==1.198.0
 aws-cdk.aws-ec2==1.198.0
 aws-cdk.aws-cloudfront==1.198.0
-aws-cdk.aws-cloudfront-origins==1.198.0
+aws-cdk.aws-cloudfront-origins==1.198.1
 aws-cdk.aws-codedeploy==1.198.0
 aws-cdk.aws_certificatemanager==1.198.0
 aws-cdk.aws-route53==1.198.0
