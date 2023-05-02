@@ -8,7 +8,10 @@ from django.core.management.base import BaseCommand
 from django.db import connection
 from django.db import transaction
 from storage.zipfile import unzip
-from uk_geo_utils.management.commands.import_onspd import Command as LocalImporter
+from uk_geo_utils.management.commands.import_onspd import (
+    Command as LocalImporter,
+    HEADERS,
+)
 from uk_geo_utils.helpers import get_onspd_model
 
 
@@ -116,6 +119,7 @@ class Command(BaseCommand):
             cmd = LocalImporter()
             cmd.table_name = self.temp_table_name
             cmd.path = data_path
+            cmd.header = HEADERS["aug2022"]
             cmd.import_onspd()
 
             # grab the index CREATE statements from the old table before
