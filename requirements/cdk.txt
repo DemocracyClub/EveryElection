@@ -10,7 +10,7 @@ aws-cdk.aws-codedeploy==1.198.1
 aws-cdk.aws_certificatemanager==1.198.1
 aws-cdk.aws-route53==1.198.1
 aws-cdk.aws-route53-targets==1.198.1
-aws-cdk.aws-lambda-python==1.198.1
+aws-cdk.aws-lambda-python==1.202.0
 aws-cdk.aws-events-targets==1.198.1
 pyyaml==6.0
 diagrams==0.23.3
