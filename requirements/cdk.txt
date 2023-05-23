@@ -1,4 +1,4 @@
-aws-cdk.core==1.198.1
+aws-cdk.core==1.202.0
 aws-cdk.aws-imagebuilder==1.198.1
 aws-cdk.aws-iam==1.198.1
 aws-cdk.aws-ssm==1.198.1
