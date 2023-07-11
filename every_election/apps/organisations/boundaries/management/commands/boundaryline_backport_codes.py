@@ -8,6 +8,9 @@ manage.py boundaryline_backport_codes -f /foo/bar/bdline_gb-2018-05.zip
 manage.py boundaryline_backport_codes -u "http://parlvid.mysociety.org/os/bdline_gb-2018-05.zip"
 
 are all valid calls.
+
+You can use the --show-picker option, but it's sensible to run it first without, as it's then much quicker to tidy up
+those that remain.
 """
 
 import argparse
@@ -59,6 +62,12 @@ class Command(BaseBoundaryLineCommand):
             action="store_true",
             dest="dry-run",
             help="Don't commit changes",
+        )
+        parser.add_argument(
+            "--show-picker",
+            action="store_true",
+            dest="show-picker",
+            help="Show picker when requiring manual review",
         )
         super().add_arguments(parser)
 
@@ -130,7 +139,10 @@ class Command(BaseBoundaryLineCommand):
         self.stdout.write("Searching...")
         lookup = get_area_type_lookup(filter=lambda x: x in self.WARD_TYPES, group=True)
         for org_type, filename in lookup.items():
-            bl = BoundaryLine(os.path.join(base_dir, "Data", "GB", filename))
+            bl = BoundaryLine(
+                os.path.join(base_dir, "Data", "GB", filename),
+                show_picker=options["show-picker"],
+            )
             divs = self.get_divisions(org_type, options["date"])
             for div in divs:
                 org = self.get_parent_org_boundary(div)

@@ -1,3 +1,5 @@
+import sys
+
 from django.contrib.gis.gdal import DataSource, OGRGeometry
 from django.contrib.gis.geos import MultiPolygon
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
@@ -13,11 +15,12 @@ SANITY_CHECK_TOLERANCE = 97
 
 
 class BoundaryLine:
-    def __init__(self, filename):
+    def __init__(self, filename, show_picker=False):
         ds = DataSource(filename)
         if len(ds) != 1:
             raise ValueError("Expected 1 layer, found %i" % (len(ds)))
         self.layer = ds[0]
+        self.show_picker = show_picker
 
     def merge_features(self, features):
         polygons = []
@@ -166,6 +169,16 @@ class BoundaryLine:
 
         warning = self.get_match_warning(div, matches[0])
         if warning:
+            if self.show_picker:
+                sys.stdout.write(
+                    f"""{warning}
+                Do you want to match {matches[0].get('name')} ({matches[0].get('code')}) to {div.official_identifier}?
+                """
+                )
+                choice = input("enter 'y' to accept, or 'n' not to: ")
+                if choice.lower() in ("y", "yes"):
+                    return self.get_code_from_feature(matches[0])
+
             raise ObjectDoesNotExist(warning)
 
         return self.get_code_from_feature(matches[0])
