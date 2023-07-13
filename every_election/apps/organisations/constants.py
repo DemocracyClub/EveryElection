@@ -599,6 +599,8 @@ ORG_CURIE_TO_MAPIT_AREA_TYPE = {
     "local-authority-eng:ESK": "DIS",
     "local-authority-eng:CBD": "UTA",
     "local-authority-eng:WAF": "UTA",
+    "local-authority-eng:SMT": "UTA",
+    "local-authority-eng:NYE": "UTA",
 }
 
 
