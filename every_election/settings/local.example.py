@@ -12,6 +12,11 @@ DATABASES = {
 # google custom search API key
 GCS_API_KEY = ""
 
+# don't use the real url in dev or staging
+# there is a webhook url for each environment, so
+# we can test the slack integration
+SLACK_WEBHOOK_URL = ""
+
 # AWS credentials
 AWS_ACCESS_KEY_ID = ""
 AWS_SECRET_ACCESS_KEY = ""

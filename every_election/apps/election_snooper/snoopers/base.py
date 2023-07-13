@@ -1,4 +1,6 @@
+import os
 from bs4 import BeautifulSoup
+from django.conf import settings
 import requests
 from election_snooper.helpers import post_to_slack
 
