@@ -4,3 +4,4 @@
 0 2 * * * every_election cd /var/www/every_election/repo && ./serverscripts/rebuild_local_db.sh
 30 2 * * * every_election cd /var/www/every_election/repo && ./serverscripts/add_nuts1.sh
 0 1 * * * ee-manage-py-command dumpdata elections election_snooper --indent 4 -o /var/www/every_election/repo/every_election/data/elections.json
+0 0 * * * ee-manage-py-command snoop
