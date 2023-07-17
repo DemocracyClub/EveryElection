@@ -10,7 +10,7 @@ manage.py boundaryline_import_boundaries --code gss:W09000043 --source bdline_gb
 manage.py boundaryline_import_boundaries --code gss:W09000019 --source bdline_gb-2018-05 --all -u "http://parlvid.mysociety.org/os/bdline_gb-2018-05.zip"
 manage.py boundaryline_import_boundaries --codes /foo/bar/codes.json --source bdline_gb-2018-05 -f /foo/bar/bdline_gb-2018-05
 """
-
+import datetime
 import json
 import os
 import re
@@ -45,7 +45,12 @@ class Command(BaseBoundaryLineCommand):
             action="store",
             help="local path to a JSON file containing an array of codes",
         )
-
+        parser.add_argument(
+            "--modified-after",
+            action="store",
+            default="2000-01-01",
+            help="yyyy-mm-dd: only consider divisions modified after this date.",
+        )
         parser.add_argument(
             "--source",
             action="store",
@@ -66,6 +71,8 @@ class Command(BaseBoundaryLineCommand):
         code_type, code = split_code(identifier)
 
         if code_type == "unit_id" and re.match(r"^\d+$", code):
+            return True
+
             # FIXME before 2021
             error = (
                 "Importing boundaries from BoundaryLine against CEDs is "
@@ -105,13 +112,21 @@ class Command(BaseBoundaryLineCommand):
         # use code to find a matching OrganisationGeography
         # or OrganisationDivision record
 
-        _, code = split_code(identifier)
+        code_type, code = split_code(identifier)
         try:
             return OrganisationGeography.objects.all().get(gss=code)
         except OrganisationGeography.DoesNotExist:
-            return OrganisationDivision.objects.all().get(
-                official_identifier=identifier
-            )
+            if code_type == "unit_id":
+                modified_after = self.modified_after
+                return (
+                    OrganisationDivision.objects.all()
+                    .filter(modified__gte=modified_after)
+                    .get(official_identifier=identifier)
+                )
+            else:
+                return OrganisationDivision.objects.all().get(
+                    official_identifier=identifier
+                )
 
     def get_geography_from_feature(self, feature):
         # extract a geography object we can safely save to
@@ -223,7 +238,7 @@ class Command(BaseBoundaryLineCommand):
         identifiers = self.get_identifiers(options)
         self.source = options["source"]
         self.base_dir = self.get_base_dir(**options)
-
+        self.modified_after = datetime.date.fromisoformat(options["modified_after"])
         self.import_all(identifiers, options["all"])
 
         self.stdout.write("\n\n")

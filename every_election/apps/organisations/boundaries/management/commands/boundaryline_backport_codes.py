@@ -33,7 +33,7 @@ class Command(BaseBoundaryLineCommand):
     to divisions imported from LGBCE with pseudo-identifiers.
     """
 
-    WARD_TYPES = ("UTE", "DIW", "LBW", "MTW", "UTW")
+    WARD_TYPES = ("UTE", "DIW", "LBW", "MTW", "UTW", "CED")
     Record = namedtuple("Record", ["division", "code"])
 
     def __init__(self, *args, **kwargs):
