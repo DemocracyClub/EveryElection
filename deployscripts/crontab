@@ -3,5 +3,5 @@
 # If you want to have a command run only once per env / once globally, use SSM Run Command
 0 2 * * * every_election cd /var/www/every_election/repo && ./serverscripts/rebuild_local_db.sh
 30 2 * * * every_election cd /var/www/every_election/repo && ./serverscripts/add_nuts1.sh
-0 1 * * * ee-manage-py-command dumpdata elections election_snooper --indent 4 -o /var/www/every_election/repo/every_election/data/elections.json
-0 0 * * * ee-manage-py-command snoop
+0 1 * * * every_election ee-manage-py-command dumpdata elections election_snooper --indent 4 -o /var/www/every_election/repo/every_election/data/elections.json
+0 0 * * * every_election ee-manage-py-command snoop
