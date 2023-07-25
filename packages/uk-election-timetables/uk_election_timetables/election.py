@@ -23,8 +23,13 @@ class Election(metaclass=ABCMeta):
 
         This is set out in `The Representation of the People (England and Wales) Regulations 2001 <https://www.legislation.gov.uk/uksi/2001/341/regulation/56/made>`_.
 
+        In Northern Ireland, this is set out in `The Representation of the People (Northern Ireland) Regulations 2008 <https://www.legislation.gov.uk/uksi/2008/1741/regulation/61/made>`
+
         :return: a datetime representing the postal vote application deadline
         """
+        if self.country == Country.NORTHERN_IRELAND:
+            return working_days_before(self.poll_date, 14, self._calendar())
+
         return working_days_before(self.poll_date, 11, self._calendar())
 
     @property
