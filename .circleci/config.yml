@@ -1,8 +1,8 @@
 version: 2.1
 
 orbs:
-  node: circleci/node@5.0.2
-  slack: circleci/slack@4.1
+  node: circleci/node@5.1.0
+  slack: circleci/slack@4.12.5
 
 jobs:
   build_and_test:
@@ -11,7 +11,7 @@ jobs:
         environment:
           CIRCLECI: true
           PGHOST: 127.0.0.1
-      - image: cimg/postgres:11.17-postgis
+      - image: cimg/postgres:12.11-postgis
         environment:
           POSTGRES_USER: every_election
           POSTGRES_DB: every_election
