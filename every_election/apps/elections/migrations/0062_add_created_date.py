@@ -8,7 +8,9 @@ from django.utils.timezone import timedelta
 def add_created_date(apps, schema_editor):
     Election = apps.get_model("elections", "Election")
     delta = timedelta(weeks=8)
-    expression = ExpressionWrapper(F("poll_open_date") - delta, output_field=DateField)
+    expression = ExpressionWrapper(
+        F("poll_open_date") - delta, output_field=DateField
+    )
     Election.private_objects.update(created=expression)
 
 

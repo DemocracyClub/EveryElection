@@ -9,7 +9,9 @@ import requests
 
 
 def post_to_slack(message):
-    env = os.getenv("SERVER_ENVIRONMENT", getattr(settings, "SERVER_ENVIRONMENT", None))
+    env = os.getenv(
+        "SERVER_ENVIRONMENT", getattr(settings, "SERVER_ENVIRONMENT", None)
+    )
     if env in ["test", "development", "staging"]:
         prefix = "TEST for {} environment: ".format(env)
         message = prefix + message

@@ -103,16 +103,24 @@ class Command(BaseCommand):
 
         for division in divisions_missing_territory_code:
             parents = (
-                OrganisationDivision.objects.exclude(territory_code__in=["", None])
-                .filter(geography__geography__intersects=division.geography.geography)
-                .filter(divisionset__organisation__slug__in=["parl", "europarl"])
+                OrganisationDivision.objects.exclude(
+                    territory_code__in=["", None]
+                )
+                .filter(
+                    geography__geography__intersects=division.geography.geography
+                )
+                .filter(
+                    divisionset__organisation__slug__in=["parl", "europarl"]
+                )
             )
             if not parents.exists():
                 self.stdout.write(f"WARNING: No parents for {division}")
                 print(
                     OrganisationDivision.objects.exclude(
                         territory_code__in=["", None]
-                    ).filter(geography__geography__covers=division.geography.geography)
+                    ).filter(
+                        geography__geography__covers=division.geography.geography
+                    )
                 )
 
                 continue
@@ -128,9 +136,13 @@ class Command(BaseCommand):
         for division in divisions_missing_territory_code:
             centre = division.geography.geography.centroid
             parents = (
-                OrganisationDivision.objects.exclude(territory_code__in=["", None])
+                OrganisationDivision.objects.exclude(
+                    territory_code__in=["", None]
+                )
                 .filter(geography__geography__contains=centre)
-                .filter(divisionset__organisation__slug__in=["parl", "europarl"])
+                .filter(
+                    divisionset__organisation__slug__in=["parl", "europarl"]
+                )
             )
             codes = set([parent.territory_code for parent in parents])
             if len(codes) > 1:

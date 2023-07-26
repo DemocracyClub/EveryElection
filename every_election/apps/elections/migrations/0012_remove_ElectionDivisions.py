@@ -8,7 +8,10 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("organisations", "0009_organisationdivision_division_election_sub_type"),
+        (
+            "organisations",
+            "0009_organisationdivision_division_election_sub_type",
+        ),
         ("elections", "0011_remove_field_requirements"),
     ]
 

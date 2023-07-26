@@ -24,7 +24,9 @@ class ElectionSourceForm(forms.Form):
         label="Where did you find out about this election?",
     )
     document = forms.URLField(
-        required=False, max_length=1000, label="Link to 'Notice of Election' Document"
+        required=False,
+        max_length=1000,
+        label="Link to 'Notice of Election' Document",
     )
 
 
@@ -41,7 +43,8 @@ class ElectionTypeForm(forms.Form):
             qs = (
                 qs.filter(organisation__start_date__lte=date)
                 .filter(
-                    Q(organisation__end_date__gte=date) | Q(organisation__end_date=None)
+                    Q(organisation__end_date__gte=date)
+                    | Q(organisation__end_date=None)
                 )
                 .distinct()
             )
@@ -66,7 +69,8 @@ class ElectionSubTypeForm(forms.Form):
             self.fields["election_subtype"].queryset = qs
 
     election_subtype = forms.ModelMultipleChoiceField(
-        queryset=ElectionSubType.objects.all(), widget=forms.CheckboxSelectMultiple
+        queryset=ElectionSubType.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
     )
 
 
@@ -82,9 +86,9 @@ class ElectionOrganisationForm(forms.Form):
         super().__init__(*args, **kwargs)
         if election_type:
             qs = self.fields["election_organisation"].queryset
-            qs = qs.filter(election_types__election_type=election_type).filter_by_date(
-                election_date
-            )
+            qs = qs.filter(
+                election_types__election_type=election_type
+            ).filter_by_date(election_date)
 
             if len(qs) == 0:
                 self.fields["election_organisation"] = forms.CharField(
@@ -125,7 +129,10 @@ class ElectionOrganisationDivisionForm(forms.Form):
                 OrganisationDivisionSet.objects.filter(
                     organisation=organisation, start_date__lte=election_date
                 )
-                .filter(models.Q(end_date__gte=election_date) | models.Q(end_date=None))
+                .filter(
+                    models.Q(end_date__gte=election_date)
+                    | models.Q(end_date=None)
+                )
                 .order_by("-start_date")
                 .first()
             )
@@ -133,7 +140,9 @@ class ElectionOrganisationDivisionForm(forms.Form):
                 # There is no active division set for this organisation
                 # on this date
                 no_divs_field = forms.CharField(
-                    widget=forms.TextInput(attrs={"class": "ds-visually-hidden"}),
+                    widget=forms.TextInput(
+                        attrs={"class": "ds-visually-hidden"}
+                    ),
                     required=False,
                     label="""
                         There are no active divisions for this organisation.
@@ -143,7 +152,9 @@ class ElectionOrganisationDivisionForm(forms.Form):
                         it's a mistake.
                     """,
                 )
-                self.fields["{}_no_divs".format(organisation.pk)] = no_divs_field
+                self.fields[
+                    "{}_no_divs".format(organisation.pk)
+                ] = no_divs_field
                 continue
 
             if election_subtype:
@@ -168,7 +179,9 @@ class ElectionOrganisationDivisionForm(forms.Form):
                     self.add_single_field(organisation, div)
 
     def add_single_field(self, organisation, div, subtype=None):
-        field_id = "__".join([str(x) for x in [organisation.pk, div.pk, subtype] if x])
+        field_id = "__".join(
+            [str(x) for x in [organisation.pk, div.pk, subtype] if x]
+        )
         field = forms.ChoiceField(
             choices=self.choices,
             widget=dc_forms.RadioSelectCluster,
@@ -181,7 +194,9 @@ class ElectionOrganisationDivisionForm(forms.Form):
 
 class NoticeOfElectionForm(forms.Form):
     document = forms.URLField(
-        required=True, max_length=1000, label="Link to 'Notice of Election' Document"
+        required=True,
+        max_length=1000,
+        label="Link to 'Notice of Election' Document",
     )
 
     def clean_document(self):

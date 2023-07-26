@@ -82,7 +82,12 @@ class ElectionAdmin(admin.ModelAdmin):
         "current_status",
     )
     list_filter = ["current"]
-    list_display = ["election_id", "poll_open_date", "current", "current_status"]
+    list_display = [
+        "election_id",
+        "poll_open_date",
+        "current",
+        "current_status",
+    ]
     actions = [mark_current, mark_not_current, unset_current, soft_delete]
     date_hierarchy = "poll_open_date"
 
@@ -193,7 +198,6 @@ class ElectionStatusProblemManager(Manager):
         )
 
         return qs
-
 
 class ElectionStatusProblem(Election):
     objects = ElectionStatusProblemManager()

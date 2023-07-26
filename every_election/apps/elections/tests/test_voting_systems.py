@@ -15,7 +15,9 @@ class TestElectoralSystems(BaseElectionCreatorMixIn, TestCase):
         """
 
         # Elections without organisations don't have voting systems
-        election_id = ElectionBuilder("local", "2017-05-04").build_election_group()
+        election_id = ElectionBuilder(
+            "local", "2017-05-04"
+        ).build_election_group()
         assert election_id.voting_system == None
 
         # "Normal" UK local election is FPTP

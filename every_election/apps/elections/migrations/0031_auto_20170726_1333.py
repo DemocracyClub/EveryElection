@@ -27,7 +27,8 @@ class Migration(migrations.Migration):
                 (
                     "uploaded_file",
                     models.FileField(
-                        storage=storages.backends.s3boto3.S3Boto3Storage(), upload_to=""
+                        storage=storages.backends.s3boto3.S3Boto3Storage(),
+                        upload_to="",
                     ),
                 ),
             ],

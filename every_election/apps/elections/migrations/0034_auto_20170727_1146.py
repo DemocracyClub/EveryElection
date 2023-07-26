@@ -14,7 +14,9 @@ class Migration(migrations.Migration):
             model_name="document",
             name="uploaded_file",
             field=models.FileField(
-                max_length=1000, storage=elections.models.PdfS3Storage(), upload_to=""
+                max_length=1000,
+                storage=elections.models.PdfS3Storage(),
+                upload_to="",
             ),
         )
     ]

@@ -10,12 +10,13 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterModelOptions(
-            name="organisation", options={"ordering": ("official_name", "-start_date")}
+            name="organisation",
+            options={"ordering": ("official_name", "-start_date")},
         ),
         migrations.AlterUniqueTogether(
             name="organisation",
-            unique_together=set(
-                [("official_identifier", "organisation_type", "end_date")]
-            ),
+            unique_together={
+                ("official_identifier", "organisation_type", "end_date")
+            },
         ),
     ]

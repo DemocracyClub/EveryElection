@@ -32,7 +32,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "geography",
-                    django.contrib.gis.db.models.fields.MultiPolygonField(srid=4326),
+                    django.contrib.gis.db.models.fields.MultiPolygonField(
+                        srid=4326
+                    ),
                 ),
                 (
                     "organisation",

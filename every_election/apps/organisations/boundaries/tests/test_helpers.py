@@ -27,7 +27,8 @@ class NormalizeNamesTest(TestCase):
             normalize_name_for_matching("St. Helen's South"),
         )
         self.assertNotEqual(
-            normalize_name_for_matching("foo"), normalize_name_for_matching("bar")
+            normalize_name_for_matching("foo"),
+            normalize_name_for_matching("bar"),
         )
         self.assertNotEqual(
             normalize_name_for_matching("St. Helena"),

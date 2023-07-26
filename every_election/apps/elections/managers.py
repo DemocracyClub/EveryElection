@@ -43,19 +43,25 @@ class ElectionQuerySet(models.QuerySet):
         return (
             self.filter(group_type=None)
             .annotate(
-                division_centroid=PointOnSurface("division_geography__geography"),
+                division_centroid=PointOnSurface(
+                    "division_geography__geography"
+                ),
                 organisation_centroid=PointOnSurface(
                     "organisation_geography__geography"
                 ),
             )
             .filter(
                 models.Q(division_centroid__within=area)
-                | models.Q(organisation_centroid__within=area, division_centroid=None)
+                | models.Q(
+                    organisation_centroid__within=area, division_centroid=None
+                )
             )
         )
 
     def current(self):
-        recent_past = datetime.today() - timedelta(days=settings.CURRENT_PAST_DAYS)
+        recent_past = datetime.today() - timedelta(
+            days=settings.CURRENT_PAST_DAYS
+        )
         return self.filter(
             models.Q(poll_open_date__gte=recent_past) | models.Q(current=True)
         ).exclude(current=False)
@@ -69,7 +75,9 @@ class ElectionQuerySet(models.QuerySet):
         elif isinstance(status, str):
             query = models.Q(current_status=status)
         else:
-            raise TypeError("Expected list or str found {}".format(type(status)))
+            raise TypeError(
+                "Expected list or str found {}".format(type(status))
+            )
         return self.filter(query).order_by("election_id")
 
     def update(self, update_modified=True, **kwargs):

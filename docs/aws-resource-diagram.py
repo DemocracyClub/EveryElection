@@ -17,7 +17,9 @@ from diagrams.generic.network import Subnet
 from diagrams.onprem.database import PostgreSQL
 from diagrams.programming.framework import Django
 
-with Diagram("AWS deployment resources", filename="docs/aws-resources", show=False):
+with Diagram(
+    "AWS deployment resources", filename="docs/aws-resources", show=False
+):
     with Cluster("Manual setup"):
         cert = CertificateManager("TLS Certificate")
 

@@ -88,7 +88,9 @@ class UpdateEndDatesTests(TestCase):
         out = StringIO()
         cmd.stdout = out
 
-        cmd.handle(**{"file": filename, "url": None, "s3": None, "overwrite": False})
+        cmd.handle(
+            **{"file": filename, "url": None, "s3": None, "overwrite": False}
+        )
         ods1 = OrganisationDivisionSet.objects.get(
             organisation=self.org1, start_date="2004-12-02"
         )
@@ -115,7 +117,12 @@ class UpdateEndDatesTests(TestCase):
 
         with self.assertRaises(ValueError):
             cmd.handle(
-                **{"file": filename, "url": None, "s3": None, "overwrite": False}
+                **{
+                    "file": filename,
+                    "url": None,
+                    "s3": None,
+                    "overwrite": False,
+                }
             )
 
         # no end dates should have changed
@@ -123,7 +130,9 @@ class UpdateEndDatesTests(TestCase):
 
     def test_org_not_in_db(self):
         dirname = os.path.dirname(os.path.abspath(__file__))
-        filename = os.path.abspath(os.path.join(dirname, "test_data/org_not_in_db.csv"))
+        filename = os.path.abspath(
+            os.path.join(dirname, "test_data/org_not_in_db.csv")
+        )
         cmd = Command()
 
         # supress output
@@ -132,7 +141,12 @@ class UpdateEndDatesTests(TestCase):
 
         with self.assertRaises(Organisation.DoesNotExist):
             cmd.handle(
-                **{"file": filename, "url": None, "s3": None, "overwrite": False}
+                **{
+                    "file": filename,
+                    "url": None,
+                    "s3": None,
+                    "overwrite": False,
+                }
             )
 
         # no end dates should have changed
@@ -151,7 +165,12 @@ class UpdateEndDatesTests(TestCase):
 
         with self.assertRaises(ValueError):
             cmd.handle(
-                **{"file": filename, "url": None, "s3": None, "overwrite": False}
+                **{
+                    "file": filename,
+                    "url": None,
+                    "s3": None,
+                    "overwrite": False,
+                }
             )
 
         # no end dates should have changed
@@ -171,7 +190,12 @@ class UpdateEndDatesTests(TestCase):
 
         with self.assertRaises(OrganisationDivisionSet.DoesNotExist):
             cmd.handle(
-                **{"file": filename, "url": None, "s3": None, "overwrite": False}
+                **{
+                    "file": filename,
+                    "url": None,
+                    "s3": None,
+                    "overwrite": False,
+                }
             )
 
         # no end dates should have changed
@@ -194,7 +218,9 @@ class UpdateEndDatesTests(TestCase):
         cmd.stdout = out
 
         # run updates with overwrite=False
-        cmd.handle(**{"file": filename, "url": None, "s3": None, "overwrite": False})
+        cmd.handle(
+            **{"file": filename, "url": None, "s3": None, "overwrite": False}
+        )
 
         # end date shouldn't have changed
         ods = OrganisationDivisionSet.objects.get(
@@ -203,7 +229,9 @@ class UpdateEndDatesTests(TestCase):
         self.assertEqual("2020-01-01", ods.end_date.strftime("%Y-%m-%d"))
 
         # now run it again with overwrite=True
-        cmd.handle(**{"file": filename, "url": None, "s3": None, "overwrite": True})
+        cmd.handle(
+            **{"file": filename, "url": None, "s3": None, "overwrite": True}
+        )
 
         # this time it should have been ovewrwritten with the new value
         ods = OrganisationDivisionSet.objects.get(
@@ -225,7 +253,12 @@ class UpdateEndDatesTests(TestCase):
 
         with self.assertRaises(Organisation.DoesNotExist):
             cmd.handle(
-                **{"file": filename, "url": None, "s3": None, "overwrite": False}
+                **{
+                    "file": filename,
+                    "url": None,
+                    "s3": None,
+                    "overwrite": False,
+                }
             )
 
         # no end dates should have changed
@@ -245,7 +278,12 @@ class UpdateEndDatesTests(TestCase):
 
         with self.assertRaises(ValueError):
             cmd.handle(
-                **{"file": filename, "url": None, "s3": None, "overwrite": False}
+                **{
+                    "file": filename,
+                    "url": None,
+                    "s3": None,
+                    "overwrite": False,
+                }
             )
 
         # no end dates should have changed

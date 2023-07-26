@@ -75,8 +75,6 @@ class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
 
         try:
             self.org_group.save()
-        except ValueError:
-            pass
 
         # the exception should have prevented both the
         # parent and child records from being saved
@@ -92,8 +90,6 @@ class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
 
         try:
             self.org_group.save()
-        except ValueError:
-            pass
 
         # the exception should have prevented both the
         # parent and child records from being saved

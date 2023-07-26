@@ -25,7 +25,10 @@ class Migration(migrations.Migration):
                 ),
                 ("name", models.CharField(blank=True, max_length=100)),
                 ("election_type", models.CharField(blank=True, max_length=100)),
-                ("election_subtype", models.CharField(blank=True, max_length=100)),
+                (
+                    "election_subtype",
+                    models.CharField(blank=True, max_length=100),
+                ),
             ],
         )
     ]

@@ -14,18 +14,22 @@ def check_deployment_group():
     Attempt to get default deployment group.
     TODO allow this to accept args
     """
-    client = session.client("codedeploy", region_name=os.environ.get("AWS_REGION"))
+    client = session.client(
+        "codedeploy", region_name=os.environ.get("AWS_REGION")
+    )
     deployment_group = client.get_deployment_group(
         applicationName="EECodeDeploy",
         deploymentGroupName="EEDefaultDeploymentGroup",
     )
-    asg_name = deployment_group["deploymentGroupInfo"]["autoScalingGroups"][0]["name"]
+    asg_name = deployment_group["deploymentGroupInfo"]["autoScalingGroups"][0][
+        "name"
+    ]
     autoscale_client = session.client(
         "autoscaling", region_name=os.environ.get("AWS_REGION")
     )
-    autoscale_client.describe_auto_scaling_groups(AutoScalingGroupNames=[asg_name])[
-        "AutoScalingGroups"
-    ][0]
+    autoscale_client.describe_auto_scaling_groups(
+        AutoScalingGroupNames=[asg_name]
+    )["AutoScalingGroups"][0]
     asg_info = autoscale_client.describe_auto_scaling_groups(
         AutoScalingGroupNames=[asg_name]
     )["AutoScalingGroups"][0]
@@ -46,7 +50,11 @@ def check_deployment_group():
                 AutoScalingGroupNames=[asg_name]
             )["AutoScalingGroups"][0]
             instance_count = len(
-                [i for i in asg_info["Instances"] if i["LifecycleState"] == "InService"]
+                [
+                    i
+                    for i in asg_info["Instances"]
+                    if i["LifecycleState"] == "InService"
+                ]
             )
 
     print("ASG now has an instance running. Continuing with deploy")
@@ -74,7 +82,9 @@ def create_default_asg():
     """
     Get or create the default auto scaling group
     """
-    client = session.client("autoscaling", region_name=os.environ.get("AWS_REGION"))
+    client = session.client(
+        "autoscaling", region_name=os.environ.get("AWS_REGION")
+    )
     subnet_ids = get_subnet_ids()
     target_group_arn = get_target_group_arn()
     existing_asgs = [
@@ -129,7 +139,9 @@ def create_deployment_group():
     """
     Creates a default deployment group in CodeDeploy
     """
-    client = session.client("codedeploy", region_name=os.environ.get("AWS_REGION"))
+    client = session.client(
+        "codedeploy", region_name=os.environ.get("AWS_REGION")
+    )
     service_role = get_service_role()
     app_name = "EECodeDeploy"
     deployment_group_name = "EEDefaultDeploymentGroup"
@@ -160,7 +172,9 @@ def create_deployment_group():
                     "actionOnTimeout": "CONTINUE_DEPLOYMENT",
                     # 'waitTimeInMinutes': 0
                 },
-                "greenFleetProvisioningOption": {"action": "COPY_AUTO_SCALING_GROUP"},
+                "greenFleetProvisioningOption": {
+                    "action": "COPY_AUTO_SCALING_GROUP"
+                },
             },
             loadBalancerInfo={
                 "targetGroupInfoList": [{"name": TARGET_GROUP_NAME}],

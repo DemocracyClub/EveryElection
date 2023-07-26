@@ -2,7 +2,12 @@ from datetime import date
 
 from django.test import TestCase
 
-from elections.models import ElectedRole, Election, ElectionType, ElectionSubType
+from elections.models import (
+    ElectedRole,
+    Election,
+    ElectionType,
+    ElectionSubType,
+)
 from organisations.models import Organisation
 from organisations.tests.factories import (
     OrganisationDivisionFactory,
@@ -15,13 +20,17 @@ from .base_tests import BaseElectionCreatorMixIn, FuzzyInt
 
 
 class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
-    def run_test_with_data(self, all_data, expected_ids, expected_titles, **kwargs):
+    def run_test_with_data(
+        self, all_data, expected_ids, expected_titles, **kwargs
+    ):
         self.create_ids(all_data, **kwargs)
         assert Election.private_objects.count() == len(expected_ids)
 
         # ensure the records created match the expected ids
         for expected_id in expected_ids:
-            assert Election.private_objects.filter(election_id=expected_id).exists()
+            assert Election.private_objects.filter(
+                election_id=expected_id
+            ).exists()
 
         # ensure the records created match the expected titles
         for expected_title in expected_titles:
@@ -130,7 +139,10 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         all_data = self.base_data
 
         all_data.update(
-            {self.make_div_id(): "contested", self.make_div_id(div=self.org_div_2): ""}
+            {
+                self.make_div_id(): "contested",
+                self.make_div_id(div=self.org_div_2): "",
+            }
         )
         expected_ids = [
             "local." + self.date_str,
@@ -196,7 +208,10 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             "date": self.date,
         }
 
-        expected_ids = ["mayor." + self.date_str, "mayor.test-ca." + self.date_str]
+        expected_ids = [
+            "mayor." + self.date_str,
+            "mayor.test-ca." + self.date_str,
+        ]
         expected_titles = ["Mayoral elections", "Mayor of Foo Town"]
 
         self.run_test_with_data(all_data, expected_ids, expected_titles)
@@ -281,7 +296,10 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         all_data = {
             "election_organisation": [naw_org],
             "election_type": naw_election_type,
-            "election_subtype": [naw_election_sub_type_c, naw_election_sub_type_r],
+            "election_subtype": [
+                naw_election_sub_type_c,
+                naw_election_sub_type_r,
+            ],
             "date": self.date,
         }
 
@@ -293,7 +311,9 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
                 self.make_div_id(
                     org=naw_org, div=org_div_4, subtype="c"
                 ): "by_election",  # by election
-                self.make_div_id(org=naw_org, div=org_div_5, subtype="r"): "contested",
+                self.make_div_id(
+                    org=naw_org, div=org_div_5, subtype="r"
+                ): "contested",
             }
         )
 
@@ -365,7 +385,9 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
     def test_election_with_division_geography(self):
         all_data = self.base_data
 
-        DivisionGeographyFactory(division=self.org_div_2, geography=self.test_polygon)
+        DivisionGeographyFactory(
+            division=self.org_div_2, geography=self.test_polygon
+        )
 
         all_data.update(
             {
@@ -417,7 +439,9 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
 
         all_data = {
             "election_organisation": [gla],
-            "election_subtype": [election_type.subtype.get(election_subtype="a")],
+            "election_subtype": [
+                election_type.subtype.get(election_subtype="a")
+            ],
             "election_type": election_type,
             "date": self.date,
             gla.pk: None,

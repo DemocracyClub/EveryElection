@@ -29,7 +29,10 @@ class Migration(migrations.Migration):
                 ("gss", models.CharField(blank=True, max_length=20)),
                 ("slug", models.CharField(blank=True, max_length=100)),
                 ("division_type", models.CharField(blank=True, max_length=255)),
-                ("division_subtype", models.CharField(blank=True, max_length=255)),
+                (
+                    "division_subtype",
+                    models.CharField(blank=True, max_length=255),
+                ),
                 (
                     "organisation",
                     models.ForeignKey(

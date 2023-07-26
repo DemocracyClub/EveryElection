@@ -1,5 +1,10 @@
 from django.contrib.gis.gdal.error import GDALException
-from django.contrib.gis.geos import GEOSGeometry, MultiPolygon, Polygon, WKTWriter
+from django.contrib.gis.geos import (
+    GEOSGeometry,
+    MultiPolygon,
+    Polygon,
+    WKTWriter,
+)
 
 
 def convert_geom_to_multipolygon(geom):

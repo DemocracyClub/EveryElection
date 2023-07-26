@@ -13,7 +13,10 @@ class Migration(migrations.Migration):
         migrations.AlterModelManagers(
             name="election",
             managers=[
-                ("private_objects", elections.managers.PrivateElectionsManager())
+                (
+                    "private_objects",
+                    elections.managers.PrivateElectionsManager(),
+                )
             ],
         )
     ]

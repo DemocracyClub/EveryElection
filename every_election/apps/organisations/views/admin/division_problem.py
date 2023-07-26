@@ -19,7 +19,12 @@ class DivisionProblemAdmin(admin.ModelAdmin):
         "divisionset",
         "problem_text",
     )
-    readonly_fields = ("problem_text", "no_gss_code", "invalid_source", "no_geography")
+    readonly_fields = (
+        "problem_text",
+        "no_gss_code",
+        "invalid_source",
+        "no_geography",
+    )
     form = DivisionProblemForm
 
     def has_add_permission(self, request):

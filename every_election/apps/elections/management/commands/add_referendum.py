@@ -98,7 +98,9 @@ class Command(BaseCommand):
             },
         )
 
-        self.stdout.write(f"{'Created' if created else 'Updated'} {election_id}")
+        self.stdout.write(
+            f"{'Created' if created else 'Updated'} {election_id}"
+        )
 
         ModerationHistory.objects.get_or_create(
             status_id=ModerationStatuses.approved.value,

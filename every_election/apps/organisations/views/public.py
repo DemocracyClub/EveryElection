@@ -9,7 +9,9 @@ from elections.models import Election
 
 class SupportedOrganisationsView(ListView):
     template_name = "organisations/supported_organisations.html"
-    queryset = Organisation.objects.all().order_by("organisation_type", "common_name")
+    queryset = Organisation.objects.all().order_by(
+        "organisation_type", "common_name"
+    )
 
 
 class OrganisationsFilterView(TemplateView):
@@ -45,7 +47,9 @@ class OrganisationDetailView(TemplateView):
         pcc_q = Q(election_id__startswith="pcc")
         ref_q = Q(election_id__startswith="ref")
         others_q = Q(group_type__isnull=False) & ~Q(group_type="subtype")
-        elections = Election.public_objects.filter(others_q | pcc_q | mayor_q | ref_q)
+        elections = Election.public_objects.filter(
+            others_q | pcc_q | mayor_q | ref_q
+        )
 
         try:
             obj = (
@@ -62,5 +66,7 @@ class OrganisationDetailView(TemplateView):
             "context_object_name": "organisation",
         }
         if obj.get_geography(kwargs["date"]):
-            context["api_detail_geo"] = obj.get_url("api:organisation-geo", "json")
+            context["api_detail_geo"] = obj.get_url(
+                "api:organisation-geo", "json"
+            )
         return context

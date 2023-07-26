@@ -15,7 +15,9 @@ class BaseBoundaryLineCommand(ReadFromFileMixin, BaseCommand):
         self.cleanup_required = False
         try:
             if options["url"]:
-                self.stdout.write("Downloading data from %s ..." % (options["url"]))
+                self.stdout.write(
+                    "Downloading data from %s ..." % (options["url"])
+                )
             fh = self.load_data(options)
             self.stdout.write("Extracting archive...")
             path = unzip(fh.name)
@@ -52,7 +54,9 @@ class BaseOsniCommand(BaseCommand):
         org_geo.geography = feature["geometry"].ewkb
         org_geo.source = self.source
         org_geo.save()
-        self.stdout.write("Importing boundary for area {}...saved".format(str(org_geo)))
+        self.stdout.write(
+            "Importing boundary for area {}...saved".format(str(org_geo))
+        )
 
     def import_div_geography(self, div, feature):
         try:
@@ -66,4 +70,6 @@ class BaseOsniCommand(BaseCommand):
                 source=self.source,
             )
             dg.save()
-        self.stdout.write("Importing boundary for area {}...saved".format(str(div)))
+        self.stdout.write(
+            "Importing boundary for area {}...saved".format(str(div))
+        )

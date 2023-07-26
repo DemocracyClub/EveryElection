@@ -21,7 +21,10 @@ from organisations.models import (
     OrganisationDivision,
 )
 from organisations.boundaries.boundaryline import BoundaryLine
-from organisations.boundaries.constants import get_area_type_lookup, SPECIAL_CASES
+from organisations.boundaries.constants import (
+    get_area_type_lookup,
+    SPECIAL_CASES,
+)
 from organisations.boundaries.management.base import BaseBoundaryLineCommand
 from organisations.boundaries.helpers import split_code
 from organisations.constants import REGISTER_SUBTYPE_TO_BOUNDARYLINE_TYPE
@@ -90,7 +93,9 @@ class Command(BaseBoundaryLineCommand):
         if orgs.exists():
             return orgs
 
-        divs = OrganisationDivision.objects.all().filter(official_identifier=identifier)
+        divs = OrganisationDivision.objects.all().filter(
+            official_identifier=identifier
+        )
         if divs.exists():
             return divs
 
@@ -132,7 +137,9 @@ class Command(BaseBoundaryLineCommand):
         if org_geo.gss in SPECIAL_CASES:
             filename = SPECIAL_CASES[org_geo.gss]["file"]
             proxy_code = SPECIAL_CASES[org_geo.gss]["code"]
-            bl = BoundaryLine(os.path.join(self.base_dir, "Data", "GB", filename))
+            bl = BoundaryLine(
+                os.path.join(self.base_dir, "Data", "GB", filename)
+            )
             geom = self.get_geography_from_feature(
                 bl.get_feature_by_field("code", proxy_code)
             )
@@ -155,7 +162,9 @@ class Command(BaseBoundaryLineCommand):
         bl = self.open_boundaryline(area_type)
         code_type, code = split_code(div.official_identifier)
         fieldname = "code" if code_type == "gss" else code_type
-        geom = self.get_geography_from_feature(bl.get_feature_by_field(fieldname, code))
+        geom = self.get_geography_from_feature(
+            bl.get_feature_by_field(fieldname, code)
+        )
 
         try:
             div.geography.geography = geom.ewkb
@@ -180,7 +189,9 @@ class Command(BaseBoundaryLineCommand):
             self.validate_identifier(identifier)
 
         for identifier in identifiers:
-            self.stdout.write("Importing boundary for area {}...".format(identifier))
+            self.stdout.write(
+                "Importing boundary for area {}...".format(identifier)
+            )
 
             try:
                 records = self.get_records(identifier, allow_multiple)
@@ -214,10 +225,10 @@ class Command(BaseBoundaryLineCommand):
     def get_identifiers(self, options):
         if options["code"]:
             return [options["code"]]
-        codes = json.load(open(options["codes"]))
-        if not isinstance(codes, (list,)):
-            raise ValueError("Root JSON element must be array []")
-        return codes
+        with json.load(open(options["codes"])) as codes:
+            if not isinstance(codes, (list,)):
+                raise ValueError("Root JSON element must be array []")
+            return codes
 
     def handle(self, *args, **options):
         identifiers = self.get_identifiers(options)
@@ -228,11 +239,15 @@ class Command(BaseBoundaryLineCommand):
 
         self.stdout.write("\n\n")
         self.stdout.write(
-            "Imported {} boundaries.\n\n".format(len(identifiers) - len(self.errors))
+            "Imported {} boundaries.\n\n".format(
+                len(identifiers) - len(self.errors)
+            )
         )
         self.stdout.write("{} Failures:".format(len(self.errors)))
         for identifier, e in self.errors:
-            self.stdout.write("{id}: {error}".format(id=identifier, error=str(e)))
+            self.stdout.write(
+                "{id}: {error}".format(id=identifier, error=str(e))
+            )
 
         if self.cleanup_required:
             self.cleanup(self.base_dir)

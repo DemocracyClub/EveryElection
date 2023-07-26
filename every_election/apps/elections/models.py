@@ -102,7 +102,9 @@ class Election(TimeStampedModel):
     plus extra information about this election.
     """
 
-    election_id = models.CharField(blank=True, null=True, max_length=250, unique=True)
+    election_id = models.CharField(
+        blank=True, null=True, max_length=250, unique=True
+    )
     tmp_election_id = models.CharField(blank=True, null=True, max_length=250)
     election_title = models.CharField(blank=True, max_length=255)
     election_type = models.ForeignKey(ElectionType, on_delete=models.CASCADE)
@@ -113,9 +115,13 @@ class Election(TimeStampedModel):
     organisation = models.ForeignKey(
         "organisations.Organisation", null=True, on_delete=models.CASCADE
     )
-    elected_role = models.ForeignKey(ElectedRole, null=True, on_delete=models.CASCADE)
+    elected_role = models.ForeignKey(
+        ElectedRole, null=True, on_delete=models.CASCADE
+    )
     division = models.ForeignKey(
-        "organisations.OrganisationDivision", null=True, on_delete=models.CASCADE
+        "organisations.OrganisationDivision",
+        null=True,
+        on_delete=models.CASCADE,
     )
     division_geography = models.ForeignKey(
         "organisations.DivisionGeography",
@@ -132,12 +138,17 @@ class Election(TimeStampedModel):
     seats_contested = models.IntegerField(blank=True, null=True)
     seats_total = models.IntegerField(blank=True, null=True)
     group = models.ForeignKey(
-        "Election", null=True, related_name="_children_qs", on_delete=models.CASCADE
+        "Election",
+        null=True,
+        related_name="_children_qs",
+        on_delete=models.CASCADE,
     )
     requires_voter_id = models.CharField(
         max_length=100,
         null=True,
-        choices=[(req, ID_REQUIREMENTS[req]["name"]) for req in ID_REQUIREMENTS.keys()],
+        choices=[
+            (req, ID_REQUIREMENTS[req]["name"]) for req in ID_REQUIREMENTS
+        ],
     )
 
     def get_children(self, manager):
@@ -158,14 +169,19 @@ class Election(TimeStampedModel):
                 return child_manager_cls(self)
         raise ValueError("Unknown manager {}".format(manager))
 
-    group_type = models.CharField(blank=True, max_length=100, null=True, db_index=True)
+    group_type = models.CharField(
+        blank=True, max_length=100, null=True, db_index=True
+    )
     voting_system = models.CharField(
         max_length=100,
         null=True,
-        choices=[(vs, VOTING_SYSTEMS[vs]["name"]) for vs in VOTING_SYSTEMS.keys()],
+        choices=[(vs, VOTING_SYSTEMS[vs]["name"]) for vs in VOTING_SYSTEMS],
     )
     explanation = models.ForeignKey(
-        "elections.Explanation", null=True, blank=True, on_delete=models.SET_NULL
+        "elections.Explanation",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
     metadata = models.ForeignKey(
         "elections.MetaData", null=True, blank=True, on_delete=models.SET_NULL
@@ -331,9 +347,13 @@ class Election(TimeStampedModel):
         if not self.group_type and self.geography:
             return (
                 Onspd.objects.filter(location__within=self.geography.geography)
-                .filter(location__dwithin=(self.geography.geography.centroid, 0.08))
+                .filter(
+                    location__dwithin=(self.geography.geography.centroid, 0.08)
+                )
                 .annotate(
-                    distance=Distance("location", self.geography.geography.centroid)
+                    distance=Distance(
+                        "location", self.geography.geography.centroid
+                    )
                 )
                 .order_by("distance")
                 .first()
@@ -389,27 +409,30 @@ class Election(TimeStampedModel):
         if self.division_geography:
             return self.division_geography
 
-        try:
-            if self.identifier_type == "ballot":
-                # attach geography by division if possible
-                if self.division:
-                    return self.division.geography
-        except ObjectDoesNotExist:
-            pass
+        if self.identifier_type == "ballot" and self.division:
+            # attach geography by division if possible
+            try:
+                return self.division.geography
+            except ObjectDoesNotExist:
+                pass
         return None
 
     @property
     def ynr_link(self):
         if self.identifier_type in ["organisation", "ballot"]:
-            return "https://candidates.democracyclub.org.uk/elections/{}".format(
-                self.election_id
+            return (
+                "https://candidates.democracyclub.org.uk/elections/{}".format(
+                    self.election_id
+                )
             )
         return None
 
     @property
     def whocivf_link(self):
         if self.identifier_type in ["organisation", "ballot"]:
-            return "https://whocanivotefor.co.uk/elections/{}".format(self.election_id)
+            return "https://whocanivotefor.co.uk/elections/{}".format(
+                self.election_id
+            )
         return None
 
     def get_organisation_geography(self):
@@ -439,7 +462,9 @@ class Election(TimeStampedModel):
         """
         Build URL to the election in the admin
         """
-        viewname = f"admin:{self._meta.app_label}_{self._meta.model_name}_change"
+        viewname = (
+            f"admin:{self._meta.app_label}_{self._meta.model_name}_change"
+        )
         return reverse(viewname=viewname, kwargs={"object_id": self.pk})
 
     def clean(self):
@@ -474,7 +499,11 @@ class Election(TimeStampedModel):
             self.group = group_model
 
         super().save(*args, **kwargs)
-        if status and status != DEFAULT_STATUS and status != self.current_status:
+        if (
+            status
+            and status != DEFAULT_STATUS
+            and status != self.current_status
+        ):
             event = ModerationHistory(
                 election=self, status_id=status, user=user, notes=notes
             )
@@ -503,7 +532,9 @@ def init_status_history(sender, instance, **kwargs):
 class ModerationHistory(TimeStampedModel):
     election = models.ForeignKey(Election, on_delete=models.CASCADE)
     status = models.ForeignKey(ModerationStatus, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    user = models.ForeignKey(
+        User, null=True, blank=True, on_delete=models.SET_NULL
+    )
     notes = models.CharField(blank=True, max_length=255)
 
     def save(self, **kwargs):
@@ -565,5 +596,7 @@ class Document(models.Model):
             filename = "Notice_of_Election"
         with tempfile.NamedTemporaryFile() as tmp:
             urllib.request.urlretrieve(url, tmp.name)
-            self.uploaded_file.save("%s/%s" % (election_id, filename), File(tmp))
+            self.uploaded_file.save(
+                "%s/%s" % (election_id, filename), File(tmp)
+            )
         return self.uploaded_file

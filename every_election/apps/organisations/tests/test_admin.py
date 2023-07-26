@@ -27,7 +27,9 @@ class OrganisationProblemTests(TestCase):
         self.assertTrue(problem.no_geography)
         self.assertFalse(problem.no_divisionset)
         self.assertFalse(problem.no_electedrole)
-        self.assertEqual("No associated OrganisationGeography", problem.problem_text)
+        self.assertEqual(
+            "No associated OrganisationGeography", problem.problem_text
+        )
 
     def test_no_divisionset(self):
         org = OrganisationFactory()
@@ -69,7 +71,9 @@ class OrganisationProblemTests(TestCase):
         self.assertTrue(problem.no_geography)
         self.assertTrue(problem.no_divisionset)
         self.assertTrue(problem.no_electedrole)
-        self.assertEqual("No associated OrganisationGeography", problem.problem_text)
+        self.assertEqual(
+            "No associated OrganisationGeography", problem.problem_text
+        )
 
 
 class OrganisationGeographyProblemTests(TestCase):
@@ -164,7 +168,9 @@ class DivisionProblemTests(TestCase):
         self.assertFalse(problem.no_gss_code)
         self.assertTrue(problem.no_geography)
         self.assertTrue(problem.invalid_source)
-        self.assertEqual("No associated DivisionGeography", problem.problem_text)
+        self.assertEqual(
+            "No associated DivisionGeography", problem.problem_text
+        )
 
     def test_all_ok(self):
         div = OrganisationDivisionFactory()

@@ -62,7 +62,8 @@ class ImportBoundariesTests(TestCase):
 
         self.assertIn("FAILED", output)
         self.assertIn(
-            "X01000001: OrganisationDivision matching query does not exist", output
+            "X01000001: OrganisationDivision matching query does not exist",
+            output,
         )
 
         # DB content should not have changed

@@ -15,9 +15,18 @@ class Migration(migrations.Migration):
             name="current_status",
             field=models.CharField(
                 choices=[
-                    (elections.models.ModerationStatuses("Suggested"), "Suggested"),
-                    (elections.models.ModerationStatuses("Rejected"), "Rejected"),
-                    (elections.models.ModerationStatuses("Approved"), "Approved"),
+                    (
+                        elections.models.ModerationStatuses("Suggested"),
+                        "Suggested",
+                    ),
+                    (
+                        elections.models.ModerationStatuses("Rejected"),
+                        "Rejected",
+                    ),
+                    (
+                        elections.models.ModerationStatuses("Approved"),
+                        "Approved",
+                    ),
                     (elections.models.ModerationStatuses("Deleted"), "Deleted"),
                 ],
                 default="Suggested",

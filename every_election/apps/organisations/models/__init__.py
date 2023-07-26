@@ -14,3 +14,16 @@ from organisations.models.admin import (
     OrganisationProblem,
     OrganisationGeographyProblem,
 )
+
+__all__ = [
+    "DivisionProblem",
+    "OrganisationProblem",
+    "OrganisationGeographyProblem",
+    "Organisation",
+    "OrganisationGeography",
+    "OrganisationGeographySubdivided",
+    "OrganisationDivisionSet",
+    "OrganisationDivision",
+    "DivisionGeography",
+    "DivisionGeographySubdivided",
+]

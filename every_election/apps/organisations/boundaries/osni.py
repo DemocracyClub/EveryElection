@@ -23,7 +23,11 @@ class OsniLayer:
             """
             if response.code == 202:
                 raise HTTPError(
-                    url, response.code, response.msg, response.headers, response.fp
+                    url,
+                    response.code,
+                    response.msg,
+                    response.headers,
+                    response.fp,
                 )
             data = response.read()
             return data

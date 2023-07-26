@@ -27,7 +27,8 @@ class TestElectionModel(TestCase):
         )
         self.assertFalse(has_approved_parents(ballot))
         ModerationHistoryFactory(
-            election=org_group, status=ModerationStatusFactory(short_label="Approved")
+            election=org_group,
+            status=ModerationStatusFactory(short_label="Approved"),
         )
         self.assertTrue(has_approved_parents(ballot))
 
@@ -49,7 +50,8 @@ class TestElectionModel(TestCase):
         self.assertFalse(has_approved_parents(ballot))
 
         ModerationHistoryFactory(
-            election=org_group, status=ModerationStatusFactory(short_label="Approved")
+            election=org_group,
+            status=ModerationStatusFactory(short_label="Approved"),
         )
         # now both parents are approved
         self.assertTrue(has_approved_parents(ballot))
@@ -68,6 +70,7 @@ class TestElectionModel(TestCase):
 
         # approve one of the 2 child ballots
         ModerationHistoryFactory(
-            election=ballots[0], status=ModerationStatusFactory(short_label="Approved")
+            election=ballots[0],
+            status=ModerationStatusFactory(short_label="Approved"),
         )
         self.assertTrue(has_approved_child(org_group))

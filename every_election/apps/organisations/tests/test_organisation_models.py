@@ -88,9 +88,12 @@ class TestOrganisationGeographies(TestCase):
         org = OrganisationFactory()
         geo = OrganisationGeographyFactory(organisation=org, gss="X01000001")
         self.assertEqual(geo, org.get_geography(date.today()))
-        self.assertEqual(geo, org.get_geography("doesn't even need to be a date"))
         self.assertEqual(
-            "https://mapit.mysociety.org/area/X01000001", org.format_geography_link()
+            geo, org.get_geography("doesn't even need to be a date")
+        )
+        self.assertEqual(
+            "https://mapit.mysociety.org/area/X01000001",
+            org.format_geography_link(),
         )
         geo.gss = ""
         geo.save()
@@ -105,7 +108,10 @@ class TestOrganisationGeographies(TestCase):
     def test_multiple_geographies(self):
         org = OrganisationFactory(start_date=date(2001, 1, 1), end_date=None)
         OrganisationGeographyFactory(
-            organisation=org, gss="X01000001", start_date=None, end_date="2001-01-01"
+            organisation=org,
+            gss="X01000001",
+            start_date=None,
+            end_date="2001-01-01",
         )
         OrganisationGeographyFactory(
             organisation=org,
@@ -114,7 +120,10 @@ class TestOrganisationGeographies(TestCase):
             end_date="2002-01-01",
         )
         OrganisationGeographyFactory(
-            organisation=org, gss="X01000003", start_date="2002-01-02", end_date=None
+            organisation=org,
+            gss="X01000003",
+            start_date="2002-01-02",
+            end_date=None,
         )
         self.assertEqual("X01000001", org.get_geography(date(2001, 1, 1)).gss)
         self.assertEqual("X01000002", org.get_geography(date(2001, 7, 20)).gss)
@@ -133,7 +142,9 @@ class TestOrganisationDivision(TestCase):
 
     def test_format_geography_empty(self):
         self.assertIsNone(
-            OrganisationDivisionFactory(official_identifier="").format_geography_link()
+            OrganisationDivisionFactory(
+                official_identifier=""
+            ).format_geography_link()
         )
 
     def test_format_geography_not_gss(self):
@@ -190,7 +201,9 @@ class TestDateConstraints(TestCase):
         """
         try:
             OrganisationDivisionSetFactory(
-                organisation=self.org, start_date=date(2000, 1, 1), end_date=None
+                organisation=self.org,
+                start_date=date(2000, 1, 1),
+                end_date=None,
             )
         except ValidationError:
             self.fail("ValidationError raised unexpectedly!")
@@ -216,7 +229,9 @@ class TestDateConstraints(TestCase):
     def test_save_organisationgeography_before_start(self):
         with self.assertRaises(ValidationError):
             OrganisationGeographyFactory(
-                organisation=self.org, start_date=date(2000, 1, 1), end_date=None
+                organisation=self.org,
+                start_date=date(2000, 1, 1),
+                end_date=None,
             )
 
     def test_save_organisationgeography_after_end(self):
@@ -245,7 +260,8 @@ class TestOrganisation(TestCase):
 
     def test_save_calls_update(self):
         self.assertNotIn(
-            self.org.modified, self.org.election_set.values_list("modified", flat=True)
+            self.org.modified,
+            self.org.election_set.values_list("modified", flat=True),
         )
         self.org.save()
         modified_dates = (

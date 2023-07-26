@@ -49,7 +49,9 @@ class Command(ReadFromCSVMixin, BaseCommand):
     def create_division_sets(self, csv_data):
         for line in csv_data:
             org = self.get_org_from_line(line)
-            self.division_sets[org.official_identifier] = OrganisationDivisionSet(
+            self.division_sets[
+                org.official_identifier
+            ] = OrganisationDivisionSet(
                 organisation=org,
                 start_date=self.start_date,
                 end_date=None,

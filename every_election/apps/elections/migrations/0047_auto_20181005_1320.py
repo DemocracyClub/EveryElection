@@ -52,7 +52,9 @@ class Migration(migrations.Migration):
                     models.CharField(
                         choices=[
                             (
-                                elections.models.ModerationStatuses("Suggested"),
+                                elections.models.ModerationStatuses(
+                                    "Suggested"
+                                ),
                                 "Suggested",
                             ),
                             (
@@ -63,7 +65,10 @@ class Migration(migrations.Migration):
                                 elections.models.ModerationStatuses("Approved"),
                                 "Approved",
                             ),
-                            (elections.models.ModerationStatuses("Deleted"), "Deleted"),
+                            (
+                                elections.models.ModerationStatuses("Deleted"),
+                                "Deleted",
+                            ),
                         ],
                         max_length=32,
                         primary_key=True,
@@ -77,14 +82,18 @@ class Migration(migrations.Migration):
             name="election",
             managers=[
                 ("public_objects", django.db.models.manager.Manager()),
-                ("private_objects", elections.managers.PrivateElectionsManager()),
+                (
+                    "private_objects",
+                    elections.managers.PrivateElectionsManager(),
+                ),
             ],
         ),
         migrations.AddField(
             model_name="moderationhistory",
             name="election",
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, to="elections.Election"
+                on_delete=django.db.models.deletion.CASCADE,
+                to="elections.Election",
             ),
         ),
         migrations.AddField(
@@ -99,7 +108,8 @@ class Migration(migrations.Migration):
             model_name="election",
             name="moderation_statuses",
             field=models.ManyToManyField(
-                through="elections.ModerationHistory", to="elections.ModerationStatus"
+                through="elections.ModerationHistory",
+                to="elections.ModerationStatus",
             ),
         ),
     ]

@@ -14,7 +14,8 @@ class Migration(migrations.Migration):
         Organisation = apps.get_model("organisations", "Organisation")
 
         Organisation.objects.filter(
-            organisation_type="police_area", slug__in=constants.AREAS_WITHOUT_PCCS
+            organisation_type="police_area",
+            slug__in=constants.AREAS_WITHOUT_PCCS,
         ).delete()
 
     def do_nothing(apps, schema_editor):

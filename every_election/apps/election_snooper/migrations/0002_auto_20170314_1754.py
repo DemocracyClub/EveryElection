@@ -10,7 +10,9 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
-            model_name="snoopedelection", name="date", field=models.DateField(null=True)
+            model_name="snoopedelection",
+            name="date",
+            field=models.DateField(null=True),
         ),
         migrations.AlterField(
             model_name="snoopedelection",

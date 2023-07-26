@@ -61,7 +61,9 @@ class Command(BaseCommand):
 
             # split the SQL string into a list of sqlparse.sql.Token objects
             # https://sqlparse.readthedocs.io/en/latest/analyzing/
-            parsed_sql = sqlparse.parse(index["original_index_create_statement"])[0]
+            parsed_sql = sqlparse.parse(
+                index["original_index_create_statement"]
+            )[0]
 
             # we expect the statement to be of the form
             # CREATE [UNIQUE] INDEX $index ON $table USING $fields"
@@ -72,7 +74,9 @@ class Command(BaseCommand):
                 if not token.ttype and self.table_name in token.value
             ]
             if len(identifiers) != 2:
-                raise Exception("Expected 2 identifiers, found %i" % len(identifiers))
+                raise Exception(
+                    "Expected 2 identifiers, found %i" % len(identifiers)
+                )
 
             original_index_name = identifiers[0]
             temp_index_name = original_index_name.replace(
@@ -95,7 +99,8 @@ class Command(BaseCommand):
     def swap_tables(self):
         self.cursor.execute("DROP TABLE %s;" % (self.table_name))
         self.cursor.execute(
-            "ALTER TABLE %s RENAME TO %s;" % (self.temp_table_name, self.table_name)
+            "ALTER TABLE %s RENAME TO %s;"
+            % (self.temp_table_name, self.table_name)
         )
 
     def handle(self, **options):
@@ -145,7 +150,9 @@ class Command(BaseCommand):
                     self.cursor.execute(index["index_rename_statement"])
 
         finally:
-            self.cursor.execute("DROP TABLE IF EXISTS %s;" % (self.temp_table_name))
+            self.cursor.execute(
+                "DROP TABLE IF EXISTS %s;" % (self.temp_table_name)
+            )
             self.stdout.write("Cleaning up temp files..")
             self.cleanup(tempdir)
 

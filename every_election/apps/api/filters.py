@@ -21,13 +21,14 @@ class ElectionFilter(django_filters.FilterSet):
             )
 
         if self.data.get("future", False):
-            og_qs = og_qs.filter(Q(end_date__gt=now()) | Q(end_date=None)).filter(
-                Q(start_date__lt=now()) | Q(start_date=None)
-            )
+            og_qs = og_qs.filter(
+                Q(end_date__gt=now()) | Q(end_date=None)
+            ).filter(Q(start_date__lt=now()) | Q(start_date=None))
 
         if "poll_open_date" in self.data and self.data["poll_open_date"]:
             og_qs = og_qs.filter(
-                Q(start_date__lte=self.data["poll_open_date"]) | Q(start_date=None)
+                Q(start_date__lte=self.data["poll_open_date"])
+                | Q(start_date=None)
             )
 
         if (
@@ -52,7 +53,9 @@ class ElectionFilter(django_filters.FilterSet):
 
         return queryset.filter(
             Q(division_geography__geography__bboverlaps=og_qs.get().geography)
-            | Q(organisation_geography__geography__bboverlaps=og_qs.get().geography)
+            | Q(
+                organisation_geography__geography__bboverlaps=og_qs.get().geography
+            )
         ).prefetch_related("_children_qs")
 
     organisation_identifier = django_filters.CharFilter(

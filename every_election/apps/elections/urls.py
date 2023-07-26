@@ -22,7 +22,9 @@ id_creator_wizard = IDCreatorWizard.as_view(
 
 urlpatterns = [
     re_path(
-        r"^election_types/$", ElectionTypesView.as_view(), name="election_types_view"
+        r"^election_types/$",
+        ElectionTypesView.as_view(),
+        name="election_types_view",
     ),
     re_path(
         r"^reference_definition/$",
@@ -35,7 +37,9 @@ urlpatterns = [
         SingleElection.as_view(),
         name="single_election_view",
     ),
-    re_path(r"^id_creator/(?P<step>.+)/$", id_creator_wizard, name="id_creator_step"),
+    re_path(
+        r"^id_creator/(?P<step>.+)/$", id_creator_wizard, name="id_creator_step"
+    ),
     re_path(r"^id_creator/$", id_creator_wizard, name="id_creator"),
     re_path(r"^sync/$", get_election_fixture),
 ]

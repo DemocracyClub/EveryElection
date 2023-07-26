@@ -11,17 +11,16 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterUniqueTogether(
             name="organisation",
-            unique_together=set(
-                [
-                    ("official_identifier", "organisation_type", "start_date"),
-                    ("official_identifier", "organisation_type", "end_date"),
-                ]
-            ),
+            unique_together={
+                ("official_identifier", "organisation_type", "start_date"),
+                ("official_identifier", "organisation_type", "end_date"),
+            },
         ),
         migrations.AlterUniqueTogether(
             name="organisationgeography",
-            unique_together=set(
-                [("organisation", "end_date"), ("organisation", "start_date")]
-            ),
+            unique_together={
+                ("organisation", "end_date"),
+                ("organisation", "start_date"),
+            },
         ),
     ]

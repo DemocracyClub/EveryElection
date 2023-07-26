@@ -40,7 +40,10 @@ class Command(BaseCommand):
             type=parse_date,
         )
         parser.add_argument(
-            "--to", dest="to", help="Export elections until this date", type=parse_date
+            "--to",
+            dest="to",
+            help="Export elections until this date",
+            type=parse_date,
         )
         parser.add_argument(
             "--output",
@@ -52,16 +55,20 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             os.mkdir(options["output"])
-        except FileExistsError:
-            pass
 
         if not (options["from"] or options["to"]):
-            elections = Election.public_objects.future().filter(group_type="election")
+            elections = Election.public_objects.future().filter(
+                group_type="election"
+            )
         else:
-            elections = Election.public_objects.all().filter(group_type="election")
+            elections = Election.public_objects.all().filter(
+                group_type="election"
+            )
 
             if options["from"]:
-                elections = elections.filter(poll_open_date__gte=options["from"])
+                elections = elections.filter(
+                    poll_open_date__gte=options["from"]
+                )
 
             if options["to"]:
                 elections = elections.filter(poll_open_date__lte=options["to"])
@@ -70,7 +77,9 @@ class Command(BaseCommand):
             self.stdout.write("Exporting elections for group %s" % election)
             data = self.export_election(election)
 
-            gj_path = os.path.join(options["output"], "%s.json" % election.election_id)
+            gj_path = os.path.join(
+                options["output"], "%s.json" % election.election_id
+            )
             with open(gj_path, "w") as output_file:
                 geojson.dump(data, output_file)
 
@@ -79,7 +88,8 @@ class Command(BaseCommand):
             )
             self.topojson_convert(gj_path, tj_path)
             tj_simple_path = os.path.join(
-                options["output"], "%s-topo-simplified.json" % election.election_id
+                options["output"],
+                "%s-topo-simplified.json" % election.election_id,
             )
             self.topojson_simplify(tj_path, tj_simple_path)
 
@@ -126,12 +136,16 @@ class Command(BaseCommand):
                 id=election.election_id,
                 properties={
                     "name": election.election_title,
-                    "division": election.division.name if election.division else None,
+                    "division": election.division.name
+                    if election.division
+                    else None,
                     "organisation": election.organisation.official_name,
                 },
             )
             features.append(feat)
-        return geojson.FeatureCollection(features, election_group=parent.election_id)
+        return geojson.FeatureCollection(
+            features, election_group=parent.election_id
+        )
 
     def get_ballots(self, group):
         "Return the ballots for a group of elections."

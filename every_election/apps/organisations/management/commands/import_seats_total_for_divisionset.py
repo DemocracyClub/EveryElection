@@ -23,10 +23,14 @@ class Command(ReadFromCSVMixin, BaseCommand):
         )
 
     def handle(self, *args, **options):
-        division_set = OrganisationDivisionSet.objects.get(pk=options["divisionset"])
+        division_set = OrganisationDivisionSet.objects.get(
+            pk=options["divisionset"]
+        )
         csv_data = self.load_data(options)
 
-        division_names = set(division_set.divisions.values_list("name", flat=True))
+        division_names = set(
+            division_set.divisions.values_list("name", flat=True)
+        )
         csv_names = set([r["name"] for r in csv_data])
         if division_names != csv_names:
             self.stderr.write("Name mismatch")

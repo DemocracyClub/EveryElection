@@ -32,11 +32,11 @@ class ALDCScraper(BaseSnooper):
             }
             try:
                 data["date"] = datetime.strptime(date, "%B %d, %Y")
-            except ValueError:
-                pass
 
             item, created = SnoopedElection.objects.update_or_create(
-                snooper_name=self.snooper_name, detail_url=detail_url, defaults=data
+                snooper_name=self.snooper_name,
+                detail_url=detail_url,
+                defaults=data,
             )
             if created:
                 self.post_to_slack(item)

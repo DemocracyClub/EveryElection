@@ -7,7 +7,11 @@ from django.contrib.gis.gdal import DataSource
 from django.db import transaction
 
 from django.conf import settings
-from .models import OrganisationDivisionSet, OrganisationDivision, DivisionGeography
+from .models import (
+    OrganisationDivisionSet,
+    OrganisationDivision,
+    DivisionGeography,
+)
 from storage.shapefile import pre_process_layer
 
 
@@ -33,9 +37,7 @@ class DivisionSetGeographyImporter:
         stdout=None,
     ):
         if not isinstance(data, DataSource):
-            error = (
-                "param 'data' must be an instance of django.contrib.gis.gdal.DataSource"
-            )
+            error = "param 'data' must be an instance of django.contrib.gis.gdal.DataSource"
             raise TypeError(error)
         if len(data) != 1:
             raise ValueError("Expected 1 layer, found %i" % (len(data)))
@@ -91,7 +93,9 @@ class DivisionSetGeographyImporter:
                     self.stdout.write(f"\t {i}. {missing_name}")
                 match = None
                 while not match:
-                    match = input("Pick a number to match or enter 's' to skip: ")
+                    match = input(
+                        "Pick a number to match or enter 's' to skip: "
+                    )
 
                     if match:
                         if match == "s":
@@ -107,7 +111,9 @@ class DivisionSetGeographyImporter:
         return map
 
     def check_names(self):
-        legislation_names = sorted([div.name for div in self.div_set.divisions.all()])
+        legislation_names = sorted(
+            [div.name for div in self.div_set.divisions.all()]
+        )
         boundary_names = sorted([self.get_name(div) for div in self.data])
 
         if len(legislation_names) != len(boundary_names):
@@ -118,14 +124,17 @@ class DivisionSetGeographyImporter:
         if legislation_names != boundary_names:
             map_data = self.make_name_map(legislation_names, boundary_names)
             if map_data:
-                self.stdout.write("\nYou need to save this file as `name_map.json`:")
+                self.stdout.write(
+                    "\nYou need to save this file as `name_map.json`:"
+                )
                 self.stdout.write(json.dumps(map_data, indent=4))
                 raise MapCreationNeededException()
             else:
                 # create a 'diff' of the 2 lists
                 # so we can work out what we need to fix
-                diff = ndiff(legislation_names, boundary_names)
-                raise DiffException("legislation_names != boundary_names", diff)
+                self.stdout.write(
+                    "The names in the input file don't match the names in the legislation"
+                )
 
         return True
 

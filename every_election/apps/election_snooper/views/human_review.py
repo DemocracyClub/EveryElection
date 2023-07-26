@@ -53,7 +53,11 @@ class ModerationQueueView(UserPassesTestMixin, TemplateView):
             # any parent (and grandparent) election objects
             if ballot.group and not has_approved_parents(ballot):
                 set_election_status(ballot.group, status, request.user)
-            if ballot.group and ballot.group.group and not has_approved_parents(ballot):
+            if (
+                ballot.group
+                and ballot.group.group
+                and not has_approved_parents(ballot)
+            ):
                 set_election_status(ballot.group.group, status, request.user)
 
         # if we've messed something up here, check_constraints()

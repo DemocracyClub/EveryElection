@@ -43,7 +43,9 @@ class EEOncePerTagCommandRunner(Stack):
         )
 
         # Environment conditionals
-        dc_environment = self.node.try_get_context("dc-environment") or "development"
+        dc_environment = (
+            self.node.try_get_context("dc-environment") or "development"
+        )
 
         if dc_environment == "production":
             # Back-ups

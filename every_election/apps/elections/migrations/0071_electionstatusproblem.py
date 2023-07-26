@@ -23,7 +23,10 @@ class Migration(migrations.Migration):
             bases=("elections.election",),
             managers=[
                 ("objects", django.db.models.manager.Manager()),
-                ("private_objects", elections.managers.PrivateElectionsManager()),
+                (
+                    "private_objects",
+                    elections.managers.PrivateElectionsManager(),
+                ),
             ],
         ),
     ]

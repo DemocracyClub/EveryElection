@@ -115,7 +115,6 @@ class OrganisationProblemManager(Manager):
 
         return qs
 
-
 class OrganisationProblem(Organisation):
     objects = OrganisationProblemManager()
 
@@ -169,7 +168,6 @@ class OrganisationGeographyProblemManager(Manager):
         )
 
         return qs
-
 
 class OrganisationGeographyProblem(OrganisationGeography):
     objects = OrganisationGeographyProblemManager()

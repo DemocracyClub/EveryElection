@@ -19,14 +19,18 @@ urlpatterns = [
     re_path(r"^email/", include("dc_signup_form.urls")),
     re_path(
         r"^robots\.txt$",
-        TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
+        TemplateView.as_view(
+            template_name="robots.txt", content_type="text/plain"
+        ),
     ),
 ]
 
 
 if settings.DEBUG:
     urlpatterns += static(
-        settings.STATIC_URL, document_root=settings.STATIC_ROOT, show_indexes=True
+        settings.STATIC_URL,
+        document_root=settings.STATIC_ROOT,
+        show_indexes=True,
     )
 
     from dc_utils.urls import dc_utils_testing_patterns

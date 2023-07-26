@@ -39,5 +39,8 @@ class DateConstraintMixin:
         ):
             raise ValidationError(
                 "end_date (%s) must be on or before parent organisation end_date (%s)"
-                % (self.end_date.isoformat(), self.organisation.end_date.isoformat())
+                % (
+                    self.end_date.isoformat(),
+                    self.organisation.end_date.isoformat(),
+                )
             )

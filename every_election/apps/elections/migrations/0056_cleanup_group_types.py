@@ -58,4 +58,6 @@ def fix_bad_group_types(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [("elections", "0055_auto_20181204_0918")]
 
-    operations = [migrations.RunPython(fix_bad_group_types, migrations.RunPython.noop)]
+    operations = [
+        migrations.RunPython(fix_bad_group_types, migrations.RunPython.noop)
+    ]

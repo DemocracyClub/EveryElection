@@ -24,7 +24,10 @@ from organisations.models import (
     OrganisationDivision,
     OrganisationDivisionSet,
 )
-from organisations.constants import ORG_CURIE_TO_MAPIT_AREA_TYPE, PARENT_TO_CHILD_AREAS
+from organisations.constants import (
+    ORG_CURIE_TO_MAPIT_AREA_TYPE,
+    PARENT_TO_CHILD_AREAS,
+)
 from core.mixins import ReadFromCSVMixin
 
 
@@ -61,7 +64,9 @@ class Command(ReadFromCSVMixin, BaseCommand):
             return Organisation.objects.all().get_by_date(
                 organisation_type="local-authority",
                 official_identifier=line["Organisation ID"],
-                date=datetime.datetime.strptime(line["Start Date"], "%Y-%m-%d").date(),
+                date=datetime.datetime.strptime(
+                    line["Start Date"], "%Y-%m-%d"
+                ).date(),
             )
         else:
             # If we haven't got a start date for the divisionset, see if we can
@@ -79,7 +84,8 @@ class Command(ReadFromCSVMixin, BaseCommand):
         divsets = OrganisationDivisionSet.objects.filter(organisation=org)
         if not divsets:
             raise Exception(
-                "Could not find any previous DivisionSets for Organisation %s" % org
+                "Could not find any previous DivisionSets for Organisation %s"
+                % org
             )
         if not divsets.latest().end_date:
             raise Exception(
@@ -101,7 +107,9 @@ class Command(ReadFromCSVMixin, BaseCommand):
                 # the end date of the previous DivisionSet
                 start_date = self.get_start_date(org)
 
-            self.division_sets[org.official_identifier] = OrganisationDivisionSet(
+            self.division_sets[
+                org.official_identifier
+            ] = OrganisationDivisionSet(
                 organisation=org,
                 start_date=start_date,
                 end_date=line["End Date"] or None,
@@ -129,7 +137,9 @@ class Command(ReadFromCSVMixin, BaseCommand):
         return identifier
 
     def get_division_type_from_registers(self, line):
-        curie = ":".join([line["Organisation ID type"], line["Organisation ID"]])
+        curie = ":".join(
+            [line["Organisation ID type"], line["Organisation ID"]]
+        )
         return PARENT_TO_CHILD_AREAS[self.org_curie_to_area_type[curie]][0]
 
     def create_div_from_line(self, div_set, identifier, line):
@@ -152,8 +162,6 @@ class Command(ReadFromCSVMixin, BaseCommand):
             seats_total=seats_total,
             divisionset=div_set,
         )
-
-        return div
 
     def create_divisions(self, csv_data):
         for line in csv_data:

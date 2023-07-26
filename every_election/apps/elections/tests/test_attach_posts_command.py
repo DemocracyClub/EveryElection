@@ -29,7 +29,10 @@ class TestAttachPostsPerWard(TestCase):
                 }
             )
 
-        self.default_options = {"replace_seats_total": False, "skip_unknown": False}
+        self.default_options = {
+            "replace_seats_total": False,
+            "skip_unknown": False,
+        }
 
     @mock.patch(COMMAND_PATH + ".load_data")
     def test_set_seats_total(self, fake_load_csv_data):

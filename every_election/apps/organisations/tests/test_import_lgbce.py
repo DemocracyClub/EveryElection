@@ -73,7 +73,10 @@ class ImportLgbceTests(TestCase):
 
     def run_import_with_test_data(self, org, name_map):
         cmd = Command()
-        cmd.get_data = lambda x: (tempfile.mkdtemp(), DataSource(self.test_data_path))
+        cmd.get_data = lambda x: (
+            tempfile.mkdtemp(),
+            DataSource(self.test_data_path),
+        )
         cmd.get_name_map = lambda x: name_map
         args = {
             "org": org,
@@ -125,7 +128,9 @@ class ImportLgbceTests(TestCase):
         # there's some names in the test file that don't match the ones in the database
         # but we'll pass an empty name_map - this should cause a failure
         name_map = {}
-        error_output = self.run_import_with_test_data(self.valid_org_code, name_map)
+        error_output = self.run_import_with_test_data(
+            self.valid_org_code, name_map
+        )
         self.assertEqual(
             "Failed: legislation_names != boundary_names", error_output[:43]
         )

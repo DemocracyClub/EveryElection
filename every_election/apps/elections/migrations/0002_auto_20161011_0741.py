@@ -23,10 +23,15 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("name", models.CharField(blank=True, max_length=100)),
-                ("election_subtype", models.CharField(blank=True, max_length=100)),
+                (
+                    "election_subtype",
+                    models.CharField(blank=True, max_length=100),
+                ),
             ],
         ),
-        migrations.RemoveField(model_name="electiontype", name="election_subtype"),
+        migrations.RemoveField(
+            model_name="electiontype", name="election_subtype"
+        ),
         migrations.AddField(
             model_name="electionsubtype",
             name="election_type",

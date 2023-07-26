@@ -6,7 +6,9 @@ from django.db import migrations
 
 def split_geography_field(apps, schema_editor):
     Election = apps.get_model("elections", "Election")
-    OrganisationGeography = apps.get_model("organisations", "OrganisationGeography")
+    OrganisationGeography = apps.get_model(
+        "organisations", "OrganisationGeography"
+    )
 
     elections = Election.objects.all()
     for election in elections:

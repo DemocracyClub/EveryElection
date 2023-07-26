@@ -22,7 +22,10 @@ class ReadFromFileMixin:
     def add_arguments(self, parser):
         group = parser.add_mutually_exclusive_group(required=True)
         group.add_argument(
-            "-f", "--file", action="store", help="Path to import e.g: /foo/bar/baz.csv"
+            "-f",
+            "--file",
+            action="store",
+            help="Path to import e.g: /foo/bar/baz.csv",
         )
         group.add_argument(
             "-u",
@@ -31,7 +34,10 @@ class ReadFromFileMixin:
             help="URL to import e.g: http://foo.bar/baz.csv",
         )
         group.add_argument(
-            "-s", "--s3", action="store", help="S3 key to import e.g: foo/bar/baz.csv"
+            "-s",
+            "--s3",
+            action="store",
+            help="S3 key to import e.g: foo/bar/baz.csv",
         )
 
     def read_from_local(self, filename):

@@ -11,5 +11,7 @@ class Migration(migrations.Migration):
     dependencies = [("elections", "0025_election_geography")]
 
     operations = [
-        migrations.RunPython(migrations.RunPython.noop, migrations.RunPython.noop)
+        migrations.RunPython(
+            migrations.RunPython.noop, migrations.RunPython.noop
+        )
     ]

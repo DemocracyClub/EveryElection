@@ -81,7 +81,9 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
                 .filter_by_status("Deleted")
             )
         else:
-            identifier_type = self.request.query_params.get("identifier_type", None)
+            identifier_type = self.request.query_params.get(
+                "identifier_type", None
+            )
             if identifier_type != "ballot":
                 queryset = queryset.prefetch_related(
                     Prefetch("_children_qs", Election.public_objects.all())
@@ -228,7 +230,10 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
         if page is not None:
             return self.get_paginated_response(
                 OrganisationSerializer(
-                    page, many=True, read_only=True, context={"request": request}
+                    page,
+                    many=True,
+                    read_only=True,
+                    context={"request": request},
                 ).data
             )
 

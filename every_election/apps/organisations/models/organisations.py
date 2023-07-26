@@ -42,7 +42,9 @@ class Organisation(UpdateElectionsTimestampedModel, DateDisplayMixin):
         ("europarl", "europarl"),
     )
 
-    official_identifier = models.CharField(blank=False, max_length=255, db_index=True)
+    official_identifier = models.CharField(
+        blank=False, max_length=255, db_index=True
+    )
     organisation_type = models.CharField(
         blank=False, max_length=255, choices=ORGTYPES, default="local-authority"
     )
@@ -66,7 +68,9 @@ class Organisation(UpdateElectionsTimestampedModel, DateDisplayMixin):
 
     @property
     def name(self):
-        return self.official_name or self.common_name or self.official_identifier
+        return (
+            self.official_name or self.common_name or self.official_identifier
+        )
 
     class Meta:
         ordering = ("official_name", "-start_date")
@@ -83,7 +87,11 @@ class Organisation(UpdateElectionsTimestampedModel, DateDisplayMixin):
         """
 
     def get_url(self, view, ext=None):
-        args = (self.organisation_type, self.official_identifier, self.start_date)
+        args = (
+            self.organisation_type,
+            self.official_identifier,
+            self.start_date,
+        )
         args = args + (ext,) if ext else args
         return reverse(view, args=args)
 
@@ -124,7 +132,9 @@ class Organisation(UpdateElectionsTimestampedModel, DateDisplayMixin):
                 return None
 
 
-class OrganisationGeography(DateConstraintMixin, DateDisplayMixin, models.Model):
+class OrganisationGeography(
+    DateConstraintMixin, DateDisplayMixin, models.Model
+):
     organisation = models.ForeignKey(
         "Organisation", related_name="geographies", on_delete=models.CASCADE
     )
@@ -151,7 +161,10 @@ class OrganisationGeography(DateConstraintMixin, DateDisplayMixin, models.Model)
         verbose_name_plural = "Organisation Geographies"
         ordering = ("-start_date",)
         get_latest_by = "start_date"
-        unique_together = (("organisation", "start_date"), ("organisation", "end_date"))
+        unique_together = (
+            ("organisation", "start_date"),
+            ("organisation", "end_date"),
+        )
         """
         Note:
         This model also has an additional constraint to prevent

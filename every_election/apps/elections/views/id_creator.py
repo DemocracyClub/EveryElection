@@ -6,8 +6,16 @@ from formtools.wizard.views import NamedUrlSessionWizardView
 
 from core.helpers import user_is_moderator
 from organisations.models import Organisation
-from elections.models import Document, ElectedRole, ElectionSubType, ModerationStatuses
-from elections.utils import create_ids_for_each_ballot_paper, get_notice_directory
+from elections.models import (
+    Document,
+    ElectedRole,
+    ElectionSubType,
+    ModerationStatuses,
+)
+from elections.utils import (
+    create_ids_for_each_ballot_paper,
+    get_notice_directory,
+)
 from elections.forms import (
     ElectionDateForm,
     ElectionTypeForm,
@@ -110,7 +118,9 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
     @cached_property
     def get_election_type(self):
         if self.get_cleaned_data_for_step("election_type"):
-            return self.get_cleaned_data_for_step("election_type").get("election_type")
+            return self.get_cleaned_data_for_step("election_type").get(
+                "election_type"
+            )
 
     @cached_property
     def get_election_subtypes(self):
@@ -150,28 +160,34 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                     )
                     # auto-populate the form with these to allow editing
                     return {"source": se.detail_url, "document": se.detail_url}
-                elif se.snooper_name == "ALDC" or se.snooper_name == "LibDemNewbies":
+                elif (
+                    se.snooper_name == "ALDC"
+                    or se.snooper_name == "LibDemNewbies"
+                ):
                     # put these in the session - they aren't user-modifiable
                     self.storage.extra_data.update(
                         {
                             "radar_id": se.id,
-                            "radar_date": [se.date.day, se.date.month, se.date.year],
+                            "radar_date": [
+                                se.date.day,
+                                se.date.month,
+                                se.date.year,
+                            ],
                         }
                     )
                     # auto-populate the form with these to allow editing
                     return {"source": se.source, "document": ""}
-                else:
-                    return {}
-
-        if step == "date":
-            # if we've got a date from a SnoopedElection
-            # init the date form with that
-            if isinstance(
-                self.storage.extra_data, dict
-            ) and self.storage.extra_data.get("radar_date", False):
-                radar_date = self.storage.extra_data["radar_date"]
-                if isinstance(radar_date, list):
-                    return {"date": radar_date}
+                return {}
+        # if we've got a date from a SnoopedElection
+        # init the date form with that
+        if (
+            step == "date"
+            and isinstance(self.storage.extra_data, dict)
+            and self.storage.extra_data.get("radar_date", False)
+        ):
+            radar_date = self.storage.extra_data["radar_date"]
+            if isinstance(radar_date, list):
+                return {"date": radar_date}
 
         return self.initial_dict.get(step, {})
 
@@ -267,7 +283,10 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
 
             election.save(status=status, user=self.request.user, notes=notes)
 
-        if not user_is_moderator(self.request.user) and len(context["all_ids"]) > 0:
+        if (
+            not user_is_moderator(self.request.user)
+            and len(context["all_ids"]) > 0
+        ):
             ballots = [e for e in context["all_ids"] if e.group_type == None]
             if len(ballots) == 1:
                 message = """
@@ -287,10 +306,12 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
 
         # if this election was created from a radar entry set the status
         # of the radar entry to indicate we have made an id for it
-        if isinstance(self.storage.extra_data, dict) and self.storage.extra_data.get(
-            "radar_id", False
-        ):
-            se = SnoopedElection.objects.get(pk=self.storage.extra_data["radar_id"])
+        if isinstance(
+            self.storage.extra_data, dict
+        ) and self.storage.extra_data.get("radar_id", False):
+            se = SnoopedElection.objects.get(
+                pk=self.storage.extra_data["radar_id"]
+            )
             se.status = "id_created"
             se.save()
 

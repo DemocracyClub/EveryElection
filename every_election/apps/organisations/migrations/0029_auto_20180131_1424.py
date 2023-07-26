@@ -11,6 +11,9 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name="organisationdivisionset",
-            options={"get_latest_by": "start_date", "ordering": ("-start_date",)},
+            options={
+                "get_latest_by": "start_date",
+                "ordering": ("-start_date",),
+            },
         )
     ]

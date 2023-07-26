@@ -37,8 +37,12 @@ class Migration(migrations.Migration):
         migrations.AlterModelOptions(
             name="organisationdivision", options={"ordering": ("name",)}
         ),
-        migrations.RemoveField(model_name="organisationdivision", name="end_date"),
-        migrations.RemoveField(model_name="organisationdivision", name="start_date"),
+        migrations.RemoveField(
+            model_name="organisationdivision", name="end_date"
+        ),
+        migrations.RemoveField(
+            model_name="organisationdivision", name="start_date"
+        ),
         migrations.AlterField(
             model_name="organisationdivision",
             name="organisation",

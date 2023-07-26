@@ -14,7 +14,9 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RenameField(
-            model_name="election", old_name="geography", new_name="division_geography"
+            model_name="election",
+            old_name="geography",
+            new_name="division_geography",
         ),
         migrations.AddField(
             model_name="election",

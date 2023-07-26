@@ -78,7 +78,10 @@ class Command(ReadFromFileMixin, BaseCommand):
             self.stdout.write(f"...for {len(ballots)} ballots...")
             ballots.update(
                 tags=JsonbSet(
-                    "tags", Value(f"{{{tag_name}}}"), Value(json.dumps(tags)), True
+                    "tags",
+                    Value(f"{{{tag_name}}}"),
+                    Value(json.dumps(tags)),
+                    True,
                 )
             )
             self.stdout.write("...done.")

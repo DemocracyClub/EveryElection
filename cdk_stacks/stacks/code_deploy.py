@@ -29,7 +29,9 @@ class EECodeDeployment(Stack):
         self.dc_environment = self.node.try_get_context("dc-environment")
 
         # self.ami = ec2.MachineImage.lookup(name=EE_IMAGE, owners=["self"])
-        self.ami = ec2.MachineImage.generic_linux(ami_map={"eu-west-2": EE_IMAGE})
+        self.ami = ec2.MachineImage.generic_linux(
+            ami_map={"eu-west-2": EE_IMAGE}
+        )
 
         self.default_vpc = ec2.Vpc.from_lookup(
             scope=self, id="default-vpc-id", is_default=True
@@ -52,7 +54,8 @@ class EECodeDeployment(Stack):
         self.target_group = self.create_target_group()
 
         self.alb = self.create_alb(
-            security_group=self.alb_security_group, target_group=self.target_group
+            security_group=self.alb_security_group,
+            target_group=self.target_group,
         )
 
         self.code_deploy = self.create_code_deploy()
@@ -65,7 +68,10 @@ class EECodeDeployment(Stack):
         )
 
     def create_launch_template(
-        self, ami: ec2.IMachineImage, security_group: ec2.SecurityGroup, role: iam.Role
+        self,
+        ami: ec2.IMachineImage,
+        security_group: ec2.SecurityGroup,
+        role: iam.Role,
     ) -> ec2.LaunchTemplate:
         lt = ec2.LaunchTemplate(
             self,
@@ -146,7 +152,9 @@ class EECodeDeployment(Stack):
         )
         if https:
             alb_security_group.add_ingress_rule(
-                ec2.Peer.any_ipv4(), ec2.Port.tcp(443), "allow HTTPS from anywhere"
+                ec2.Peer.any_ipv4(),
+                ec2.Port.tcp(443),
+                "allow HTTPS from anywhere",
             )
 
         return alb_security_group

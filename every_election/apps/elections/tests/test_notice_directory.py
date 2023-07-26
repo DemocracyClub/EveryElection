@@ -8,7 +8,9 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
     def setUp(self):
         super().setUp()
 
-        self.election = ElectionBuilder("local", "2017-06-08").build_election_group()
+        self.election = ElectionBuilder(
+            "local", "2017-06-08"
+        ).build_election_group()
 
         self.organisation = (
             ElectionBuilder("local", "2017-06-08")
@@ -31,7 +33,9 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         )
 
     def test_one_ballot_with_org(self):
-        folder = get_notice_directory([self.election, self.organisation, self.ballot1])
+        folder = get_notice_directory(
+            [self.election, self.organisation, self.ballot1]
+        )
         self.assertEqual(self.ballot1.election_id, folder)
 
     def test_one_ballot_no_org(self):
@@ -45,7 +49,9 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         self.assertEqual(self.organisation.election_id, folder)
 
     def test_two_ballots_no_org(self):
-        folder = get_notice_directory([self.election, self.ballot1, self.ballot2])
+        folder = get_notice_directory(
+            [self.election, self.ballot1, self.ballot2]
+        )
         self.assertEqual(self.election.election_id, folder)
 
     def test_group_only(self):

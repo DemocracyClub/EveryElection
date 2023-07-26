@@ -15,10 +15,16 @@ def add_created_date(apps, schema_editor):
     Organisation = apps.get_model("organisations", "Organisation")
     Organisation.objects.update(created=F("start_date"))
 
-    OrganisationDivision = apps.get_model("organisations", "OrganisationDivision")
-    OrganisationDivisionSet = apps.get_model("organisations", "OrganisationDivisionSet")
+    OrganisationDivision = apps.get_model(
+        "organisations", "OrganisationDivision"
+    )
+    OrganisationDivisionSet = apps.get_model(
+        "organisations", "OrganisationDivisionSet"
+    )
 
-    division_set = OrganisationDivisionSet.objects.filter(divisions=OuterRef("pk"))
+    division_set = OrganisationDivisionSet.objects.filter(
+        divisions=OuterRef("pk")
+    )
     subquery = Subquery(division_set.values("start_date")[:1])
     OrganisationDivision.objects.update(created=subquery)
 

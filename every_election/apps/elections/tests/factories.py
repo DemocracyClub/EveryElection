@@ -49,7 +49,9 @@ class ElectionFactory(factory.django.DjangoModelFactory):
     def _get_manager(cls, model_class):
         return model_class.private_objects
 
-    election_id = factory.Sequence(lambda n: "local.place-name-%d.2017-03-23" % n)
+    election_id = factory.Sequence(
+        lambda n: "local.place-name-%d.2017-03-23" % n
+    )
     election_title = factory.Sequence(lambda n: "Election %d" % n)
     election_type = factory.SubFactory(ElectionTypeFactory)
     poll_open_date = "2017-03-23"

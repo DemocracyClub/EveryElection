@@ -78,7 +78,10 @@ class Command(BaseBoundaryLineCommand):
         This means we only need to do one round-trip to the DB per DivisionSet
         instead of once per division. This speeds things up a bit.
         """
-        if (div.organisation_id, div.divisionset.start_date) in self.org_boundaries:
+        if (
+            div.organisation_id,
+            div.divisionset.start_date,
+        ) in self.org_boundaries:
             return self.org_boundaries[
                 (div.organisation_id, div.divisionset.start_date)
             ]
@@ -86,7 +89,9 @@ class Command(BaseBoundaryLineCommand):
         org = Organisation.objects.get(pk=div.organisation_id).get_geography(
             div.divisionset.start_date
         )
-        self.org_boundaries[(div.organisation_id, div.divisionset.start_date)] = org
+        self.org_boundaries[
+            (div.organisation_id, div.divisionset.start_date)
+        ] = org
         return org
 
     @transaction.atomic
@@ -115,7 +120,9 @@ class Command(BaseBoundaryLineCommand):
 
     def report(self, verbose):
         self.stdout.write(
-            "Searched {} divisions".format(len(self.found) + len(self.not_found))
+            "Searched {} divisions".format(
+                len(self.found) + len(self.not_found)
+            )
         )
         self.stdout.write("Found {} codes".format(len(self.found)))
         self.stdout.write("\n")
@@ -128,7 +135,9 @@ class Command(BaseBoundaryLineCommand):
         base_dir = self.get_base_dir(**options)
 
         self.stdout.write("Searching...")
-        lookup = get_area_type_lookup(filter=lambda x: x in self.WARD_TYPES, group=True)
+        lookup = get_area_type_lookup(
+            filter=lambda x: x in self.WARD_TYPES, group=True
+        )
         for org_type, filename in lookup.items():
             bl = BoundaryLine(os.path.join(base_dir, "Data", "GB", filename))
             divs = self.get_divisions(org_type, options["date"])

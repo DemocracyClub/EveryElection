@@ -45,7 +45,9 @@ class SnoopedElectionView(UserPassesTestMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         instance = SnoopedElection.objects.get(pk=request.POST.get("pk"))
-        form = ReviewElectionForm(request.POST, instance=instance, prefix=instance.pk)
+        form = ReviewElectionForm(
+            request.POST, instance=instance, prefix=instance.pk
+        )
         if form.is_valid():
             form.save()
         # TODO: if there's an error it's not processed yet
