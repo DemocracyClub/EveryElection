@@ -1,12 +1,11 @@
-from django.test import TestCase
-
 from io import StringIO
+
 import mock
+from django.test import TestCase
+from elections.management.commands import attach_posts_per_election_from_csv
+from elections.models import Election
 
 from .factories import ElectionWithStatusFactory
-
-from elections.models import Election
-from elections.management.commands import attach_posts_per_election_from_csv
 
 COMMAND_PATH = (
     "elections.management.commands.attach_posts_per_election_from_csv.Command"

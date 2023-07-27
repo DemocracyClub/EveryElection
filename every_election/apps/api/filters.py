@@ -2,7 +2,6 @@ import django_filters
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.utils.timezone import now
-
 from elections.models import Election
 from organisations.models import OrganisationGeography
 

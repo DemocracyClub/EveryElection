@@ -1,15 +1,15 @@
 from datetime import date
+
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from elections.tests.factories import ElectionFactory
 from organisations.models import Organisation
 from organisations.tests.factories import (
-    OrganisationFactory,
-    OrganisationGeographyFactory,
     OrganisationDivisionFactory,
     OrganisationDivisionSetFactory,
+    OrganisationFactory,
+    OrganisationGeographyFactory,
 )
-
-from elections.tests.factories import ElectionFactory
 
 
 class TestOrganisationManager(TestCase):

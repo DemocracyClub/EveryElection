@@ -1,11 +1,10 @@
 from django.urls import re_path
 
 from .views import (
-    SupportedOrganisationsView,
     OrganisationDetailView,
     OrganisationsFilterView,
+    SupportedOrganisationsView,
 )
-
 
 urlpatterns = [
     re_path(

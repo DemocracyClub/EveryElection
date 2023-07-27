@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand
-
-from elections.models import ElectionType, ElectionSubType
 from elections import constants
+from elections.models import ElectionSubType, ElectionType
 
 
 class Command(BaseCommand):

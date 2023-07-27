@@ -14,20 +14,21 @@ manage.py boundaryline_import_boundaries --codes /foo/bar/codes.json --source bd
 import json
 import os
 import re
+
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
-from organisations.models import (
-    DivisionGeography,
-    OrganisationGeography,
-    OrganisationDivision,
-)
 from organisations.boundaries.boundaryline import BoundaryLine
 from organisations.boundaries.constants import (
-    get_area_type_lookup,
     SPECIAL_CASES,
+    get_area_type_lookup,
 )
-from organisations.boundaries.management.base import BaseBoundaryLineCommand
 from organisations.boundaries.helpers import split_code
+from organisations.boundaries.management.base import BaseBoundaryLineCommand
 from organisations.constants import REGISTER_SUBTYPE_TO_BOUNDARYLINE_TYPE
+from organisations.models import (
+    DivisionGeography,
+    OrganisationDivision,
+    OrganisationGeography,
+)
 from storage.shapefile import convert_geom_to_multipolygon
 
 
@@ -225,7 +226,7 @@ class Command(BaseBoundaryLineCommand):
     def get_identifiers(self, options):
         if options["code"]:
             return [options["code"]]
-        with json.load(open(options["codes"])) as codes:
+        with json.load(open(options["codes"])) as codes: 
             if not isinstance(codes, (list,)):
                 raise ValueError("Root JSON element must be array []")
             return codes
@@ -248,6 +249,11 @@ class Command(BaseBoundaryLineCommand):
             self.stdout.write(
                 "{id}: {error}".format(id=identifier, error=str(e))
             )
+
+        if self.cleanup_required:
+            self.cleanup(self.base_dir)
+
+        self.stdout.write("...done!")
 
         if self.cleanup_required:
             self.cleanup(self.base_dir)

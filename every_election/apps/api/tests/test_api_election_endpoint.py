@@ -1,11 +1,10 @@
 import json
-import pytest
 from datetime import datetime, timedelta
 from urllib.parse import urlencode
 
+import pytest
 import vcr
-from rest_framework.test import APITestCase
-
+from elections.models import ElectionType, MetaData
 from elections.tests.factories import (
     ElectionWithStatusFactory,
     ModerationHistoryFactory,
@@ -13,13 +12,13 @@ from elections.tests.factories import (
     related_status,
 )
 from organisations.tests.factories import (
-    OrganisationFactory,
-    OrganisationDivisionSetFactory,
-    OrganisationDivisionFactory,
-    OrganisationGeographyFactory,
     DivisionGeographyFactory,
+    OrganisationDivisionFactory,
+    OrganisationDivisionSetFactory,
+    OrganisationFactory,
+    OrganisationGeographyFactory,
 )
-from elections.models import ElectionType, MetaData
+from rest_framework.test import APITestCase
 
 
 class TestElectionAPIQueries(APITestCase):
@@ -49,7 +48,7 @@ class TestElectionAPIQueries(APITestCase):
 
         assert len(data["results"]) == 1
         assert data["results"][0]["election_id"] == id_current
-        assert data["results"][0]["current"] == True
+        assert data["results"][0]["current"] is True
 
     def test_election_endpoint_future(self):
         ElectionWithStatusFactory(
@@ -561,8 +560,8 @@ class TestElectionAPIQueries(APITestCase):
         )
         data = resp.json()
         self.assertSetEqual(
-            set(["overlaps", "same", "contains", "within"]),
-            set([e["election_title"] for e in data["results"]]),
+            {"overlaps", "same", "contains", "within"},
+            {e["election_title"] for e in data["results"]},
         )
 
         # BIG_TEST1 has an area bigger than 2. So should hoover up everything
@@ -572,6 +571,6 @@ class TestElectionAPIQueries(APITestCase):
         )
         data = resp.json()
         self.assertSetEqual(
-            set(["overlaps", "same", "contains", "within"]),
-            set([e["election_title"] for e in data["results"]]),
+            {"overlaps", "same", "contains", "within"},
+            {e["election_title"] for e in data["results"]},
         )

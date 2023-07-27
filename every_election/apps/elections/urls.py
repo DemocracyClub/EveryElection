@@ -1,16 +1,15 @@
 from django.urls import re_path
+from elections.views.sync import get_election_fixture
 
 from .views import (
-    AllElectionsView,
     CONDITION_DICT,
-    ElectionTypesView,
     FORMS,
+    AllElectionsView,
+    ElectionTypesView,
     IDCreatorWizard,
     ReferenceDefinitionView,
     SingleElection,
 )
-from elections.views.sync import get_election_fixture
-
 
 id_creator_wizard = IDCreatorWizard.as_view(
     FORMS,

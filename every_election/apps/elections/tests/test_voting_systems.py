@@ -1,10 +1,9 @@
 from django.test import TestCase
-
+from elections.models import ElectedRole
 from elections.utils import ElectionBuilder
+from organisations.tests.factories import OrganisationFactory
 
 from .base_tests import BaseElectionCreatorMixIn
-from elections.models import ElectedRole
-from organisations.tests.factories import OrganisationFactory
 
 
 class TestElectoralSystems(BaseElectionCreatorMixIn, TestCase):
@@ -18,7 +17,7 @@ class TestElectoralSystems(BaseElectionCreatorMixIn, TestCase):
         election_id = ElectionBuilder(
             "local", "2017-05-04"
         ).build_election_group()
-        assert election_id.voting_system == None
+        assert election_id.voting_system is None
 
         # "Normal" UK local election is FPTP
         eng_org = OrganisationFactory(territory_code="ENG")

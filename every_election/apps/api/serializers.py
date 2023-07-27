@@ -1,14 +1,7 @@
-from rest_framework import serializers
-from rest_framework_gis.serializers import (
-    GeoFeatureModelSerializer,
-    GeometrySerializerMethodField,
-)
-from uk_election_ids.datapackage import VOTING_SYSTEMS
-
 from elections.models import (
     Election,
-    ElectionType,
     ElectionSubType,
+    ElectionType,
     ModerationStatuses,
 )
 from organisations.models import (
@@ -16,6 +9,12 @@ from organisations.models import (
     OrganisationDivision,
     OrganisationDivisionSet,
 )
+from rest_framework import serializers
+from rest_framework_gis.serializers import (
+    GeoFeatureModelSerializer,
+    GeometrySerializerMethodField,
+)
+from uk_election_ids.datapackage import VOTING_SYSTEMS
 
 
 class OrganisationHyperlinkedIdentityField(
@@ -247,6 +246,15 @@ class ElectionGeoSerializer(GeoFeatureModelSerializer, BaseElectionSerializer):
         return obj.geography.geography
 
     class Meta:
+        model = Election
+        extra_kwargs = {
+            "url": {"view_name": "election-geo", "lookup_field": "pk"}
+        }
+
+        geo_field = "geography_model"
+
+        fields = election_fields
+        depth = 1
         model = Election
         extra_kwargs = {
             "url": {"view_name": "election-geo", "lookup_field": "pk"}

@@ -1,9 +1,10 @@
+import os
 from datetime import date
 from io import StringIO
-import os
+
 from django.test import TestCase
-from organisations.models import Organisation, OrganisationDivisionSet
 from organisations.management.commands.update_end_dates import Command
+from organisations.models import Organisation, OrganisationDivisionSet
 
 
 class UpdateEndDatesTests(TestCase):

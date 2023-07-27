@@ -1,12 +1,11 @@
-from django.db import transaction
+from core.helpers import user_is_moderator
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import TemplateView
-
-from core.helpers import user_is_moderator
-from elections.constraints import has_approved_parents, check_constraints
 from election_snooper.forms import ModerationHistoryForm
+from elections.constraints import check_constraints, has_approved_parents
 from elections.models import Election, ModerationHistory, ModerationStatuses
 
 

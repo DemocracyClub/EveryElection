@@ -1,7 +1,6 @@
+from core.mixins import ReadFromCSVMixin
 from django.core.management.base import BaseCommand
 from django.db import transaction
-
-from core.mixins import ReadFromCSVMixin
 from elections.models import Election
 
 

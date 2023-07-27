@@ -1,7 +1,6 @@
+from core.models import JsonbSet
 from django.db.models import Value
 from django.test import TestCase
-
-from core.models import JsonbSet
 from elections.models import Election
 from elections.tests.factories import ElectionFactory
 

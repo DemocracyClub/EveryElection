@@ -1,6 +1,5 @@
-from django.contrib.gis.db import models
-
 from core.mixins import UpdateElectionsTimestampedModel
+from django.contrib.gis.db import models
 
 from .mixins import DateConstraintMixin, DateDisplayMixin
 

@@ -3,9 +3,8 @@ import os
 import textwrap
 import warnings
 
-from django.conf import settings
-
 import requests
+from django.conf import settings
 
 
 def post_to_slack(message):

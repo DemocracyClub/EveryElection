@@ -17,11 +17,10 @@ from datetime import datetime
 
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.db import transaction
-
-from organisations.models import Organisation, OrganisationDivision
 from organisations.boundaries.boundaryline import BoundaryLine
 from organisations.boundaries.constants import get_area_type_lookup
 from organisations.boundaries.management.base import BaseBoundaryLineCommand
+from organisations.models import Organisation, OrganisationDivision
 
 
 class Command(BaseBoundaryLineCommand):

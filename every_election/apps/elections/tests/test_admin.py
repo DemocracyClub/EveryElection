@@ -1,10 +1,8 @@
-import mock
 from unittest.mock import MagicMock
 
-from elections import admin
-
+import mock
 from django.test import TestCase
-
+from elections import admin
 from elections.models import ModerationHistory
 
 

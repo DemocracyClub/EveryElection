@@ -1,12 +1,11 @@
 from django.core.management import BaseCommand
-
 from elections.models import (
     Election,
     ElectionType,
     ModerationHistory,
     ModerationStatuses,
 )
-from organisations.models.organisations import Organisation
+from organisations.models import Organisation
 
 
 class Command(BaseCommand):

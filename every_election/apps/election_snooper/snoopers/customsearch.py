@@ -1,9 +1,9 @@
 from urllib.parse import urlencode
 
 from django.conf import settings
+from election_snooper.models import SnoopedElection
 
 from .base import BaseSnooper
-from election_snooper.models import SnoopedElection
 
 
 class CustomSearchScraper(BaseSnooper):

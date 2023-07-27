@@ -18,13 +18,14 @@ manage.py import_lgbce FOO -s "foo/bar/baz.zip"
 import json
 import os
 import shutil
+
 from botocore.exceptions import ClientError
 from django.conf import settings
 from django.contrib.gis.gdal import DataSource
 from django.core.management.base import BaseCommand
 from organisations.importers import (
-    DivisionSetGeographyImporter,
     DiffException,
+    DivisionSetGeographyImporter,
     MapCreationNeededException,
 )
 from organisations.models import Organisation, OrganisationDivisionSet
@@ -118,7 +119,8 @@ class Command(BaseCommand):
             # by adding a name_map.json file to the same S3 directory
             # where the shape files are saved
             f = s3.get_file(basepath + "/name_map.json")
-            return json.load(open(f.name))
+            with json.load(open(f.name)) as name:
+                return name
         except ClientError as e:
             if int(e.response["Error"]["Code"]) == 404:
                 # if we didn't find any name map file, return an empty map

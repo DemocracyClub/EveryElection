@@ -1,6 +1,7 @@
 import os
 from datetime import date
 from io import StringIO
+
 from django.test import TestCase
 from organisations.boundaries.management.commands.boundaryline_backport_codes import (
     Command,
@@ -48,8 +49,7 @@ class BackportCodesTests(TestCase):
         cmd.stdout = StringIO()
         cmd.handle(**self.opts)
         cmd.stdout.seek(0)
-        output = cmd.stdout.read()
-        return output
+        return cmd.stdout.read()
 
     def test_write(self):
         output = self.run_command_with_test_data()

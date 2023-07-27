@@ -1,19 +1,21 @@
 from datetime import date
+
 from django.test import TestCase
+from election_snooper.models import SnoopedElection
 from elections.models import (
     DEFAULT_STATUS,
-    Election,
     ElectedRole,
+    Election,
     ElectionSubType,
     ElectionType,
 )
 from elections.utils import ElectionBuilder
-from election_snooper.models import SnoopedElection
 from organisations.models import Organisation, OrganisationDivision
 from organisations.tests.factories import (
     OrganisationDivisionFactory,
     OrganisationDivisionSetFactory,
 )
+
 from .base_tests import BaseElectionCreatorMixIn
 
 

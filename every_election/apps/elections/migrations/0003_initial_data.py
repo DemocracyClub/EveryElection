@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
-
 from elections.constants import ELECTION_TYPES
 
 

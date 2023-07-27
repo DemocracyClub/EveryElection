@@ -6,10 +6,12 @@ more than one view of the same DB table in /admin
 """
 
 from datetime import datetime
+
 from django.contrib.gis.db.models import Q
 from django.db.models import Manager
-from .organisations import Organisation, OrganisationGeography
+
 from .divisions import OrganisationDivision
+from .organisations import Organisation, OrganisationGeography
 
 INVALID_SOURCES = ("unknown", "lgbce", "")
 
@@ -23,7 +25,7 @@ class DivisionProblemManager(Manager):
         # so we'll ignore DivisionSets with a future start_date in this report
         qs = qs.filter(divisionset__start_date__lte=datetime.today())
 
-        qs = qs.filter(
+        return qs.filter(
             (
                 # we always want divisions to have
                 # an associated geography record
@@ -44,7 +46,6 @@ class DivisionProblemManager(Manager):
                 & ~Q(division_type="NIE")
             )
         )
-        return qs
 
 
 class DivisionProblem(OrganisationDivision):
@@ -87,7 +88,7 @@ class OrganisationProblemManager(Manager):
     def get_queryset(self):
         qs = super().get_queryset()
 
-        qs = qs.filter(
+        return qs.filter(
             (
                 # we always want Organisations to have at least
                 # one related OrganisationGeography record
@@ -113,7 +114,6 @@ class OrganisationProblemManager(Manager):
             )
         )
 
-        return qs
 
 class OrganisationProblem(Organisation):
     objects = OrganisationProblemManager()
@@ -149,7 +149,7 @@ class OrganisationGeographyProblemManager(Manager):
     def get_queryset(self):
         qs = super().get_queryset()
 
-        qs = qs.filter(
+        return qs.filter(
             (
                 # OrganisationGeographies should have a GSS code...mostly
                 Q(gss="")
@@ -167,7 +167,6 @@ class OrganisationGeographyProblemManager(Manager):
             )
         )
 
-        return qs
 
 class OrganisationGeographyProblem(OrganisationGeography):
     objects = OrganisationGeographyProblemManager()

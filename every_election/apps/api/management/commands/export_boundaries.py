@@ -1,10 +1,10 @@
+import contextlib
 import os
 import os.path
 import subprocess
 from datetime import datetime
 
 import geojson
-
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from elections.models import Election
@@ -53,7 +53,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        try:
+        with contextlib.suppress(FileExistsError):
             os.mkdir(options["output"])
 
         if not (options["from"] or options["to"]):

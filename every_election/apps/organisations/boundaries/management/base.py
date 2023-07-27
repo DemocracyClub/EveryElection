@@ -1,7 +1,7 @@
 import shutil
 
-from django.core.management.base import BaseCommand
 from core.mixins import ReadFromFileMixin
+from django.core.management.base import BaseCommand
 from organisations.models import (
     DivisionGeography,
     OrganisationDivision,
@@ -70,6 +70,9 @@ class BaseOsniCommand(BaseCommand):
                 source=self.source,
             )
             dg.save()
+        self.stdout.write(
+            "Importing boundary for area {}...saved".format(str(div))
+        )
         self.stdout.write(
             "Importing boundary for area {}...saved".format(str(div))
         )

@@ -1,15 +1,15 @@
 from django.test import TestCase
+from elections.constraints import (
+    has_approved_child,
+    has_approved_parents,
+    has_related_status,
+)
 from elections.tests.factories import (
     ElectionFactory,
     ElectionWithStatusFactory,
     ModerationHistoryFactory,
     ModerationStatusFactory,
     related_status,
-)
-from elections.constraints import (
-    has_approved_child,
-    has_approved_parents,
-    has_related_status,
 )
 
 

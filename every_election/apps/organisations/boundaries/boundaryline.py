@@ -6,7 +6,6 @@ from organisations.boundaries.helpers import (
     overlap_percent,
 )
 
-
 # Percentage overlap required for us to consider 2 divisions
 # 'the same' without manual investigation
 SANITY_CHECK_TOLERANCE = 97
@@ -24,7 +23,7 @@ class BoundaryLine:
         for feat in features:
             if isinstance(feat.geom.geos, MultiPolygon):
                 multipoly = feat.geom.geos
-                polygons = polygons + [poly for poly in multipoly]
+                polygons = polygons + list(multipoly)
             else:
                 polygons.append(feat.geom.geos)
 
@@ -92,12 +91,11 @@ class BoundaryLine:
             + "but BoundaryLine shape for {code} only covers {percent:.2f}% "
             + "of {div}'s area. Manual review required."
         )
-        warning = warning.format(
+        return warning.format(
             code=self.get_code_from_feature(match),
             div=div.official_identifier,
             percent=overlap,
         )
-        return warning
 
     def get_division_code(self, div, org):
         filter_geom = OGRGeometry(org.geography.ewkt).transform(

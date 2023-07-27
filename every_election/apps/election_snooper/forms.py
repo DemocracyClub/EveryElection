@@ -1,11 +1,11 @@
 from django import forms
-
-from .models import SnoopedElection
 from elections.models import (
     ModerationHistory,
     ModerationStatus,
     ModerationStatuses,
 )
+
+from .models import SnoopedElection
 
 
 class ReviewElectionForm(forms.ModelForm):

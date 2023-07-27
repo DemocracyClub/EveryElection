@@ -1,7 +1,5 @@
-import os
-from bs4 import BeautifulSoup
-from django.conf import settings
 import requests
+from bs4 import BeautifulSoup
 from election_snooper.helpers import post_to_slack
 
 
@@ -11,8 +9,7 @@ class BaseSnooper:
 
     def get_soup(self, url):
         req = self.get_page(url)
-        soup = BeautifulSoup(req.content, "html.parser")
-        return soup
+        return BeautifulSoup(req.content, "html.parser")
 
     def post_to_slack(self, item):
         message = """

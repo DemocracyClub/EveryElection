@@ -1,7 +1,8 @@
 import os
+import time
+
 import boto3
 from botocore.exceptions import ClientError
-import time
 
 session = boto3.Session()
 
@@ -92,7 +93,7 @@ def create_default_asg():
         for asg in client.describe_auto_scaling_groups()["AutoScalingGroups"]
     ]
     if "default" in existing_asgs:
-        return
+        return None
     return client.create_auto_scaling_group(
         AutoScalingGroupName="default",
         AvailabilityZones=[
@@ -199,6 +200,7 @@ def main():
     # step as the instance needs to have initialised and be in ready state
     # before code deploy can create a start deployment
     time.sleep(60)
+    return None
 
 
 if __name__ == "__main__":

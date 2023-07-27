@@ -1,10 +1,11 @@
 from datetime import datetime
+
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Prefetch, Q
 from django.http import Http404
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView, TemplateView
-from organisations.models import Organisation
 from elections.models import Election
+from organisations.models import Organisation
 
 
 class SupportedOrganisationsView(ListView):

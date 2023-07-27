@@ -1,8 +1,9 @@
 import json
 import urllib.request
 from urllib.error import HTTPError
-from retry import retry
+
 from django.contrib.gis.geos import GEOSGeometry
+from retry import retry
 from storage.shapefile import convert_geom_to_multipolygon
 
 
@@ -29,8 +30,7 @@ class OsniLayer:
                     response.headers,
                     response.fp,
                 )
-            data = response.read()
-            return data
+            return response.read()
 
     def __init__(self, url, gss_field, name_field):
         ds = json.loads(self.get_data_from_url(url).decode("utf-8"))

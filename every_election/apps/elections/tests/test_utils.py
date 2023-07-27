@@ -1,6 +1,6 @@
 import pytest
-from elections.utils import get_voter_id_requirement
 from elections.tests.factories import ElectionFactory
+from elections.utils import get_voter_id_requirement
 
 
 @pytest.mark.django_db

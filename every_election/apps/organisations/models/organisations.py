@@ -1,9 +1,8 @@
+from core.mixins import UpdateElectionsTimestampedModel
 from django.contrib.gis.db import models
 from django.urls import reverse
-
 from model_utils import Choices
 
-from core.mixins import UpdateElectionsTimestampedModel
 from .mixins import DateConstraintMixin, DateDisplayMixin
 
 
@@ -109,7 +108,7 @@ class Organisation(UpdateElectionsTimestampedModel, DateDisplayMixin):
 
     def get_geography(self, date):
         if len(self.geographies.all()) == 0:
-            return None
+            return None  
         elif len(self.geographies.all()) == 1:
             return self.geographies.all()[0]
         else:
@@ -123,6 +122,8 @@ class Organisation(UpdateElectionsTimestampedModel, DateDisplayMixin):
                     "date %s is after organisation end_date (%s)"
                     % (date.isoformat(), self.end_date.isoformat())
                 )
+            
+            
             try:
                 return self.geographies.get(
                     (models.Q(start_date__lte=date) | models.Q(start_date=None))

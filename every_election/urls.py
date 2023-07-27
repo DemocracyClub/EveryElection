@@ -1,10 +1,9 @@
-from django.urls import re_path, include
-from django.conf.urls.static import static
-from django.conf import settings
-from django.contrib import admin
-from django.views.generic import TemplateView
-
 from core.views import HomeView
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import include, re_path
+from django.views.generic import TemplateView
 
 handler500 = "dc_utils.urls.dc_server_error"
 

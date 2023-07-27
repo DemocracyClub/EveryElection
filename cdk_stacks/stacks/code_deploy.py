@@ -1,22 +1,21 @@
-from aws_cdk.aws_cloudfront import PriceClass
-from aws_cdk.core import Stack, Construct, Duration
-
-import aws_cdk.aws_ec2 as ec2
-import aws_cdk.aws_iam as iam
-import aws_cdk.aws_elasticloadbalancingv2 as elbv2
-from aws_cdk.aws_ssm import StringParameter
-import aws_cdk.aws_codedeploy as codedeploy
+import aws_cdk.aws_certificatemanager as acm
 import aws_cdk.aws_cloudfront as cloudfront
 import aws_cdk.aws_cloudfront_origins as origins
-import aws_cdk.aws_certificatemanager as acm
+import aws_cdk.aws_codedeploy as codedeploy
+import aws_cdk.aws_ec2 as ec2
+import aws_cdk.aws_elasticloadbalancingv2 as elbv2
+import aws_cdk.aws_iam as iam
 import aws_cdk.aws_route53 as route_53
 import aws_cdk.aws_route53_targets as route_53_target
+from aws_cdk.aws_cloudfront import PriceClass
+from aws_cdk.aws_ssm import StringParameter
+from aws_cdk.core import Construct, Duration, Stack
 
 from cdk_stacks.stacks.code_deploy_policies import (
-    EE_DEPLOYER_POLICY,
-    EE_CODE_DEPLOY_POLICY,
     EE_CODE_DEPLOY_EC2_POLICY,
     EE_CODE_DEPLOY_LAUNCH_TEMPLATE_POLICY,
+    EE_CODE_DEPLOY_POLICY,
+    EE_DEPLOYER_POLICY,
 )
 
 EE_IMAGE = "ami-014a706cddda2a79a"
@@ -63,7 +62,7 @@ class EECodeDeployment(Stack):
         self.cloudfront = self.create_cloudfront(self.alb)
 
     def create_code_deploy(self):
-        application = codedeploy.ServerApplication(
+        codedeploy.ServerApplication(
             self, "CodeDeployApplicationID", application_name="EECodeDeploy"
         )
 
@@ -73,7 +72,7 @@ class EECodeDeployment(Stack):
         security_group: ec2.SecurityGroup,
         role: iam.Role,
     ) -> ec2.LaunchTemplate:
-        lt = ec2.LaunchTemplate(
+        return ec2.LaunchTemplate(
             self,
             "ee-launch-template-id",
             instance_type=ec2.InstanceType("t3a.medium"),
@@ -94,7 +93,6 @@ class EECodeDeployment(Stack):
                 )
             ],
         )
-        return lt
 
     def create_target_group(self):
         return elbv2.ApplicationTargetGroup(
@@ -390,7 +388,7 @@ class EECodeDeployment(Stack):
         hosted_zone = route_53.HostedZone.from_lookup(
             self, "EEDomain", domain_name=fqdn, private_zone=False
         )
-        a_record = route_53.ARecord(
+        route_53.ARecord(
             self,
             "FQDN_A_RECORD_TO_CF",
             zone=hosted_zone,

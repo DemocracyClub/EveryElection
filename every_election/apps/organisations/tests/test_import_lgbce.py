@@ -1,17 +1,18 @@
-from datetime import date
 import os
 import tempfile
+from datetime import date
 from io import StringIO
+
 from django.contrib.gis.gdal import DataSource
-from django.utils.text import slugify
 from django.test import TestCase
+from django.utils.text import slugify
+from organisations.management.commands.import_lgbce import Command
 from organisations.models import (
     DivisionGeography,
     Organisation,
     OrganisationDivision,
     OrganisationDivisionSet,
 )
-from organisations.management.commands.import_lgbce import Command
 
 
 class ImportLgbceTests(TestCase):
@@ -87,8 +88,7 @@ class ImportLgbceTests(TestCase):
         cmd.stderr = StringIO()
         cmd.handle(**args)
         cmd.stderr.seek(0)
-        error_output = cmd.stderr.read()
-        return error_output
+        return cmd.stderr.read()
 
     def test_org_not_found(self):
         with self.assertRaises(Organisation.DoesNotExist):
@@ -162,6 +162,9 @@ class ImportLgbceTests(TestCase):
 
         # now that we've imported geographies for this divisionset once,
         # if we try to do it again then it should fail
+        # because the divisionset has related geographies now
+        with self.assertRaises(Exception):
+            self.run_import_with_test_data(self.valid_org_code, name_map)
         # because the divisionset has related geographies now
         with self.assertRaises(Exception):
             self.run_import_with_test_data(self.valid_org_code, name_map)

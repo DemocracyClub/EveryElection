@@ -1,11 +1,10 @@
 import pytest
-
-from organisations.tests.factories import (
-    OrganisationDivisionSetFactory,
-    OrganisationDivisionFactory,
-)
-from elections.utils import ElectionBuilder
 from elections.tests.factories import ElectedRoleFactory
+from elections.utils import ElectionBuilder
+from organisations.tests.factories import (
+    OrganisationDivisionFactory,
+    OrganisationDivisionSetFactory,
+)
 
 
 def test_division_set_by_date(db):

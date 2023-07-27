@@ -1,6 +1,7 @@
 import os
 import tempfile
 from io import StringIO
+
 from django.contrib.gis.geos import MultiPolygon
 from django.test import TestCase
 from organisations.boundaries.management.commands.boundaryline_import_boundaries import (
@@ -8,8 +9,8 @@ from organisations.boundaries.management.commands.boundaryline_import_boundaries
 )
 from organisations.models import (
     DivisionGeography,
-    OrganisationGeography,
     OrganisationDivision,
+    OrganisationGeography,
 )
 
 
@@ -52,8 +53,7 @@ class ImportBoundariesTests(TestCase):
         cmd.stdout = StringIO()
         cmd.handle(**self.opts)
         cmd.stdout.seek(0)
-        output = cmd.stdout.read()
-        return output
+        return cmd.stdout.read()
 
     def test_import_division_not_found(self):
         # gss:X01000001 is not a valid division in our DB fixture
@@ -237,6 +237,10 @@ class ImportBoundariesTests(TestCase):
         self.opts["code"] = "gss:E09000008"
         output = self.run_command_with_test_data()
         self.assertIn("Imported 1 boundaries", output)
+        self.assertEqual(
+            "imported in unit test",
+            OrganisationGeography.objects.get(gss="E09000008").source,
+        )
         self.assertEqual(
             "imported in unit test",
             OrganisationGeography.objects.get(gss="E09000008").source,

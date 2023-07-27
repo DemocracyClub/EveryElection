@@ -1,9 +1,10 @@
 from datetime import date
+
 from django.test import TestCase
-from organisations.models import Organisation, OrganisationDivisionSet
 from organisations.management.commands.import_divisionsets_from_csv import (
     Command,
 )
+from organisations.models import Organisation, OrganisationDivisionSet
 
 
 class ImportDivisionSetsFromCsvTests(TestCase):

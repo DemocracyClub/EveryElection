@@ -22,10 +22,9 @@ python manage.py update_end_dates -s "foo/bar/baz.csv"
 import datetime
 from collections import namedtuple
 
+from core.mixins import ReadFromCSVMixin
 from django.conf import settings
 from django.core.management.base import BaseCommand
-
-from core.mixins import ReadFromCSVMixin
 from organisations.models import Organisation, OrganisationDivisionSet
 
 

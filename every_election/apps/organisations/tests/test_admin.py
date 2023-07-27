@@ -1,19 +1,17 @@
 from django.test import TestCase
-
+from elections.tests.factories import ElectedRoleFactory
 from organisations.models import (
     DivisionProblem,
-    OrganisationProblem,
     OrganisationGeographyProblem,
+    OrganisationProblem,
 )
-
 from organisations.tests.factories import (
     DivisionGeographyFactory,
-    OrganisationFactory,
     OrganisationDivisionFactory,
     OrganisationDivisionSetFactory,
+    OrganisationFactory,
     OrganisationGeographyFactory,
 )
-from elections.tests.factories import ElectedRoleFactory
 
 
 class OrganisationProblemTests(TestCase):

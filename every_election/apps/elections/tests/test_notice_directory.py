@@ -1,6 +1,6 @@
 from django.test import TestCase
-from elections.utils import get_notice_directory
-from elections.utils import ElectionBuilder
+from elections.utils import ElectionBuilder, get_notice_directory
+
 from .base_tests import BaseElectionCreatorMixIn
 
 

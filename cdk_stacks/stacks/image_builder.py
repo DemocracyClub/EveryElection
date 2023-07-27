@@ -2,12 +2,11 @@ import json
 import re
 from pathlib import Path
 
-import yaml
-from aws_cdk.core import Stack, Construct
 import aws_cdk.aws_iam as iam
 import aws_cdk.aws_imagebuilder as image_builder
+import yaml
 from aws_cdk.aws_ssm import StringParameter
-
+from aws_cdk.core import Construct, Stack
 
 COMPONENTS = [
     {
@@ -157,13 +156,12 @@ class EEImageUpdater(Stack):
         )
 
         # create an instance profile to attach the role
-        instanceprofile = iam.CfnInstanceProfile(
+        return iam.CfnInstanceProfile(
             self,
             "EEImageInstanceProfile",
             instance_profile_name="EEImageInstanceProfile",
             roles=["EEImageRole"],
         )
-        return instanceprofile
 
     def make_infra_config(self) -> image_builder.CfnInfrastructureConfiguration:
         """

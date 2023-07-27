@@ -1,14 +1,10 @@
+from dc_utils import forms as dc_forms
 from django import forms
 from django.db import models
 from django.db.models import Q
-
-from organisations.models import Organisation
-from organisations.models import OrganisationDivisionSet
+from organisations.models import Organisation, OrganisationDivisionSet
 
 from .models import ElectionSubType, ElectionType
-
-from dc_utils import forms as dc_forms
-
 
 #
 # Forms:

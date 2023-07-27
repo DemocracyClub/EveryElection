@@ -2,14 +2,13 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib.gis.db.models.functions import PointOnSurface
+from django.contrib.gis.geos import GEOSGeometry, Point
 from django.db import models
-from django.contrib.gis.geos import Point, GEOSGeometry
 from django.utils import timezone
-
 from elections.query_helpers import get_point_from_postcode
 from organisations.models import (
-    OrganisationGeographySubdivided,
     DivisionGeographySubdivided,
+    OrganisationGeographySubdivided,
 )
 
 
@@ -113,5 +112,7 @@ class PrivateElectionsManager(models.Manager.from_queryset(ElectionQuerySet)):
     In these situations we can explicitly use this manager to
     query all election objects.
     """
+
+    use_in_migrations = True
 
     use_in_migrations = True

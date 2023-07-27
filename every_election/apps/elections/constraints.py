@@ -1,4 +1,4 @@
-from elections.models import ModerationHistory, ModerationStatuses, Election
+from elections.models import Election, ModerationStatuses
 
 
 class ViolatedConstraint(Exception):

@@ -1,7 +1,6 @@
 from typing import List
 
 from django.core.management.base import BaseCommand
-
 from organisations.models import Organisation, OrganisationDivision
 
 GSS_TO_NATION = {
@@ -144,7 +143,7 @@ class Command(BaseCommand):
                     divisionset__organisation__slug__in=["parl", "europarl"]
                 )
             )
-            codes = set([parent.territory_code for parent in parents])
+            codes = {parent.territory_code for parent in parents}
             if len(codes) > 1:
                 self.stdout.write(
                     f"WARNING: {division} has more than one territory: {parents} / {codes}"

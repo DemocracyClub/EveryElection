@@ -3,14 +3,13 @@ import json
 import sys
 from difflib import ndiff
 
+from django.conf import settings
 from django.contrib.gis.gdal import DataSource
 from django.db import transaction
-
-from django.conf import settings
-from .models import (
-    OrganisationDivisionSet,
-    OrganisationDivision,
+from organisations.models import (
     DivisionGeography,
+    OrganisationDivision,
+    OrganisationDivisionSet,
 )
 from storage.shapefile import pre_process_layer
 
@@ -76,9 +75,9 @@ class DivisionSetGeographyImporter:
         legislation_names = set(legislation_names)
         boundary_names = set(boundary_names)
 
-        missing_from_leg = sorted(list(boundary_names - legislation_names))
+        missing_from_leg = sorted(boundary_names - legislation_names)
         map = {}
-        for name in sorted(list(legislation_names)):
+        for name in sorted(legislation_names):
             if name not in boundary_names:
                 self.stdout.write(
                     inspect.cleandoc(
@@ -122,19 +121,21 @@ class DivisionSetGeographyImporter:
                 % (len(legislation_names), len(boundary_names))
             )
         if legislation_names != boundary_names:
-            map_data = self.make_name_map(legislation_names, boundary_names)
-            if map_data:
+            diff = ndiff(legislation_names, boundary_names)
+            try:
+                map_data = self.make_name_map(legislation_names, boundary_names)
                 self.stdout.write(
                     "\nYou need to save this file as `name_map.json`:"
                 )
                 self.stdout.write(json.dumps(map_data, indent=4))
                 raise MapCreationNeededException()
-            else:
+            except DiffException("legislation_names != boundary_names", diff):
                 # create a 'diff' of the 2 lists
                 # so we can work out what we need to fix
                 self.stdout.write(
                     "The names in the input file don't match the names in the legislation"
                 )
+                
 
         return True
 

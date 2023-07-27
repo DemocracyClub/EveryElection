@@ -1,34 +1,32 @@
 import tempfile
 import urllib.request
-
 from datetime import date, timedelta
 from enum import Enum, unique
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.gis.db.models.functions import Distance
-from django.db.models import JSONField
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.files import File
 from django.db import models, transaction
+from django.db.models import JSONField
 from django.db.models.fields.related_descriptors import (
     create_reverse_many_to_one_manager,
 )
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
-
 from django_extensions.db.models import TimeStampedModel
 from storages.backends.s3boto3 import S3Boto3Storage
-from uk_election_ids.datapackage import VOTING_SYSTEMS, ID_REQUIREMENTS
+from uk_election_ids.datapackage import ID_REQUIREMENTS, VOTING_SYSTEMS
 from uk_election_timetables.calendars import Country
 from uk_election_timetables.election_ids import (
-    from_election_id,
     NoSuchElectionTypeError,
+    from_election_id,
 )
 from uk_geo_utils.models import Onspd
 
-from .managers import PublicElectionsManager, PrivateElectionsManager
+from .managers import PrivateElectionsManager, PublicElectionsManager
 
 
 class ElectionType(models.Model):
@@ -147,7 +145,8 @@ class Election(TimeStampedModel):
         max_length=100,
         null=True,
         choices=[
-            (req, ID_REQUIREMENTS[req]["name"]) for req in ID_REQUIREMENTS
+            (req, ID_REQUIREMENTS[req]["name"])
+            for req in ID_REQUIREMENTS
         ],
     )
 
@@ -175,7 +174,9 @@ class Election(TimeStampedModel):
     voting_system = models.CharField(
         max_length=100,
         null=True,
-        choices=[(vs, VOTING_SYSTEMS[vs]["name"]) for vs in VOTING_SYSTEMS],
+        choices=[
+            (vs, VOTING_SYSTEMS[vs]["name"]) for vs in VOTING_SYSTEMS
+        ],
     )
     explanation = models.ForeignKey(
         "elections.Explanation",
@@ -321,6 +322,7 @@ class Election(TimeStampedModel):
                 election_id__endswith=date,
                 group_type=None,
             )
+        return None
 
     @property
     def group_seats_contested(self):
@@ -337,8 +339,7 @@ class Election(TimeStampedModel):
                 .aggregate(models.Sum("seats_contested"))
                 .get("seats_contested__sum")
             )
-        else:
-            return self.seats_contested
+        return self.seats_contested
 
     def __str__(self):
         return self.get_id()
@@ -358,8 +359,7 @@ class Election(TimeStampedModel):
                 .order_by("distance")
                 .first()
             )
-        else:
-            return None
+        return None
 
     @property
     def get_timetable(self):
@@ -390,8 +390,7 @@ class Election(TimeStampedModel):
     def get_id(self):
         if self.election_id:
             return self.election_id
-        else:
-            return self.tmp_election_id
+        return self.tmp_election_id
 
     @property
     def geography(self):
@@ -410,8 +409,8 @@ class Election(TimeStampedModel):
             return self.division_geography
 
         if self.identifier_type == "ballot" and self.division:
-            # attach geography by division if possible
-            try:
+        # attach geography by division if possible
+            try: 
                 return self.division.geography
             except ObjectDoesNotExist:
                 pass
@@ -550,6 +549,7 @@ class ModerationHistory(TimeStampedModel):
             self.election.current_status = self.status.short_label
             self.election.save()
         super().save(**kwargs)
+        return None
 
     class Meta:
         verbose_name_plural = "Moderation History"

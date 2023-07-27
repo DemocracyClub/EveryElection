@@ -1,11 +1,10 @@
 import json
 
+from core.mixins import ReadFromFileMixin
+from core.models import JsonbSet
 from django.contrib.gis.gdal import DataSource
 from django.core.management import BaseCommand
 from django.db.models import Value
-
-from core.mixins import ReadFromFileMixin
-from core.models import JsonbSet
 from elections.models import Election
 
 

@@ -10,8 +10,7 @@ from django.contrib.gis.geos import (
 def convert_geom_to_multipolygon(geom):
     if isinstance(geom, Polygon):
         return MultiPolygon(geom)
-    else:
-        return geom
+    return geom
 
 
 def _remove_invalid_geometries(in_features):
@@ -59,11 +58,10 @@ def pre_process_layer(layer, srid):
     Given we mostly just want to iterate over the features,
     this is an OK compromise.
     """
-    features = [f for f in layer]
+    features = list(layer)
 
     # then tidy it up
     features = _remove_invalid_geometries(features)
     features = _add_multipolygons(features)
     features = _strip_z_values(features)
-    features = _convert_multipolygons_to_latlong(features, srid)
-    return features
+    return _convert_multipolygons_to_latlong(features, srid)

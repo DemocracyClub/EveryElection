@@ -1,7 +1,7 @@
-from freezegun import freeze_time
+import contextlib
 
-from django.utils import timezone
 from django.test import TestCase
+from django.utils import timezone
 from elections.models import (
     DEFAULT_STATUS,
     Election,
@@ -10,6 +10,8 @@ from elections.models import (
 )
 from elections.tests.factories import ElectionFactory
 from elections.utils import ElectionBuilder
+from freezegun import freeze_time
+
 from .base_tests import BaseElectionCreatorMixIn
 
 
@@ -73,7 +75,7 @@ class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
         # if we try to save parent_record
         self.election_group.organisation_id = "foo"
 
-        try:
+        with contextlib.suppress(ValueError):
             self.org_group.save()
 
         # the exception should have prevented both the
@@ -88,7 +90,7 @@ class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
         # if we try to save child_record
         self.org_group.organisation_id = "foo"
 
-        try:
+        with contextlib.suppress(ValueError):
             self.org_group.save()
 
         # the exception should have prevented both the

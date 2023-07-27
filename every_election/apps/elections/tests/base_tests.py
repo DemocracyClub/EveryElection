@@ -1,12 +1,12 @@
 from datetime import date
 
+from elections.models import ElectedRole, ElectionType
+from elections.utils import create_ids_for_each_ballot_paper
 from organisations.models import Organisation
 from organisations.tests.factories import (
     OrganisationDivisionFactory,
     OrganisationDivisionSetFactory,
 )
-from elections.models import ElectionType, ElectedRole
-from elections.utils import create_ids_for_each_ballot_paper
 
 
 class FuzzyInt(int):

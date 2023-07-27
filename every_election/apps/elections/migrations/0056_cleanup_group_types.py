@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 
-
 group_type_map = {
     # These mayoral elections all have group_type='organisation', but they should
     # be None to bring them into line with the current convention for mayor/pcc

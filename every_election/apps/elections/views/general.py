@@ -1,13 +1,12 @@
 from collections import OrderedDict
 
-from django.contrib.auth.mixins import AccessMixin
-from django.views.generic import ListView, DetailView, TemplateView
-from django.utils.html import mark_safe
-
 from core.helpers import user_is_moderator
+from django.contrib.auth.mixins import AccessMixin
+from django.utils.html import mark_safe
+from django.views.generic import DetailView, ListView, TemplateView
 from elections.constants import ELECTION_TYPES
 from elections.forms import NoticeOfElectionForm
-from elections.models import ElectionType, Election, Document
+from elections.models import Document, Election, ElectionType
 
 
 class ElectionTypesView(ListView):

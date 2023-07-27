@@ -15,8 +15,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name="organisation",
-            unique_together={
-                ("official_identifier", "organisation_type", "end_date")
-            },
+            unique_together={("official_identifier", "organisation_type", "end_date")},
         ),
     ]

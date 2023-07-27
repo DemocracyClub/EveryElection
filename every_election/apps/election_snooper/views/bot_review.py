@@ -1,13 +1,13 @@
 import urllib
+
+from core.helpers import user_is_moderator
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import TemplateView
-
-from core.helpers import user_is_moderator
-from election_snooper.models import SnoopedElection
 from election_snooper.forms import ReviewElectionForm
+from election_snooper.models import SnoopedElection
 
 
 class SnoopedElectionView(UserPassesTestMixin, TemplateView):

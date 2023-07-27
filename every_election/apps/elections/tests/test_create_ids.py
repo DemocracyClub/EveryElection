@@ -1,18 +1,17 @@
 from datetime import date
 
 from django.test import TestCase
-
 from elections.models import (
     ElectedRole,
     Election,
-    ElectionType,
     ElectionSubType,
+    ElectionType,
 )
 from organisations.models import Organisation
 from organisations.tests.factories import (
+    DivisionGeographyFactory,
     OrganisationDivisionFactory,
     OrganisationDivisionSetFactory,
-    DivisionGeographyFactory,
     OrganisationGeographyFactory,
 )
 
@@ -372,9 +371,9 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
 
         for election in Election.private_objects.all():
             if election.group_type == "organisation":
-                self.assertTrue(election.geography != None)
+                self.assertTrue(election.geography is not None)
             else:
-                self.assertTrue(election.geography == None)
+                self.assertTrue(election.geography is None)
 
         result = Election.private_objects.for_lat_lng(
             51.50124158773981, -0.13715744018554688
@@ -412,9 +411,9 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
 
         for election in Election.private_objects.all():
             if election.election_id == "local.test.test-div-2." + self.date_str:
-                self.assertTrue(election.geography != None)
+                self.assertTrue(election.geography is not None)
             else:
-                self.assertTrue(election.geography == None)
+                self.assertTrue(election.geography is None)
 
         result = Election.private_objects.for_lat_lng(
             51.50124158773981, -0.13715744018554688

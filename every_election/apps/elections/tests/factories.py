@@ -1,20 +1,19 @@
 import datetime
+
 import factory
-
 from django.db.models import signals
-
 from elections.models import (
-    Election,
-    ModerationHistory,
-    ElectionType,
     ElectedRole,
+    Election,
+    ElectionType,
+    ModerationHistory,
     ModerationStatus,
     ModerationStatuses,
 )
 from organisations.tests.factories import (
-    OrganisationFactory,
-    OrganisationDivisionFactory,
     DivisionGeographyFactory,
+    OrganisationDivisionFactory,
+    OrganisationFactory,
 )
 
 

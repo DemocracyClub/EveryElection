@@ -1,13 +1,13 @@
 from datetime import date
-import factory
 
+import factory
 from organisations.models import (
-    Organisation,
-    OrganisationDivisionSet,
-    OrganisationDivision,
-    OrganisationGeography,
     DivisionGeography,
     DivisionGeographySubdivided,
+    Organisation,
+    OrganisationDivision,
+    OrganisationDivisionSet,
+    OrganisationGeography,
     OrganisationGeographySubdivided,
 )
 
@@ -118,6 +118,9 @@ class OrganisationGeographyFactory(factory.django.DjangoModelFactory):
         if not self.geography:
             return
         for geom in self.geography:
+            SubdividedOrganisationGeographyFactory(
+                organisation_geography=self, geography=geom
+            )
             SubdividedOrganisationGeographyFactory(
                 organisation_geography=self, geography=geom
             )

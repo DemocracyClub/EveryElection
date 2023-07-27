@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 
-from django.test import TestCase
 from django.contrib.gis.geos import Point
-
+from django.test import TestCase
+from elections.models import Election
 from elections.tests.factories import (
     ElectionFactory,
     ElectionWithStatusFactory,
@@ -10,7 +10,6 @@ from elections.tests.factories import (
     ModerationStatusFactory,
     related_status,
 )
-from elections.models import Election
 
 
 class TestElectionGeoQueries(TestCase):

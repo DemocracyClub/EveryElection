@@ -11,6 +11,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterUniqueTogether(
             name="organisationdivisionset",
-            unique_together=set([("organisation", "end_date")]),
+            unique_together={("organisation", "end_date")},
         )
     ]

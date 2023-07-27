@@ -1,18 +1,20 @@
 import os
-import psutil
 import shutil
 import tempfile
 import urllib.request
+
+import psutil
 import sqlparse
 from django.core.management.base import BaseCommand
-from django.db import connection
-from django.db import transaction
+from django.db import connection, transaction
 from storage.zipfile import unzip
+from uk_geo_utils.helpers import get_onspd_model
 from uk_geo_utils.management.commands.import_onspd import (
-    Command as LocalImporter,
     HEADERS,
 )
-from uk_geo_utils.helpers import get_onspd_model
+from uk_geo_utils.management.commands.import_onspd import (
+    Command as LocalImporter,
+)
 
 
 class Command(BaseCommand):

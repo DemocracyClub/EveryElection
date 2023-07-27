@@ -1,16 +1,14 @@
 import datetime
 
+from core.mixins import ReadFromCSVMixin
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils.text import slugify
-
 from organisations.models import (
     Organisation,
     OrganisationDivision,
     OrganisationDivisionSet,
 )
-
-from core.mixins import ReadFromCSVMixin
 
 
 class Command(ReadFromCSVMixin, BaseCommand):
@@ -84,6 +82,9 @@ class Command(ReadFromCSVMixin, BaseCommand):
             record.divisionset.save()
             # hack: see https://code.djangoproject.com/ticket/29085
             # This should fix it when we use Django>=3.03:
+            # https://github.com/django/django/commit/519016e5f25d7c0a040015724f9920581551cab0
+            record.divisionset = record.divisionset
+            record.save()
             # https://github.com/django/django/commit/519016e5f25d7c0a040015724f9920581551cab0
             record.divisionset = record.divisionset
             record.save()

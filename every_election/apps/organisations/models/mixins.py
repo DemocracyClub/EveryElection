@@ -8,8 +8,7 @@ class DateDisplayMixin:
         text = f"{self.start_date.strftime('%d %b %Y')}"
         if self.end_date:
             return f"{text} to {self.end_date.strftime('%d %b %Y')}"
-        else:
-            return f"{text} onwards"
+        return f"{text} onwards"
 
 
 class DateConstraintMixin:
