@@ -94,8 +94,19 @@ black path/your_file.py
 To run a project-wide reformat, run:
 ```commandline
 black .
+
 ```
+
+Additionally, this project uses [ruff](https://beta.ruff.rs/docs/) for linting. You can run it with:
+
+    ruff . 
+
+ruff has in-built functionality to fix common linting errors. Use the `--fix` option to do this.
+
+Both Black and ruff are both automatically called as part of pytest in this project.
 
 ## Development Notes
 
 - If adding any new fields to EveryElection, you may also need to add them to the EE API app within this project.
+
+
