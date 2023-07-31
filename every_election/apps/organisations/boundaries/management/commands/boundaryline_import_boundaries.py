@@ -226,10 +226,11 @@ class Command(BaseBoundaryLineCommand):
     def get_identifiers(self, options):
         if options["code"]:
             return [options["code"]]
-        with json.load(open(options["codes"])) as codes: 
-            if not isinstance(codes, (list,)):
-                raise ValueError("Root JSON element must be array []")
-            return codes
+        with open(options["codes"]) as f:
+            codes = json.load(f)
+        if not isinstance(codes, (list,)):
+            raise ValueError("Root JSON element must be array []")
+        return codes
 
     def handle(self, *args, **options):
         identifiers = self.get_identifiers(options)

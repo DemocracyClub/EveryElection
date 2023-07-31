@@ -1,8 +1,12 @@
+import contextlib
 import os
 import sys
 
 import dc_design_system
 import requests
+from dc_utils.settings.pipeline import *  # noqa
+from dc_utils.settings.pipeline import get_pipeline_settings
+from dc_utils.settings.whitenoise import whitenoise_add_middleware
 
 # PATH vars
 
@@ -163,11 +167,6 @@ STATICFILES_DIRS = (root("assets"), root("../node_modules"))
 STATIC_ROOT = root("static")
 
 
-from dc_utils.settings.pipeline import *  # noqa
-from dc_utils.settings.pipeline import get_pipeline_settings
-from dc_utils.settings.whitenoise import whitenoise_add_middleware
-
-
 MIDDLEWARE = whitenoise_add_middleware(MIDDLEWARE)
 WHITENOISE_MAX_AGE = 60 * 60 * 24 * 40
 
@@ -308,10 +307,9 @@ CURRENT_FUTURE_DAYS = 90
 
 
 # .local.py overrides all the common settings.
-try:
+
+with contextlib.suppress(ImportError):
     from .local import *  # noqa
-except ImportError:
-    pass
 
 
 # importing test settings file if necessary

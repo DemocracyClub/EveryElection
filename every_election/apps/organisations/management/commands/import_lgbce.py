@@ -126,9 +126,8 @@ class Command(BaseCommand):
                 # if we didn't find any name map file, return an empty map
                 # i.e: just assume the names in the file are correct
                 return {}
-            else:
-                # re-throw any other error
-                raise
+            # re-throw any other error
+            raise
 
     def get_division_set(self, org_code):
         org = (

@@ -108,29 +108,27 @@ class Organisation(UpdateElectionsTimestampedModel, DateDisplayMixin):
 
     def get_geography(self, date):
         if len(self.geographies.all()) == 0:
-            return None  
-        elif len(self.geographies.all()) == 1:
+            return None
+        if len(self.geographies.all()) == 1:
             return self.geographies.all()[0]
-        else:
-            if date < self.start_date:
-                raise ValueError(
-                    "date %s is before organisation start_date (%s)"
-                    % (date.isoformat(), self.start_date.isoformat())
-                )
-            if self.end_date and date > self.end_date:
-                raise ValueError(
-                    "date %s is after organisation end_date (%s)"
-                    % (date.isoformat(), self.end_date.isoformat())
-                )
-            
-            
-            try:
-                return self.geographies.get(
-                    (models.Q(start_date__lte=date) | models.Q(start_date=None))
-                    & (models.Q(end_date__gte=date) | models.Q(end_date=None))
-                )
-            except OrganisationGeography.DoesNotExist:
-                return None
+        if date < self.start_date:
+            raise ValueError(
+                "date %s is before organisation start_date (%s)"
+                % (date.isoformat(), self.start_date.isoformat())
+            )
+        if self.end_date and date > self.end_date:
+            raise ValueError(
+                "date %s is after organisation end_date (%s)"
+                % (date.isoformat(), self.end_date.isoformat())
+            )
+
+        try:
+            return self.geographies.get(
+                (models.Q(start_date__lte=date) | models.Q(start_date=None))
+                & (models.Q(end_date__gte=date) | models.Q(end_date=None))
+            )
+        except OrganisationGeography.DoesNotExist:
+            return None
 
 
 class OrganisationGeography(

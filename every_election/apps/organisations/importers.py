@@ -121,21 +121,17 @@ class DivisionSetGeographyImporter:
                 % (len(legislation_names), len(boundary_names))
             )
         if legislation_names != boundary_names:
-            diff = ndiff(legislation_names, boundary_names)
-            try:
-                map_data = self.make_name_map(legislation_names, boundary_names)
+            map_data = self.make_name_map(legislation_names, boundary_names)
+            if map_data:
                 self.stdout.write(
                     "\nYou need to save this file as `name_map.json`:"
                 )
                 self.stdout.write(json.dumps(map_data, indent=4))
                 raise MapCreationNeededException()
-            except DiffException("legislation_names != boundary_names", diff):
-                # create a 'diff' of the 2 lists
-                # so we can work out what we need to fix
-                self.stdout.write(
-                    "The names in the input file don't match the names in the legislation"
-                )
-                
+            # create a 'diff' of the 2 lists
+            # so we can work out what we need to fix
+            diff = ndiff(legislation_names, boundary_names)
+            raise DiffException("legislation_names != boundary_names", diff)
 
         return True
 
