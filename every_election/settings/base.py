@@ -1,13 +1,21 @@
+import contextlib
 import os
 import sys
 
 import dc_design_system
 import requests
+from dc_utils.settings.pipeline import *  # noqa
+from dc_utils.settings.pipeline import get_pipeline_settings
+from dc_utils.settings.whitenoise import whitenoise_add_middleware
 
 # PATH vars
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-root = lambda *x: os.path.join(BASE_DIR, *x)
+
+
+def root(*x):
+    return os.path.join(BASE_DIR, *x)
+
 
 sys.path.insert(0, root("apps"))
 
@@ -81,7 +89,9 @@ INSTALLED_APPS += PROJECT_APPS
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "filters": {"require_debug_false": {"()": "django.utils.log.RequireDebugFalse"}},
+    "filters": {
+        "require_debug_false": {"()": "django.utils.log.RequireDebugFalse"}
+    },
     "handlers": {
         "mail_admins": {
             "level": "ERROR",
@@ -92,7 +102,10 @@ LOGGING = {
     },
     "loggers": {
         # Silence DisallowedHost exception by setting null error handler
-        "django.security.DisallowedHost": {"handlers": ["null"], "propagate": False},
+        "django.security.DisallowedHost": {
+            "handlers": ["null"],
+            "propagate": False,
+        },
         "django.request": {
             "handlers": ["mail_admins"],
             "level": "ERROR",
@@ -154,19 +167,17 @@ STATICFILES_DIRS = (root("assets"), root("../node_modules"))
 STATIC_ROOT = root("static")
 
 
-from dc_utils.settings.pipeline import *  # noqa
-from dc_utils.settings.pipeline import get_pipeline_settings
-from dc_utils.settings.whitenoise import whitenoise_add_middleware
-
-
 MIDDLEWARE = whitenoise_add_middleware(MIDDLEWARE)
 WHITENOISE_MAX_AGE = 60 * 60 * 24 * 40
 
 PIPELINE = get_pipeline_settings(
-    extra_css=["scss/styles.scss"], extra_js=["js/date.format.js", "js/scripts.js"]
+    extra_css=["scss/styles.scss"],
+    extra_js=["js/date.format.js", "js/scripts.js"],
 )
 
-PIPELINE["SASS_ARGUMENTS"] += " -I " + dc_design_system.DC_SYSTEM_PATH + "/system"
+PIPELINE["SASS_ARGUMENTS"] += (
+    " -I " + dc_design_system.DC_SYSTEM_PATH + "/system"
+)
 
 PIPELINE["STYLESHEETS"].update(
     {
@@ -227,7 +238,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"
+    },
 ]
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = None
@@ -244,7 +257,9 @@ LOGOUT_REDIRECT_URL = "home"
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 100,
-    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
+    "DEFAULT_FILTER_BACKENDS": (
+        "django_filters.rest_framework.DjangoFilterBackend",
+    ),
     "DEFAULT_RENDERER_CLASSES": (
         "rest_framework.renderers.JSONRenderer",
         "rest_framework.renderers.BrowsableAPIRenderer",
@@ -273,7 +288,9 @@ AWS_S3_FILE_OVERWRITE = True
 AWS_DEFAULT_ACL = None
 
 
-EMAIL_SIGNUP_ENDPOINT = "https://democracyclub.org.uk/mailing_list/api_signup/v1/"
+EMAIL_SIGNUP_ENDPOINT = (
+    "https://democracyclub.org.uk/mailing_list/api_signup/v1/"
+)
 EMAIL_SIGNUP_API_KEY = ""
 
 
@@ -290,10 +307,9 @@ CURRENT_FUTURE_DAYS = 90
 
 
 # .local.py overrides all the common settings.
-try:
+
+with contextlib.suppress(ImportError):
     from .local import *  # noqa
-except ImportError:
-    pass
 
 
 # importing test settings file if necessary

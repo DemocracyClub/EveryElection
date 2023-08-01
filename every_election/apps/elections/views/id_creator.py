@@ -1,25 +1,31 @@
+from core.helpers import user_is_moderator
+from django import forms
 from django.db import transaction
 from django.http import HttpResponseRedirect
-from django import forms
 from django.utils.functional import cached_property
-from formtools.wizard.views import NamedUrlSessionWizardView
-
-from core.helpers import user_is_moderator
-from organisations.models import Organisation
-from elections.models import Document, ElectedRole, ElectionSubType, ModerationStatuses
-from elections.utils import create_ids_for_each_ballot_paper, get_notice_directory
-from elections.forms import (
-    ElectionDateForm,
-    ElectionTypeForm,
-    ElectionSubTypeForm,
-    ElectionOrganisationForm,
-    ElectionOrganisationDivisionForm,
-    ElectionSourceForm,
-)
 from election_snooper.helpers import post_to_slack
 from election_snooper.models import SnoopedElection
-from elections.utils import get_voter_id_requirement
-
+from elections.forms import (
+    ElectionDateForm,
+    ElectionOrganisationDivisionForm,
+    ElectionOrganisationForm,
+    ElectionSourceForm,
+    ElectionSubTypeForm,
+    ElectionTypeForm,
+)
+from elections.models import (
+    Document,
+    ElectedRole,
+    ElectionSubType,
+    ModerationStatuses,
+)
+from elections.utils import (
+    create_ids_for_each_ballot_paper,
+    get_notice_directory,
+    get_voter_id_requirement,
+)
+from formtools.wizard.views import NamedUrlSessionWizardView
+from organisations.models import Organisation
 
 FORMS = [
     ("source", ElectionSourceForm),
@@ -67,14 +73,13 @@ def select_organisation(wizard):
         return False
     qs = ElectedRole.objects.filter(election_type=election_type)
 
-    if qs.count() > 1:
+    if qs.count() < 1:
         return True
-    else:
-        wizard.storage.extra_data.update(
-            {"election_organisation": [qs[0].organisation.slug]}
-        )
+    wizard.storage.extra_data.update(
+        {"election_organisation": [qs[0].organisation.slug]}
+    )
 
-        return False
+    return False
 
 
 def select_subtype(wizard):
@@ -110,7 +115,10 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
     @cached_property
     def get_election_type(self):
         if self.get_cleaned_data_for_step("election_type"):
-            return self.get_cleaned_data_for_step("election_type").get("election_type")
+            return self.get_cleaned_data_for_step("election_type").get(
+                "election_type"
+            )
+        return None
 
     @cached_property
     def get_election_subtypes(self):
@@ -118,6 +126,7 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             return self.get_cleaned_data_for_step("election_subtype").get(
                 "election_subtype"
             )
+        return None
 
     @cached_property
     def get_organisations(self):
@@ -126,12 +135,12 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                 "election_organisation"
             )
         if "election_organisation" in self.storage.extra_data:
-            qs = Organisation.objects.filter(
+            return Organisation.objects.filter(
                 electedrole__election_type__election_type__in=self.storage.extra_data[
                     "election_organisation"
                 ]
             )
-            return qs
+        return None
 
     def get_election_date(self):
         election_date = self.get_cleaned_data_for_step("date") or {}
@@ -150,28 +159,34 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                     )
                     # auto-populate the form with these to allow editing
                     return {"source": se.detail_url, "document": se.detail_url}
-                elif se.snooper_name == "ALDC" or se.snooper_name == "LibDemNewbies":
+                if (
+                    se.snooper_name == "ALDC"
+                    or se.snooper_name == "LibDemNewbies"
+                ):
                     # put these in the session - they aren't user-modifiable
                     self.storage.extra_data.update(
                         {
                             "radar_id": se.id,
-                            "radar_date": [se.date.day, se.date.month, se.date.year],
+                            "radar_date": [
+                                se.date.day,
+                                se.date.month,
+                                se.date.year,
+                            ],
                         }
                     )
                     # auto-populate the form with these to allow editing
                     return {"source": se.source, "document": ""}
-                else:
-                    return {}
-
-        if step == "date":
-            # if we've got a date from a SnoopedElection
-            # init the date form with that
-            if isinstance(
-                self.storage.extra_data, dict
-            ) and self.storage.extra_data.get("radar_date", False):
-                radar_date = self.storage.extra_data["radar_date"]
-                if isinstance(radar_date, list):
-                    return {"date": radar_date}
+                return {}
+        # if we've got a date from a SnoopedElection
+        # init the date form with that
+        if (
+            step == "date"
+            and isinstance(self.storage.extra_data, dict)
+            and self.storage.extra_data.get("radar_date", False)
+        ):
+            radar_date = self.storage.extra_data["radar_date"]
+            if isinstance(radar_date, list):
+                return {"date": radar_date}
 
         return self.initial_dict.get(step, {})
 
@@ -179,7 +194,7 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         context = super().get_context_data(form=form, **kwargs)
         all_data = self.get_all_cleaned_data()
         # print("\n".join(str(all_data).split(',')))
-        if not "date" in all_data:
+        if "date" not in all_data:
             all_data["date"] = None
 
         all_data["election_organisation"] = self.get_organisations
@@ -256,19 +271,21 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
 
         for election in context["all_ids"]:
             # Mop up and pre-ECO metadata
-            if election.group_type == "organisation":
-                if (
-                    election.metadata
-                    and election.metadata.description == "Pre-ECO election"
-                ):
-                    election.metadata = None
+            if election.group_type == "organisation" and (
+                election.metadata
+                and election.metadata.description == "Pre-ECO election"
+            ):
+                election.metadata = None
 
             election.requires_voter_id = get_voter_id_requirement(election)
 
             election.save(status=status, user=self.request.user, notes=notes)
 
-        if not user_is_moderator(self.request.user) and len(context["all_ids"]) > 0:
-            ballots = [e for e in context["all_ids"] if e.group_type == None]
+        if (
+            not user_is_moderator(self.request.user)
+            and len(context["all_ids"]) > 0
+        ):
+            ballots = [e for e in context["all_ids"] if e.group_type is None]
             if len(ballots) == 1:
                 message = """
                     New election {} suggested by anonymous user:\n
@@ -287,10 +304,12 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
 
         # if this election was created from a radar entry set the status
         # of the radar entry to indicate we have made an id for it
-        if isinstance(self.storage.extra_data, dict) and self.storage.extra_data.get(
-            "radar_id", False
-        ):
-            se = SnoopedElection.objects.get(pk=self.storage.extra_data["radar_id"])
+        if isinstance(
+            self.storage.extra_data, dict
+        ) and self.storage.extra_data.get("radar_id", False):
+            se = SnoopedElection.objects.get(
+                pk=self.storage.extra_data["radar_id"]
+            )
             se.status = "id_created"
             se.save()
 

@@ -3,7 +3,6 @@ from django.contrib.gis.geos import MultiPolygon
 from django.test import TestCase
 from organisations.boundaries.osni import OsniLayer
 
-
 fake_data = b"""{
   "type": "FeatureCollection",
   "features": [

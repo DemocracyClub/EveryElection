@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 
-from django.test import TestCase
 from django.contrib.gis.geos import Point
-
+from django.test import TestCase
+from elections.models import Election
 from elections.tests.factories import (
     ElectionFactory,
     ElectionWithStatusFactory,
@@ -10,7 +10,6 @@ from elections.tests.factories import (
     ModerationStatusFactory,
     related_status,
 )
-from elections.models import Election
 
 
 class TestElectionGeoQueries(TestCase):
@@ -75,7 +74,10 @@ class TestElectionGeoQueries(TestCase):
         ElectionWithStatusFactory(
             group=None, poll_open_date=datetime.today() - timedelta(days=60)
         )
-        assert Election.public_objects.current().for_postcode("SW1A1AA").count() == 1
+        assert (
+            Election.public_objects.current().for_postcode("SW1A1AA").count()
+            == 1
+        )
 
     def test_public_private_filter_simple(self):
         # simple case: each election only has a single status event
@@ -114,7 +116,9 @@ class TestElectionGeoQueries(TestCase):
             election=e1, status=ModerationStatusFactory(short_label="Approved")
         )
         self.assertEqual(1, Election.public_objects.count())
-        self.assertEqual(e1.election_id, Election.public_objects.all()[0].election_id)
+        self.assertEqual(
+            e1.election_id, Election.public_objects.all()[0].election_id
+        )
         self.assertEqual(2, Election.private_objects.count())
 
         # and then delete it again

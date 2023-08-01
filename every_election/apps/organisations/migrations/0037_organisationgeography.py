@@ -3,8 +3,8 @@
 from __future__ import unicode_literals
 
 import django.contrib.gis.db.models.fields
-from django.db import migrations, models
 import django.db.models.deletion
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -32,7 +32,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "geography",
-                    django.contrib.gis.db.models.fields.MultiPolygonField(srid=4326),
+                    django.contrib.gis.db.models.fields.MultiPolygonField(
+                        srid=4326
+                    ),
                 ),
                 (
                     "organisation",

@@ -1,7 +1,6 @@
+from core.models import JsonbSet
 from django.db.models import Value
 from django.test import TestCase
-
-from core.models import JsonbSet
 from elections.models import Election
 from elections.tests.factories import ElectionFactory
 
@@ -15,7 +14,9 @@ class TestJsonbSet(TestCase):
     def test_update(self):
         qs = Election.private_objects.all()
         qs.update(
-            tags=JsonbSet("tags", Value('{"BAZ"}'), Value('{"bar": "foo"}'), True)
+            tags=JsonbSet(
+                "tags", Value('{"BAZ"}'), Value('{"bar": "foo"}'), True
+            )
         )
         for election in qs:
             self.assertDictEqual(election.tags, {"BAZ": {"bar": "foo"}})
@@ -30,7 +31,9 @@ class TestJsonbSet(TestCase):
 
     def test_set_value(self):
         # Test we can set a new value
-        self.election.tags = JsonbSet("tags", Value('{"BAZ"}'), Value('"foo"'), True)
+        self.election.tags = JsonbSet(
+            "tags", Value('{"BAZ"}'), Value('"foo"'), True
+        )
         self.election.save()
         self.election.refresh_from_db()
         self.assertDictEqual(self.election.tags, {"BAZ": "foo"})
@@ -48,7 +51,9 @@ class TestJsonbSet(TestCase):
         )
         self.election.save()
         self.election.refresh_from_db()
-        self.assertDictEqual(self.election.tags, {"BAZ": {"bar": "different_foo"}})
+        self.assertDictEqual(
+            self.election.tags, {"BAZ": {"bar": "different_foo"}}
+        )
 
     def test_dont_create_missing(self):
         self.election.tags = JsonbSet(

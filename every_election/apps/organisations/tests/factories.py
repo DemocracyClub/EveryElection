@@ -1,13 +1,13 @@
 from datetime import date
-import factory
 
+import factory
 from organisations.models import (
-    Organisation,
-    OrganisationDivisionSet,
-    OrganisationDivision,
-    OrganisationGeography,
     DivisionGeography,
     DivisionGeographySubdivided,
+    Organisation,
+    OrganisationDivision,
+    OrganisationDivisionSet,
+    OrganisationGeography,
     OrganisationGeographySubdivided,
 )
 
@@ -18,7 +18,9 @@ class OrganisationFactory(factory.django.DjangoModelFactory):
 
     official_identifier = factory.Sequence(lambda n: n)
     organisation_type = "local-authority"
-    official_name = factory.Sequence(lambda n: "The Organisation %d Council" % n)
+    official_name = factory.Sequence(
+        lambda n: "The Organisation %d Council" % n
+    )
     common_name = factory.Sequence(lambda n: "Organisation %d" % n)
     slug = factory.Sequence(lambda n: "org-%d" % n)
     territory_code = "ENG"
@@ -86,7 +88,9 @@ class DivisionGeographyFactory(factory.django.DjangoModelFactory):
 
         """
         for geom in self.geography:
-            SubdividedDivisionGeographyFactory(division_geography=self, geography=geom)
+            SubdividedDivisionGeographyFactory(
+                division_geography=self, geography=geom
+            )
 
 
 class OrganisationGeographyFactory(factory.django.DjangoModelFactory):
@@ -114,6 +118,9 @@ class OrganisationGeographyFactory(factory.django.DjangoModelFactory):
         if not self.geography:
             return
         for geom in self.geography:
+            SubdividedOrganisationGeographyFactory(
+                organisation_geography=self, geography=geom
+            )
             SubdividedOrganisationGeographyFactory(
                 organisation_geography=self, geography=geom
             )

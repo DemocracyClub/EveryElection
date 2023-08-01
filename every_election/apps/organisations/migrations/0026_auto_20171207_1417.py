@@ -6,13 +6,15 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-    dependencies = [("organisations", "0025_organisationdivisionset_territory_code")]
+    dependencies = [
+        ("organisations", "0025_organisationdivisionset_territory_code")
+    ]
 
     operations = [
         migrations.AlterUniqueTogether(
             name="organisationdivision",
-            unique_together=set(
-                [("organisation", "divisionset", "official_identifier")]
-            ),
+            unique_together={
+                ("organisation", "divisionset", "official_identifier")
+            },
         )
     ]

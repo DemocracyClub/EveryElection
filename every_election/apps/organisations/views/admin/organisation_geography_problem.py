@@ -14,7 +14,12 @@ class OrganisationGeographyProblemAdmin(admin.ModelAdmin):
 
     ordering = ("source", "gss", "start_date")
     list_display = ("__str__", "problem_text")
-    readonly_fields = ("problem_text", "no_gss_code", "invalid_source", "no_geography")
+    readonly_fields = (
+        "problem_text",
+        "no_gss_code",
+        "invalid_source",
+        "no_geography",
+    )
     exclude = ("geography",)
     form = OrganisationGeographyProblemAdminForm
 

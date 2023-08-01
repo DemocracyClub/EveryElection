@@ -1,11 +1,10 @@
 import json
 
+from core.mixins import ReadFromFileMixin
+from core.models import JsonbSet
 from django.contrib.gis.gdal import DataSource
 from django.core.management import BaseCommand
 from django.db.models import Value
-
-from core.mixins import ReadFromFileMixin
-from core.models import JsonbSet
 from elections.models import Election
 
 
@@ -78,7 +77,10 @@ class Command(ReadFromFileMixin, BaseCommand):
             self.stdout.write(f"...for {len(ballots)} ballots...")
             ballots.update(
                 tags=JsonbSet(
-                    "tags", Value(f"{{{tag_name}}}"), Value(json.dumps(tags)), True
+                    "tags",
+                    Value(f"{{{tag_name}}}"),
+                    Value(json.dumps(tags)),
+                    True,
                 )
             )
             self.stdout.write("...done.")

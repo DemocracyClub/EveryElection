@@ -1,20 +1,19 @@
 import datetime
+
 import factory
-
 from django.db.models import signals
-
 from elections.models import (
-    Election,
-    ModerationHistory,
-    ElectionType,
     ElectedRole,
+    Election,
+    ElectionType,
+    ModerationHistory,
     ModerationStatus,
     ModerationStatuses,
 )
 from organisations.tests.factories import (
-    OrganisationFactory,
-    OrganisationDivisionFactory,
     DivisionGeographyFactory,
+    OrganisationDivisionFactory,
+    OrganisationFactory,
 )
 
 
@@ -49,7 +48,9 @@ class ElectionFactory(factory.django.DjangoModelFactory):
     def _get_manager(cls, model_class):
         return model_class.private_objects
 
-    election_id = factory.Sequence(lambda n: "local.place-name-%d.2017-03-23" % n)
+    election_id = factory.Sequence(
+        lambda n: "local.place-name-%d.2017-03-23" % n
+    )
     election_title = factory.Sequence(lambda n: "Election %d" % n)
     election_type = factory.SubFactory(ElectionTypeFactory)
     poll_open_date = "2017-03-23"

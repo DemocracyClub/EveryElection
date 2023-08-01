@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
-
 from elections.constants import ELECTION_TYPES
 
 
@@ -26,12 +25,16 @@ def add_initial_election_types(apps, schema_editor):
 def remove_initial_election_types(apps, schema_editor):
     ElectionType = apps.get_model("elections", "ElectionType")
 
-    ElectionType.objects.filter(election_type__in=ELECTION_TYPES.keys()).delete()
+    ElectionType.objects.filter(
+        election_type__in=ELECTION_TYPES.keys()
+    ).delete()
 
 
 class Migration(migrations.Migration):
     dependencies = [("elections", "0002_auto_20161011_0741")]
 
     operations = [
-        migrations.RunPython(add_initial_election_types, remove_initial_election_types)
+        migrations.RunPython(
+            add_initial_election_types, remove_initial_election_types
+        )
     ]

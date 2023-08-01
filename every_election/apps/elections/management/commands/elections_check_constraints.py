@@ -1,6 +1,7 @@
 import sys
+
 from django.core.management.base import BaseCommand
-from elections.constraints import check_constraints, ViolatedConstraint
+from elections.constraints import ViolatedConstraint, check_constraints
 from elections.models import Election
 
 

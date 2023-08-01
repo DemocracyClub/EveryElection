@@ -1,7 +1,6 @@
+from core.mixins import ReadFromCSVMixin
 from django.core.management.base import BaseCommand
 from django.db import transaction
-
-from core.mixins import ReadFromCSVMixin
 from elections.models import Election
 
 
@@ -62,7 +61,9 @@ class Command(ReadFromCSVMixin, BaseCommand):
         else:
             if trust_csv and csv_seats_total and csv_seats_total > 0:
                 self.stdout.write(
-                    "Taking seats total from CSV for {}".format(election.election_id)
+                    "Taking seats total from CSV for {}".format(
+                        election.election_id
+                    )
                 )
                 seats_total = csv_seats_total
 
@@ -101,7 +102,9 @@ class Command(ReadFromCSVMixin, BaseCommand):
 
                 seats_contested = self.get_seats_contested(line)
 
-                seats_total = self.get_seats_total(election, line, trust_csv=trust_csv)
+                seats_total = self.get_seats_total(
+                    election, line, trust_csv=trust_csv
+                )
                 if seats_total is None:
                     message = "Seats total not known for {}".format(
                         election.election_id

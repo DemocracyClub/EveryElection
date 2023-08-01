@@ -25,9 +25,13 @@ class TestSingleElectionView(TestCase):
 
         # we shouldn't be able to access elections which are
         # suggsted, rejected or deleted via the DetailView
-        resp = self.client.get("/api/elections/{}/".format(rejected.election_id))
+        resp = self.client.get(
+            "/api/elections/{}/".format(rejected.election_id)
+        )
         self.assertEqual(404, resp.status_code)
-        resp = self.client.get("/api/elections/{}/".format(suggested.election_id))
+        resp = self.client.get(
+            "/api/elections/{}/".format(suggested.election_id)
+        )
         self.assertEqual(404, resp.status_code)
         resp = self.client.get("/api/elections/{}/".format(deleted.election_id))
         self.assertEqual(404, resp.status_code)

@@ -1,0 +1,35 @@
+[tool.black]
+line-length = 80
+
+[tool.ruff]
+line-length = 80
+ignore = ["E501"]
+
+extend-exclude = ["every_election/settings/local.py"]
+
+extend-select = [
+    "I",
+    "C4",
+    "SIM",
+    "Q003",
+    "RET",
+]
+
+[tool.pytest.ini_options]
+norecursedirs =[
+    "src",
+    "every_election/static_root",
+    ".aws-sam",
+    ".ruff-cache",
+    ".circleci",
+]
+DJANGO_SETTINGS_MODULE = "every_election.settings.base"
+addopts =[
+    "--ignore=*/__pycache__",
+    "--ignore=.*",
+    "--ignore=.download-cache",
+    "--ignore=every_election/settings/local.py",
+    "--ignore=lib",
+    "--ruff",
+    "--black",
+]

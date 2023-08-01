@@ -1,23 +1,23 @@
 from datetime import datetime
 from typing import Optional
 
-from uk_election_ids.datapackage import VOTING_SYSTEMS
-from uk_election_ids.metadata_tools import VotingSystemMatcher, IDRequirementsMatcher
-
+from elections.models import (
+    ElectedRole,
+    Election,
+    ElectionSubType,
+    ElectionType,
+    MetaData,
+)
 from organisations.models import (
     Organisation,
     OrganisationDivision,
     OrganisationDivisionSet,
 )
-from elections.models import (
-    Election,
-    ElectedRole,
-    ElectionSubType,
-    ElectionType,
-    MetaData,
-)
-
 from uk_election_ids.election_ids import IdBuilder
+from uk_election_ids.metadata_tools import (
+    IDRequirementsMatcher,
+    VotingSystemMatcher,
+)
 
 CACHE = {
     "voting_systems": {},
@@ -55,30 +55,32 @@ def get_cached_election_type(election_type):
 
 def get_cached_election_subtype(election_type):
     if election_type not in CACHE["election_sub_types"]:
-        CACHE["election_sub_types"][election_type] = ElectionSubType.objects.filter(
-            election_type=election_type
-        )
+        CACHE["election_sub_types"][
+            election_type
+        ] = ElectionSubType.objects.filter(election_type=election_type)
     return CACHE["election_sub_types"][election_type]
 
 
 def get_cached_valid_election_types(organisation):
     if organisation not in CACHE["valid_election_types"]:
-        CACHE["valid_election_types"][organisation] = organisation.election_types.all()
+        CACHE["valid_election_types"][
+            organisation
+        ] = organisation.election_types.all()
     return CACHE["valid_election_types"][organisation]
 
 
 def get_cached_private_elections(date, election_id):
-    if not date in CACHE["private_elections"]:
+    if date not in CACHE["private_elections"]:
         qs = Election.private_objects.filter(poll_open_date=date)
         CACHE["private_elections"][date] = {e.election_id: e for e in qs}
     return CACHE["private_elections"][date].get(election_id)
 
 
 def get_cached_elected_role(organisation, election_type):
-    if not election_type in CACHE["elected_roles"]:
+    if election_type not in CACHE["elected_roles"]:
         CACHE["elected_roles"][election_type] = {}
 
-    if not organisation in CACHE["elected_roles"][election_type]:
+    if organisation not in CACHE["elected_roles"][election_type]:
         try:
             CACHE["elected_roles"][election_type][
                 organisation
@@ -175,11 +177,15 @@ class ElectionBuilder:
 
         if (
             self.subtype
-            and self.subtype.election_subtype != division.division_election_sub_type
+            and self.subtype.election_subtype
+            != division.division_election_sub_type
         ):
             raise OrganisationDivision.ValidationError(
                 "election subtype is '%s' but division is of subtype '%s'"
-                % (self.subtype.election_subtype, division.division_election_sub_type)
+                % (
+                    self.subtype.election_subtype,
+                    division.division_election_sub_type,
+                )
             )
 
         divisionset = division.divisionset
@@ -220,10 +226,9 @@ class ElectionBuilder:
     def get_voting_system(self):
         if not self.organisation:
             return None
-        slug = VotingSystemMatcher(
+        return VotingSystemMatcher(
             self.id.ids[-1], nation=self.organisation.territory_code
         ).get_voting_system()
-        return slug
 
     def get_seats_contested(self):
         if self.contest_type == "by":
@@ -235,8 +240,7 @@ class ElectionBuilder:
         if self.election_type.election_type != "local":
             if self.division and self.division.seats_total:
                 return self.division.seats_total
-            else:
-                return 1
+            return 1
 
         """
         If this is an all-up local election, we can fairly safely
@@ -275,8 +279,7 @@ class ElectionBuilder:
             )
             if id_type == "subtype":
                 return subtype_title
-            else:
-                parts.append(subtype_title)
+            parts.append(subtype_title)
 
         if self._use_org and self.organisation:
             if self.election_type.election_type == "mayor":
@@ -306,24 +309,23 @@ class ElectionBuilder:
         )
         if existing_election:
             return existing_election
-        else:
-            # return an instance of elections.models.Election
-            # but don't persist it to the DB yet.
-            # The calling code is responsible for calling .save()
-            return Election(
-                **merge_dicts(
-                    record,
-                    {
-                        "poll_open_date": self.date,
-                        "election_type": self.election_type,
-                        "election_subtype": self.subtype,
-                        "organisation": self.organisation,
-                        "division": self.division,
-                        "elected_role": self.get_elected_role(),
-                        "voting_system": self.get_voting_system(),
-                    },
-                )
+        # return an instance of elections.models.Election
+        # but don't persist it to the DB yet.
+        # The calling code is responsible for calling .save()
+        return Election(
+            **merge_dicts(
+                record,
+                {
+                    "poll_open_date": self.date,
+                    "election_type": self.election_type,
+                    "election_subtype": self.subtype,
+                    "organisation": self.organisation,
+                    "division": self.division,
+                    "elected_role": self.get_elected_role(),
+                    "voting_system": self.get_voting_system(),
+                },
             )
+        )
 
     def build_election_group(self):
         return self._build(
@@ -404,7 +406,10 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
         div_data = {
             k: v
             for k, v in all_data.items()
-            if str(k).startswith(pk) and "__" in str(k) and v != "no_seats" and v != ""
+            if str(k).startswith(pk)
+            and "__" in str(k)
+            and v != "no_seats"
+            and v != ""
         }
 
         election_type = all_data["election_type"].election_type
@@ -413,7 +418,11 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
         # GROUP 1
         # Make a group ID for the date and election type
         builder = ElectionBuilder(all_data["election_type"], all_data["date"])
-        if all_data["election_type"].election_type not in ["local", "mayor", "pcc"]:
+        if all_data["election_type"].election_type not in [
+            "local",
+            "mayor",
+            "pcc",
+        ]:
             builder.with_organisation(organisation)
         date_id = builder.build_election_group()
 
@@ -437,16 +446,18 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
         # Special case where we have no divs for an org that should have them.
         # This is generally due to an upcoming ECO that's not been Made yet.
         # In this case, we want to make an org ID but no div IDs
-        if all_data["election_type"].election_type == "local":
-            if f"{organisation.pk}_no_divs" in all_data:
-                group_id = (
-                    ElectionBuilder(all_data["election_type"], all_data["date"])
-                    .with_organisation(organisation)
-                    .build_organisation_group(date_id)
-                )
-                group_id.group_type = None
-                group_id.metadata = get_or_create_eco_group_metadata()
-                all_ids.append(group_id)
+        if (
+            all_data["election_type"].election_type == "local"
+            and f"{organisation.pk}_no_divs" in all_data
+        ):
+            group_id = (
+                ElectionBuilder(all_data["election_type"], all_data["date"])
+                .with_organisation(organisation)
+                .build_organisation_group(date_id)
+            )
+            group_id.group_type = None
+            group_id.metadata = get_or_create_eco_group_metadata()
+            all_ids.append(group_id)
 
         if all_data["election_type"].election_type in ["mayor", "pcc"]:
             group_id = date_id
@@ -463,7 +474,10 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
         if subtypes:
             for subtype in all_data.get("election_subtype", []):
                 # Special case `gla.a` elections as they should be a ballot
-                if organisation.slug == "gla" and subtype.election_subtype == "a":
+                if (
+                    organisation.slug == "gla"
+                    and subtype.election_subtype == "a"
+                ):
                     group_id = date_id
                     group_type = None
                 else:
@@ -476,20 +490,25 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                     .with_subtype(subtype)
                     .build_subtype_group(group_id, group_type=group_type)
                 )
-                if subtype_id.election_id not in [e.election_id for e in all_ids]:
+                if subtype_id.election_id not in [
+                    e.election_id for e in all_ids
+                ]:
                     all_ids.append(subtype_id)
 
                 for div, contest_type in div_data.items():
                     _, div_id, div_subtype = div.split("__")
-                    if not div_subtype == subtype.election_subtype:
+                    if div_subtype != subtype.election_subtype:
                         continue
 
                     org_div = OrganisationDivision.objects.get(
-                        pk=div_id, division_election_sub_type=subtype.election_subtype
+                        pk=div_id,
+                        division_election_sub_type=subtype.election_subtype,
                     )
 
                     builder = (
-                        ElectionBuilder(all_data["election_type"], all_data["date"])
+                        ElectionBuilder(
+                            all_data["election_type"], all_data["date"]
+                        )
                         .with_subtype(subtype)
                         .with_organisation(organisation)
                         .with_division(org_div)
@@ -499,16 +518,19 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
 
                     if contest_type == "by_election":
                         all_ids.append(
-                            builder.with_contest_type("by").build_ballot(subtype_id)
+                            builder.with_contest_type("by").build_ballot(
+                                subtype_id
+                            )
                         )
                     elif contest_type in ["contested", "seats_contested"]:
                         all_ids.append(builder.build_ballot(subtype_id))
                     else:
                         raise ValueError(
-                            "Unrecognised contest_type value '%s'" % contest_type
+                            "Unrecognised contest_type value '%s'"
+                            % contest_type
                         )
         else:
-            all_division_ids = [div.split("__")[1] for div in div_data.keys()]
+            all_division_ids = [div.split("__")[1] for div in div_data]
             all_division_objects = {
                 str(div.pk): div
                 for div in OrganisationDivision.objects.filter(
@@ -558,10 +580,7 @@ def get_notice_directory(elections):
         elif election.group_type == "organisation":
             organisation_group_id = election.election_id
         elif not election.group_type:
-            if ballot_count == 0:
-                ballot_id = election.election_id
-            else:
-                ballot_id = ""
+            ballot_id = election.election_id if ballot_count == 0 else ""
             ballot_count = ballot_count + 1
         else:
             raise ValueError(
@@ -570,9 +589,19 @@ def get_notice_directory(elections):
 
     if ballot_count == 1 and ballot_id:
         return ballot_id
-    elif organisation_group_id:
+    if organisation_group_id:
         return organisation_group_id
-    elif election_group_id:
+    if election_group_id:
+        return election_group_id
+
+    # if we get here, something went wrong
+    # the function might have been called with an empty list
+    raise ValueError("Can't find an appropriate election id")
+    if ballot_count == 1 and ballot_id:
+        return ballot_id
+    if organisation_group_id:
+        return organisation_group_id
+    if election_group_id:
         return election_group_id
 
     # if we get here, something went wrong

@@ -1,6 +1,7 @@
 import os
 from datetime import date
 from io import StringIO
+
 from django.test import TestCase
 from organisations.boundaries.management.commands.boundaryline_backport_codes import (
     Command,
@@ -48,8 +49,7 @@ class BackportCodesTests(TestCase):
         cmd.stdout = StringIO()
         cmd.handle(**self.opts)
         cmd.stdout.seek(0)
-        output = cmd.stdout.read()
-        return output
+        return cmd.stdout.read()
 
     def test_write(self):
         output = self.run_command_with_test_data()
@@ -62,7 +62,9 @@ class BackportCodesTests(TestCase):
 
         self.assertIn("Searched 28 divisions", output)
         self.assertIn("Found 27 codes", output)
-        self.assertIn("Could not find a code for division CRY:shirley-south", output)
+        self.assertIn(
+            "Could not find a code for division CRY:shirley-south", output
+        )
 
     def test_dry_run(self):
         self.opts["dry-run"] = True
@@ -75,7 +77,9 @@ class BackportCodesTests(TestCase):
         # but we should still output info on the console
         self.assertIn("Searched 28 divisions", output)
         self.assertIn("Found 27 codes", output)
-        self.assertIn("Could not find a code for division CRY:shirley-south", output)
+        self.assertIn(
+            "Could not find a code for division CRY:shirley-south", output
+        )
 
     def test_no_divisions_found(self):
         self.opts["date"] = date(2001, 1, 1)

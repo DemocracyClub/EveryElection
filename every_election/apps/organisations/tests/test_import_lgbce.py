@@ -1,17 +1,18 @@
-from datetime import date
 import os
 import tempfile
+from datetime import date
 from io import StringIO
+
 from django.contrib.gis.gdal import DataSource
-from django.utils.text import slugify
 from django.test import TestCase
+from django.utils.text import slugify
+from organisations.management.commands.import_lgbce import Command
 from organisations.models import (
     DivisionGeography,
     Organisation,
     OrganisationDivision,
     OrganisationDivisionSet,
 )
-from organisations.management.commands.import_lgbce import Command
 
 
 class ImportLgbceTests(TestCase):
@@ -73,7 +74,10 @@ class ImportLgbceTests(TestCase):
 
     def run_import_with_test_data(self, org, name_map):
         cmd = Command()
-        cmd.get_data = lambda x: (tempfile.mkdtemp(), DataSource(self.test_data_path))
+        cmd.get_data = lambda x: (
+            tempfile.mkdtemp(),
+            DataSource(self.test_data_path),
+        )
         cmd.get_name_map = lambda x: name_map
         args = {
             "org": org,
@@ -84,8 +88,7 @@ class ImportLgbceTests(TestCase):
         cmd.stderr = StringIO()
         cmd.handle(**args)
         cmd.stderr.seek(0)
-        error_output = cmd.stderr.read()
-        return error_output
+        return cmd.stderr.read()
 
     def test_org_not_found(self):
         with self.assertRaises(Organisation.DoesNotExist):
@@ -125,7 +128,9 @@ class ImportLgbceTests(TestCase):
         # there's some names in the test file that don't match the ones in the database
         # but we'll pass an empty name_map - this should cause a failure
         name_map = {}
-        error_output = self.run_import_with_test_data(self.valid_org_code, name_map)
+        error_output = self.run_import_with_test_data(
+            self.valid_org_code, name_map
+        )
         self.assertEqual(
             "Failed: legislation_names != boundary_names", error_output[:43]
         )
@@ -157,6 +162,9 @@ class ImportLgbceTests(TestCase):
 
         # now that we've imported geographies for this divisionset once,
         # if we try to do it again then it should fail
+        # because the divisionset has related geographies now
+        with self.assertRaises(Exception):
+            self.run_import_with_test_data(self.valid_org_code, name_map)
         # because the divisionset has related geographies now
         with self.assertRaises(Exception):
             self.run_import_with_test_data(self.valid_org_code, name_map)

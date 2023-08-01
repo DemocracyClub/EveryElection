@@ -2,12 +2,11 @@ import json
 import re
 from pathlib import Path
 
-import yaml
-from aws_cdk.core import Stack, Construct
 import aws_cdk.aws_iam as iam
 import aws_cdk.aws_imagebuilder as image_builder
+import yaml
 from aws_cdk.aws_ssm import StringParameter
-
+from aws_cdk.core import Construct, Stack
 
 COMPONENTS = [
     {
@@ -41,7 +40,9 @@ COMPONENTS = [
 
 def validate_name(name):
     name = name.replace(".", "-")
-    if not re.match(r"^[-_A-Za-z-0-9][-_A-Za-z0-9 ]{1,126}[-_A-Za-z-0-9]$", name):
+    if not re.match(
+        r"^[-_A-Za-z-0-9][-_A-Za-z0-9 ]{1,126}[-_A-Za-z-0-9]$", name
+    ):
         raise ValueError(f"{name} isn't valid")
     return name
 
@@ -55,7 +56,9 @@ class EEImageUpdater(Stack):
         # Make the infrastructure configuration (the type of instance
         # that will build the image)
         infra_config = self.make_infra_config()
-        recipe = self.make_recipe(settings["base_ami_id"], settings["recipe_version"])
+        recipe = self.make_recipe(
+            settings["base_ami_id"], settings["recipe_version"]
+        )
         distribution = self.make_distribution()
 
         pipeline = image_builder.CfnImagePipeline(
@@ -112,7 +115,9 @@ class EEImageUpdater(Stack):
         if component.get("arn"):
             return component.get("arn")
 
-        component_path = Path() / "cdk_stacks" / "components" / component.get("file")
+        component_path = (
+            Path() / "cdk_stacks" / "components" / component.get("file")
+        )
         component_yaml = yaml.safe_load(component_path.read_text())
 
         name = f"{component['name']}".replace(".", "-").replace(" ", "-")
@@ -151,13 +156,12 @@ class EEImageUpdater(Stack):
         )
 
         # create an instance profile to attach the role
-        instanceprofile = iam.CfnInstanceProfile(
+        return iam.CfnInstanceProfile(
             self,
             "EEImageInstanceProfile",
             instance_profile_name="EEImageInstanceProfile",
             roles=["EEImageRole"],
         )
-        return instanceprofile
 
     def make_infra_config(self) -> image_builder.CfnInfrastructureConfiguration:
         """
@@ -188,7 +192,9 @@ class EEImageUpdater(Stack):
         return infraconfig
 
     def make_distribution(self):
-        org_id = StringParameter.value_for_string_parameter(self, "OrganisationID")
+        org_id = StringParameter.value_for_string_parameter(
+            self, "OrganisationID"
+        )
         dist_name = validate_name("EE-distribution")
         return image_builder.CfnDistributionConfiguration(
             self,

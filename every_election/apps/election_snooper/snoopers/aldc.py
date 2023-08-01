@@ -1,7 +1,9 @@
+import contextlib
 from datetime import datetime
 
-from .base import BaseSnooper
 from election_snooper.models import SnoopedElection
+
+from .base import BaseSnooper
 
 
 class ALDCScraper(BaseSnooper):
@@ -30,13 +32,13 @@ class ALDCScraper(BaseSnooper):
                 "detail": "\n".join([x.text for x in content]),
                 "snooper_name": self.snooper_name,
             }
-            try:
+            with contextlib.suppress(ValueError):
                 data["date"] = datetime.strptime(date, "%B %d, %Y")
-            except ValueError:
-                pass
 
             item, created = SnoopedElection.objects.update_or_create(
-                snooper_name=self.snooper_name, detail_url=detail_url, defaults=data
+                snooper_name=self.snooper_name,
+                detail_url=detail_url,
+                defaults=data,
             )
             if created:
                 self.post_to_slack(item)

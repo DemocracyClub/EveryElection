@@ -11,10 +11,13 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name="organisationgeography",
-            options={"get_latest_by": "start_date", "ordering": ("-start_date",)},
+            options={
+                "get_latest_by": "start_date",
+                "ordering": ("-start_date",),
+            },
         ),
         migrations.AlterUniqueTogether(
             name="organisationgeography",
-            unique_together=set([("organisation", "end_date")]),
+            unique_together={("organisation", "end_date")},
         ),
     ]

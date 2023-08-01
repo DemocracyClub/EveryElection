@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from django.core.management.base import BaseCommand
-
 from organisations.models import Organisation, OrganisationDivision
 
 

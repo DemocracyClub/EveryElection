@@ -3,13 +3,14 @@ import os
 import textwrap
 import warnings
 
-from django.conf import settings
-
 import requests
+from django.conf import settings
 
 
 def post_to_slack(message):
-    env = os.getenv("SERVER_ENVIRONMENT", getattr(settings, "SERVER_ENVIRONMENT", None))
+    env = os.getenv(
+        "SERVER_ENVIRONMENT", getattr(settings, "SERVER_ENVIRONMENT", None)
+    )
     if env in ["test", "development", "staging"]:
         prefix = "TEST for {} environment: ".format(env)
         message = prefix + message

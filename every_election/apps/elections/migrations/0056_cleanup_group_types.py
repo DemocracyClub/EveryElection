@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 
-
 group_type_map = {
     # These mayoral elections all have group_type='organisation', but they should
     # be None to bring them into line with the current convention for mayor/pcc
@@ -58,4 +57,6 @@ def fix_bad_group_types(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [("elections", "0055_auto_20181204_0918")]
 
-    operations = [migrations.RunPython(fix_bad_group_types, migrations.RunPython.noop)]
+    operations = [
+        migrations.RunPython(fix_bad_group_types, migrations.RunPython.noop)
+    ]

@@ -10,7 +10,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterModelOptions(
-            name="organisationdivisionset", options={"ordering": ("-start_date",)}
+            name="organisationdivisionset",
+            options={"ordering": ("-start_date",)},
         ),
         migrations.AddField(
             model_name="organisationdivisionset",

@@ -1,23 +1,20 @@
 from diagrams import Cluster, Diagram
 from diagrams.aws.compute import (
-    Lambda,
-    EC2AutoScaling,
-    EC2Instances,
     EC2Ami,
+    EC2AutoScaling,
     EC2ImageBuilder,
+    EC2Instances,
 )
-from diagrams.aws.database import RDS
 from diagrams.aws.devtools import Codedeploy
 from diagrams.aws.general import InternetAlt1
 from diagrams.aws.management import Config, Organizations
-from diagrams.aws.network import ALB, Route53, CloudFront
+from diagrams.aws.network import ALB, CloudFront, Route53
 from diagrams.aws.security import CertificateManager
-from diagrams.aws.storage import S3
 from diagrams.generic.network import Subnet
-from diagrams.onprem.database import PostgreSQL
-from diagrams.programming.framework import Django
 
-with Diagram("AWS deployment resources", filename="docs/aws-resources", show=False):
+with Diagram(
+    "AWS deployment resources", filename="docs/aws-resources", show=False
+):
     with Cluster("Manual setup"):
         cert = CertificateManager("TLS Certificate")
 

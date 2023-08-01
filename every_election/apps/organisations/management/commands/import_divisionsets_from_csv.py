@@ -14,18 +14,20 @@ python manage.py import_divisionsets_from_csv -s "foo/bar/baz.csv"
 
 import datetime
 
+from core.mixins import ReadFromCSVMixin
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils.text import slugify
-
+from organisations.constants import (
+    ORG_CURIE_TO_MAPIT_AREA_TYPE,
+    PARENT_TO_CHILD_AREAS,
+)
 from organisations.models import (
     Organisation,
     OrganisationDivision,
     OrganisationDivisionSet,
 )
-from organisations.constants import ORG_CURIE_TO_MAPIT_AREA_TYPE, PARENT_TO_CHILD_AREAS
-from core.mixins import ReadFromCSVMixin
 
 
 class Command(ReadFromCSVMixin, BaseCommand):
@@ -61,17 +63,18 @@ class Command(ReadFromCSVMixin, BaseCommand):
             return Organisation.objects.all().get_by_date(
                 organisation_type="local-authority",
                 official_identifier=line["Organisation ID"],
-                date=datetime.datetime.strptime(line["Start Date"], "%Y-%m-%d").date(),
+                date=datetime.datetime.strptime(
+                    line["Start Date"], "%Y-%m-%d"
+                ).date(),
             )
-        else:
-            # If we haven't got a start date for the divisionset, see if we can
-            # work out the org without needing one (mostly we can).
-            # If we throw an exception here, we will need to call this again
-            # with a start date on this divisionset
-            return Organisation.objects.get(
-                organisation_type="local-authority",
-                official_identifier=line["Organisation ID"],
-            )
+        # If we haven't got a start date for the divisionset, see if we can
+        # work out the org without needing one (mostly we can).
+        # If we throw an exception here, we will need to call this again
+        # with a start date on this divisionset
+        return Organisation.objects.get(
+            organisation_type="local-authority",
+            official_identifier=line["Organisation ID"],
+        )
 
     def get_start_date(self, org):
         # Given an org, work out the start date for a new division set
@@ -79,7 +82,8 @@ class Command(ReadFromCSVMixin, BaseCommand):
         divsets = OrganisationDivisionSet.objects.filter(organisation=org)
         if not divsets:
             raise Exception(
-                "Could not find any previous DivisionSets for Organisation %s" % org
+                "Could not find any previous DivisionSets for Organisation %s"
+                % org
             )
         if not divsets.latest().end_date:
             raise Exception(
@@ -101,7 +105,9 @@ class Command(ReadFromCSVMixin, BaseCommand):
                 # the end date of the previous DivisionSet
                 start_date = self.get_start_date(org)
 
-            self.division_sets[org.official_identifier] = OrganisationDivisionSet(
+            self.division_sets[
+                org.official_identifier
+            ] = OrganisationDivisionSet(
                 organisation=org,
                 start_date=start_date,
                 end_date=line["End Date"] or None,
@@ -129,7 +135,9 @@ class Command(ReadFromCSVMixin, BaseCommand):
         return identifier
 
     def get_division_type_from_registers(self, line):
-        curie = ":".join([line["Organisation ID type"], line["Organisation ID"]])
+        curie = ":".join(
+            [line["Organisation ID type"], line["Organisation ID"]]
+        )
         return PARENT_TO_CHILD_AREAS[self.org_curie_to_area_type[curie]][0]
 
     def create_div_from_line(self, div_set, identifier, line):
@@ -143,7 +151,7 @@ class Command(ReadFromCSVMixin, BaseCommand):
         if not seats_total:
             seats_total = 1
 
-        div = OrganisationDivision(
+        return OrganisationDivision(
             official_identifier=identifier,
             temp_id=identifier,
             name=line["Name"],
@@ -152,8 +160,6 @@ class Command(ReadFromCSVMixin, BaseCommand):
             seats_total=seats_total,
             divisionset=div_set,
         )
-
-        return div
 
     def create_divisions(self, csv_data):
         for line in csv_data:
@@ -168,6 +174,11 @@ class Command(ReadFromCSVMixin, BaseCommand):
     def save_all(self):
         for record in self.divisions:
             record.divisionset.save()
+            # hack: see https://code.djangoproject.com/ticket/29085
+            # This should fix it when we use Django>=3.03:
+            # https://github.com/django/django/commit/519016e5f25d7c0a040015724f9920581551cab0
+            record.divisionset = record.divisionset
+            record.save()
             # hack: see https://code.djangoproject.com/ticket/29085
             # This should fix it when we use Django>=3.03:
             # https://github.com/django/django/commit/519016e5f25d7c0a040015724f9920581551cab0

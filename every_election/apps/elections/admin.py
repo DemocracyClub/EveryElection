@@ -1,10 +1,12 @@
 import json
 from copy import deepcopy
+
 from django import forms
 from django.contrib import admin
 from django.db import models
 from django.db.models import Manager
 from django.forms.widgets import Textarea
+
 from .models import (
     ElectedRole,
     Election,
@@ -82,15 +84,19 @@ class ElectionAdmin(admin.ModelAdmin):
         "current_status",
     )
     list_filter = ["current"]
-    list_display = ["election_id", "poll_open_date", "current", "current_status"]
+    list_display = [
+        "election_id",
+        "poll_open_date",
+        "current",
+        "current_status",
+    ]
     actions = [mark_current, mark_not_current, unset_current, soft_delete]
     date_hierarchy = "poll_open_date"
 
     def get_readonly_fields(self, request, obj=None):
         if obj.identifier_type == "ballot":
             return self.readonly_fields
-        else:
-            return self.readonly_fields + ("cancelled",)
+        return self.readonly_fields + ("cancelled",)
 
     def render_change_form(self, request, context, *args, **kwargs):
         context["adminform"].form.fields["replaces"].queryset = (
@@ -188,11 +194,9 @@ class ElectionStatusProblemManager(Manager):
             .order_by("-modified")
             .values("status")[:1]
         )
-        qs = qs.annotate(latest_status=latest_statuses).exclude(
+        return qs.annotate(latest_status=latest_statuses).exclude(
             latest_status=models.F("current_status")
         )
-
-        return qs
 
 
 class ElectionStatusProblem(Election):

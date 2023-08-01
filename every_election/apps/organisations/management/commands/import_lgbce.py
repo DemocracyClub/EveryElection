@@ -18,13 +18,14 @@ manage.py import_lgbce FOO -s "foo/bar/baz.zip"
 import json
 import os
 import shutil
+
 from botocore.exceptions import ClientError
 from django.conf import settings
 from django.contrib.gis.gdal import DataSource
 from django.core.management.base import BaseCommand
 from organisations.importers import (
-    DivisionSetGeographyImporter,
     DiffException,
+    DivisionSetGeographyImporter,
     MapCreationNeededException,
 )
 from organisations.models import Organisation, OrganisationDivisionSet
@@ -64,7 +65,9 @@ class Command(BaseCommand):
         try:
             (tempdir, data) = self.get_data(options["s3"])
             name_map = self.get_name_map(options["s3"])
-            self.import_data(data, divset, options["name_column"], name_map, srid)
+            self.import_data(
+                data, divset, options["name_column"], name_map, srid
+            )
         except Exception:
             # if anything throws an unhandled error,
             # try to clean up the temp files first
@@ -76,7 +79,13 @@ class Command(BaseCommand):
 
     def import_data(self, data, divset, name_column, name_map, srid):
         importer = DivisionSetGeographyImporter(
-            data, divset, name_column, name_map, srid, "lgbce", stdout=self.stdout
+            data,
+            divset,
+            name_column,
+            name_map,
+            srid,
+            "lgbce",
+            stdout=self.stdout,
         )
         try:
             importer.import_data()
@@ -84,9 +93,13 @@ class Command(BaseCommand):
             errorstr = ""
             errorstr += "Failed: " + str(e) + "\n\n"
             errorstr += "\n".join(e.diff)
-            errorstr += "\n\nTo specify fixes names, upload a file 'name_map.json' "
+            errorstr += (
+                "\n\nTo specify fixes names, upload a file 'name_map.json' "
+            )
             errorstr += "with the structure:\n"
-            errorstr += '{\n  "oldname1": "newname1",\n  "oldname2": "newname2"\n}'
+            errorstr += (
+                '{\n  "oldname1": "newname1",\n  "oldname2": "newname2"\n}'
+            )
             self.stderr.write(errorstr)
         except MapCreationNeededException:
             self.stderr.write("Stopping as a map file is needed.")
@@ -106,15 +119,15 @@ class Command(BaseCommand):
             # by adding a name_map.json file to the same S3 directory
             # where the shape files are saved
             f = s3.get_file(basepath + "/name_map.json")
-            return json.load(open(f.name))
+            with json.load(open(f.name)) as name:
+                return name
         except ClientError as e:
             if int(e.response["Error"]["Code"]) == 404:
                 # if we didn't find any name map file, return an empty map
                 # i.e: just assume the names in the file are correct
                 return {}
-            else:
-                # re-throw any other error
-                raise
+            # re-throw any other error
+            raise
 
     def get_division_set(self, org_code):
         org = (
@@ -122,7 +135,9 @@ class Command(BaseCommand):
             .filter(official_identifier=org_code)
             .latest()
         )
-        divset = OrganisationDivisionSet.objects.filter(organisation=org).latest()
+        divset = OrganisationDivisionSet.objects.filter(
+            organisation=org
+        ).latest()
 
         # divset is the DivisionSet with the most recent start date
         if not divset.divisions.all():
@@ -169,4 +184,6 @@ class Command(BaseCommand):
             shutil.rmtree(tempdir)
         except OSError:
             self.stdout.write("Failed to clean up temp files.")
-            self.stdout.write("Oh well. ¯\\_(ツ)_/¯ All the important stuff worked.")
+            self.stdout.write(
+                "Oh well. ¯\\_(ツ)_/¯ All the important stuff worked."
+            )

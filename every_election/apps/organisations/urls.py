@@ -1,14 +1,15 @@
 from django.urls import re_path
 
 from .views import (
-    SupportedOrganisationsView,
     OrganisationDetailView,
     OrganisationsFilterView,
+    SupportedOrganisationsView,
 )
 
-
 urlpatterns = [
-    re_path(r"^$", SupportedOrganisationsView.as_view(), name="organisations_view"),
+    re_path(
+        r"^$", SupportedOrganisationsView.as_view(), name="organisations_view"
+    ),
     # canonical URL for a single organisation record
     re_path(
         r"^(?P<organisation_type>[-\w]+)/(?P<official_identifier>[-\w]+)/(?P<date>\d{4}-\d{2}-\d{2})/$",

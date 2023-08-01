@@ -3,10 +3,8 @@ import logging
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import ValidationError
-
 from localflavor.gb.forms import GBPostcodeField
 from uk_geo_utils.geocoders import OnspdGeocoder
-
 
 logger = logging.getLogger(__name__)
 

@@ -1,4 +1,4 @@
-from elections.models import ModerationHistory, ModerationStatuses, Election
+from elections.models import Election, ModerationStatuses
 
 
 class ViolatedConstraint(Exception):
@@ -19,7 +19,8 @@ def has_approved_parents(election):
         return False
     if (
         election.group.group
-        and election.group.group.current_status != ModerationStatuses.approved.value
+        and election.group.group.current_status
+        != ModerationStatuses.approved.value
     ):
         return False
     return True
@@ -32,7 +33,9 @@ def has_related_status(election: Election):
 def check_constraints(election):
     if not has_related_status(election):
         raise ViolatedConstraint(
-            "Election {} has no related status objects".format(election.election_id)
+            "Election {} has no related status objects".format(
+                election.election_id
+            )
         )
 
     if (

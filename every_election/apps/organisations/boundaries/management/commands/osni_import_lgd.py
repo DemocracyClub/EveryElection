@@ -10,7 +10,9 @@ class Command(BaseOsniCommand):
 
         for feature in self.layer.features:
             if "gss" in feature:
-                record = OrganisationGeography.objects.all().get(gss=feature["gss"])
+                record = OrganisationGeography.objects.all().get(
+                    gss=feature["gss"]
+                )
                 self.import_boundary(record, feature)
             else:
                 raise Exception("Expected GSS code")

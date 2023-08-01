@@ -5,9 +5,7 @@ import urllib
 
 import requests
 from django_extensions.db.models import TimeStampedModel
-
 from storage.s3wrapper import S3Wrapper
-
 
 """
 Generic mixins for reading from files in a Django management command.
@@ -22,7 +20,10 @@ class ReadFromFileMixin:
     def add_arguments(self, parser):
         group = parser.add_mutually_exclusive_group(required=True)
         group.add_argument(
-            "-f", "--file", action="store", help="Path to import e.g: /foo/bar/baz.csv"
+            "-f",
+            "--file",
+            action="store",
+            help="Path to import e.g: /foo/bar/baz.csv",
         )
         group.add_argument(
             "-u",
@@ -31,11 +32,15 @@ class ReadFromFileMixin:
             help="URL to import e.g: http://foo.bar/baz.csv",
         )
         group.add_argument(
-            "-s", "--s3", action="store", help="S3 key to import e.g: foo/bar/baz.csv"
+            "-s",
+            "--s3",
+            action="store",
+            help="S3 key to import e.g: foo/bar/baz.csv",
         )
 
     def read_from_local(self, filename):
-        return open(filename, "rt")
+        with open(filename, "rt"):
+            return filename
 
     def read_from_url(self, url):
         tmp = tempfile.NamedTemporaryFile()
@@ -53,6 +58,7 @@ class ReadFromFileMixin:
             return self.read_from_url(options["url"])
         if options["s3"]:
             return self.read_from_s3(options["s3"])
+        return None
 
 
 class ReadFromCSVMixin(ReadFromFileMixin):
@@ -60,9 +66,9 @@ class ReadFromCSVMixin(ReadFromFileMixin):
     DELIMITER = ","
 
     def read_from_local(self, filename):
-        f = open(filename, "rt", encoding=self.ENCODING)
-        reader = csv.DictReader(f, delimiter=self.DELIMITER)
-        return list(reader)
+        with open(filename, "rt", encoding=self.ENCODING) as f:
+            reader = csv.DictReader(f, delimiter=self.DELIMITER)
+            return list(reader)
 
     def read_from_url(self, url):
         r = requests.get(url)

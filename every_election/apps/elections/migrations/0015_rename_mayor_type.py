@@ -8,16 +8,22 @@ from django.db import migrations
 def rename_mayor_type(apps, schema_editor):
     ElectionType = apps.get_model("elections", "ElectionType")
 
-    ElectionType.objects.filter(name="City mayor").update(name="Directly Elected Mayor")
+    ElectionType.objects.filter(name="City mayor").update(
+        name="Directly Elected Mayor"
+    )
 
 
 def undo_rename_mayor_type(apps, schema_editor):
     ElectionType = apps.get_model("elections", "ElectionType")
 
-    ElectionType.objects.filter(name="Directly Elected Mayor").update(name="City mayor")
+    ElectionType.objects.filter(name="Directly Elected Mayor").update(
+        name="City mayor"
+    )
 
 
 class Migration(migrations.Migration):
     dependencies = [("elections", "0014_auto_20170107_1605")]
 
-    operations = [migrations.RunPython(rename_mayor_type, undo_rename_mayor_type)]
+    operations = [
+        migrations.RunPython(rename_mayor_type, undo_rename_mayor_type)
+    ]

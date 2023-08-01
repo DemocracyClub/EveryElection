@@ -8,8 +8,7 @@ class DateDisplayMixin:
         text = f"{self.start_date.strftime('%d %b %Y')}"
         if self.end_date:
             return f"{text} to {self.end_date.strftime('%d %b %Y')}"
-        else:
-            return f"{text} onwards"
+        return f"{text} onwards"
 
 
 class DateConstraintMixin:
@@ -39,5 +38,8 @@ class DateConstraintMixin:
         ):
             raise ValidationError(
                 "end_date (%s) must be on or before parent organisation end_date (%s)"
-                % (self.end_date.isoformat(), self.organisation.end_date.isoformat())
+                % (
+                    self.end_date.isoformat(),
+                    self.organisation.end_date.isoformat(),
+                )
             )

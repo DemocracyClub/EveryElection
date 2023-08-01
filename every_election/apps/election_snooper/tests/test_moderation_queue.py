@@ -38,7 +38,8 @@ class TestSingleElectionView(TestCase):
             moderation_status=related_status("Suggested"),
         )
         suggested_child = ElectionWithStatusFactory(
-            group=suggested_parent, moderation_status=related_status("Suggested")
+            group=suggested_parent,
+            moderation_status=related_status("Suggested"),
         )
 
         resp = self.client.get("/election_radar/moderation_queue/")

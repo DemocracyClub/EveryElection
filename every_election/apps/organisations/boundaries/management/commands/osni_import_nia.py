@@ -15,7 +15,9 @@ class Command(BaseOsniCommand):
 
         for feature in self.layer.features:
             record = OrganisationDivision.objects.all().get(
-                official_identifier="osni_oid:NIE-{}".format(feature["OBJECTID"]),
+                official_identifier="osni_oid:NIE-{}".format(
+                    feature["OBJECTID"]
+                ),
                 slug=slugify(feature["name"]),
             )
             self.import_boundary(record, feature)

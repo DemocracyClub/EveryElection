@@ -12,6 +12,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="election",
             name="election_id",
-            field=models.CharField(blank=True, max_length=250, null=True, unique=True),
+            field=models.CharField(
+                blank=True, max_length=250, null=True, unique=True
+            ),
         )
     ]

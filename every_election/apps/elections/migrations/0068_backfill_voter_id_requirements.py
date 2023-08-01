@@ -20,5 +20,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(set_voter_id_requirements, migrations.RunPython.noop)
+        migrations.RunPython(
+            set_voter_id_requirements, migrations.RunPython.noop
+        )
     ]

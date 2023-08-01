@@ -1,12 +1,12 @@
 from datetime import date
 
+from elections.models import ElectedRole, ElectionType
+from elections.utils import create_ids_for_each_ballot_paper
 from organisations.models import Organisation
 from organisations.tests.factories import (
     OrganisationDivisionFactory,
     OrganisationDivisionSetFactory,
 )
-from elections.models import ElectionType, ElectedRole
-from elections.utils import create_ids_for_each_ballot_paper
 
 
 class FuzzyInt(int):
@@ -58,7 +58,10 @@ class BaseElectionCreatorMixIn:
 
         self.div_set = OrganisationDivisionSetFactory(organisation=self.org1)
         self.org_div_1 = OrganisationDivisionFactory(
-            divisionset=self.div_set, name="Test Div 1", slug="test-div", seats_total=3
+            divisionset=self.div_set,
+            name="Test Div 1",
+            slug="test-div",
+            seats_total=3,
         )
         self.org_div_2 = OrganisationDivisionFactory(
             divisionset=self.div_set, name="Test Div 2", slug="test-div-2"

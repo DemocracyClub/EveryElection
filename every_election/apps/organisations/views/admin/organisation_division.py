@@ -1,6 +1,7 @@
-from django.contrib import admin
-from django import forms
 from datetime import datetime
+
+from django import forms
+from django.contrib import admin
 from organisations.models import OrganisationDivision
 
 
@@ -14,8 +15,7 @@ class CurrentDivisionFilter(admin.SimpleListFilter):
     def queryset(self, request, queryset):
         if self.value() == "true":
             return queryset.filter_by_date(datetime.today())
-        else:
-            return queryset
+        return queryset
 
 
 class TempIdFilter(admin.SimpleListFilter):
@@ -28,8 +28,7 @@ class TempIdFilter(admin.SimpleListFilter):
     def queryset(self, request, queryset):
         if self.value() == "true":
             return queryset.filter_with_temp_id()
-        else:
-            return queryset
+        return queryset
 
 
 class OrganisationDivisionAdminForm(forms.ModelForm):

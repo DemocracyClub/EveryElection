@@ -1,11 +1,12 @@
-from django.contrib.gis.db import models
-
 from core.mixins import UpdateElectionsTimestampedModel
+from django.contrib.gis.db import models
 
 from .mixins import DateConstraintMixin, DateDisplayMixin
 
 
-class OrganisationDivisionSet(DateConstraintMixin, DateDisplayMixin, models.Model):
+class OrganisationDivisionSet(
+    DateConstraintMixin, DateDisplayMixin, models.Model
+):
     organisation = models.ForeignKey(
         "Organisation", related_name="divisionset", on_delete=models.CASCADE
     )
@@ -18,7 +19,9 @@ class OrganisationDivisionSet(DateConstraintMixin, DateDisplayMixin, models.Mode
     ValidationError = ValueError
 
     def __str__(self):
-        return "{}:{} ({})".format(self.pk, self.short_title, self.active_period_text)
+        return "{}:{} ({})".format(
+            self.pk, self.short_title, self.active_period_text
+        )
 
     @property
     def has_related_geographies(self):
@@ -94,7 +97,9 @@ class OrganisationDivision(UpdateElectionsTimestampedModel):
         on_delete=models.CASCADE,
     )
     name = models.CharField(blank=True, max_length=255)
-    official_identifier = models.CharField(blank=True, max_length=255, db_index=True)
+    official_identifier = models.CharField(
+        blank=True, max_length=255, db_index=True
+    )
     temp_id = models.CharField(blank=True, max_length=255, db_index=True)
     slug = models.CharField(blank=True, max_length=100)
     division_type = models.CharField(blank=True, max_length=255)

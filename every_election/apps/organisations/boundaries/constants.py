@@ -1,6 +1,5 @@
 from itertools import groupby
 
-
 AREA_TYPE_TO_FILE = [
     ("CED", "county_electoral_division_region.shp"),
     ("UTE", "unitary_electoral_division_region.shp"),
@@ -27,7 +26,7 @@ AREA_TYPE_TO_FILE = [
 def get_area_type_lookup(filter=lambda x: True, group=False):
     filtered = [a for a in AREA_TYPE_TO_FILE if filter(a[0])]
 
-    if group == True:
+    if group is True:
         lookup = {}
         for filename, types in groupby(filtered, lambda x: x[1]):
             lookup[tuple((rec[0] for rec in types))] = filename

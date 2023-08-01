@@ -11,7 +11,9 @@ class Migration(migrations.Migration):
     ]
 
     def add_curies(apps, schema_editor):
-        OrganisationDivision = apps.get_model("organisations", "OrganisationDivision")
+        OrganisationDivision = apps.get_model(
+            "organisations", "OrganisationDivision"
+        )
         qs = OrganisationDivision.objects.exclude(gss="")
         for div in qs:
             div.gss = "gss:{}".format(div.gss)
@@ -22,8 +24,11 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterModelOptions(
-            name="organisationdivisionset", options={"ordering": ("start_date",)}
+            name="organisationdivisionset",
+            options={"ordering": ("start_date",)},
         ),
         migrations.RunPython(add_curies, do_nothing),
-        migrations.RenameField("organisationdivision", "gss", "geography_curie"),
+        migrations.RenameField(
+            "organisationdivision", "gss", "geography_curie"
+        ),
     ]

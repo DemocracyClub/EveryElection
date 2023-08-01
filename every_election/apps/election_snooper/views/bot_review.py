@@ -1,13 +1,13 @@
 import urllib
+
+from core.helpers import user_is_moderator
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import TemplateView
-
-from core.helpers import user_is_moderator
-from election_snooper.models import SnoopedElection
 from election_snooper.forms import ReviewElectionForm
+from election_snooper.models import SnoopedElection
 
 
 class SnoopedElectionView(UserPassesTestMixin, TemplateView):
@@ -45,7 +45,9 @@ class SnoopedElectionView(UserPassesTestMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         instance = SnoopedElection.objects.get(pk=request.POST.get("pk"))
-        form = ReviewElectionForm(request.POST, instance=instance, prefix=instance.pk)
+        form = ReviewElectionForm(
+            request.POST, instance=instance, prefix=instance.pk
+        )
         if form.is_valid():
             form.save()
         # TODO: if there's an error it's not processed yet

@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from django.views.generic import TemplateView
-
 from elections.models import Election
 
 

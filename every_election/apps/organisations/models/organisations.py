@@ -1,9 +1,8 @@
+from core.mixins import UpdateElectionsTimestampedModel
 from django.contrib.gis.db import models
 from django.urls import reverse
-
 from model_utils import Choices
 
-from core.mixins import UpdateElectionsTimestampedModel
 from .mixins import DateConstraintMixin, DateDisplayMixin
 
 
@@ -42,7 +41,9 @@ class Organisation(UpdateElectionsTimestampedModel, DateDisplayMixin):
         ("europarl", "europarl"),
     )
 
-    official_identifier = models.CharField(blank=False, max_length=255, db_index=True)
+    official_identifier = models.CharField(
+        blank=False, max_length=255, db_index=True
+    )
     organisation_type = models.CharField(
         blank=False, max_length=255, choices=ORGTYPES, default="local-authority"
     )
@@ -66,7 +67,9 @@ class Organisation(UpdateElectionsTimestampedModel, DateDisplayMixin):
 
     @property
     def name(self):
-        return self.official_name or self.common_name or self.official_identifier
+        return (
+            self.official_name or self.common_name or self.official_identifier
+        )
 
     class Meta:
         ordering = ("official_name", "-start_date")
@@ -83,7 +86,11 @@ class Organisation(UpdateElectionsTimestampedModel, DateDisplayMixin):
         """
 
     def get_url(self, view, ext=None):
-        args = (self.organisation_type, self.official_identifier, self.start_date)
+        args = (
+            self.organisation_type,
+            self.official_identifier,
+            self.start_date,
+        )
         args = args + (ext,) if ext else args
         return reverse(view, args=args)
 
@@ -102,29 +109,31 @@ class Organisation(UpdateElectionsTimestampedModel, DateDisplayMixin):
     def get_geography(self, date):
         if len(self.geographies.all()) == 0:
             return None
-        elif len(self.geographies.all()) == 1:
+        if len(self.geographies.all()) == 1:
             return self.geographies.all()[0]
-        else:
-            if date < self.start_date:
-                raise ValueError(
-                    "date %s is before organisation start_date (%s)"
-                    % (date.isoformat(), self.start_date.isoformat())
-                )
-            if self.end_date and date > self.end_date:
-                raise ValueError(
-                    "date %s is after organisation end_date (%s)"
-                    % (date.isoformat(), self.end_date.isoformat())
-                )
-            try:
-                return self.geographies.get(
-                    (models.Q(start_date__lte=date) | models.Q(start_date=None))
-                    & (models.Q(end_date__gte=date) | models.Q(end_date=None))
-                )
-            except OrganisationGeography.DoesNotExist:
-                return None
+        if date < self.start_date:
+            raise ValueError(
+                "date %s is before organisation start_date (%s)"
+                % (date.isoformat(), self.start_date.isoformat())
+            )
+        if self.end_date and date > self.end_date:
+            raise ValueError(
+                "date %s is after organisation end_date (%s)"
+                % (date.isoformat(), self.end_date.isoformat())
+            )
+
+        try:
+            return self.geographies.get(
+                (models.Q(start_date__lte=date) | models.Q(start_date=None))
+                & (models.Q(end_date__gte=date) | models.Q(end_date=None))
+            )
+        except OrganisationGeography.DoesNotExist:
+            return None
 
 
-class OrganisationGeography(DateConstraintMixin, DateDisplayMixin, models.Model):
+class OrganisationGeography(
+    DateConstraintMixin, DateDisplayMixin, models.Model
+):
     organisation = models.ForeignKey(
         "Organisation", related_name="geographies", on_delete=models.CASCADE
     )
@@ -151,7 +160,10 @@ class OrganisationGeography(DateConstraintMixin, DateDisplayMixin, models.Model)
         verbose_name_plural = "Organisation Geographies"
         ordering = ("-start_date",)
         get_latest_by = "start_date"
-        unique_together = (("organisation", "start_date"), ("organisation", "end_date"))
+        unique_together = (
+            ("organisation", "start_date"),
+            ("organisation", "end_date"),
+        )
         """
         Note:
         This model also has an additional constraint to prevent

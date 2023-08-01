@@ -1,10 +1,8 @@
-import mock
 from unittest.mock import MagicMock
 
-from elections import admin
-
+import mock
 from django.test import TestCase
-
+from elections import admin
 from elections.models import ModerationHistory
 
 
@@ -26,7 +24,9 @@ class TestAdminActions(TestCase):
             is_current = admin_action[1]
             queryset = MagicMock()
             with self.subTest(msg=action.short_description):
-                action(modeladmin=modeladmin, request=request, queryset=queryset)
+                action(
+                    modeladmin=modeladmin, request=request, queryset=queryset
+                )
                 queryset.update.assert_called_once_with(current=is_current)
 
     def test_soft_delete(self):

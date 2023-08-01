@@ -1,15 +1,15 @@
 import json
+
 from django.contrib.gis.geos import GEOSGeometry
 from django.test import TestCase
 from organisations.boundaries.management.base import BaseOsniCommand
 from organisations.models import DivisionGeography
 from organisations.tests.factories import (
     DivisionGeographyFactory,
-    OrganisationFactory,
     OrganisationDivisionFactory,
+    OrganisationFactory,
     OrganisationGeographyFactory,
 )
-
 
 fake_record = {
     "geometry": GEOSGeometry(

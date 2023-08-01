@@ -1,5 +1,4 @@
 from django.core.management.base import BaseCommand
-
 from election_snooper.snoopers.aldc import ALDCScraper
 from election_snooper.snoopers.customsearch import CustomSearchScraper
 

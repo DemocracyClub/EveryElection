@@ -1,10 +1,9 @@
 from django.test import TestCase
-
 from organisations.tests.factories import (
-    OrganisationFactory,
-    OrganisationDivisionSetFactory,
-    OrganisationDivisionFactory,
     DivisionGeographyFactory,
+    OrganisationDivisionFactory,
+    OrganisationDivisionSetFactory,
+    OrganisationFactory,
 )
 
 

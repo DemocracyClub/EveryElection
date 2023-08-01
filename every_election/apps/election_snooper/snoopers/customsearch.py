@@ -1,9 +1,9 @@
 from urllib.parse import urlencode
 
 from django.conf import settings
+from election_snooper.models import SnoopedElection
 
 from .base import BaseSnooper
-from election_snooper.models import SnoopedElection
 
 
 class CustomSearchScraper(BaseSnooper):
@@ -37,7 +37,9 @@ class CustomSearchScraper(BaseSnooper):
                 "snooper_name": self.snooper_name,
             }
             item, created = SnoopedElection.objects.update_or_create(
-                snooper_name=self.snooper_name, detail_url=detail_url, defaults=data
+                snooper_name=self.snooper_name,
+                detail_url=detail_url,
+                defaults=data,
             )
             if created:
                 self.post_to_slack(item)

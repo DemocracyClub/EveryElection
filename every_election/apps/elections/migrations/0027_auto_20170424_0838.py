@@ -10,6 +10,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name="election", name="current", field=models.BooleanField(null=True)
+            model_name="election",
+            name="current",
+            field=models.BooleanField(null=True),
         )
     ]

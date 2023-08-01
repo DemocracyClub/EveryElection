@@ -1,27 +1,27 @@
 from collections import OrderedDict
 from datetime import datetime
 
+from api import filters
 from django.db.models import Prefetch
 from django.http import Http404
-from rest_framework import viewsets
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework.exceptions import APIException
-from uk_election_ids.election_ids import validate
-
-from elections.models import Election, ElectionType, ElectionSubType
+from elections.models import Election, ElectionSubType, ElectionType
 from elections.query_helpers import PostcodeError
 from organisations.models import Organisation, OrganisationDivision
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.exceptions import APIException
+from rest_framework.response import Response
+from uk_election_ids.election_ids import validate
+
 from .serializers import (
+    ElectionGeoSerializer,
     ElectionSerializer,
-    ElectionTypeSerializer,
     ElectionSubTypeSerializer,
-    OrganisationSerializer,
+    ElectionTypeSerializer,
     OrganisationDivisionSerializer,
     OrganisationGeoSerializer,
-    ElectionGeoSerializer,
+    OrganisationSerializer,
 )
-from api import filters
 
 
 class APIPostcodeException(APIException):
@@ -81,7 +81,9 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
                 .filter_by_status("Deleted")
             )
         else:
-            identifier_type = self.request.query_params.get("identifier_type", None)
+            identifier_type = self.request.query_params.get(
+                "identifier_type", None
+            )
             if identifier_type != "ballot":
                 queryset = queryset.prefetch_related(
                     Prefetch("_children_qs", Election.public_objects.all())
@@ -118,8 +120,7 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
                 queryset = queryset.filter(group_type=None)
             else:
                 queryset = queryset.filter(group_type=identifier_type)
-        queryset = queryset.order_by()
-        return queryset
+        return queryset.order_by()
 
     def retrieve(self, request, *args, **kwargs):
         if not validate(kwargs["election_id"]):
@@ -228,7 +229,10 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
         if page is not None:
             return self.get_paginated_response(
                 OrganisationSerializer(
-                    page, many=True, read_only=True, context={"request": request}
+                    page,
+                    many=True,
+                    read_only=True,
+                    context={"request": request},
                 ).data
             )
 

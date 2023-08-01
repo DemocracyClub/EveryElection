@@ -1,6 +1,7 @@
 import os
-import boto3
 import time
+
+import boto3
 
 session = boto3.Session(region_name=os.environ.get("AWS_REGION"))
 
@@ -56,7 +57,9 @@ def check_deployment(deployment_id):
     returns a success or error code
     """
     client = session.client("codedeploy")
-    deployment = client.get_deployment(deploymentId=deployment_id)["deploymentInfo"]
+    deployment = client.get_deployment(deploymentId=deployment_id)[
+        "deploymentInfo"
+    ]
 
     if deployment["status"] == "Succeeded":
         print("SUCCESS")
@@ -66,7 +69,9 @@ def check_deployment(deployment_id):
         print("FAIL")
         print(deployment["errorInformation"])
         # delete the ASG that was created during the failed deployment
-        delete_asg(asg_name=deployment["targetInstances"]["autoScalingGroups"][0])
+        delete_asg(
+            asg_name=deployment["targetInstances"]["autoScalingGroups"][0]
+        )
         exit(1)
 
     print(deployment["status"])

@@ -13,6 +13,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="divisiongeography",
             name="geography",
-            field=django.contrib.gis.db.models.fields.MultiPolygonField(srid=4326),
+            field=django.contrib.gis.db.models.fields.MultiPolygonField(
+                srid=4326
+            ),
         ),
     ]

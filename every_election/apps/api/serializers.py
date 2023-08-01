@@ -1,14 +1,7 @@
-from rest_framework import serializers
-from rest_framework_gis.serializers import (
-    GeoFeatureModelSerializer,
-    GeometrySerializerMethodField,
-)
-from uk_election_ids.datapackage import VOTING_SYSTEMS
-
 from elections.models import (
     Election,
-    ElectionType,
     ElectionSubType,
+    ElectionType,
     ModerationStatuses,
 )
 from organisations.models import (
@@ -16,9 +9,17 @@ from organisations.models import (
     OrganisationDivision,
     OrganisationDivisionSet,
 )
+from rest_framework import serializers
+from rest_framework_gis.serializers import (
+    GeoFeatureModelSerializer,
+    GeometrySerializerMethodField,
+)
+from uk_election_ids.datapackage import VOTING_SYSTEMS
 
 
-class OrganisationHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
+class OrganisationHyperlinkedIdentityField(
+    serializers.HyperlinkedIdentityField
+):
     def get_url(self, obj, view_name, request, format):
         # Unsaved objects will not yet have a valid URL.
         if obj.pk is None:
@@ -174,7 +175,9 @@ class BaseElectionSerializer(serializers.ModelSerializer):
     election_subtype = ElectionSubTypeSerializer()
     organisation = OrganisationSerializer()
     division = OrganisationDivisionSerializer()
-    group = serializers.SlugRelatedField(slug_field="election_id", read_only=True)
+    group = serializers.SlugRelatedField(
+        slug_field="election_id", read_only=True
+    )
     children = serializers.SerializerMethodField()
     elected_role = ElectedRoleField(read_only=True)
     voting_system = serializers.SerializerMethodField()
@@ -182,8 +185,12 @@ class BaseElectionSerializer(serializers.ModelSerializer):
     metadata = MetaDataSerializer(read_only=True)
     current = serializers.SerializerMethodField()
     deleted = serializers.SerializerMethodField()
-    replaces = serializers.SlugRelatedField(slug_field="election_id", read_only=True)
-    replaced_by = serializers.SlugRelatedField(slug_field="election_id", read_only=True)
+    replaces = serializers.SlugRelatedField(
+        slug_field="election_id", read_only=True
+    )
+    replaced_by = serializers.SlugRelatedField(
+        slug_field="election_id", read_only=True
+    )
     tags = serializers.JSONField()
 
     def get_deleted(self, obj: Election):
@@ -240,7 +247,18 @@ class ElectionGeoSerializer(GeoFeatureModelSerializer, BaseElectionSerializer):
 
     class Meta:
         model = Election
-        extra_kwargs = {"url": {"view_name": "election-geo", "lookup_field": "pk"}}
+        extra_kwargs = {
+            "url": {"view_name": "election-geo", "lookup_field": "pk"}
+        }
+
+        geo_field = "geography_model"
+
+        fields = election_fields
+        depth = 1
+        model = Election
+        extra_kwargs = {
+            "url": {"view_name": "election-geo", "lookup_field": "pk"}
+        }
 
         geo_field = "geography_model"
 

@@ -5,7 +5,10 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("elections", "0065_remove_electiontype_default_voting_system_and_more"),
+        (
+            "elections",
+            "0065_remove_electiontype_default_voting_system_and_more",
+        ),
     ]
 
     operations = [

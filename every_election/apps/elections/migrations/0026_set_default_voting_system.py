@@ -4,12 +4,12 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 
-from elections import constants
-
 
 class Migration(migrations.Migration):
     dependencies = [("elections", "0025_election_geography")]
 
     operations = [
-        migrations.RunPython(migrations.RunPython.noop, migrations.RunPython.noop)
+        migrations.RunPython(
+            migrations.RunPython.noop, migrations.RunPython.noop
+        )
     ]

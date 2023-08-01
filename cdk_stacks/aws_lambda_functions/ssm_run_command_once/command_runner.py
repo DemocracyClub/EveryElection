@@ -44,7 +44,9 @@ class RunOncePerTagRunCommandClient:
             random_instance = random.choice(instances)
             self.instance_id = random_instance["InstanceId"]
             return self.instance_id
-        raise ValueError(f"No instances found with {tag_name=} and {tag_value=}")
+        raise ValueError(
+            f"No instances found with {tag_name=} and {tag_value=}"
+        )
 
     def run_command_on_single_instance(self, command: str):
         self._get_single_instance_id_by_tag(self.tag_name, self.tag_value)
@@ -74,6 +76,8 @@ class RunOncePerTagRunCommandClient:
 
 if __name__ == "__main__":
     # Use for debugging and ad-hoc commands
-    runner = RunOncePerTagRunCommandClient(tag_name="dc-product", tag_value="ee")
+    runner = RunOncePerTagRunCommandClient(
+        tag_name="dc-product", tag_value="ee"
+    )
     runner.run_command_on_single_instance("ls -la /")
     runner.poll_response()

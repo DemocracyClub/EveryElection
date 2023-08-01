@@ -1,12 +1,11 @@
 from django.core.management import BaseCommand
-
 from elections.models import (
     Election,
     ElectionType,
     ModerationHistory,
     ModerationStatuses,
 )
-from organisations.models.organisations import Organisation
+from organisations.models import Organisation
 
 
 class Command(BaseCommand):
@@ -98,7 +97,9 @@ class Command(BaseCommand):
             },
         )
 
-        self.stdout.write(f"{'Created' if created else 'Updated'} {election_id}")
+        self.stdout.write(
+            f"{'Created' if created else 'Updated'} {election_id}"
+        )
 
         ModerationHistory.objects.get_or_create(
             status_id=ModerationStatuses.approved.value,

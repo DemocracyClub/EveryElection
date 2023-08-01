@@ -6,11 +6,12 @@ model-mommy
 pytest
 pluggy
 pytest-django
-pytest-pep8
-pytest-flakes
 pytest-cov
 pytest-freezegun
 factory_boy
 vcrpy
 pytest-xdist
 safety
+ruff==0.0.280
+pytest-ruff
+pytest-black

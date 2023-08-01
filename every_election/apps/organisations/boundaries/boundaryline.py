@@ -6,7 +6,6 @@ from organisations.boundaries.helpers import (
     overlap_percent,
 )
 
-
 # Percentage overlap required for us to consider 2 divisions
 # 'the same' without manual investigation
 SANITY_CHECK_TOLERANCE = 97
@@ -24,7 +23,7 @@ class BoundaryLine:
         for feat in features:
             if isinstance(feat.geom.geos, MultiPolygon):
                 multipoly = feat.geom.geos
-                polygons = polygons + [poly for poly in multipoly]
+                polygons = polygons + list(multipoly)
             else:
                 polygons.append(feat.geom.geos)
 
@@ -80,7 +79,9 @@ class BoundaryLine:
             # just assume its fine. Its probably fine.
             return None
 
-        overlap = overlap_percent(OGRGeometry(div.geography.geography.ewkt), match.geom)
+        overlap = overlap_percent(
+            OGRGeometry(div.geography.geography.ewkt), match.geom
+        )
         if overlap >= SANITY_CHECK_TOLERANCE:
             # close enough
             return None
@@ -90,15 +91,16 @@ class BoundaryLine:
             + "but BoundaryLine shape for {code} only covers {percent:.2f}% "
             + "of {div}'s area. Manual review required."
         )
-        warning = warning.format(
+        return warning.format(
             code=self.get_code_from_feature(match),
             div=div.official_identifier,
             percent=overlap,
         )
-        return warning
 
     def get_division_code(self, div, org):
-        filter_geom = OGRGeometry(org.geography.ewkt).transform(27700, clone=True)
+        filter_geom = OGRGeometry(org.geography.ewkt).transform(
+            27700, clone=True
+        )
         self.layer.spatial_filter = filter_geom
         # slugging names to compare them
         # will help reduce some ambiguity
@@ -107,7 +109,10 @@ class BoundaryLine:
 
         matches = []
         for feature in self.layer:
-            if normalize_name_for_matching(feature.get("name")) == division_name:
+            if (
+                normalize_name_for_matching(feature.get("name"))
+                == division_name
+            ):
                 matches.append(feature)
             if len(matches) > 1:
                 # ...but we also need to be a little bit careful
@@ -115,14 +120,19 @@ class BoundaryLine:
                     "Found >1 possible matches for division {div}: {codes}".format(
                         div=div.official_identifier,
                         codes=", ".join(
-                            [self.get_code_from_feature(match) for match in matches]
+                            [
+                                self.get_code_from_feature(match)
+                                for match in matches
+                            ]
                         ),
                     )
                 )
 
         if len(matches) == 0:
             raise ObjectDoesNotExist(
-                "Found 0 matches for division {div}".format(div=div.official_identifier)
+                "Found 0 matches for division {div}".format(
+                    div=div.official_identifier
+                )
             )
 
         warning = self.get_match_warning(div, matches[0])

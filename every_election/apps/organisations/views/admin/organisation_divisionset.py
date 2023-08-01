@@ -1,7 +1,6 @@
-from django.contrib import admin
 from django import forms
-
-from organisations.models import OrganisationDivisionSet, OrganisationDivision
+from django.contrib import admin
+from organisations.models import OrganisationDivision, OrganisationDivisionSet
 
 
 class OrganisationDivisionSetAdminForm(forms.ModelForm):

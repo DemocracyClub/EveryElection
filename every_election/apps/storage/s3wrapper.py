@@ -1,5 +1,6 @@
-import boto3
 import tempfile
+
+import boto3
 from django.conf import settings
 
 

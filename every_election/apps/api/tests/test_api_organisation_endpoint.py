@@ -1,9 +1,10 @@
 from datetime import date
-from rest_framework.test import APITestCase
+
 from organisations.tests.factories import (
     OrganisationFactory,
     OrganisationGeographyFactory,
 )
+from rest_framework.test import APITestCase
 
 
 class TestOrganisationAPIEndpoint(APITestCase):

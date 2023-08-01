@@ -1,12 +1,10 @@
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from organisations.models import OrganisationDivisionSet, OrganisationDivision
+from organisations.models import OrganisationDivision, OrganisationDivisionSet
 
 
 class Command(BaseCommand):
-    help = (
-        "Copy all of the division and geography objects from one DivisionSet to another"
-    )
+    help = "Copy all of the division and geography objects from one DivisionSet to another"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -57,7 +55,9 @@ class Command(BaseCommand):
             div.geography = geog
             div.save()
 
-        assert len(old_divset.divisions.all()) == len(new_divset.divisions.all())
+        assert len(old_divset.divisions.all()) == len(
+            new_divset.divisions.all()
+        )
 
         self.stdout.write("...done!")
 
