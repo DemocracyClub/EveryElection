@@ -1,3 +1,5 @@
+import sys
+
 from django.contrib.gis.gdal import DataSource, OGRGeometry
 from django.contrib.gis.geos import MultiPolygon
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
@@ -13,11 +15,12 @@ SANITY_CHECK_TOLERANCE = 97
 
 
 class BoundaryLine:
-    def __init__(self, filename):
+    def __init__(self, filename, show_picker=False):
         ds = DataSource(filename)
         if len(ds) != 1:
             raise ValueError("Expected 1 layer, found %i" % (len(ds)))
         self.layer = ds[0]
+        self.show_picker = show_picker
 
     def merge_features(self, features):
         polygons = []
@@ -97,6 +100,51 @@ class BoundaryLine:
         )
         return warning
 
+    def get_overlaps(self, div, features):
+        # builds a list of (code, overlap %) tuples.
+        # We don't use a dict ({code: overlap %}), because boundaryline splits multipolygons into separate features
+        overlaps = []
+        max_overlap = 0
+        best_match = None
+        for feature in features:
+            intersection_area = (
+                div.geography.geography.transform(27700, clone=True)
+                .intersection(feature.geom.geos)
+                .area
+            )
+            code = self.get_code_from_feature(feature)
+            div_area = div.geography.geography.transform(27700, clone=True).area
+            percent_overlap = intersection_area / div_area * 100
+            if percent_overlap > max_overlap:
+                max_overlap = percent_overlap
+                best_match = feature
+            overlaps.append((code, percent_overlap))
+
+        return best_match, overlaps
+
+    def evaluate_overlaps(self, div, best_match, overlaps):
+        significant_overlaps = [
+            (code, overlap)
+            for code, overlap in overlaps
+            if overlap >= SANITY_CHECK_TOLERANCE
+        ]
+        if len(significant_overlaps) > 1:
+            raise MultipleObjectsReturned(
+                "Found >1 possible matches for division {div} with significant overlap: {codes}".format(
+                    div=div.official_identifier,
+                    overlaps=overlaps,
+                )
+            )
+        elif len(significant_overlaps) == 1:
+            print(
+                f"Matching {best_match.get('name')} ({self.get_code_from_feature(best_match)}) to {div.official_identifier} based on geom overlap"
+            )
+            return [best_match]
+        else:
+            raise ObjectDoesNotExist(
+                f"Found 0 matches for division {div.official_identifier}. Check territory_code and/or division_type"
+            )
+
     def get_division_code(self, div, org):
         filter_geom = OGRGeometry(org.geography.ewkt).transform(27700, clone=True)
         self.layer.spatial_filter = filter_geom
@@ -109,24 +157,28 @@ class BoundaryLine:
         for feature in self.layer:
             if normalize_name_for_matching(feature.get("name")) == division_name:
                 matches.append(feature)
-            if len(matches) > 1:
+            matched_codes = set(self.get_code_from_feature(match) for match in matches)
+            if len(matched_codes) > 1:
                 # ...but we also need to be a little bit careful
-                raise MultipleObjectsReturned(
-                    "Found >1 possible matches for division {div}: {codes}".format(
-                        div=div.official_identifier,
-                        codes=", ".join(
-                            [self.get_code_from_feature(match) for match in matches]
-                        ),
-                    )
-                )
+                best_match, overlaps = self.get_overlaps(div, matches)
+                matches = self.evaluate_overlaps(div, best_match, overlaps)
 
         if len(matches) == 0:
-            raise ObjectDoesNotExist(
-                "Found 0 matches for division {div}".format(div=div.official_identifier)
-            )
+            best_match, overlaps = self.get_overlaps(div, self.layer)
+            matches = self.evaluate_overlaps(div, best_match, overlaps)
 
         warning = self.get_match_warning(div, matches[0])
         if warning:
+            if self.show_picker:
+                sys.stdout.write(
+                    f"""{warning}
+                Do you want to match {matches[0].get('name')} ({matches[0].get('code')}) to {div.official_identifier}?
+                """
+                )
+                choice = input("enter 'y' to accept, or 'n' not to: ")
+                if choice.lower() in ("y", "yes"):
+                    return self.get_code_from_feature(matches[0])
+
             raise ObjectDoesNotExist(warning)
 
         return self.get_code_from_feature(matches[0])

@@ -173,6 +173,14 @@ COMBINED_AUTHORITY_SLUG_TO_GSS = {
         "E08000031",
     ],
     "west-of-england": ["E06000022", "E06000023", "E06000025"],
+    "west-yorkshire": [
+        "E08000032",
+        "E08000033",
+        "E08000034",
+        "E08000035",
+        "E08000036",
+        "E06000014",
+    ],
 }
 
 
@@ -591,6 +599,8 @@ ORG_CURIE_TO_MAPIT_AREA_TYPE = {
     "local-authority-eng:ESK": "DIS",
     "local-authority-eng:CBD": "UTA",
     "local-authority-eng:WAF": "UTA",
+    "local-authority-eng:SMT": "UTA",
+    "local-authority-eng:NYE": "UTA",
 }
 
 
