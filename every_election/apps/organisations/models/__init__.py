@@ -16,8 +16,14 @@ from organisations.models.organisations import (
 )
 
 __all__ = [
-   "DivisionProblem", "OrganisationProblem", "OrganisationGeographyProblem",
-   "Organisation", "OrganisationGeography", "OrganisationGeographySubdivided",
-   "OrganisationDivisionSet", "OrganisationDivision", "DivisionGeography",
-   "DivisionGeographySubdivided"
+    "DivisionProblem",
+    "OrganisationProblem",
+    "OrganisationGeographyProblem",
+    "Organisation",
+    "OrganisationGeography",
+    "OrganisationGeographySubdivided",
+    "OrganisationDivisionSet",
+    "OrganisationDivision",
+    "DivisionGeography",
+    "DivisionGeographySubdivided",
 ]

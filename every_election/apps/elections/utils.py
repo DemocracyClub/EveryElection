@@ -446,7 +446,10 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
         # Special case where we have no divs for an org that should have them.
         # This is generally due to an upcoming ECO that's not been Made yet.
         # In this case, we want to make an org ID but no div IDs
-        if all_data["election_type"].election_type == "local" and f"{organisation.pk}_no_divs" in all_data:
+        if (
+            all_data["election_type"].election_type == "local"
+            and f"{organisation.pk}_no_divs" in all_data
+        ):
             group_id = (
                 ElectionBuilder(all_data["election_type"], all_data["date"])
                 .with_organisation(organisation)

@@ -145,8 +145,7 @@ class Election(TimeStampedModel):
         max_length=100,
         null=True,
         choices=[
-            (req, ID_REQUIREMENTS[req]["name"])
-            for req in ID_REQUIREMENTS
+            (req, ID_REQUIREMENTS[req]["name"]) for req in ID_REQUIREMENTS
         ],
     )
 
@@ -174,9 +173,7 @@ class Election(TimeStampedModel):
     voting_system = models.CharField(
         max_length=100,
         null=True,
-        choices=[
-            (vs, VOTING_SYSTEMS[vs]["name"]) for vs in VOTING_SYSTEMS
-        ],
+        choices=[(vs, VOTING_SYSTEMS[vs]["name"]) for vs in VOTING_SYSTEMS],
     )
     explanation = models.ForeignKey(
         "elections.Explanation",
@@ -409,8 +406,8 @@ class Election(TimeStampedModel):
             return self.division_geography
 
         if self.identifier_type == "ballot" and self.division:
-        # attach geography by division if possible
-            try: 
+            # attach geography by division if possible
+            try:
                 return self.division.geography
             except ObjectDoesNotExist:
                 pass

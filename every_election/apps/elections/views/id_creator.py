@@ -179,13 +179,15 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                 return {}
         # if we've got a date from a SnoopedElection
         # init the date form with that
-        if step == "date" and isinstance(
-                self.storage.extra_data, dict
-            ) and self.storage.extra_data.get("radar_date", False):
-                radar_date = self.storage.extra_data["radar_date"]
-                if isinstance(radar_date, list):
-                    return {"date": radar_date}
-                
+        if (
+            step == "date"
+            and isinstance(self.storage.extra_data, dict)
+            and self.storage.extra_data.get("radar_date", False)
+        ):
+            radar_date = self.storage.extra_data["radar_date"]
+            if isinstance(radar_date, list):
+                return {"date": radar_date}
+
         return self.initial_dict.get(step, {})
 
     def get_context_data(self, form, **kwargs):
