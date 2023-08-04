@@ -29,6 +29,13 @@ from uk_geo_utils.models import Onspd
 from .managers import PrivateElectionsManager, PublicElectionsManager
 
 
+class ElectionCancellationReason(models.TextChoices):
+    NO_CANDIDATES = "NO_CANDIDATES", "No candidates"
+    EQUAL_CANDIDATES = "EQUAL_CANDIDATES", "Equal candidates to seats"
+    UNDER_CONTESTED = "UNDER_CONTESTED", "Fewer candidates than seats"
+    CANDIDATE_DEATH = "CANDIDATE_DEATH", "Death of a candidate"
+
+
 class ElectionType(models.Model):
     name = models.CharField(blank=True, max_length=100)
     election_type = models.CharField(blank=True, max_length=100, unique=True)
