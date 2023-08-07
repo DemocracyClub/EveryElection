@@ -7,7 +7,7 @@ orbs:
 jobs:
   build_and_test:
     docker:
-      - image: cimg/python:3.10.7
+      - image: cimg/python:3.10.7-browsers
         environment:
           CIRCLECI: true
           PGHOST: 127.0.0.1
@@ -41,6 +41,11 @@ jobs:
             pip install --upgrade pip
             pip install coveralls wheel
             pip install -r requirements/testing.txt
+      - run:
+          name: Install Playwright
+          command: |
+            . .venv/bin/activate
+            playwright install
       - run:
           name: Install CDK Python dependencies
           command: |
