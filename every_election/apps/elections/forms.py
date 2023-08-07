@@ -196,7 +196,6 @@ class NoticeOfElectionForm(forms.Form):
     )
 
     def clean_document(self):
-        document = self.cleaned_data["document"]
         """
         TODO: do we want to do any additional validation checks here?
         Notice of Election URLs are not gauranteed to end in .pdf
@@ -206,4 +205,4 @@ class NoticeOfElectionForm(forms.Form):
         https://www.tewkesbury.gov.uk/voting-and-elections
         http://doncaster.gov.uk/services/the-council-democracy/notice-of-elections
         """
-        return document
+        return self.cleaned_data["document"]
