@@ -6,6 +6,7 @@ import pytest
 import vcr
 from elections.models import ElectionType, MetaData
 from elections.tests.factories import (
+    ElectionFactory,
     ElectionWithStatusFactory,
     ModerationHistoryFactory,
     ModerationStatusFactory,
@@ -414,12 +415,16 @@ class TestElectionAPIQueries(APITestCase):
 
     @pytest.mark.freeze_time("2017-01-23")
     def test_all_expected_fields_returned(self):
+        ElectionFactory.reset_sequence(0)
         OrganisationFactory.reset_sequence(0)
         OrganisationDivisionFactory.reset_sequence(0)
         org = OrganisationFactory()
-        div_set = OrganisationDivisionSetFactory(organisation=org)
+        div_set = OrganisationDivisionSetFactory(
+            organisation=org,
+        )
         org_div = OrganisationDivisionFactory(
-            divisionset=div_set, territory_code="ENG"
+            divisionset=div_set,
+            territory_code="ENG",
         )
         ElectionWithStatusFactory(
             group=None,

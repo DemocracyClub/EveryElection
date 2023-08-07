@@ -3,11 +3,11 @@
 black==23.7.0
 mock
 model-mommy
-pytest
+pytest==7.4.0
 pluggy
-pytest-django
+pytest-django==4.5.2
 pytest-cov
-pytest-freezegun
+pytest-freezegun==0.4.2
 factory_boy
 vcrpy
 pytest-xdist

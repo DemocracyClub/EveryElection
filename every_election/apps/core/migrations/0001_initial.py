@@ -7,7 +7,6 @@ from django.db import migrations
 
 def add_moderator_group(apps, schema_editor):
     g = Group.objects.create(name="moderators")
-    g.save()
     for user in User.objects.all():
         # add any existing admin users
         # to the moderators group when we create it

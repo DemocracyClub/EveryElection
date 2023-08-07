@@ -3,6 +3,7 @@ from django.test import TestCase
 from elections.tests.factories import ElectionWithStatusFactory, related_status
 
 
+# @pytest.mark.django_db
 class TestSingleElectionView(TestCase):
     def test_election_status(self):
         # 4 ballots with different moderation statuses
