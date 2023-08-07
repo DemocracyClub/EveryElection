@@ -73,7 +73,7 @@ def select_organisation(wizard):
         return False
     qs = ElectedRole.objects.filter(election_type=election_type)
 
-    if qs.count() < 1:
+    if qs.count() > 1:
         return True
     wizard.storage.extra_data.update(
         {"election_organisation": [qs[0].organisation.slug]}
