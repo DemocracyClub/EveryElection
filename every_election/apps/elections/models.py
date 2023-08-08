@@ -29,6 +29,13 @@ from uk_geo_utils.models import Onspd
 from .managers import PrivateElectionsManager, PublicElectionsManager
 
 
+class ElectionCancellationReason(models.TextChoices):
+    NO_CANDIDATES = "NO_CANDIDATES", "No candidates"
+    EQUAL_CANDIDATES = "EQUAL_CANDIDATES", "Equal candidates to seats"
+    UNDER_CONTESTED = "UNDER_CONTESTED", "Fewer candidates than seats"
+    CANDIDATE_DEATH = "CANDIDATE_DEATH", "Death of a candidate"
+
+
 class ElectionType(models.Model):
     name = models.CharField(blank=True, max_length=100)
     election_type = models.CharField(blank=True, max_length=100, unique=True)
@@ -252,6 +259,13 @@ class Election(TimeStampedModel):
         on_delete=models.SET_NULL,
         related_name="cancellation_election_set",
     )
+    cancellation_reason = models.CharField(
+        max_length=16,
+        null=True,
+        blank=True,
+        choices=ElectionCancellationReason.choices,
+        default=None,
+    )
     replaces = models.ForeignKey(
         "Election",
         null=True,
@@ -471,6 +485,10 @@ class Election(TimeStampedModel):
         if not self.cancelled and self.cancellation_notice:
             raise ValidationError(
                 "Only a cancelled election can have a cancellation notice"
+            )
+        if not self.cancelled and self.cancellation_reason:
+            raise ValidationError(
+                "Only a cancelled election can have a cancellation reason"
             )
 
     @transaction.atomic
