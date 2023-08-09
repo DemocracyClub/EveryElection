@@ -2,11 +2,11 @@
 {% load dc_forms %}
 
 {% block form_tag_extra %}class="large_legends inline_radios"{% endblock form_tag_extra %}
-{% block page_title %}Election Organisation{% endblock page_title %}
+{% block page_title %}Election Divisions{% endblock page_title %}
 {% block form_page_header %}
-    <h1>Election Organisation</h1>
+    <h1>Election Divisions</h1>
 
-    <p>Enter the organisation(s) holding <strong>{{ all_data.election_type }}</strong>
+    <p>Enter the division(s) with <strong>{{ all_data.election_type }}</strong>
         on <strong>{{ all_data.date|date }}</strong></p>
 
 {% endblock form_page_header %}

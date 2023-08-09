@@ -7,8 +7,8 @@ var NotAThursdayWarning = function(op, date, date_form) {
         existing_error.remove();
     }
     if (op === "add") {
-        var date_string = date.format("mmmm dS yyyy");
-        var day_of_the_week = date.format("dddd");
+        var date_string = date.toLocaleDateString();
+        var day_of_the_week = new Intl.DateTimeFormat("en-GB", { weekday: "long" }).format(date);
         var warning = '<div class="ds-error ds-padded" style="clear:both">UK elections are almost always on a Thursday<br>'+date_string+' is a '+ day_of_the_week +' not a Thursday. Are you sure that\'s right?</div>';
         date_form.insertAdjacentHTML('afterend', warning);
     }
@@ -18,6 +18,11 @@ var CheckIsThursday = function (date_form) {
     var day = date_form.querySelector('#id_date-date_0').value;
     var month = date_form.querySelector('#id_date-date_1').value;
     var year = date_form.querySelector('#id_date-date_2').value;
+
+    if (![day, month, year].every(Boolean)) {
+        NotAThursdayWarning("remove", date, date_form);
+        return;
+    }
 
     var date = new Date([year, month, day]);
     var day_of_week = date.getDay();
@@ -31,8 +36,10 @@ var CheckIsThursday = function (date_form) {
 
 var date_form = document.getElementById("id_creator_date");
 if (date_form != undefined) {
-    date_form.addEventListener("change", function (el) {
+    date_form.querySelectorAll("input").forEach(function(el) {
+      el.addEventListener("input", function (el) {
         CheckIsThursday(el.target.parentElement.parentElement);
+    });
     });
     CheckIsThursday(date_form.querySelector(".ds-date"));
 }

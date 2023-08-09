@@ -67,7 +67,9 @@ aws s3 cp s3://dc-ee-production-database-backups/every_election/$LATEST_FILE - |
 _We strongly advise you to create a local backup before dropping your database!_
 
 ## Run the tests
-This project uses pytest. 
+This project uses pytest and playwright.
+
+Before running tests you'll need to run `playwright install`.
 
 To run the full suite, run:
 ```commandline
@@ -108,5 +110,3 @@ Both Black and ruff are both automatically called as part of pytest in this proj
 ## Development Notes
 
 - If adding any new fields to EveryElection, you may also need to add them to the EE API app within this project.
-
-

@@ -1,3 +1,5 @@
+import datetime
+
 from core.helpers import user_is_moderator
 from django import forms
 from django.db import transaction
@@ -73,7 +75,7 @@ def select_organisation(wizard):
         return False
     qs = ElectedRole.objects.filter(election_type=election_type)
 
-    if qs.count() < 1:
+    if qs.count() > 1:
         return True
     wizard.storage.extra_data.update(
         {"election_organisation": [qs[0].organisation.slug]}
@@ -179,14 +181,21 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                 return {}
         # if we've got a date from a SnoopedElection
         # init the date form with that
-        if (
-            step == "date"
-            and isinstance(self.storage.extra_data, dict)
-            and self.storage.extra_data.get("radar_date", False)
-        ):
-            radar_date = self.storage.extra_data["radar_date"]
-            if isinstance(radar_date, list):
-                return {"date": radar_date}
+        if step == "date":
+            if isinstance(
+                self.storage.extra_data, dict
+            ) and self.storage.extra_data.get("radar_date", False):
+                radar_date = self.storage.extra_data["radar_date"]
+                if isinstance(radar_date, list):
+                    return {"date": radar_date}
+
+            return {
+                "date": [
+                    "",
+                    (datetime.date.today() + datetime.timedelta(days=45)).month,
+                    datetime.date.today().year,
+                ]
+            }
 
         return self.initial_dict.get(step, {})
 
