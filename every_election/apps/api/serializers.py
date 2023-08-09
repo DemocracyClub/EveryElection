@@ -162,6 +162,7 @@ election_fields = (
     "metadata",
     "deleted",
     "cancelled",
+    "cancellation_reason",
     "replaces",
     "replaced_by",
     "tags",

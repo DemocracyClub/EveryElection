@@ -492,6 +492,7 @@ class TestElectionAPIQueries(APITestCase):
             "metadata": null,
             "deleted": false,
             "cancelled": false,
+            "cancellation_reason": null,
             "replaces": null,
             "replaced_by": null,
             "requires_voter_id": null,
