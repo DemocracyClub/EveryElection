@@ -64,6 +64,8 @@ def test_date_warning_shown(page, live_server, settings):
     page.goto(f"{live_server.url}/id_creator/date/")
     expect(page).to_have_title("Poll Date | Democracy Club Elections")
     page.locator("#id_date-date_0").fill("1")
+    page.locator("#id_date-date_1").fill("")
+    page.locator("#id_date-date_2").fill("")
     expect(page.locator("#id_creator_date")).not_to_contain_text(
         "UK elections are almost always on a Thursday"
     )
