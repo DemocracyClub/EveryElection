@@ -17,6 +17,35 @@ from .models import (
 )
 
 
+class GroupTypeListFilter(admin.SimpleListFilter):
+    """
+    Elections without a group type are considered "ballots".
+    Becuase "ballot" is implied only, this class is used to override
+    the "-" option in the admin panel filters and make it read "ballot".
+    """
+
+    title = "group type"
+    parameter_name = "group_type"
+
+    def lookups(self, request, model_admin):
+        return [
+            ("ballot", "Ballot"),
+            ("election", "Election"),
+            ("organisation", "Organisation"),
+            ("subtype", "Subtype"),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == "ballot":
+            return queryset.filter(
+                group_type=None,
+            )
+
+        return queryset.filter(
+            group_type=self.value(),
+        )
+
+
 def mark_current(modeladmin, request, queryset):
     queryset.update(current=True)
 
@@ -83,7 +112,7 @@ class ElectionAdmin(admin.ModelAdmin):
         "cancellation_notice",
         "current_status",
     )
-    list_filter = ["current", "cancelled", "group_type"]
+    list_filter = ["current", "cancelled", GroupTypeListFilter]
     list_display = [
         "election_id",
         "poll_open_date",
