@@ -83,7 +83,7 @@ class ElectionAdmin(admin.ModelAdmin):
         "cancellation_notice",
         "current_status",
     )
-    list_filter = ["current"]
+    list_filter = ["current", "cancelled", "group_type"]
     list_display = [
         "election_id",
         "poll_open_date",
