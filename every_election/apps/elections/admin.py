@@ -88,6 +88,64 @@ soft_delete.short_description = "Soft delete"
 class ElectionAdmin(admin.ModelAdmin):
     search_fields = ("election_id",)
 
+    fieldsets = (
+        (
+            "Election Information",
+            {
+                "fields": (
+                    "election_id",
+                    "election_title",
+                    "group_type",
+                    "group",
+                )
+            },
+        ),
+        (
+            "Ballot Information",
+            {
+                "fields": (
+                    "current",
+                    "cancelled",
+                    "cancellation_reason",
+                    "seats_contested",
+                    "seats_total",
+                    "replaces",
+                    "requires_voter_id",
+                    "voting_system",
+                    "explanation",
+                    "metadata",
+                ),
+            },
+        ),
+        (
+            "Source Information",
+            {
+                "fields": (
+                    "source",
+                    "snooped_election",
+                ),
+            },
+        ),
+        (
+            "Internal Metadata",
+            {
+                "classes": ("collapse",),
+                "fields": (
+                    "tmp_election_id",
+                    "organisation",
+                    "division",
+                    "tags",
+                    "elected_role",
+                    "poll_open_date",
+                    "election_subtype",
+                    "election_type",
+                    "modified",
+                    "created",
+                ),
+            },
+        ),
+    )
+
     def has_add_permission(self, request):
         return False
 
