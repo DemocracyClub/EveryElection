@@ -151,16 +151,21 @@ class ElectionAdmin(admin.ModelAdmin):
 
     readonly_fields = (
         "election_id",
-        "tmp_election_id",
-        "election_type",
-        "election_subtype",
-        "poll_open_date",
-        "organisation",
-        "elected_role",
-        "division",
+        "group_type",
         "group",
-        "created",
+        "seats_total",
+        "requires_voter_id",
+        "snooped_election",
+        "tmp_election_id",
+        "organisation",
+        "division",
+        "tags",
+        "elected_role",
+        "poll_open_date",
+        "election_subtype",
+        "election_type",
         "modified",
+        "created",
     )
     list_filter = ["current", "cancelled", GroupTypeListFilter]
     list_display = [
