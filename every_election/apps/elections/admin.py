@@ -88,6 +88,64 @@ soft_delete.short_description = "Soft delete"
 class ElectionAdmin(admin.ModelAdmin):
     search_fields = ("election_id",)
 
+    fieldsets = (
+        (
+            "Election Information",
+            {
+                "fields": (
+                    "election_id",
+                    "election_title",
+                    "group_type",
+                    "group",
+                )
+            },
+        ),
+        (
+            "Ballot Information",
+            {
+                "fields": (
+                    "current",
+                    "cancelled",
+                    "cancellation_reason",
+                    "seats_contested",
+                    "seats_total",
+                    "replaces",
+                    "requires_voter_id",
+                    "voting_system",
+                    "explanation",
+                    "metadata",
+                ),
+            },
+        ),
+        (
+            "Source Information",
+            {
+                "fields": (
+                    "source",
+                    "snooped_election",
+                ),
+            },
+        ),
+        (
+            "Internal Metadata",
+            {
+                "classes": ("collapse",),
+                "fields": (
+                    "tmp_election_id",
+                    "organisation",
+                    "division",
+                    "tags",
+                    "elected_role",
+                    "poll_open_date",
+                    "election_subtype",
+                    "election_type",
+                    "modified",
+                    "created",
+                ),
+            },
+        ),
+    )
+
     def has_add_permission(self, request):
         return False
 
@@ -104,14 +162,6 @@ class ElectionAdmin(admin.ModelAdmin):
         "created",
         "modified",
     )
-    exclude = (
-        "geography",
-        "division_geography",
-        "organisation_geography",
-        "notice",
-        "cancellation_notice",
-        "current_status",
-    )
     list_filter = ["current", "cancelled", GroupTypeListFilter]
     list_display = [
         "election_id",
@@ -127,13 +177,23 @@ class ElectionAdmin(admin.ModelAdmin):
             return self.readonly_fields
         return self.readonly_fields + ("cancelled",)
 
+    def get_fieldsets(self, request, obj=None):
+        if obj.group_type:
+            # Hide Ballot Information section if not a ballot
+            return tuple(
+                f for f in self.fieldsets if f[0] != "Ballot Information"
+            )
+
+        return self.fieldsets
+
     def render_change_form(self, request, context, *args, **kwargs):
-        context["adminform"].form.fields["replaces"].queryset = (
-            Election.public_objects.filter(cancelled=True)
-            .filter(poll_open_date__lte=context["original"].poll_open_date)
-            .filter(division_id=context["original"].division_id)
-            .filter(organisation_id=context["original"].organisation_id)
-        )
+        if context["adminform"].form.fields.get("replaces"):
+            context["adminform"].form.fields["replaces"].queryset = (
+                Election.public_objects.filter(cancelled=True)
+                .filter(poll_open_date__lte=context["original"].poll_open_date)
+                .filter(division_id=context["original"].division_id)
+                .filter(organisation_id=context["original"].organisation_id)
+            )
         return super().render_change_form(request, context, *args, **kwargs)
 
     def has_delete_permission(self, request, obj=None):
