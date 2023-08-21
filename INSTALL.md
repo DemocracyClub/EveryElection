@@ -66,6 +66,15 @@ aws s3 cp s3://dc-ee-production-database-backups/every_election/$LATEST_FILE - |
 ```
 _We strongly advise you to create a local backup before dropping your database!_
 
+## (Optional) Update elections.json
+`elections.json` is used to serve data about elections to other projects and in production keeps itself up to date with a cron job.
+When you're relying on a local version of EE's API to support work in another project, you may need to update this JSON file to reflect
+local changes to data.
+To do this, run:
+```commandline
+python manage.py dumpdata elections election_snooper --indent 4 -o every_election/data/elections.json    
+```
+
 ## Run the tests
 This project uses pytest and playwright.
 
