@@ -63,7 +63,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_filters",
-    "dc_signup_form",
     "corsheaders",
     "uk_geo_utils",
     "dc_design_system",
@@ -113,7 +112,6 @@ LOGGING = {
         },
     },
 }
-
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django_middleware_global_request.middleware.GlobalRequestMiddleware",
@@ -222,7 +220,6 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
-                "dc_signup_form.context_processors.signup_form",
                 "core.context_processors.global_settings",
                 "dc_utils.context_processors.dc_django_utils",
             ],
@@ -286,12 +283,6 @@ AWS_STORAGE_BUCKET_NAME = NOTICE_OF_ELECTION_BUCKET
 # versioning is on so we can retreive old copies
 AWS_S3_FILE_OVERWRITE = True
 AWS_DEFAULT_ACL = None
-
-
-EMAIL_SIGNUP_ENDPOINT = (
-    "https://democracyclub.org.uk/mailing_list/api_signup/v1/"
-)
-EMAIL_SIGNUP_API_KEY = ""
 
 
 # Disable Basic Auth by default

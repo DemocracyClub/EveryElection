@@ -15,7 +15,6 @@ urlpatterns = [
     re_path(r"", include("elections.urls")),
     re_path(r"^api/", include(("api.urls", "api"), namespace="api")),
     re_path(r"^election_radar/", include("election_snooper.urls")),
-    re_path(r"^email/", include("dc_signup_form.urls")),
     re_path(
         r"^robots\.txt$",
         TemplateView.as_view(

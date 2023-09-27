@@ -29,7 +29,6 @@ django-pipeline==2.1.0
 
 importlib-metadata==6.8.0
 
-git+https://github.com/DemocracyClub/dc_signup_form.git@2.2.0
 git+https://github.com/DemocracyClub/design-system.git@0.3.0
 git+https://github.com/DemocracyClub/dc_django_utils.git@2.4.0
 
