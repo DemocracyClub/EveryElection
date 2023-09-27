@@ -242,7 +242,6 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
 
         all_data["election_organisation"] = self.get_organisations
         all_data["election_divisions"] = self.get_divisions()
-        print(all_data["election_divisions"])
         all_data["election_type"] = self.get_election_type
 
         if not all_data.get("election_organisation"):

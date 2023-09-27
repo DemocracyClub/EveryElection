@@ -134,6 +134,17 @@ class ElectionOrganisationDivisionForm(forms.Form):
             required=False,
         )
 
+        if self.division.organisation.official_identifier == "LND-alder":
+            # There's no such thing as an Aldermanic by-election
+            self.fields["ballot_type"] = forms.ChoiceField(
+                choices=(
+                    ("no_seats", "No Election"),
+                    ("seats_contested", "Scheduled"),
+                ),
+                widget=forms.RadioSelect,
+                required=False,
+            )
+
     division_name = forms.CharField()
     group = forms.CharField()
     seats_contested = forms.CharField()
