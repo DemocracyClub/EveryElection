@@ -5,15 +5,16 @@ A new deploy will being the servers back again, or it's possible to manually ena
 
 """
 
+import aws_cdk.aws_lambda_python_alpha as aws_lambda_python
 from aws_cdk import (
+    Duration,
+    Stack,
     aws_events,
     aws_events_targets,
     aws_iam,
     aws_lambda,
-    aws_lambda_python,
-    core,
 )
-from aws_cdk.core import Construct, Stack
+from constructs import Construct
 
 
 class PowerOffAtEndOfDay(Stack):
@@ -24,7 +25,7 @@ class PowerOffAtEndOfDay(Stack):
             self,
             "PowerOffAtEndOfDay",
             assumed_by=aws_iam.ServicePrincipal("lambda.amazonaws.com"),
-            max_session_duration=core.Duration.hours(1),
+            max_session_duration=Duration.hours(1),
         )
         for managed_policy_arn in [
             "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
@@ -44,7 +45,7 @@ class PowerOffAtEndOfDay(Stack):
             entry="./cdk_stacks/aws_lambda_functions/power_off_at_day_end_function",
             index="main.py",
             runtime=aws_lambda.Runtime.PYTHON_3_9,
-            timeout=core.Duration.minutes(10),
+            timeout=Duration.minutes(10),
             role=role,
         )
 
