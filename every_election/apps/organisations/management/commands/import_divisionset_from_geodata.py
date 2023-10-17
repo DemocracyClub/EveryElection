@@ -29,8 +29,8 @@ class Command(ReadFromFileMixin, BaseCommand):
     this command imports them, creating a new divisionset for them. 
     Example call: 
     python manage.py import_divisionset_from_geodata \
-        -f ~/Downloads/parl_constituencies_2025.gpkg   
-        --org-id 499 --srid 4326 --short-title "2025 Boundaries"    
+        -f ~/Downloads/parl_constituencies_2025.gpkg  \
+        --org-id 499 --srid 4326 --short-title "2025 Boundaries" \    
         --id-field gss_code --name-field name --division-type WMC \
         --division-subtype "UK Parliament constituency" --territory-field nation \
         --source "mySociety: UK Parliamentary Constituencies 2025"
