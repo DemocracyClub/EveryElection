@@ -1,15 +1,15 @@
-import aws_cdk.aws_certificatemanager as acm
-import aws_cdk.aws_cloudfront as cloudfront
-import aws_cdk.aws_cloudfront_origins as origins
-import aws_cdk.aws_codedeploy as codedeploy
-import aws_cdk.aws_ec2 as ec2
-import aws_cdk.aws_elasticloadbalancingv2 as elbv2
-import aws_cdk.aws_iam as iam
-import aws_cdk.aws_route53 as route_53
-import aws_cdk.aws_route53_targets as route_53_target
-from aws_cdk.aws_cloudfront import PriceClass
-from aws_cdk.aws_ssm import StringParameter
-from aws_cdk.core import Construct, Duration, Stack
+from aws_cdk import Duration, Stack
+from aws_cdk import aws_certificatemanager as acm
+from aws_cdk import aws_cloudfront as cloudfront
+from aws_cdk import aws_cloudfront_origins as origins
+from aws_cdk import aws_codedeploy as codedeploy
+from aws_cdk import aws_ec2 as ec2
+from aws_cdk import aws_elasticloadbalancingv2 as elbv2
+from aws_cdk import aws_iam as iam
+from aws_cdk import aws_route53 as route_53
+from aws_cdk import aws_route53_targets as route_53_target
+from aws_cdk import aws_ssm as ssm
+from constructs import Construct
 
 from cdk_stacks.stacks.code_deploy_policies import (
     EE_CODE_DEPLOY_EC2_POLICY,
@@ -286,7 +286,7 @@ class EECodeDeployment(Stack):
             certificate_arn=cert_arns.get(self.dc_environment),
         )
 
-        fqdn = StringParameter.value_from_lookup(
+        fqdn = ssm.StringParameter.value_from_lookup(
             self,
             "FQDN",
         )
@@ -382,7 +382,7 @@ class EECodeDeployment(Stack):
             },
             certificate=cert,
             domain_names=[fqdn],
-            price_class=PriceClass.PRICE_CLASS_100,
+            price_class=cloudfront.PriceClass.PRICE_CLASS_100,
         )
 
         hosted_zone = route_53.HostedZone.from_lookup(

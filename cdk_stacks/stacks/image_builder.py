@@ -2,11 +2,12 @@ import json
 import re
 from pathlib import Path
 
-import aws_cdk.aws_iam as iam
-import aws_cdk.aws_imagebuilder as image_builder
 import yaml
-from aws_cdk.aws_ssm import StringParameter
-from aws_cdk.core import Construct, Stack
+from aws_cdk import Stack
+from aws_cdk import aws_iam as iam
+from aws_cdk import aws_imagebuilder as image_builder
+from aws_cdk import aws_ssm as ssm
+from constructs import Construct
 
 COMPONENTS = [
     {
@@ -192,7 +193,7 @@ class EEImageUpdater(Stack):
         return infraconfig
 
     def make_distribution(self):
-        org_id = StringParameter.value_for_string_parameter(
+        org_id = ssm.StringParameter.value_for_string_parameter(
             self, "OrganisationID"
         )
         dist_name = validate_name("EE-distribution")
