@@ -29,17 +29,20 @@ class Command(ReadFromFileMixin, BaseCommand):
     this command imports them, creating a new divisionset for them. 
     Example call: 
     python manage.py import_divisionset_from_geodata \
-        -f ~/Downloads/parl_constituencies_2025.gpkg  \
-        --org-id 499 --srid 4326 --short-title "2025 Boundaries" \    
+        -f ~/Downloads/parl_constituencies_2025.gpkg \
+        --org-id 499 --srid 4326 --short-title "2025 Boundaries" \
         --id-field gss_code --name-field name --division-type WMC \
         --division-subtype "UK Parliament constituency" --territory-field nation \
-        --source "mySociety: UK Parliamentary Constituencies 2025"
+        --seats-total 1 --source "mySociety: UK Parliamentary Constituencies 2025"
     """
 
     def __init__(
         self, stdout=None, stderr=None, no_color=False, force_color=False
     ):
         super().__init__(stdout, stderr, no_color, force_color)
+        self.seats_total_field = None
+        self.seats_total = None
+
         self.source = None
         self.territory_field = None
         self.division_set = None
@@ -76,6 +79,18 @@ class Command(ReadFromFileMixin, BaseCommand):
             "--territory-field",
             action="store",
             help="Territory field in datasource",
+        )
+        seats_total_group = parser.add_mutually_exclusive_group(required=True)
+        seats_total_group.add_argument(
+            "--seats-total-field",
+            action="store",
+            help="Seats total field in datasource",
+        )
+        seats_total_group.add_argument(
+            "--seats-total",
+            action="store",
+            type=int,
+            help="Seats total for each division",
         )
         parser.add_argument(
             "--division-type",
@@ -136,6 +151,13 @@ class Command(ReadFromFileMixin, BaseCommand):
             territory_code = TERRITORY_LOOKUP[territory_code.lower()]
         return territory_code
 
+    def get_seats_total(self, feature):
+        return (
+            self.seats_total
+            if self.seats_total
+            else feature[self.seats_total_field].value
+        )
+
     def create_division(self, feature):
         identifier = self.get_id(feature)
         name = self.get_name(feature)
@@ -147,6 +169,7 @@ class Command(ReadFromFileMixin, BaseCommand):
             division_type=self.division_type,
             division_subtype=self.division_subtype,
             divisionset=self.division_set,
+            seats_total=self.get_seats_total(feature),
             territory_code=self.get_territory_code(feature),
         )
 
@@ -189,11 +212,8 @@ class Command(ReadFromFileMixin, BaseCommand):
                 f"No end_date set on current divisionset ({self.org}: {self.current_divset}). "
             )
             return
-
         start_date = self.current_divset.end_date + datetime.timedelta(days=1)
         short_title = options["short_title"]
-        self.create_divisionset(start_date, short_title)
-
         self.validate_data_source(self.get_datasource(options))
         self.data = pre_process_layer(self.data, int(options["srid"]))
         self.id_field = options["id_field"]
@@ -202,6 +222,9 @@ class Command(ReadFromFileMixin, BaseCommand):
         self.division_type = options["division_type"]
         self.division_subtype = options.get("division_subtype", None)
         self.source = options["source"]
+        self.seats_total = options.get("seats_total", None)
+        self.seats_total_field = options.get("seats_total_field", None)
+        self.create_divisionset(start_date, short_title)
         self.create_divisions()
         self.save_divisions()
         self.create_division_geographies()
