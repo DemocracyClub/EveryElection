@@ -135,12 +135,10 @@ class Command(ReadFromFileMixin, BaseCommand):
         return slugify(name)
 
     def get_id(self, feature):
-        identifier = feature[self.id_field].value
-        if not identifier:
-            identifier = (
-                f"{self.org.official_identifier}:{self.name_to_id(feature)}"
-            )
-        return identifier
+        code = feature[self.id_field].value
+        if not code:
+            return f"{self.org.official_identifier}:{self.name_to_id(feature)}"
+        return f"gss:{code}"
 
     def get_name(self, feature):
         return feature[self.name_field].value
