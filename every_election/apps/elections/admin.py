@@ -131,7 +131,6 @@ class ElectionAdmin(admin.ModelAdmin):
             {
                 "classes": ("collapse",),
                 "fields": (
-                    "tmp_election_id",
                     "organisation",
                     "division",
                     "tags",
@@ -156,7 +155,6 @@ class ElectionAdmin(admin.ModelAdmin):
         "seats_total",
         "requires_voter_id",
         "snooped_election",
-        "tmp_election_id",
         "organisation",
         "division",
         "tags",
