@@ -147,6 +147,7 @@ class Election(TimeStampedModel):
         null=True,
         related_name="_children_qs",
         on_delete=models.CASCADE,
+        verbose_name="Parent",
     )
     requires_voter_id = models.CharField(
         max_length=100,
