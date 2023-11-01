@@ -28,3 +28,6 @@ class SnoopedElection(StatusModel):
 
     def get_absolute_url(self):
         return "{}?pk={}".format(reverse("snooped_election_view"), self.pk)
+
+    def __str__(self):
+        return f"{self.title} - {self.date_seen} ({self.snooper_name})"
