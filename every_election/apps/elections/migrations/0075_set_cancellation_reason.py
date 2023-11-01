@@ -26,7 +26,12 @@ class Migration(migrations.Migration):
         ("elections", "0074_election_cancellation_reason"),
     ]
 
-    operations = [migrations.RunPython(set_cancellation_reasons, migrations.RunPython.noop)]
+    operations = [
+        migrations.RunPython(
+            set_cancellation_reasons, migrations.RunPython.noop
+        )
+    ]
+
 
 # SQL used to generate CSV for this migration from the WCIVF database is as follows:
 #
