@@ -24,10 +24,9 @@ jobs:
       - restore_cache:
           key: v3-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
 
-
-      - node/install:
-          node-version: '19.7.0'
-      - node/install-packages:
+      - run:
+          name: Install node node_modules
+          command: npm install
           cache-path: ~/repo/node_modules
           override-ci-command: npm install
 
