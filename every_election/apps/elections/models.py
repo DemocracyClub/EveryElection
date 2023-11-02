@@ -147,6 +147,7 @@ class Election(TimeStampedModel):
         null=True,
         related_name="_children_qs",
         on_delete=models.CASCADE,
+        verbose_name="Parent",
     )
     requires_voter_id = models.CharField(
         max_length=100,
@@ -489,6 +490,10 @@ class Election(TimeStampedModel):
         if not self.cancelled and self.cancellation_reason:
             raise ValidationError(
                 "Only a cancelled election can have a cancellation reason"
+            )
+        if self.seats_contested > self.seats_total:
+            raise ValidationError(
+                "Seats contested cannot be greater than seats total"
             )
 
     @transaction.atomic

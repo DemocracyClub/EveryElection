@@ -95,7 +95,7 @@ class ElectionAdmin(admin.ModelAdmin):
                 "fields": (
                     "election_id",
                     "election_title",
-                    "group_type",
+                    "friendly_group_type",
                     "group",
                 )
             },
@@ -131,7 +131,6 @@ class ElectionAdmin(admin.ModelAdmin):
             {
                 "classes": ("collapse",),
                 "fields": (
-                    "tmp_election_id",
                     "organisation",
                     "division",
                     "tags",
@@ -151,12 +150,11 @@ class ElectionAdmin(admin.ModelAdmin):
 
     readonly_fields = (
         "election_id",
-        "group_type",
+        "friendly_group_type",
         "group",
         "seats_total",
         "requires_voter_id",
         "snooped_election",
-        "tmp_election_id",
         "organisation",
         "division",
         "tags",
@@ -176,6 +174,11 @@ class ElectionAdmin(admin.ModelAdmin):
     ]
     actions = [mark_current, mark_not_current, unset_current, soft_delete]
     date_hierarchy = "poll_open_date"
+
+    def friendly_group_type(self, obj):
+        return obj.group_type or "ballot"
+
+    friendly_group_type.short_description = "Group type"
 
     def get_readonly_fields(self, request, obj=None):
         if obj.identifier_type == "ballot":
