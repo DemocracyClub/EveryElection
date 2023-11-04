@@ -1,5 +1,6 @@
 from core.mixins import UpdateElectionsTimestampedModel
 from django.contrib.gis.db import models
+from django_extensions.db.models import TimeStampedModel
 
 from .mixins import DateConstraintMixin, DateDisplayMixin
 
@@ -170,3 +171,26 @@ class DivisionGeographySubdivided(models.Model):
         SELECT st_subdivide(geography) as geography, id as division_geography_id 
         FROM organisations_divisiongeography;
     """
+
+
+class ReviewStatus(models.TextChoices):
+    COMPLETED = "COMPLETED", "Completed"
+    CURRENT = "CURRENT", "Currently in Review"
+
+
+class OrganisationBoundaryReview(TimeStampedModel):
+    organisation = models.ForeignKey(
+        "Organisation", null=True, on_delete=models.CASCADE
+    )
+    divisionset = models.OneToOneField(
+        OrganisationDivisionSet, null=True, on_delete=models.CASCADE
+    )
+    legislation_title = models.CharField(null=True)
+    slug = models.CharField()
+    consultation_url = models.URLField(null=True)
+    boundaries_url = models.URLField(null=True)
+
+    status = models.CharField(choices=ReviewStatus.choices)
+    latest_event = models.CharField(null=True)
+    legislation_url = models.URLField(null=True)
+    legislation_made = models.BooleanField(null=True)
