@@ -10,3 +10,52 @@
         on <strong>{{ all_data.date|date }}</strong></p>
 
 {% endblock form_page_header %}
+
+{% block form_content %}
+    {{ wizard.form.management_form }}
+
+    {% for form in wizard.form.forms %}
+        <fieldset>
+            <legend>{{ form.division_name.initial }}</legend>
+            {{ form.errors }}
+            {% if form.non_field_errors %}
+                {% for non_field_error in form.non_field_errors %}
+                    <div class="ds-error">
+                        {{ non_field_error }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% for hidden_field in form.hidden_fields %}
+                {{ hidden_field }}
+            {% endfor %}
+
+            <div class="ds-cluster ds-cluster-tight">
+                <div class="ds-stack-smallest">
+                    {% for radio in form.ballot_type %}
+                        <label class="ds-field-radio" for="{{ radio.id_for_label }}">
+                            {{ radio.tag }}
+                            <span>{{ radio.choice_label }}</span>
+                        </label>
+                    {% endfor %}
+                    <div class="ds-field">
+                        <label for="{{ form.seats_contested.id_for_label }}"></label>
+
+                        <input
+                            id="{{ form.seats_contested.id_for_label }}"
+                            name="{{ form.seats_contested.html_name }}"
+                            type="number"
+                            max="{{ form.seats_contested.field.max_value }}"
+                            min="{{ form.seats_contested.field.min_value }}"
+                            size="1"
+                            style="font-size: 1.5em; padding:0.2em;"
+                            value="{{ form.seats_contested.value|default_if_none:0 }}"
+                        ><br>
+                        <small>{{ form.seats_contested.help_text }}</small>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    {% endfor %}
+
+{% endblock %}

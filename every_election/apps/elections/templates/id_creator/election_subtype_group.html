@@ -8,13 +8,14 @@
                     <caption>{% if election_subtype_group.grouper %}{{ election_subtype_group.grouper }}{% else %}{{ election_group.grouper }}{% endif %}</caption>
                     <tr>
                         <th>Election Name</th>
+                        <th>Seats contested</th>
                         <th>Ballot paper ID</th>
                     </tr>
                     {% for election in election_subtype_group.list %}
                         {% if election.identifier_type == "ballot" %}
-
                             <tr>
                                 <td>{{ election.division }}</td>
+                                <td>{{ election.seats_contested }}</td>
                                 <td><code>{{ election.election_id }}</code></td>
                             </tr>
                         {% endif %}

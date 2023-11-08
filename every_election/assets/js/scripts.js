@@ -45,20 +45,23 @@ if (date_form != undefined) {
 }
 
 
-var division_picker = document.getElementById("id_creator_election_organisation_division");
-if (division_picker != undefined) {
-
-    var all_contested_button = document.createElement("button");
-    all_contested_button.innerText = "Mark all seats as contested (can't be undone)";
-    all_contested_button.setAttribute("class", "ds-button");
-    all_contested_button.setAttribute("type", "button");
-
-    all_contested_button.addEventListener("click", function() {
-        document.querySelectorAll("input").forEach(function (el) {
-            if (el.value === "seats_contested") {
-                el.checked = 1;
-            }
-        })
-    });
-    division_picker.insertAdjacentElement("beforebegin", all_contested_button);
-}
+// var division_picker = document.getElementById("id_creator_election_organisation_division");
+// if (division_picker != undefined) {
+//
+//     var all_contested_button = document.createElement("button");
+//     all_contested_button.innerText = "Mark all divisions as contested (can't be undone)";
+//     all_contested_button.setAttribute("class", "ds-button");
+//     all_contested_button.setAttribute("type", "button");
+//
+//     all_contested_button.addEventListener("click", function() {
+//         document.querySelectorAll("input").forEach(function (el) {
+//             if (el.value === "seats_contested") {
+//                 el.checked = 1;
+//             }
+//             if (el.id.indexOf("seats-contested")) {
+//                 el.value = el.getAttribute("max");
+//             }
+//         });
+//     });
+//     division_picker.insertAdjacentElement("beforebegin", all_contested_button);
+// }

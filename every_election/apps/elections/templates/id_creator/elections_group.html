@@ -7,12 +7,14 @@
                 <caption>{{election_group.grouper }}</caption>
                 <tr>
                     <th>Election Name</th>
+                    <th>Seats contested</th>
                     <th>Ballot paper ID</th>
                 </tr>
                 {% for election in election_group.list %}
                     {% if election.identifier_type == "ballot" %}
                         <tr>
                             <td>{% if all_ids.0.election_type.election_type == "mayor" or all_ids.0.election_type.election_type == "pcc" %}{{ election.election_title }}{% else %}{{ election.division }}{% endif %}</td>
+                            <td>{{ election.seats_contested }}</td>
                             <td><code>{{ election.election_id }}</code></td>
                         </tr>
                     {% endif %}

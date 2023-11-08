@@ -119,6 +119,7 @@ class ElectionBuilder:
         self.organisation = None
         self.division = None
         self.contest_type = None
+        self.seats_contested = None
 
         # meta-data
         self._use_org = False
@@ -208,6 +209,10 @@ class ElectionBuilder:
         self.contest_type = contest_type
         return self
 
+    def with_seats_contested(self, seats):
+        self.seats_contested = seats
+        return self
+
     def with_source(self, source):
         self.source = source
         return self
@@ -231,33 +236,9 @@ class ElectionBuilder:
         ).get_voting_system()
 
     def get_seats_contested(self):
-        if self.contest_type == "by":
-            # Assume any by-election always elects one representative.
-            # There may be edge cases where we need to edit this via /admin
-            # but this is the best assumption we can make
+        if not self.seats_contested:
             return 1
-
-        if self.election_type.election_type != "local":
-            if self.division and self.division.seats_total:
-                return self.division.seats_total
-            return 1
-
-        """
-        If this is an all-up local election, we can fairly safely
-        return self.division.seats_total
-        but at the moment we have no way to know if this is 'all-up' or not
-        so doing this is likely to generate a lot of confusing wrong data
-
-        TODO: Add an 'all-up' tickbox to the wizard for local elections
-        Then we can either return
-        self.division.seats_total  or  1
-        here, which will mostly be right
-        ..except for when it isn't
-        ..which will be sometimes
-        """
-
-        # otherwise don't attempt to guess
-        return None
+        return self.seats_contested
 
     def get_seats_total(self):
         if not self.division:
@@ -403,14 +384,16 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
         group_id = None
 
         pk = str(organisation.pk)
-        div_data = {
-            k: v
-            for k, v in all_data.items()
-            if str(k).startswith(pk)
-            and "__" in str(k)
-            and v != "no_seats"
-            and v != ""
-        }
+        div_data = {}
+        for form_data in all_data["election_divisions"]:
+            if (
+                form_data["ballot_type"]
+                and form_data["ballot_type"] != "no_seats"
+            ):
+                div_data[form_data["division_id"]] = {
+                    "seats_contested": form_data["seats_contested"],
+                    "ballot_type": form_data["ballot_type"],
+                }
 
         election_type = all_data["election_type"].election_type
         organisation_type = organisation.organisation_type
@@ -530,7 +513,7 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                             % contest_type
                         )
         else:
-            all_division_ids = [div.split("__")[1] for div in div_data]
+            all_division_ids = div_data.keys()
             all_division_objects = {
                 str(div.pk): div
                 for div in OrganisationDivision.objects.filter(
@@ -540,8 +523,9 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                     "divisionset__organisation",
                 )
             }
-            for div, contest_type in div_data.items():
-                org_div = all_division_objects[div.split("__")[1]]
+            for div, ballot_data in div_data.items():
+                contest_type = ballot_data["ballot_type"]
+                org_div = all_division_objects[div]
 
                 builder = (
                     ElectionBuilder(all_data["election_type"], all_data["date"])
@@ -549,6 +533,7 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                     .with_division(org_div)
                     .with_source(all_data.get("source", ""))
                     .with_snooped_election(all_data.get("radar_id", None))
+                    .with_seats_contested(ballot_data["seats_contested"])
                 )
 
                 if contest_type == "by_election":

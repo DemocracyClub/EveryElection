@@ -491,10 +491,6 @@ class Election(TimeStampedModel):
             raise ValidationError(
                 "Only a cancelled election can have a cancellation reason"
             )
-        if self.seats_contested > self.seats_total:
-            raise ValidationError(
-                "Seats contested cannot be greater than seats total"
-            )
 
     @transaction.atomic
     def save(self, *args, **kwargs):
