@@ -110,9 +110,7 @@ def test_full_id_creation(page, live_server, id_creator_data, settings):
     page.get_by_role("button", name="Submit").click()
 
     # Mark all seats as contested
-    page.get_by_role(
-        "button", name="Mark all seats as contested (can't be undone)"
-    ).click()
+    page.get_by_role("button", name="All Up").click()
     page.get_by_role("button", name="Submit").click()
 
     # Create the IDs
