@@ -50,7 +50,9 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
     def test_creates_div_data_ids(self):
         self.assertEqual(Election.private_objects.count(), 0)
         all_data = self.base_data
-        all_data.update({self.make_div_id(): "contested"})
+        all_data["election_divisions"] = [
+            self.add_division(self.make_div_id(), ballot_type="contested")
+        ]
         expected_ids = [
             "local." + self.date_str,
             "local.test." + self.date_str,
@@ -67,12 +69,13 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
     def test_creates_div_data_ids_two_divs(self):
         all_data = self.base_data
 
-        all_data.update(
-            {
-                self.make_div_id(): "contested",
-                self.make_div_id(div=self.org_div_2): "contested",
-            }
-        )
+        all_data["election_divisions"] = [
+            self.add_division(self.make_div_id(), ballot_type="contested"),
+            self.add_division(
+                self.make_div_id(div=self.org_div_2), ballot_type="contested"
+            ),
+        ]
+
         expected_ids = [
             "local." + self.date_str,
             "local.test." + self.date_str,
@@ -111,12 +114,17 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
 
         all_data = self.base_data
         all_data["election_organisation"] = [self.org1, org2]
-        all_data.update(
-            {
-                self.make_div_id(): "contested",
-                self.make_div_id(org=org2, div=div3): "contested",
-            }
-        )
+        all_data["election_divisions"] = [
+            self.add_division(
+                self.make_div_id(),
+                ballot_type="contested",
+            ),
+            self.add_division(
+                self.make_div_id(org=org2, div=div3),
+                ballot_type="contested",
+            ),
+        ]
+
         expected_ids = [
             "local." + self.date_str,
             "local.test." + self.date_str,
@@ -137,12 +145,13 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
     def test_creates_div_data_ids_blank_divs(self):
         all_data = self.base_data
 
-        all_data.update(
-            {
-                self.make_div_id(): "contested",
-                self.make_div_id(div=self.org_div_2): "",
-            }
-        )
+        all_data["election_divisions"] = [
+            self.add_division(self.make_div_id()),
+            self.add_division(
+                self.make_div_id(div=self.org_div_2), ballot_type=""
+            ),
+        ]
+
         expected_ids = [
             "local." + self.date_str,
             "local.test." + self.date_str,
@@ -159,12 +168,13 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
     def test_creates_by_election(self):
         all_data = self.base_data
 
-        all_data.update(
-            {
-                self.make_div_id(): "by_election",
-                self.make_div_id(div=self.org_div_2): "by_election",
-            }
-        )
+        all_data["election_divisions"] = [
+            self.add_division(self.make_div_id(), ballot_type="by_election"),
+            self.add_division(
+                self.make_div_id(div=self.org_div_2), ballot_type="by_election"
+            ),
+        ]
+
         expected_ids = [
             "local." + self.date_str,
             "local.test." + self.date_str,
@@ -302,19 +312,23 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             "date": self.date,
         }
 
-        all_data.update(
-            {
-                self.make_div_id(
-                    org=naw_org, div=org_div_3, subtype="c"
-                ): "contested",  # contested seat
-                self.make_div_id(
-                    org=naw_org, div=org_div_4, subtype="c"
-                ): "by_election",  # by election
-                self.make_div_id(
-                    org=naw_org, div=org_div_5, subtype="r"
-                ): "contested",
-            }
-        )
+        all_data["election_divisions"] = [
+            # contested seat
+            self.add_division(
+                self.make_div_id(org=naw_org, div=org_div_3, subtype="c"),
+                ballot_type="contested",
+            ),
+            # by election
+            self.add_division(
+                self.make_div_id(org=naw_org, div=org_div_4, subtype="c"),
+                ballot_type="by_election",
+            ),
+            # contested seat
+            self.add_division(
+                self.make_div_id(org=naw_org, div=org_div_5, subtype="r"),
+                ballot_type="contested",
+            ),
+        ]
 
         expected_ids = [
             "naw." + self.date_str,
@@ -348,12 +362,17 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             geography=self.test_polygon,
         )
 
-        all_data.update(
-            {
-                self.make_div_id(): "contested",
-                self.make_div_id(div=self.org_div_2): "contested",
-            }
-        )
+        all_data["election_divisions"] = [
+            self.add_division(
+                self.make_div_id(),
+                ballot_type="contested",
+            ),
+            self.add_division(
+                self.make_div_id(div=self.org_div_2),
+                ballot_type="contested",
+            ),
+        ]
+
         expected_ids = [
             "local." + self.date_str,
             "local.test." + self.date_str,
@@ -388,12 +407,17 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             division=self.org_div_2, geography=self.test_polygon
         )
 
-        all_data.update(
-            {
-                self.make_div_id(): "contested",
-                self.make_div_id(div=self.org_div_2): "contested",
-            }
-        )
+        all_data["election_divisions"] = [
+            self.add_division(
+                self.make_div_id(),
+                ballot_type="contested",
+            ),
+            self.add_division(
+                self.make_div_id(div=self.org_div_2),
+                ballot_type="contested",
+            ),
+        ]
+
         expected_ids = [
             "local." + self.date_str,
             "local.test." + self.date_str,

@@ -148,8 +148,21 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
         )
         election = builder.build_ballot(None)
         election.save()
-        self.assertIsNone(election.seats_contested)
+        self.assertEqual(election.seats_contested, 1)
         self.assertEqual(3, election.seats_total)
+
+    def test_seats_contested_more_than_seats_total_raises(self):
+        with self.assertRaises(ValueError) as e:
+            (
+                ElectionBuilder("local", "2017-06-08")
+                .with_organisation(self.org1)
+                .with_division(self.org_div_1)
+                .with_seats_contested(100)
+            )
+        self.assertEqual(
+            str(e.exception),
+            "Seats contested can't be more than seats total (100 > 3)",
+        )
 
     def test_seats_contested_local_by_election(self):
         builder = (
@@ -209,6 +222,7 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
             .with_organisation(sp_org)
             .with_division(sp_r_div)
             .with_subtype(region_sub_type)
+            .with_seats_contested(7)
         )
         builder_2 = (
             ElectionBuilder("sp", "2021-5-06")

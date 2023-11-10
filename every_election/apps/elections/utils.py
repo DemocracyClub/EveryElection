@@ -210,6 +210,10 @@ class ElectionBuilder:
         return self
 
     def with_seats_contested(self, seats):
+        if seats > self.division.seats_total:
+            raise ValueError(
+                f"Seats contested can't be more than seats total ({seats} > {self.division.seats_total})"
+            )
         self.seats_contested = seats
         return self
 
@@ -383,9 +387,8 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
     for organisation in all_data.get("election_organisation", []):
         group_id = None
 
-        pk = str(organisation.pk)
         div_data = {}
-        for form_data in all_data["election_divisions"]:
+        for form_data in all_data.get("election_divisions", []):
             if (
                 form_data["ballot_type"]
                 and form_data["ballot_type"] != "no_seats"
@@ -478,15 +481,18 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                 ]:
                     all_ids.append(subtype_id)
 
-                for div, contest_type in div_data.items():
-                    _, div_id, div_subtype = div.split("__")
-                    if div_subtype != subtype.election_subtype:
+                for div_id, div_details in div_data.items():
+                    contest_type = div_details["ballot_type"]
+                    try:
+                        org_div = OrganisationDivision.objects.get(
+                            pk=div_id,
+                            division_election_sub_type=subtype.election_subtype,
+                        )
+                    except OrganisationDivision.DoesNotExist:
+                        # This (id, subtype) pair doesn't exist.
+                        # That's ok, as we're looping through all subtypes,
+                        # so we'll make an election for this division soon
                         continue
-
-                    org_div = OrganisationDivision.objects.get(
-                        pk=div_id,
-                        division_election_sub_type=subtype.election_subtype,
-                    )
 
                     builder = (
                         ElectionBuilder(
@@ -517,15 +523,17 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
             all_division_objects = {
                 str(div.pk): div
                 for div in OrganisationDivision.objects.filter(
-                    pk__in=all_division_ids
+                    pk__in=all_division_ids,
+                    divisionset__organisation=organisation,
                 ).select_related(
                     "divisionset",
                     "divisionset__organisation",
                 )
             }
-            for div, ballot_data in div_data.items():
+            for div_id, division in all_division_objects.items():
+                ballot_data = div_data[div_id]
                 contest_type = ballot_data["ballot_type"]
-                org_div = all_division_objects[div]
+                org_div = all_division_objects[str(div_id)]
 
                 builder = (
                     ElectionBuilder(all_data["election_type"], all_data["date"])

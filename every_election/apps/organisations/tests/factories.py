@@ -55,8 +55,8 @@ class OrganisationDivisionFactory(factory.django.DjangoModelFactory):
     official_identifier = factory.Sequence(lambda n: n)
     slug = factory.Sequence(lambda n: "%d" % n)
     division_type = "test"
+    seats_total = 1
     # division_election_sub_type
-    # seats_total
 
 
 class SubdividedDivisionGeographyFactory(factory.django.DjangoModelFactory):
