@@ -126,4 +126,21 @@ if (division_picker != undefined) {
 
     division_picker.insertAdjacentElement("beforebegin", button_div);
 
+
+    // Set up radio button bindings
+    document.querySelectorAll("input[value=seats_contested], input[value=by_election]").forEach((el) => {
+        el.addEventListener("click", (el) => {
+            var seats = el.currentTarget.closest("fieldset").querySelector("input[name$='-seats_contested']");
+            if (seats.value < 1) {
+                seats.value = 1;
+            }
+        });
+    });
+    document.querySelectorAll("input[value=no_seats]").forEach((el) => {
+        el.addEventListener("click", (el) => {
+            var seats = el.currentTarget.closest("fieldset").querySelector("input[name$='-seats_contested']");
+                seats.value = "";
+        });
+    });
+
 }

@@ -458,7 +458,7 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                 all_ids.append(mayor_id)
 
         if subtypes:
-            for subtype in all_data.get("election_subtype", []):
+            for subtype in subtypes:
                 # Special case `gla.a` elections as they should be a ballot
                 if (
                     organisation.slug == "gla"

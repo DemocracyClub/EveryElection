@@ -8,13 +8,12 @@ from django.utils.functional import cached_property
 from election_snooper.helpers import post_to_slack
 from election_snooper.models import SnoopedElection
 from elections.forms import (
+    DivFormSet,
     ElectionDateForm,
-    ElectionOrganisationDivisionForm,
     ElectionOrganisationForm,
     ElectionSourceForm,
     ElectionSubTypeForm,
     ElectionTypeForm,
-    DivFormSet,
 )
 from elections.models import (
     Document,
@@ -207,14 +206,10 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                 del self.storage.data["step_data"]["election_type"]
             if "election_organisation" in self.storage.extra_data:
                 del self.storage.extra_data["election_organisation"]
-        if self.steps.current == "election_organisation":
-            if (
-                "election_organisation_division"
-                in self.storage.data["step_data"]
-            ):
-                del self.storage.data["step_data"][
-                    "election_organisation_division"
-                ]
+        if self.steps.current == "election_organisation" and (
+            "election_organisation_division" in self.storage.data["step_data"]
+        ):
+            del self.storage.data["step_data"]["election_organisation_division"]
         return self.get_form_step_data(form)
 
     def get_date(self):

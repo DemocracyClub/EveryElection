@@ -484,7 +484,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
                 all_data,
                 expected_ids,
                 expected_titles,
-                subtypes=True,
+                subtypes=all_data["election_subtype"],
             )
 
         ballot = Election.private_objects.get(election_id__startswith="gla.a.")

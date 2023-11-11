@@ -1,10 +1,10 @@
-from typing import Union, List
+from typing import List, Union
 
 from dc_utils import forms as dc_forms
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Q, QuerySet
+from django.db.models import Q
 from organisations.models import (
     Organisation,
     OrganisationDivision,
@@ -111,6 +111,7 @@ class ElectionOrganisationForm(forms.Form):
 class ElectionOrganisationDivisionForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.division: OrganisationDivision = kwargs.pop("division", None)
+        self.group: str = kwargs.pop("group", None)
         super().__init__(*args, **kwargs)
         if not self.division:
             return
@@ -125,10 +126,17 @@ class ElectionOrganisationDivisionForm(forms.Form):
         )
 
         self.fields["division_name"] = forms.CharField(
-            initial=self.division.name, required=False, widget=forms.HiddenInput
+            initial=f"{self.division.name}",
+            required=False,
+            widget=forms.HiddenInput,
+        )
+        self.fields["group"] = forms.CharField(
+            initial=self.group,
+            required=False,
         )
 
     division_name = forms.CharField()
+    group = forms.CharField()
     seats_contested = forms.CharField()
     ballot_type = forms.ChoiceField(
         choices=(
@@ -144,9 +152,8 @@ class ElectionOrganisationDivisionForm(forms.Form):
         if (
             self.cleaned_data["ballot_type"]
             and self.cleaned_data["ballot_type"] != "no_seats"
-        ):
-            if not self.cleaned_data["seats_contested"]:
-                raise ValidationError("Seats contested required")
+        ) and not self.cleaned_data["seats_contested"]:
+            raise ValidationError("Seats contested required")
 
 
 class DivsFormset(forms.BaseFormSet):
@@ -156,7 +163,6 @@ class DivsFormset(forms.BaseFormSet):
         self.election_date = kwargs.pop("election_date", None)
         initial_data = []
         self._form_kwargs = []
-        print(self.organisations)
         if self.organisations:
             for organisation in self.organisations:
                 div_set: Union[List[OrganisationDivision], DivisionManager] = (
@@ -171,12 +177,21 @@ class DivsFormset(forms.BaseFormSet):
                     .order_by("-start_date")
                     .first()
                 )
+                if not div_set:
+                    continue
                 for div in div_set.divisions.all().select_related(
                     "divisionset__organisation"
                 ):
-                    initial_data.append({"division_name": div.name})
-                    self._form_kwargs.append({"division": div})
-        kwargs["initial"] = initial_data
+                    group = organisation.name
+                    if div.division_subtype:
+                        group = div.division_subtype
+                    initial_data.append(
+                        {"division_name": div.name, "group": group}
+                    )
+                    self._form_kwargs.append({"division": div, "group": group})
+        kwargs["initial"] = sorted(
+            initial_data, key=lambda el: (el["group"], el["division_name"])
+        )
         super().__init__(*args, **kwargs)
 
     def get_form_kwargs(self, index):

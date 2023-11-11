@@ -15,6 +15,9 @@
     {{ wizard.form.management_form }}
 
     {% for form in wizard.form.forms %}
+        {% ifchanged form.group.value %}
+            <h2>{{ form.group.value }}</h2>
+        {% endifchanged %}
         <fieldset>
             <legend>{{ form.division_name.initial }}</legend>
             {{ form.errors }}
