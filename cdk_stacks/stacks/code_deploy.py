@@ -370,6 +370,9 @@ class EECodeDeployment(Stack):
                             "Cache-Control",
                             "Referer",
                         ),
+                        query_string_behavior=cloudfront.OriginRequestQueryStringBehavior.allow_list(
+                            "reset"
+                        ),
                     ),
                     cache_policy=cloudfront.CachePolicy(
                         self,
