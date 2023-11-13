@@ -20,6 +20,11 @@
                 {% if not election.identifier_type == "ballot" %}
                     <li><code>{{ election.election_id }}</code></li>
                 {% endif %}
+                {% if "gla.a" in election.election_id %}
+                    {# Special case gla.a as it's really a ballot type #}
+                    <li><code>{{ election.election_id }}</code></li>
+                {% endif %}
+
             {% endfor %}
         </ul>
         {% if all_ids.0.election_type.election_type in election_types_with_subtypes %}

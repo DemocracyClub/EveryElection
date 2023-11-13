@@ -104,9 +104,16 @@ class BaseElectionCreatorMixIn:
         if not div:
             div = self.org_div_1
 
-        if subtype:
-            return "__".join(map(str, [org.pk, div.pk, subtype]))
-        return "__".join(map(str, [org.pk, div.pk]))
+        return str(div.pk)
+
+    def add_division(
+        self, division_id, ballot_type="contested", seats_contested=1
+    ):
+        return {
+            "ballot_type": ballot_type,
+            "division_id": division_id,
+            "seats_contested": seats_contested,
+        }
 
     def create_ids(self, all_data, save_model=True, **kwargs):
         all_ids = create_ids_for_each_ballot_paper(all_data, **kwargs)

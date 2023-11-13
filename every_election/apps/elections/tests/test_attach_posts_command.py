@@ -28,6 +28,11 @@ class TestAttachPostsPerWard(TestCase):
                 }
             )
 
+        ballot = self.fake_csv_data[0]["election_id"]
+        div = Election.private_objects.get(election_id=ballot).division
+        div.seats_total = None
+        div.save()
+
         self.default_options = {
             "replace_seats_total": False,
             "skip_unknown": False,
@@ -53,8 +58,12 @@ class TestAttachPostsPerWard(TestCase):
         command.stdout = StringIO()
 
         options = self.default_options
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValueError) as e:
             command.handle(**options)
+        self.assertEqual(
+            str(e.exception),
+            "Seats total not known for local.place-name-0.2017-03-23",
+        )
         self.assertEqual(command.stdout.getvalue(), "")
 
     @mock.patch(COMMAND_PATH + ".load_data")
@@ -96,6 +105,9 @@ class TestAttachPostsPerWard(TestCase):
         command_class = attach_posts_per_election_from_csv.Command
         command = command_class()
         command.stdout = StringIO()
+
+        election.division.seats_total = None
+        election.division.save()
 
         options = self.default_options
         with self.assertRaisesRegex(ValueError, "Seats total not known for"):

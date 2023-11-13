@@ -453,7 +453,7 @@ class TestElectionAPIQueries(APITestCase):
                     "end_date": "2025-05-03",
                     "consultation_url": "https://example.com/consultation"
                 },
-                "seats_total": null,
+                "seats_total": 1,
                 "division_election_sub_type": "",
                 "division_subtype": "",
                 "division_type": "test",

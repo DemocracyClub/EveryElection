@@ -8,8 +8,8 @@ from django.utils.functional import cached_property
 from election_snooper.helpers import post_to_slack
 from election_snooper.models import SnoopedElection
 from elections.forms import (
+    DivFormSet,
     ElectionDateForm,
-    ElectionOrganisationDivisionForm,
     ElectionOrganisationForm,
     ElectionSourceForm,
     ElectionSubTypeForm,
@@ -35,7 +35,7 @@ FORMS = [
     ("election_type", ElectionTypeForm),
     ("election_subtype", ElectionSubTypeForm),
     ("election_organisation", ElectionOrganisationForm),
-    ("election_organisation_division", ElectionOrganisationDivisionForm),
+    ("election_organisation_division", DivFormSet),
     ("review", forms.Form),
 ]
 
@@ -73,6 +73,7 @@ def select_organisation(wizard):
     election_type = wizard.get_election_type
     if not election_type:
         return False
+
     qs = ElectedRole.objects.filter(election_type=election_type)
 
     if qs.count() > 1:
@@ -199,14 +200,50 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
 
         return self.initial_dict.get(step, {})
 
+    def process_step(self, form):
+        if self.steps.current == "election_type":
+            if "election_type" in self.storage.data["step_data"]:
+                del self.storage.data["step_data"]["election_type"]
+            if "election_organisation" in self.storage.extra_data:
+                del self.storage.extra_data["election_organisation"]
+        if self.steps.current == "election_organisation" and (
+            "election_organisation_division" in self.storage.data["step_data"]
+        ):
+            del self.storage.data["step_data"]["election_organisation_division"]
+        return self.get_form_step_data(form)
+
+    def get_date(self):
+        if "date" in self.storage.data["step_data"]:
+            date_data = self.storage.data["step_data"]["date"]
+            return "-".join(
+                [
+                    date_data[key][0]
+                    for key in (
+                        "date-date_2",
+                        "date-date_1",
+                        "date-date_0",
+                    )
+                ]
+            )
+        return None
+
+    def get_divisions(self):
+        if "election_organisation_division" in self.storage.data["step_data"]:
+            return self.get_cleaned_data_for_step(
+                "election_organisation_division"
+            )
+        return []
+
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
-        all_data = self.get_all_cleaned_data()
-        # print("\n".join(str(all_data).split(',')))
-        if "date" not in all_data:
-            all_data["date"] = None
+        # all_data = self.get_all_cleaned_data()
+        all_data = {}
+        all_data["date"] = self.get_date()
 
         all_data["election_organisation"] = self.get_organisations
+        all_data["election_divisions"] = self.get_divisions()
+        print(all_data["election_divisions"])
+        all_data["election_type"] = self.get_election_type
 
         if not all_data.get("election_organisation"):
             all_data.update(self.storage.extra_data)
@@ -224,6 +261,8 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         return context
 
     def get_form_kwargs(self, step):
+        # if step != self.steps.current:
+        #     return {}
         if step in ["election_organisation", "election_subtype"]:
             election_type = self.get_election_type
             if election_type:
@@ -231,10 +270,10 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                     "election_type": election_type.election_type,
                     "election_date": self.get_election_date(),
                 }
+            return {}
         if step == "election_organisation_division":
             organisations = self.get_organisations
             election_subtype = self.get_election_subtypes
-
             return {
                 "organisations": organisations,
                 "election_subtype": election_subtype,

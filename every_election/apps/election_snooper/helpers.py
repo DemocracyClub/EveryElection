@@ -9,7 +9,8 @@ from django.conf import settings
 
 def post_to_slack(message):
     if not getattr(settings, "SLACK_WEBHOOK_URL", None):
-        warnings.warn("settings.SLACK_WEBHOOK_URL is not set")
+        if not settings.DEBUG:
+            warnings.warn("settings.SLACK_WEBHOOK_URL is not set")
         return
 
     env = os.getenv(
