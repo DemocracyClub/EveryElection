@@ -4,6 +4,14 @@ from django.contrib.gis.db import models
 from .mixins import DateConstraintMixin, DateDisplayMixin
 
 
+class DivisionSetQuerySet(models.QuerySet):
+    def filter_by_date(self, date):
+        return self.filter(
+            models.Q(start_date__lte=date)
+            & (models.Q(end_date__gte=date) | models.Q(end_date=None))
+        )
+
+
 class OrganisationDivisionSet(
     DateConstraintMixin, DateDisplayMixin, models.Model
 ):
@@ -17,6 +25,8 @@ class OrganisationDivisionSet(
     short_title = models.CharField(blank=True, max_length=200)
     notes = models.TextField(blank=True)
     ValidationError = ValueError
+
+    objects = DivisionSetQuerySet.as_manager()
 
     def __str__(self):
         return "{}:{} ({})".format(

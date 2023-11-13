@@ -40,7 +40,7 @@
 
 {% block wizard_buttons %}
     <button type="submit" class="ds-button" value="Create IDs">Create IDs</button>
-    <button name="wizard_goto_step" type="submit" class="ds-button-blue" value="{{ wizard.steps.first }}?reset=1">
+    <a href="?reset=1" class="ds-cta ds-cta-blue">
         Start again
-    </button>
+    </a>
 {% endblock wizard_buttons %}
