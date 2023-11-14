@@ -99,6 +99,19 @@ def select_organisation_division(wizard):
         return False
     if wizard.get_election_type.election_type in ["mayor", "pcc"]:
         return False
+    # special case gla.a as it doesn't have divisions
+    if (
+        election_type.election_type == "gla"
+        and wizard.get_election_subtypes
+        and list(
+            wizard.get_election_subtypes.values_list(
+                "election_subtype", flat=True
+            )
+        )
+        == ["a"]
+    ):
+        return False
+
     return True
 
 
