@@ -1,10 +1,9 @@
-from typing import List, Union
+from typing import Union
 
 from dc_utils import forms as dc_forms
 from django import forms
 from django.core.exceptions import ValidationError
-from django.db import models
-from django.db.models import Q
+from django.db.models import F, Q, QuerySet
 from organisations.models import (
     Organisation,
     OrganisationDivision,
@@ -159,39 +158,59 @@ class ElectionOrganisationDivisionForm(forms.Form):
 class DivsFormset(forms.BaseFormSet):
     def __init__(self, *args, **kwargs):
         self.organisations = kwargs.pop("organisations", [])
-        self.election_subtype = kwargs.pop("election_subtype", None)
+        self.election_subtypes = kwargs.pop("election_subtype", None)
+        if not self.election_subtypes:
+            self.election_subtypes = []
+        self.subtype_list = [
+            subtype.election_subtype for subtype in self.election_subtypes
+        ]
         self.election_date = kwargs.pop("election_date", None)
-        initial_data = []
+        kwargs["initial"] = []
         self._form_kwargs = []
         if self.organisations:
             for organisation in self.organisations:
-                div_set: Union[List[OrganisationDivision], DivisionManager] = (
-                    OrganisationDivisionSet.objects.filter(
-                        organisation=organisation,
-                        start_date__lte=self.election_date,
+                group_field = "divisionset__organisation__official_name"
+                div_set_filter_args = {
+                    "organisation": organisation,
+                }
+                division_filter_args = {}
+                if self.subtype_list:
+                    div_set_filter_args[
+                        "divisions__division_election_sub_type__in"
+                    ] = self.subtype_list
+                    division_filter_args[
+                        "division_election_sub_type__in"
+                    ] = self.subtype_list
+                    group_field = "division_subtype"
+
+                div_set: OrganisationDivisionSet = (
+                    OrganisationDivisionSet.objects.filter_by_date(
+                        self.election_date
                     )
-                    .filter(
-                        models.Q(end_date__gte=self.election_date)
-                        | models.Q(end_date=None)
-                    )
-                    .order_by("-start_date")
+                    .filter(**div_set_filter_args)
                     .first()
                 )
                 if not div_set:
                     continue
-                for div in div_set.divisions.all().select_related(
-                    "divisionset__organisation"
-                ):
-                    group = organisation.name
-                    if div.division_subtype:
-                        group = div.division_subtype
-                    initial_data.append(
-                        {"division_name": div.name, "group": group}
+
+                divisions_qs: Union[
+                    QuerySet[OrganisationDivision], DivisionManager
+                ] = (
+                    div_set.divisions.select_related(
+                        "divisionset__organisation"
                     )
-                    self._form_kwargs.append({"division": div, "group": group})
-        kwargs["initial"] = sorted(
-            initial_data, key=lambda el: (el["group"], el["division_name"])
-        )
+                    .filter(**division_filter_args)
+                    .annotate(group=F(group_field))
+                    .order_by("group", "name")
+                )
+
+                for div in divisions_qs:
+                    kwargs["initial"].append(
+                        {"division_name": div.name, "group": div.group}
+                    )
+                    self._form_kwargs.append(
+                        {"division": div, "group": div.group}
+                    )
         super().__init__(*args, **kwargs)
 
     def get_form_kwargs(self, index):

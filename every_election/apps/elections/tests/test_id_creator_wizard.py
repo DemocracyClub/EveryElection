@@ -182,6 +182,7 @@ def test_subtype_creation(page, live_server, id_creator_data, settings):
         slug="test-div-5",
         division_election_sub_type="r",
         division_subtype="Regions",
+        seats_total=7,
     )
     settings.DEBUG = True
     # We shouldn't have any elections
@@ -212,6 +213,17 @@ def test_subtype_creation(page, live_server, id_creator_data, settings):
     # Ensure that all the headings exist
     page.get_by_role("heading", name="Constituencies").click()
     page.get_by_role("heading", name="Regions").click()
+
+    # Ensure seats contrsted are correct
+    expect(
+        page.get_by_role("group", name="Test Div 5").locator("small")
+    ).to_contain_text("Up to 7 seats total")
+    expect(
+        page.get_by_role("group", name="Test Div 4").locator("small")
+    ).to_contain_text("Up to 1 seats total")
+    expect(
+        page.get_by_role("group", name="Test Div 3").locator("small")
+    ).to_contain_text("Up to 1 seats total")
 
     # Select all up
     page.get_by_role("button", name="All up").click()
