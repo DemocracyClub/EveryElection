@@ -201,7 +201,7 @@ class DivsFormset(forms.BaseFormSet):
                     )
                     .filter(**division_filter_args)
                     .annotate(group=F(group_field))
-                    .order_by("group")
+                    .order_by("group", "name")
                 )
 
                 for div in divisions_qs:
