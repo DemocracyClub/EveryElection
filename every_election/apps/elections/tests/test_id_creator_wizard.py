@@ -4,6 +4,7 @@ import pytest
 from elections.models import (
     ElectedRole,
     Election,
+    ElectionSubType,
     ElectionType,
 )
 from organisations.models import Organisation
@@ -301,4 +302,66 @@ def test_multiple_local_elections(page, live_server, id_creator_data, settings):
         "local.test2.test-div-2.2023-01-05",
         "local.test.test-div-2.2023-01-05",
         "local.test.test-div.by.2023-01-05",
+    ]
+
+
+def test_gla_a_doesnt_show_division_picker(
+    page, live_server, id_creator_data, settings
+):
+    gla_org = Organisation.objects.create(
+        official_identifier="gla",
+        organisation_type="gla",
+        official_name="gla",
+        slug="gla",
+        territory_code="ENG",
+        election_name="Greater London Assembly elections",
+        start_date=date(2016, 10, 1),
+    )
+    gla_election_type = ElectionType.objects.get(election_type="gla")
+    ElectionSubType.objects.get(
+        election_subtype="a", election_type=gla_election_type
+    )
+    ElectedRole.objects.create(
+        election_type=gla_election_type,
+        organisation=gla_org,
+        elected_title="Assembly Member",
+        elected_role_name="Assembly Member for Foo",
+    )
+    settings.DEBUG = True
+    # We shouldn't have any elections
+    assert Election.private_objects.count() == 0
+
+    # Open the home page, click to add a new election
+    page.goto(live_server.url)
+    page.get_by_role("link", name="Add a new election").click()
+
+    # Enter a date
+    page.locator("#id_date-date_0").fill("5")
+    page.locator("#id_date-date_1").fill("1")
+    page.locator("#id_date-date_2").fill("2023")
+    page.locator("#id_date-date_2").blur()
+    page.get_by_role("button", name="Submit").click()
+
+    # Select the election type
+    page.get_by_text("Greater London Assembly elections").click()
+    page.get_by_role("button", name="Submit").click()
+
+    # Select the subtype
+    page.get_by_text("Additional (Greater London Assembly elections)").click()
+    page.get_by_role("button", name="Submit").click()
+
+    # Assert the IDs are on the review screen
+    page.get_by_text("gla.2023-01-05").click()
+    page.get_by_text("gla.a.2023-01-05").click()
+
+    # Create IDs
+    page.get_by_role("button", name="Create IDs").click()
+
+    # We should have 2 elections
+    assert Election.private_objects.count() == 2
+    assert list(
+        Election.private_objects.values_list("election_id", flat=True)
+    ) == [
+        "gla.2023-01-05",
+        "gla.a.2023-01-05",
     ]
