@@ -1,4 +1,5 @@
 import csv
+
 import requests
 from rapidfuzz import process
 

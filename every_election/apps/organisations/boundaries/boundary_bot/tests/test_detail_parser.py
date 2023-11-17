@@ -1,7 +1,8 @@
 import os
-import unittest
-from scrapy.http import TextResponse, Request
-from boundary_bot.spider import LgbceSpider
+
+from django.test import TestCase
+from organisations.boundaries.boundary_bot.spider import LgbceSpider
+from scrapy.http import Request, TextResponse
 
 
 def mock_response(file_name, url):
@@ -9,74 +10,86 @@ def mock_response(file_name, url):
     dirname = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.abspath(os.path.join(dirname, file_name))
 
-    file_content = bytes(open(file_path, "r").read(), "utf-8")
+    with open(file_path, "r") as f:
+        file_content = bytes(f.read(), "utf-8")
 
-    response = TextResponse(url=url, request=request, body=file_content)
-    return response
+    return TextResponse(url=url, request=request, body=file_content)
 
 
-class DetailParserTest(unittest.TestCase):
-    def test_no_eco(self):
+class DetailParserTest(TestCase):
+    def test_no_eco_with_shapefiles(self):
         spider = LgbceSpider()
         fixture = mock_response(
             "fixtures/detail/no_eco.html",
-            "http://www.lgbce.org.uk/current-reviews/eastern/suffolk/babergh",
+            "https://www.lgbce.org.uk/all-reviews/calderdale",
         )
         result = list(spider.parse(fixture))
         self.assertEqual(1, len(result))
-        self.assertEqual("babergh", result[0]["slug"])
+        self.assertEqual("calderdale", result[0]["slug"])
+        self.assertEqual("Consultation on proposals", result[0]["latest_event"])
+        self.assertIsNone(result[0]["title"])
+        self.assertIsNone(result[0]["legislation_url"])
+        self.assertEqual(0, result[0]["legislation_made"])
         self.assertEqual(
-            "Consultation on draft recommendations", result[0]["latest_event"]
+            "/sites/default/files/2023-10/calderdale_draftrecs.zip",
+            result[0]["boundaries_url"],
         )
-        self.assertIsNone(result[0]["eco"])
-        self.assertEqual(0, result[0]["eco_made"])
-        self.assertIsNone(result[0]["shapefiles"])
 
     def test_with_eco_and_shapefiles(self):
         spider = LgbceSpider()
         fixture = mock_response(
             "fixtures/detail/with_eco_and_shapefiles.html",
-            "http://www.lgbce.org.uk/current-reviews/south-west/gloucestershire/tewkesbury",
+            "https://www.lgbce.org.uk/all-reviews/fareham",
         )
         result = list(spider.parse(fixture))
         self.assertEqual(1, len(result))
-        self.assertEqual("tewkesbury", result[0]["slug"])
+        self.assertEqual("fareham", result[0]["slug"])
         self.assertEqual(
-            "The Tewkesbury (Electoral Changes) Order 2018 (Draft)",
+            "Making our recommendation into law",
             result[0]["latest_event"],
         )
-        self.assertIsNone(result[0]["eco"])
-        self.assertEqual(0, result[0]["eco_made"])
         self.assertEqual(
-            "http://s3-eu-west-2.amazonaws.com/lgbce/__data/assets/file/0005/35906/Tewkesbury_final_proposals.zip",
-            result[0]["shapefiles"],
+            "The Fareham (Electoral Changes) Order 2023", result[0]["title"]
+        )
+        self.assertEqual(
+            "http://www.legislation.gov.uk/id/uksi/2023/796",
+            result[0]["legislation_url"],
+        )
+        self.assertEqual(1, result[0]["legislation_made"])
+        self.assertEqual(
+            "/sites/default/files/2023-02/onedrive_1_06-02-2023.zip",
+            result[0]["boundaries_url"],
         )
 
     def test_made_eco(self):
         spider = LgbceSpider()
         fixture = mock_response(
             "fixtures/detail/made_eco.html",
-            "http://www.lgbce.org.uk/current-reviews/yorkshire-and-the-humber/west-yorkshire/leeds",
+            "https://www.lgbce.org.uk/all-reviews/allerdale",
         )
         result = list(spider.parse(fixture))
         self.assertEqual(1, len(result))
-        self.assertEqual("leeds", result[0]["slug"])
+        self.assertEqual("allerdale", result[0]["slug"])
         self.assertEqual(
-            "The Leeds (Electoral Changes) Order 2017",
+            "Effective date",
             result[0]["latest_event"],
         )
+
         self.assertEqual(
-            "http://www.legislation.gov.uk/uksi/2017/1077/contents/made",
-            result[0]["eco"],
+            "The Allerdale (Electoral Changes) Order 2017", result[0]["title"]
         )
-        self.assertEqual(1, result[0]["eco_made"])
-        self.assertIsNone(result[0]["shapefiles"])
+        self.assertEqual(
+            "https://www.legislation.gov.uk/uksi/2017/1067/contents/made",
+            result[0]["legislation_url"],
+        )
+        self.assertEqual(1, result[0]["legislation_made"])
+        self.assertIsNone(result[0]["boundaries_url"])
 
     def test_no_matches(self):
         spider = LgbceSpider()
         fixture = mock_response(
             "fixtures/detail/no_matches.html",
-            "http://www.lgbce.org.uk/current-reviews/yorkshire-and-the-humber/west-yorkshire",
+            "https://www.lgbce.org.uk/all-reviews/west-yorkshire",
         )
         result = list(spider.parse(fixture))
         # response contains nothing we are looking for

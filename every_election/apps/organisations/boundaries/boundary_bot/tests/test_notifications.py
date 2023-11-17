@@ -1,19 +1,27 @@
-import scraperwiki
-from unittest import mock, TestCase
-from boundary_bot.scraper import LgbceScraper
+from unittest import mock
+
 from data_provider import base_data
+from django.test import TestCase
+from organisations.boundaries.boundary_bot.scraper import LgbceScraper
+from organisations.tests.factories import OrganisationFactory
 
 
-@mock.patch("boundary_bot.code_matcher.CodeMatcher.get_data", lambda x: [])
+@mock.patch(
+    "organisations.boundaries.boundary_bot.code_matcher.CodeMatcher.get_data",
+    lambda x: [],
+)
 class NotificationTests(TestCase):
     def setUp(self):
-        scraperwiki.sqlite.execute("DROP TABLE IF EXISTS lgbce_reviews;")
+        super().setUp()
+        OrganisationFactory(official_identifier="BAB")
+        OrganisationFactory(official_identifier="ALL")
 
     def test_no_events(self):
         scraper = LgbceScraper(False, False)
         scraper.data = {
             "babergh": base_data["babergh"].copy(),
         }
+        scraper.data["babergh"]["register_code"] = "BAB"
         scraper.data["babergh"]["latest_event"] = "foo"
         scraper.save()
         scraper.make_notifications()
@@ -25,6 +33,7 @@ class NotificationTests(TestCase):
         scraper.data = {
             "babergh": base_data["babergh"].copy(),
         }
+        scraper.data["babergh"]["register_code"] = "BAB"
         scraper.data["babergh"]["latest_event"] = "foo"
         scraper.make_notifications()
         self.assertEqual(1, len(scraper.slack_helper.messages))
@@ -36,6 +45,7 @@ class NotificationTests(TestCase):
         scraper.data = {
             "babergh": base_data["babergh"].copy(),
         }
+        scraper.data["babergh"]["register_code"] = "BAB"
         scraper.data["babergh"]["latest_event"] = "foo"
         scraper.save()
         scraper.data["babergh"]["latest_event"] = "bar"
@@ -52,12 +62,13 @@ class NotificationTests(TestCase):
         scraper.data = {
             "allerdale": base_data["allerdale"].copy(),
         }
+        scraper.data["allerdale"]["register_code"] = "ALL"
         scraper.data["allerdale"][
             "latest_event"
         ] = "The Allerdale Electoral Changes order"
-        scraper.data["allerdale"]["status"] = "Current Reviews"
+        scraper.data["allerdale"]["status"] = scraper.CURRENT_LABEL
         scraper.save()
-        scraper.data["allerdale"]["status"] = "Recent Reviews"
+        scraper.data["allerdale"]["status"] = scraper.COMPLETED_LABEL
         scraper.make_notifications()
         self.assertEqual(1, len(scraper.slack_helper.messages))
         assert "Completed boundary review" in scraper.slack_helper.messages[0]

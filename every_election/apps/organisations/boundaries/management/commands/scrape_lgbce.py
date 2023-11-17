@@ -1,5 +1,4 @@
 from django.core.management import BaseCommand
-
 from organisations.boundaries.boundary_bot.scraper import LgbceScraper
 
 
