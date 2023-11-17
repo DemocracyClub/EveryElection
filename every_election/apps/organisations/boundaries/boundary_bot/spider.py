@@ -1,16 +1,42 @@
 import json
 import os
-import re
-
-import requests
-import scrapy
 import tempfile
-from scrapy.crawler import CrawlerProcess
+
+import scrapy
 from organisations.boundaries.boundary_bot.common import (
-    is_eco,
-    START_PAGE,
     REQUEST_HEADERS,
+    START_PAGE,
 )
+from scrapy.crawler import CrawlerProcess
+
+
+def get_link_from_container_label(label, response, link_div_class):
+    """
+    lgbce website has chunks of html like:
+
+    <div class="link-name-and-view-container">
+      <div class="link-name-container">
+        <div class="link-title">The Mole Valley (Electoral Changes) Order 2023</div>
+      </div>
+      <div class="link-view-container">
+        <a href="https://www.legislation.gov.uk/uksi/2023/49/contents/made" target="_blank" rel="nofollow noopener noreferrer">
+          View
+          <span class="sr-only">(opens in a new tab)</span>
+        </a>
+      </div>
+    </div>
+
+    This method grabs the links contained by the grandparent of the div containing text matching lower.
+    Search is case insensitive.
+    Caller needs to check that there's only one link.
+    """
+    x_path = (
+        f'//div[@class="{link_div_class}"][contains(translate('
+        "text(),"
+        '"ABCDEFGHIJKLMNOPQRSTUVWXYZ","abcdefghijklmnopqrstuvwxyz"), '
+        f'"{label.lower()}")]/../..//a/@href'
+    )
+    return response.xpath(x_path).extract()
 
 
 class LgbceSpider(scrapy.Spider):
@@ -22,6 +48,7 @@ class LgbceSpider(scrapy.Spider):
         "USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:56.0) Gecko/20100101 Firefox/56.0",
         "FEED_FORMAT": "json",
         "DEFAULT_REQUEST_HEADERS": REQUEST_HEADERS,
+        # "HTTPCACHE_ENABLED": True, # Uncomment for Dev
     }
     allowed_domains = ["lgbce.org.uk"]
     start_urls = [START_PAGE]
@@ -39,77 +66,68 @@ class LgbceSpider(scrapy.Spider):
             return zipfiles[0]
 
         # Try being more specific
-        zipfiles = response.xpath(
-            "//a[contains(.,' ')][contains(@href,'inal')]/@href"
-        ).extract()
-
+        zipfiles = get_link_from_container_label(
+            "mapping files", response, "download-file-title"
+        )
         if len(zipfiles) == 1:
             return zipfiles[0]
 
         return None
 
-    def get_made_link_from_draft_link(self, draft_link):
-        r = requests.get(draft_link)
-        rel_link = re.search(
-            r"(wsi|uksi)\/\d+\/\d+\/(contents\/)?made", str(r.content)
+    def get_latest_event(self, response):
+        latest_stage = response.css("div.stage-latest")
+        return (
+            latest_stage.css("div > div > a > h3").xpath("text()")[0].extract()
         )
-        if rel_link:
-            return "https://www.legislation.gov.uk/{}".format(rel_link.group())
-        else:
-            return None
 
-    def get_legislation(self, response):
-        # find any links to legislation.gov.uk in the pagec
-        legislation_links = response.xpath(
-            "/html/body//a[contains(@href,'legislation.gov.uk')]/@href"
-        ).extract()
+    def get_eco_title_and_link(self, response):
+        def get_link_title(selector):
+            return selector.xpath(
+                '*/div[@class="link-title"]//text()'
+            ).extract_first()
 
-        made_links = [
-            x for x in list(set(legislation_links)) if x.endswith("/made")
+        def get_link(selector):
+            return selector.xpath("*/a/@href").extract_first()
+
+        links = [
+            (get_link_title(selector), get_link(selector))
+            for selector in response.xpath(
+                '//div[@class="latest-information"]//div[@class="link-name-and-view-container"]'
+            )
         ]
-        draft_links = [x for x in list(set(legislation_links)) if "dsi" in x]
-        if len(made_links) == 1:
-            # if we found exactly link to a made order,
-            # assume that's what we're looking for
-            return made_links[0]
-        elif len(draft_links) == 1:
-            return self.get_made_link_from_draft_link(draft_links[0])
-        return None
+        made_ecos = [
+            (title, link)
+            for title, link in links
+            if (
+                ("(electoral changes) order" in title.lower())
+                and ("ukdsi" not in link)
+            )
+        ]
+
+        if len(made_ecos) == 1:
+            return made_ecos[0]
+        return None, None
 
     def parse(self, response):
-        tabs = response.css("div.field--name-field-accordion-title")
-        if tabs:
-            title = tabs[0].xpath("text()").extract_first().strip()
+        status = response.css("div.status::text")
+        if status:
+            status = status.extract_first().strip()
+            title, legislation_url = self.get_eco_title_and_link(response)
             rec = {
                 "slug": response.url.split("/")[-1],
-                "latest_event": title,
-                "shapefiles": self.get_shapefiles(response),
-                "eco": None,
-                "eco_made": 0,
+                "latest_event": self.get_latest_event(response),
+                "boundaries_url": self.get_shapefiles(response),
+                "status": status,
+                "legislation_url": legislation_url,
+                "legislation_made": 0,
+                "title": title,
             }
 
-            # try to work out if the ECO is 'made'
-            eco_made_text_1 = "have now successfully completed a "
-            eco_made_text_2 = "scrutiny and will come into "
-            div = (
-                response.css("div.field--name-field-accordion-body")
-                .extract_first()
-                .lower()
-                .replace("\xa0", " ")
-            )
-
-            if (
-                is_eco(title)
-                and eco_made_text_1 in div
-                and eco_made_text_2 in div
-            ):
-                rec["eco_made"] = 1
-
-                rec["eco"] = self.get_legislation(response)
+            if rec["legislation_url"]:
+                rec["legislation_made"] = 1
 
             yield rec
-
-        for next_page in response.css("ul > li > div > span > a"):
+        for next_page in response.css("div.letter_section > div > a"):
             if "all-reviews" in next_page.extract():
                 yield response.follow(next_page, self.parse)
 
@@ -137,7 +155,8 @@ class SpiderWrapper:
         process.crawl(self.spider)
         process.start()
 
-        results = json.load(open(tmpfile))
+        with open(tmpfile) as f:
+            results = json.load(f)
 
         os.remove(tmpfile)
 

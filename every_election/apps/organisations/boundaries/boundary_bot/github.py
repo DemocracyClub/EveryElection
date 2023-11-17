@@ -1,9 +1,10 @@
 import datetime
 import os
-from commitment import GitHubCredentials
+
 from commitment import GitHubClient as GitHubSyncClient
-from polling_bot.brain import GitHubClient as GitHubIssueClient
+from commitment import GitHubCredentials
 from organisations.boundaries.boundary_bot.common import GITHUB_API_KEY
+from polling_bot.brain import GitHubClient as GitHubIssueClient
 
 
 class GitHubIssueHelper:
@@ -15,7 +16,7 @@ class GitHubIssueHelper:
             {
                 "title": "Completed boundary review for %s" % (record["name"]),
                 "body": "Completed boundary review for %s: %s"
-                % (record["name"], record["url"]),
+                % (record["name"], record["consultation_url"]),
             }
         )
 
