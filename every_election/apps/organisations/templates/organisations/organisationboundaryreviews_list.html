@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block page_title %}Boundary Reviews{% endblock page_title %}
+
+{% block content %}
+	{% for review in object_list%}
+		<h3>
+			<a href="{% url 'single_boundary_review_view' review.id %}">{{review.lgbce_review_title}}</a>
+		</h3>
+		<li><strong>Organisation</strong>: <a href={{review.divisionset.organisation.get_absolute_url}}>{{review.divisionset.organisation.name}}</a></li>
+		<li><strong>Consultation</strong>: <a href={{review.consultation_url}}>Link</a></li>
+		<li><strong>Legislation</strong>: <a href={{review.legislation_url}}>Link</a></li>
+
+	{% endfor %}
+
+{% endblock content %}

@@ -3,9 +3,9 @@ from datetime import datetime
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Prefetch, Q
 from django.http import Http404
-from django.views.generic import ListView, TemplateView
+from django.views.generic import DetailView, ListView, TemplateView
 from elections.models import Election
-from organisations.models import Organisation
+from organisations.models import Organisation, OrganisationBoundaryReview
 
 
 class SupportedOrganisationsView(ListView):
@@ -71,3 +71,23 @@ class OrganisationDetailView(TemplateView):
                 "api:organisation-geo", "json"
             )
         return context
+
+
+class AllBoundaryReviewsView(ListView):
+    template_name = "organisations/organisationboundaryreviews_list.html"
+    model = OrganisationBoundaryReview
+    context_object_name = "boundary_reviews"
+
+    def get_queryset(self):
+        return (
+            OrganisationBoundaryReview.objects.all()
+            .prefetch_related("organisation")
+            .prefetch_related("divisionset")
+        )
+
+
+class SingleBoundaryReviewView(DetailView):
+    model = OrganisationBoundaryReview
+    context_object_name = "boundary_review"
+    slug_field = "id"
+    slug_url_kwarg = "boundary_review_id"
