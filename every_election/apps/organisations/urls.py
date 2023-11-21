@@ -4,11 +4,18 @@ from .views import (
     OrganisationDetailView,
     OrganisationsFilterView,
     SupportedOrganisationsView,
+    AllBoundaryReviewsView,
 )
 
 urlpatterns = [
     re_path(
         r"^$", SupportedOrganisationsView.as_view(), name="organisations_view"
+    ),
+    # a list of all boundary reviews
+    re_path(
+        r"^boundary_reviews/$",
+        AllBoundaryReviewsView.as_view(),
+        name="boundary_reviews_view",
     ),
     # canonical URL for a single organisation record
     re_path(
