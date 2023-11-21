@@ -1,10 +1,11 @@
 from django.urls import re_path
 
 from .views import (
+    AllBoundaryReviewsView,
     OrganisationDetailView,
     OrganisationsFilterView,
+    SingleBoundaryReviewView,
     SupportedOrganisationsView,
-    AllBoundaryReviewsView,
 )
 
 urlpatterns = [
@@ -16,6 +17,12 @@ urlpatterns = [
         r"^boundary_reviews/$",
         AllBoundaryReviewsView.as_view(),
         name="boundary_reviews_view",
+    ),
+    # a single boundary review record
+    re_path(
+        r"^boundary_reviews/(?P<boundary_review_id>.+)/$",
+        SingleBoundaryReviewView.as_view(),
+        name="single_boundary_review_view",
     ),
     # canonical URL for a single organisation record
     re_path(
