@@ -3,8 +3,13 @@ import os
 
 from commitment import GitHubClient as GitHubSyncClient
 from commitment import GitHubCredentials
-from organisations.boundaries.boundary_bot.common import GITHUB_API_KEY
-from polling_bot.brain import GitHubClient as GitHubIssueClient
+from organisations.boundaries.boundary_bot.common import (
+    GITHUB_API_KEY,
+    GITHUB_ISSUE_ONLY_API_KEY,
+)
+from organisations.boundaries.boundary_bot.common import (
+    GitHubClient as GitHubIssueClient,
+)
 
 
 class GitHubIssueHelper:
@@ -23,7 +28,7 @@ class GitHubIssueHelper:
     def raise_issues(self):
         owner = "DemocracyClub"
         repo = "EveryElection"
-        client = GitHubIssueClient(GITHUB_API_KEY)
+        client = GitHubIssueClient(GITHUB_ISSUE_ONLY_API_KEY)
         for issue in self.issues:
             client.raise_issue(owner, repo, issue["title"], issue["body"])
 
@@ -31,9 +36,9 @@ class GitHubIssueHelper:
 class GitHubSyncHelper:
     def get_github_credentials(self):
         return GitHubCredentials(
-            repo=os.environ["MORPH_GITHUB_BOUNDARY_REPO"],
-            name=os.environ["MORPH_GITHUB_USERNAME"],
-            email=os.environ["MORPH_GITHUB_EMAIL"],
+            repo=os.environ.get("GITHUB_BOUNDARY_REPO", None),
+            name=os.environ.get("GITHUB_USERNAME", None),
+            email=os.environ.get("GITHUB_EMAIL", None),
             api_key=GITHUB_API_KEY,
         )
 

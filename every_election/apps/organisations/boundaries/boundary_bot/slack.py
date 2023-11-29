@@ -1,8 +1,8 @@
 from organisations.boundaries.boundary_bot.common import (
     SLACK_WEBHOOK_URL,
+    SlackClient,
     is_eco,
 )
-from polling_bot.brain import SlackClient
 
 
 class SlackHelper:
