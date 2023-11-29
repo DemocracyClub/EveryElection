@@ -6,7 +6,7 @@ from django.core import serializers
 from organisations.boundaries.boundary_bot.code_matcher import CodeMatcher
 from organisations.boundaries.boundary_bot.common import (
     BASE_URL,
-    GITHUB_API_KEY,
+    GITHUB_ISSUE_ONLY_API_KEY,
     REQUEST_HEADERS,
     SLACK_WEBHOOK_URL,
     START_PAGE,
@@ -291,7 +291,7 @@ class LgbceScraper:
 
         if SLACK_WEBHOOK_URL:
             self.slack_helper.post_messages()
-        if GITHUB_API_KEY:
+        if GITHUB_ISSUE_ONLY_API_KEY:
             self.github_helper.raise_issues()
 
     def dump_table_to_json(self):
@@ -301,7 +301,7 @@ class LgbceScraper:
         return serializers.serialize("json", records, indent=4)
 
     def sync_db_to_github(self):
-        if GITHUB_API_KEY:
+        if GITHUB_ISSUE_ONLY_API_KEY:
             content = self.dump_table_to_json()
             g = GitHubSyncHelper()
             g.sync_file_to_github("lgbce.json", content)
