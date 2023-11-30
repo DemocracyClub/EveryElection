@@ -5,6 +5,7 @@ from organisations.models import (
     DivisionGeography,
     DivisionGeographySubdivided,
     Organisation,
+    OrganisationBoundaryReview,
     OrganisationDivision,
     OrganisationDivisionSet,
     OrganisationGeography,
@@ -124,3 +125,85 @@ class OrganisationGeographyFactory(factory.django.DjangoModelFactory):
             SubdividedOrganisationGeographyFactory(
                 organisation_geography=self, geography=geom
             )
+
+
+class IncompleteOrganisationBoundaryReviewFactory(
+    factory.django.DjangoModelFactory
+):
+    class Meta:
+        model = OrganisationBoundaryReview
+
+    organisation = factory.SubFactory(OrganisationFactory)
+    divisionset = None
+    boundaries_url = "/sites/default/files/2023-03/polygons.zip"
+    status = "Currently in review"
+    latest_event = "Consultation on proposals"
+    legislation_made = False
+    legislation_url = None
+    legislation_title = None
+
+    @factory.lazy_attribute
+    def slug(self: OrganisationBoundaryReview):
+        return self.organisation.slug
+
+    @factory.lazy_attribute
+    def consultation_url(self: OrganisationBoundaryReview):
+        return f"http://www.lgbce.org.uk/all-reviews/{self.slug}"
+
+
+class CompletedOrganisationBoundaryReviewFactory(
+    factory.django.DjangoModelFactory
+):
+    class Meta:
+        model = OrganisationBoundaryReview
+
+    organisation = factory.SubFactory(OrganisationFactory)
+    divisionset = factory.SubFactory(OrganisationDivisionSetFactory)
+    boundaries_url = "/sites/default/files/2023-03/polygons.zip"
+    status = "Completed"
+    latest_event = "Making our recommendation into law"
+    legislation_url = "https://www.legislation.gov.uk/uksi/2023/1023/made"
+    legislation_made = True
+
+    @factory.lazy_attribute
+    def slug(self: OrganisationBoundaryReview):
+        return self.organisation.slug
+
+    @factory.lazy_attribute
+    def consultation_url(self: OrganisationBoundaryReview):
+        return f"http://www.lgbce.org.uk/all-reviews/{self.slug}"
+
+    @factory.lazy_attribute
+    def legislation_title(self: OrganisationBoundaryReview):
+        return f"The {self.organisation.common_name} (Electoral Changes) Order 2023"
+
+
+class UnprocessedOrganisationBoundaryReviewFactory(
+    factory.django.DjangoModelFactory
+):
+    """
+    NB divisionset is none
+    """
+
+    class Meta:
+        model = OrganisationBoundaryReview
+
+    organisation = factory.SubFactory(OrganisationFactory)
+    divisionset = None
+    boundaries_url = "/sites/default/files/2023-03/polygons.zip"
+    status = "Completed"
+    latest_event = "Making our recommendation into law"
+    legislation_url = "https://www.legislation.gov.uk/uksi/2023/1023/made"
+    legislation_made = True
+
+    @factory.lazy_attribute
+    def slug(self: OrganisationBoundaryReview):
+        return self.organisation.slug
+
+    @factory.lazy_attribute
+    def consultation_url(self: OrganisationBoundaryReview):
+        return f"http://www.lgbce.org.uk/all-reviews/{self.slug}"
+
+    @factory.lazy_attribute
+    def legislation_title(self: OrganisationBoundaryReview):
+        return f"The {self.organisation.common_name} (Electoral Changes) Order 2023"
