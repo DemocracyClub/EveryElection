@@ -5,10 +5,13 @@ from django.test import TestCase
 from elections.tests.factories import ElectionFactory
 from organisations.models import Organisation
 from organisations.tests.factories import (
+    CompletedOrganisationBoundaryReviewFactory,
+    IncompleteOrganisationBoundaryReviewFactory,
     OrganisationDivisionFactory,
     OrganisationDivisionSetFactory,
     OrganisationFactory,
     OrganisationGeographyFactory,
+    UnprocessedOrganisationBoundaryReviewFactory,
 )
 
 
@@ -270,3 +273,65 @@ class TestOrganisation(TestCase):
             .distinct()
         )
         self.assertEqual([self.org.modified], list(modified_dates))
+
+
+class TestOrganisationDivisionBoundaryReview(TestCase):
+    def setUp(self):
+        self.unprocessed_review = UnprocessedOrganisationBoundaryReviewFactory()
+        self.processed_review = CompletedOrganisationBoundaryReviewFactory(
+            boundaries_url="path/to/processed_review_polys.zip"
+        )
+        self.incomplete_review = IncompleteOrganisationBoundaryReviewFactory(
+            boundaries_url=None
+        )
+
+    def test_boundary_file_name(self):
+        self.assertEqual(
+            "processed_review_polys.zip",
+            self.processed_review.boundary_file_name,
+        )
+        self.assertIsNone(self.incomplete_review.boundary_file_name)
+        self.assertEqual(
+            "polygons.zip", self.unprocessed_review.boundary_file_name
+        )
+
+    def test_s3_boundaries_key(self):
+        self.assertEqual(
+            f"{self.processed_review.slug}/The {self.processed_review.organisation.common_name} (Electoral Changes) "
+            f"Order 2023/processed_review_polys.zip",
+            self.processed_review.s3_boundaries_key,
+        )
+        self.assertIsNone(self.incomplete_review.s3_boundaries_key)
+        self.assertEqual(
+            f"{self.unprocessed_review.slug}/The {self.unprocessed_review.organisation.common_name} (Electoral Changes) "
+            f"Order 2023/polygons.zip",
+            self.unprocessed_review.s3_boundaries_key,
+        )
+
+    def test_cleaned_legislation_url(self):
+        cases = [
+            (
+                "http://www.legislation.gov.uk/uksi/2017/1315/contents/made",
+                "https://www.legislation.gov.uk/uksi/2017/1315",
+            ),
+            (
+                "https://www.legislation.gov.uk/uksi/2021/1053/contents/made",
+                "https://www.legislation.gov.uk/uksi/2021/1053",
+            ),
+            (
+                "https://www.legislation.gov.uk/uksi/2021/417/made",
+                "https://www.legislation.gov.uk/uksi/2021/417",
+            ),
+            (
+                "https://www.legislation.gov.uk/uksi/2021/1230/introduction/made",
+                "https://www.legislation.gov.uk/uksi/2021/1230",
+            ),
+        ]
+        for raw_url, clean_url in cases:
+            obr = CompletedOrganisationBoundaryReviewFactory(
+                legislation_url=raw_url
+            )
+            self.assertEqual(
+                clean_url,
+                obr.cleaned_legislation_url,
+            )
