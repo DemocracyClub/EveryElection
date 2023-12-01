@@ -1,3 +1,5 @@
+import re
+
 from core.mixins import UpdateElectionsTimestampedModel
 from django.contrib.gis.db import models
 from django_extensions.db.models import TimeStampedModel
@@ -200,3 +202,34 @@ class OrganisationBoundaryReview(TimeStampedModel):
         return (
             f"LGBCE review for {self.organisation.common_name} ({self.status})"
         )
+
+    @property
+    def s3_directory_key(self):
+        if self.legislation_title:
+            return f"{self.slug}/{self.legislation_title}"
+        return None
+
+    @property
+    def s3_boundaries_key(self):
+        if (file_name := self.boundary_file_name) and self.s3_directory_key:
+            return f"{self.s3_directory_key}/{file_name}"
+        return None
+
+    @property
+    def boundary_file_name(self):
+        try:
+            return self.boundaries_url.split("/")[-1]
+        except AttributeError:
+            return None
+
+    @property
+    def lgbce_boundary_url(self):
+        return f"https://www.lgbce.org.uk/{self.boundaries_url}"
+
+    @property
+    def cleaned_legislation_url(self):
+        url = re.search(
+            r"www.legislation.gov.uk/(wsi|uksi|ssi)/\d+/\d+",
+            self.legislation_url,
+        ).group()
+        return f"https://{url}"
