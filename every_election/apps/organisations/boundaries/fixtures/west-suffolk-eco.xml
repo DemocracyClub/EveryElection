@@ -1,0 +1,331 @@
+<Legislation xmlns="http://www.legislation.gov.uk/namespaces/legislation"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             DocumentURI="http://www.legislation.gov.uk/uksi/2018/1375/made"
+             IdURI="http://www.legislation.gov.uk/id/uksi/2018/1375" NumberOfProvisions="4"
+             xsi:schemaLocation="http://www.legislation.gov.uk/namespaces/legislation http://www.legislation.gov.uk/schema/legislation.xsd"
+             SchemaVersion="1.0">
+    <ukm:Metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/"
+                  xmlns:atom="http://www.w3.org/2005/Atom"
+                  xmlns:ukm="http://www.legislation.gov.uk/namespaces/metadata">
+        <dc:identifier>http://www.legislation.gov.uk/uksi/2018/1375/schedule/1/made</dc:identifier>
+        <dc:title>The West Suffolk (Electoral Changes) Order 2018</dc:title>
+        <dc:language>en</dc:language>
+        <dc:publisher>King\'s Printer of Acts of Parliament</dc:publisher>
+        <dc:modified>2018-12-18</dc:modified>
+        <dc:subject scheme="SIheading">LOCAL GOVERNMENT, ENGLAND</dc:subject>
+        <dc:description>This Order makes changes to electoral arrangements for West Suffolk following recommendations
+            made by the Local Government Boundary Commission for England. West Suffolk is established as an authority,
+            with effect from 1st April 2019, by virtue of the West Suffolk (Local Government Changes) Order 2018 (S.I.
+            2018/639). The changes made by this Order apply in respect of local government elections held on and after
+            the ordinary day of election of councillors in 2019.
+        </dc:description>
+        <atom:link rel="self" href="http://www.legislation.gov.uk/uksi/2018/1375/schedule/1/made/data.xml"
+                   type="application/xml"/>
+        <atom:link rel="http://www.legislation.gov.uk/def/navigation/resources"
+                   href="http://www.legislation.gov.uk/uksi/2018/1375/resources" title="More Resources"/>
+        <atom:link rel="http://www.legislation.gov.uk/def/navigation/memorandum"
+                   href="http://www.legislation.gov.uk/uksi/2018/1375/memorandum" title="Explanatory Memorandum"/>
+        <atom:link rel="http://www.legislation.gov.uk/def/navigation/memorandum/toc"
+                   href="http://www.legislation.gov.uk/uksi/2018/1375/memorandum/contents"
+                   title="Explanatory Memorandum Table of Contents"/>
+        <atom:link rel="http://www.legislation.gov.uk/def/navigation/act"
+                   href="http://www.legislation.gov.uk/uksi/2018/1375/made" title="whole act"/>
+        <atom:link rel="http://www.legislation.gov.uk/def/navigation/introduction"
+                   href="http://www.legislation.gov.uk/uksi/2018/1375/introduction/made" title="introduction"/>
+        <atom:link rel="http://www.legislation.gov.uk/def/navigation/signature"
+                   href="http://www.legislation.gov.uk/uksi/2018/1375/signature/made" title="signature"/>
+        <atom:link rel="http://www.legislation.gov.uk/def/navigation/note"
+                   href="http://www.legislation.gov.uk/uksi/2018/1375/note/made" title="note"/>
+        <atom:link rel="http://www.legislation.gov.uk/def/navigation/body"
+                   href="http://www.legislation.gov.uk/uksi/2018/1375/body/made" title="body"/>
+        <atom:link rel="http://www.legislation.gov.uk/def/navigation/schedules"
+                   href="http://www.legislation.gov.uk/uksi/2018/1375/schedules/made" title="schedules"/>
+        <atom:link rel="alternate" type="application/rdf+xml"
+                   href="http://www.legislation.gov.uk/uksi/2018/1375/schedule/1/made/data.rdf" title="RDF/XML"/>
+        <atom:link rel="alternate" type="application/akn+xml"
+                   href="http://www.legislation.gov.uk/uksi/2018/1375/schedule/1/made/data.akn" title="AKN"/>
+        <atom:link rel="alternate" type="application/xhtml+xml"
+                   href="http://www.legislation.gov.uk/uksi/2018/1375/schedule/1/made/data.xht" title="HTML snippet"/>
+        <atom:link rel="alternate" type="text/html"
+                   href="http://www.legislation.gov.uk/uksi/2018/1375/schedule/1/made/data.htm"
+                   title="Website (XHTML) Default View"/>
+        <atom:link rel="alternate" type="application/pdf"
+                   href="http://www.legislation.gov.uk/uksi/2018/1375/schedule/1/made/data.pdf" title="PDF"/>
+        <atom:link rel="alternate" type="application/akn+xhtml"
+                   href="http://www.legislation.gov.uk/uksi/2018/1375/schedule/1/made/data.html" title="HTML5 snippet"/>
+        <atom:link rel="http://purl.org/dc/terms/tableOfContents" hreflang="en"
+                   href="http://www.legislation.gov.uk/uksi/2018/1375/contents/made" title="Table of Contents"/>
+        <atom:link rel="http://www.legislation.gov.uk/def/navigation/supersedes"
+                   href="http://www.legislation.gov.uk/id/ukdsi/2018/9780111173978"
+                   title="The West Suffolk (Electoral Changes) Order 2018"/>
+        <atom:link rel="up" href="http://www.legislation.gov.uk/uksi/2018/1375/made" title="Entire legislation"/>
+        <atom:link rel="prev" href="http://www.legislation.gov.uk/uksi/2018/1375/signature/made"
+                   title="Signature; Signature"/>
+        <atom:link rel="prevInForce" href="http://www.legislation.gov.uk/uksi/2018/1375/signature/made"
+                   title="Signature; Signature"/>
+        <atom:link rel="next" href="http://www.legislation.gov.uk/uksi/2018/1375/schedule/2/made"
+                   title="Schedule; Schedule 2"/>
+        <atom:link rel="nextInForce" href="http://www.legislation.gov.uk/uksi/2018/1375/schedule/2/made"
+                   title="Schedule; Schedule 2"/>
+        <ukm:SecondaryMetadata>
+            <ukm:DocumentClassification>
+                <ukm:DocumentCategory Value="secondary"/>
+                <ukm:DocumentMainType Value="UnitedKingdomStatutoryInstrument"/>
+                <ukm:DocumentStatus Value="final"/>
+                <ukm:DocumentMinorType Value="order"/>
+            </ukm:DocumentClassification>
+            <ukm:Year Value="2018"/>
+            <ukm:Number Value="1375"/>
+            <ukm:Made Date="2018-12-17"/>
+            <ukm:ISBN Value="9780111177365"/>
+        </ukm:SecondaryMetadata>
+        <ukm:Supersedes URI="http://www.legislation.gov.uk/id/ukdsi/2018/9780111173978">
+            <dc:title>The West Suffolk (Electoral Changes) Order 2018</dc:title>
+            <ukm:DocumentMainType Value="UnitedKingdomDraftStatutoryInstrument"/>
+            <ukm:Year Value="2018"/>
+            <ukm:ISBN Value="9780111173978"/>
+        </ukm:Supersedes>
+        <ukm:Notes>
+            <ukm:Note IdURI="http://www.legislation.gov.uk/id/uksi/2018/1375/notes"/>
+            <ukm:Alternatives>
+                <ukm:Alternative URI="http://www.legislation.gov.uk/uksi/2018/1375/pdfs/uksiem_20181375_en.pdf"
+                                 Date="2018-12-19" Title="UK Explanatory Memorandum" Size="46170"/>
+            </ukm:Alternatives>
+        </ukm:Notes>
+        <ukm:Alternatives>
+            <ukm:Alternative URI="http://www.legislation.gov.uk/uksi/2018/1375/pdfs/uksi_20181375_en.pdf"
+                             Date="2018-12-19" Size="51905"/>
+        </ukm:Alternatives>
+        <ukm:Statistics>
+            <ukm:TotalParagraphs Value="4"/>
+            <ukm:BodyParagraphs Value="4"/>
+            <ukm:ScheduleParagraphs Value="0"/>
+            <ukm:AttachmentParagraphs Value="0"/>
+            <ukm:TotalImages Value="0"/>
+        </ukm:Statistics>
+    </ukm:Metadata>
+    <Secondary>
+        <Schedules>
+            <Schedule DocumentURI="http://www.legislation.gov.uk/uksi/2018/1375/schedule/1/made"
+                      IdURI="http://www.legislation.gov.uk/id/uksi/2018/1375/schedule/1" id="schedule-1">
+                <Number>SCHEDULE 1</Number>
+                <TitleBlock>
+                    <Title>Names of wards and number of councillors</Title>
+                </TitleBlock>
+                <Reference>Article 3</Reference>
+                <ScheduleBody>
+                    <Tabular Orientation="portrait">
+                        <table xmlns="http://www.w3.org/1999/xhtml" cols="2">
+                            <colgroup>
+                                <col width="213.2pt"/>
+                                <col width="213.2pt"/>
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th xmlns:fo="http://www.w3.org/1999/XSL/Format" rowspan="1" colspan="1"
+                                        fo:border-top-style="solid" fo:border-top-width="0.5pt"
+                                        fo:border-top-color="black" fo:border-bottom-style="solid"
+                                        fo:border-bottom-width="0.5pt" fo:border-bottom-color="black">(1)
+                                    </th>
+                                    <th xmlns:fo="http://www.w3.org/1999/XSL/Format" rowspan="1" colspan="1"
+                                        fo:border-top-style="solid" fo:border-top-width="0.5pt"
+                                        fo:border-top-color="black" fo:border-bottom-style="solid"
+                                        fo:border-bottom-width="0.5pt" fo:border-bottom-color="black">(2)
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th xmlns:fo="http://www.w3.org/1999/XSL/Format" rowspan="1" colspan="1"
+                                        fo:border-top-style="solid" fo:border-top-width="0.5pt"
+                                        fo:border-top-color="black" fo:border-bottom-style="solid"
+                                        fo:border-bottom-width="0.5pt" fo:border-bottom-color="black">Name of district
+                                        ward
+                                    </th>
+                                    <th xmlns:fo="http://www.w3.org/1999/XSL/Format" rowspan="1" colspan="1"
+                                        fo:border-top-style="solid" fo:border-top-width="0.5pt"
+                                        fo:border-top-color="black" fo:border-bottom-style="solid"
+                                        fo:border-bottom-width="0.5pt" fo:border-bottom-color="black">Number of
+                                        councillors
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Abbeygate</td>
+                                    <td rowspan="1" colspan="1" valign="middle">2</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Bardwell</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Barningham</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Barrow</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Brandon Central</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Brandon East</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Brandon West</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Chedburgh &amp; Chevington</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="bottom">Clare, Hundon &amp; Kedington</td>
+                                    <td rowspan="1" colspan="1" valign="middle">3</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Eastgate</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Exning</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Haverhill Central</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Haverhill East</td>
+                                    <td rowspan="1" colspan="1" valign="middle">2</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Haverhill North</td>
+                                    <td rowspan="1" colspan="1" valign="middle">2</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Haverhill South</td>
+                                    <td rowspan="1" colspan="1" valign="middle">2</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Haverhill South East</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Haverhill West</td>
+                                    <td rowspan="1" colspan="1" valign="middle">2</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Horringer</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Iceni</td>
+                                    <td rowspan="1" colspan="1" valign="middle">2</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Ixworth</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Kentford &amp; Moulton</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Lakenheath</td>
+                                    <td rowspan="1" colspan="1" valign="middle">2</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Manor</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Mildenhall Great Heath</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="bottom">Mildenhall Kingsway &amp; Market</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Mildenhall Queensway</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Minden</td>
+                                    <td rowspan="1" colspan="1" valign="middle">2</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Moreton Hall</td>
+                                    <td rowspan="1" colspan="1" valign="middle">3</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Newmarket East</td>
+                                    <td rowspan="1" colspan="1" valign="middle">2</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Newmarket North</td>
+                                    <td rowspan="1" colspan="1" valign="middle">2</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Newmarket West</td>
+                                    <td rowspan="1" colspan="1" valign="middle">2</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Pakenham &amp; Troston</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Risby</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Rougham</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Southgate</td>
+                                    <td rowspan="1" colspan="1" valign="middle">2</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">St Olaves</td>
+                                    <td rowspan="1" colspan="1" valign="middle">2</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Stanton</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">The Fornhams &amp; Great Barton</td>
+                                    <td rowspan="1" colspan="1" valign="middle">2</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">The Rows</td>
+                                    <td rowspan="1" colspan="1" valign="middle">2</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Tollgate</td>
+                                    <td rowspan="1" colspan="1" valign="middle">2</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Westgate</td>
+                                    <td rowspan="1" colspan="1" valign="middle">2</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Whepstead &amp; Wickhambrook</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="1" colspan="1" valign="middle">Withersfield</td>
+                                    <td rowspan="1" colspan="1" valign="middle">1</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </Tabular>
+                </ScheduleBody>
+            </Schedule>
+        </Schedules>
+    </Secondary>
+</Legislation>
