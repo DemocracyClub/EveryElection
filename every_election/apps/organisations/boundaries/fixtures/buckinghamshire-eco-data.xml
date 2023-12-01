@@ -1,0 +1,363 @@
+<Legislation xmlns="http://www.legislation.gov.uk/namespaces/legislation"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             DocumentURI="http://www.legislation.gov.uk/uksi/2023/1205/made"
+             IdURI="http://www.legislation.gov.uk/id/uksi/2023/1205" NumberOfProvisions="4"
+             xsi:schemaLocation="http://www.legislation.gov.uk/namespaces/legislation http://www.legislation.gov.uk/schema/legislation.xsd"
+             SchemaVersion="1.0">
+    <ukm:Metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/"
+                  xmlns:atom="http://www.w3.org/2005/Atom"
+                  xmlns:ukm="http://www.legislation.gov.uk/namespaces/metadata">
+        <dc:identifier>http://www.legislation.gov.uk/uksi/2023/1205/schedule/1/made</dc:identifier>
+        <dc:title>The Buckinghamshire (Electoral Changes) Order 2023</dc:title>
+        <dc:language>en</dc:language>
+        <dc:publisher>King\'s Printer of Acts of Parliament</dc:publisher>
+        <dc:modified>2023-11-15</dc:modified>
+        <dc:subject scheme="SIheading">LOCAL GOVERNMENT, ENGLAND</dc:subject>
+        <dc:description>This Order makes changes to electoral arrangements for the unitary authority of Buckinghamshire
+            (\xe2\x80\x9cthe Authority\xe2\x80\x9d) following recommendations made by the Local Boundary Commission for
+            England. This Order does not change the boundary of the Authority itself.
+        </dc:description>
+        <atom:link rel="self" href="http://www.legislation.gov.uk/uksi/2023/1205/schedule/1/made/data.xml"
+                   type="application/xml"/>
+        <atom:link rel="http://www.legislation.gov.uk/def/navigation/resources"
+                   href="http://www.legislation.gov.uk/uksi/2023/1205/resources" title="More Resources"/>
+        <atom:link rel="http://www.legislation.gov.uk/def/navigation/memorandum"
+                   href="http://www.legislation.gov.uk/uksi/2023/1205/memorandum" title="Explanatory Memorandum"/>
+        <atom:link rel="http://www.legislation.gov.uk/def/navigation/memorandum/toc"
+                   href="http://www.legislation.gov.uk/uksi/2023/1205/memorandum/contents"
+                   title="Explanatory Memorandum Table of Contents"/>
+        <atom:link rel="http://www.legislation.gov.uk/def/navigation/act"
+                   href="http://www.legislation.gov.uk/uksi/2023/1205/made" title="whole act"/>
+        <atom:link rel="http://www.legislation.gov.uk/def/navigation/introduction"
+                   href="http://www.legislation.gov.uk/uksi/2023/1205/introduction/made" title="introduction"/>
+        <atom:link rel="http://www.legislation.gov.uk/def/navigation/signature"
+                   href="http://www.legislation.gov.uk/uksi/2023/1205/signature/made" title="signature"/>
+        <atom:link rel="http://www.legislation.gov.uk/def/navigation/note"
+                   href="http://www.legislation.gov.uk/uksi/2023/1205/note/made" title="note"/>
+        <atom:link rel="http://www.legislation.gov.uk/def/navigation/body"
+                   href="http://www.legislation.gov.uk/uksi/2023/1205/body/made" title="body"/>
+        <atom:link rel="http://www.legislation.gov.uk/def/navigation/schedules"
+                   href="http://www.legislation.gov.uk/uksi/2023/1205/schedules/made" title="schedules"/>
+        <atom:link rel="alternate" type="application/rdf+xml"
+                   href="http://www.legislation.gov.uk/uksi/2023/1205/schedule/1/made/data.rdf" title="RDF/XML"/>
+        <atom:link rel="alternate" type="application/akn+xml"
+                   href="http://www.legislation.gov.uk/uksi/2023/1205/schedule/1/made/data.akn" title="AKN"/>
+        <atom:link rel="alternate" type="application/xhtml+xml"
+                   href="http://www.legislation.gov.uk/uksi/2023/1205/schedule/1/made/data.xht" title="HTML snippet"/>
+        <atom:link rel="alternate" type="text/html"
+                   href="http://www.legislation.gov.uk/uksi/2023/1205/schedule/1/made/data.htm"
+                   title="Website (XHTML) Default View"/>
+        <atom:link rel="alternate" type="application/pdf"
+                   href="http://www.legislation.gov.uk/uksi/2023/1205/schedule/1/made/data.pdf" title="PDF"/>
+        <atom:link rel="alternate" type="application/akn+xhtml"
+                   href="http://www.legislation.gov.uk/uksi/2023/1205/schedule/1/made/data.html" title="HTML5 snippet"/>
+        <atom:link rel="http://purl.org/dc/terms/tableOfContents" hreflang="en"
+                   href="http://www.legislation.gov.uk/uksi/2023/1205/contents/made" title="Table of Contents"/>
+        <atom:link rel="http://www.legislation.gov.uk/def/navigation/supersedes"
+                   href="http://www.legislation.gov.uk/id/ukdsi/2023/9780348250244"
+                   title="The Buckinghamshire (Electoral Changes) Order 2023"/>
+        <atom:link rel="up" href="http://www.legislation.gov.uk/uksi/2023/1205/made" title="Entire legislation"/>
+        <atom:link rel="prev" href="http://www.legislation.gov.uk/uksi/2023/1205/signature/made"
+                   title="Signature; Signature"/>
+        <atom:link rel="prevInForce" href="http://www.legislation.gov.uk/uksi/2023/1205/signature/made"
+                   title="Signature; Signature"/>
+        <atom:link rel="next" href="http://www.legislation.gov.uk/uksi/2023/1205/schedule/2/made"
+                   title="Schedule; Schedule 2"/>
+        <atom:link rel="nextInForce" href="http://www.legislation.gov.uk/uksi/2023/1205/schedule/2/made"
+                   title="Schedule; Schedule 2"/>
+        <ukm:SecondaryMetadata>
+            <ukm:DocumentClassification>
+                <ukm:DocumentCategory Value="secondary"/>
+                <ukm:DocumentMainType Value="UnitedKingdomStatutoryInstrument"/>
+                <ukm:DocumentStatus Value="final"/>
+                <ukm:DocumentMinorType Value="order"/>
+            </ukm:DocumentClassification>
+            <ukm:Year Value="2023"/>
+            <ukm:Number Value="1205"/>
+            <ukm:Made Date="2023-11-13"/>
+            <ukm:ISBN Value="9780348253665"/>
+        </ukm:SecondaryMetadata>
+        <ukm:Supersedes URI="http://www.legislation.gov.uk/id/ukdsi/2023/9780348250244">
+            <dc:title>The Buckinghamshire (Electoral Changes) Order 2023</dc:title>
+            <ukm:DocumentMainType Value="UnitedKingdomDraftStatutoryInstrument"/>
+            <ukm:Year Value="2023"/>
+            <ukm:ISBN Value="9780348250244"/>
+        </ukm:Supersedes>
+        <ukm:Notes>
+            <ukm:Note IdURI="http://www.legislation.gov.uk/id/uksi/2023/1205/notes"/>
+            <ukm:Alternatives>
+                <ukm:Alternative URI="http://www.legislation.gov.uk/uksi/2023/1205/pdfs/uksiem_20231205_en_001.pdf"
+                                 Date="2023-11-15" Title="UK Explanatory Memorandum" Size="41429"/>
+            </ukm:Alternatives>
+        </ukm:Notes>
+        <ukm:Alternatives>
+            <ukm:Alternative URI="http://www.legislation.gov.uk/uksi/2023/1205/pdfs/uksi_20231205_en.pdf"
+                             Date="2023-11-15" Size="50191" Print="true"/>
+        </ukm:Alternatives>
+        <ukm:Statistics>
+            <ukm:TotalParagraphs Value="4"/>
+            <ukm:BodyParagraphs Value="4"/>
+            <ukm:ScheduleParagraphs Value="0"/>
+            <ukm:AttachmentParagraphs Value="0"/>
+            <ukm:TotalImages Value="0"/>
+        </ukm:Statistics>
+    </ukm:Metadata>
+    <Secondary>
+        <Schedules>
+            <Schedule DocumentURI="http://www.legislation.gov.uk/uksi/2023/1205/schedule/1/made"
+                      IdURI="http://www.legislation.gov.uk/id/uksi/2023/1205/schedule/1" id="schedule-1">
+                <Number>SCHEDULE 1</Number>
+                <TitleBlock>
+                    <Title>Wards in Buckinghamshire and number of councillors</Title>
+                </TitleBlock>
+                <Reference>Article 3</Reference>
+                <ScheduleBody>
+                    <Tabular Orientation="portrait">
+                        <table xmlns="http://www.w3.org/1999/xhtml" cols="2">
+                            <colgroup>
+                                <col width="213.2pt"/>
+                                <col width="213.2pt"/>
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th xmlns:fo="http://www.w3.org/1999/XSL/Format" colspan="1"
+                                        fo:border-top-color="black" fo:border-top-width="0.5pt"
+                                        fo:border-top-style="solid" rowspan="1">
+                                        <Para xmlns="http://www.legislation.gov.uk/namespaces/legislation">
+                                            <Text>
+                                                <Emphasis>(1)</Emphasis>
+                                            </Text>
+                                        </Para>
+                                        <Para xmlns="http://www.legislation.gov.uk/namespaces/legislation">
+                                            <Text>
+                                                <Emphasis>Name of Ward</Emphasis>
+                                            </Text>
+                                        </Para>
+                                    </th>
+                                    <th xmlns:fo="http://www.w3.org/1999/XSL/Format" colspan="1"
+                                        fo:border-top-color="black" fo:border-top-width="0.5pt"
+                                        fo:border-top-style="solid" rowspan="1">
+                                        <Para xmlns="http://www.legislation.gov.uk/namespaces/legislation">
+                                            <Text>
+                                                <Emphasis>(2)</Emphasis>
+                                            </Text>
+                                        </Para>
+                                        <Para xmlns="http://www.legislation.gov.uk/namespaces/legislation">
+                                            <Text>
+                                                <Emphasis>Number of councillors</Emphasis>
+                                            </Text>
+                                        </Para>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td xmlns:fo="http://www.w3.org/1999/XSL/Format" colspan="1"
+                                        fo:border-top-color="black" fo:border-top-width="0.5pt"
+                                        fo:border-top-style="solid" rowspan="1">Abbey
+                                    </td>
+                                    <td xmlns:fo="http://www.w3.org/1999/XSL/Format" colspan="1"
+                                        fo:border-top-color="black" fo:border-top-width="0.5pt"
+                                        fo:border-top-style="solid" rowspan="1">2
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Amersham &amp; Chesham Bois</td>
+                                    <td colspan="1" rowspan="1">3</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Aston Clinton &amp; Weston Turville</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Aylesbury East</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Aylesbury North</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Aylesbury North West</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Aylesbury South East</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Aylesbury South West</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Aylesbury West</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Beaconsfield</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Berryfields, Buckingham Park &amp; Watermead</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Bierton, Kingsbrook &amp; Wing</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Booker &amp; Cressex</td>
+                                    <td colspan="1" rowspan="1">1</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Buckingham</td>
+                                    <td colspan="1" rowspan="1">3</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Burnham</td>
+                                    <td colspan="1" rowspan="1">3</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Castlefield &amp; Oakridge</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Chalfont St Giles &amp; Little Chalfont</td>
+                                    <td colspan="1" rowspan="1">3</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Chalfont St Peter</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Chesham North</td>
+                                    <td colspan="1" rowspan="1">3</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Chesham South</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Chiltern Villages</td>
+                                    <td colspan="1" rowspan="1">1</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Disraeli</td>
+                                    <td colspan="1" rowspan="1">1</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Downley</td>
+                                    <td colspan="1" rowspan="1">1</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Farnhams &amp; Stoke Poges</td>
+                                    <td colspan="1" rowspan="1">3</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Flackwell Heath &amp; The Wooburns</td>
+                                    <td colspan="1" rowspan="1">3</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Gerrards Cross &amp; Denham</td>
+                                    <td colspan="1" rowspan="1">3</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Grendon Underwood &amp; The Claydons</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Haddenham &amp; Stone</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Hazlemere</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Horwood</td>
+                                    <td colspan="1" rowspan="1">1</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Iver</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Ivinghoe</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Long Crendon</td>
+                                    <td colspan="1" rowspan="1">1</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Marlow</td>
+                                    <td colspan="1" rowspan="1">3</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Marsh &amp; Micklefield</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Newton Longville</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Penn, Tylers Green &amp; Loudwater</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Princes Risborough</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Quainton</td>
+                                    <td colspan="1" rowspan="1">1</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Ridgeway East</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Ridgeway West</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Sands</td>
+                                    <td colspan="1" rowspan="1">1</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Terriers &amp; Amersham Hill</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">The Missendens</td>
+                                    <td colspan="1" rowspan="1">3</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Totteridge &amp; Bowerdean</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Waddesdon</td>
+                                    <td colspan="1" rowspan="1">1</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Wendover, Halton &amp; Stoke Mandeville</td>
+                                    <td colspan="1" rowspan="1">2</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">West Wycombe &amp; Lane End</td>
+                                    <td colspan="1" rowspan="1">1</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="1">Winslow</td>
+                                    <td colspan="1" rowspan="1">1</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </Tabular>
+                </ScheduleBody>
+            </Schedule>
+        </Schedules>
+    </Secondary>
+</Legislation>

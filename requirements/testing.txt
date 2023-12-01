@@ -17,3 +17,4 @@ pytest-ruff
 pytest-black
 playwright==1.36.0
 pytest-playwright==0.4.2
+moto
