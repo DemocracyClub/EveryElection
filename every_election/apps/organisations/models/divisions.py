@@ -194,3 +194,9 @@ class OrganisationBoundaryReview(TimeStampedModel):
     latest_event = models.CharField(null=True)
     legislation_url = models.URLField(null=True)
     legislation_made = models.BooleanField(null=True)
+
+    @property
+    def lgbce_review_title(self):
+        return (
+            f"LGBCE review for {self.organisation.common_name} ({self.status})"
+        )
