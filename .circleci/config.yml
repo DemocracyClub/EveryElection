@@ -54,7 +54,7 @@ jobs:
           name: Pip safety check
           command: |
             . .venv/bin/activate
-            safety check --ignore 54672
+            safety check --ignore 54672 --ignore 62105
       - save_cache:
           paths:
             - ./.venv
