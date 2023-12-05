@@ -295,9 +295,7 @@ class LgbceScraper:
             self.github_helper.raise_issues()
 
     def dump_table_to_json(self):
-        records = (
-            OrganisationBoundaryReview.objects.all().order_by("slug").values
-        )
+        records = OrganisationBoundaryReview.objects.all().order_by("slug")
         return serializers.serialize("json", records, indent=4)
 
     def sync_db_to_github(self):
