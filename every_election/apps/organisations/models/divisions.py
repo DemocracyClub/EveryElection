@@ -196,6 +196,7 @@ class OrganisationBoundaryReview(TimeStampedModel):
     latest_event = models.CharField(null=True)
     legislation_url = models.URLField(null=True)
     legislation_made = models.BooleanField(null=True)
+    effective_date = models.DateField(null=True)
 
     @property
     def lgbce_review_title(self):

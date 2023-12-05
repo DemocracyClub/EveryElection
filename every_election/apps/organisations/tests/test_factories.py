@@ -36,6 +36,11 @@ class TestElectionIDs(TestCase):
             f"The {completed_review.organisation.common_name} (Electoral Changes) Order 2023",
             completed_review.legislation_title,
         )
+        self.assertEqual(
+            completed_review.effective_date,
+            completed_review.divisionset.start_date,
+        )
+        self.assertIsNotNone(completed_review.effective_date)
 
     def test_incomplete_organisation_boundary_review_factory(self):
         IncompleteOrganisationBoundaryReviewFactory()
@@ -46,6 +51,7 @@ class TestElectionIDs(TestCase):
         self.assertIsNone(incomplete_review.legislation_title)
         self.assertIsNone(incomplete_review.legislation_url)
         self.assertFalse(incomplete_review.legislation_made)
+        self.assertIsNone(incomplete_review.effective_date)
 
     def test_unprocessed_organisation_boundary_review_factory(self):
         unprocessed_review = UnprocessedOrganisationBoundaryReviewFactory()
@@ -57,3 +63,4 @@ class TestElectionIDs(TestCase):
         self.assertIn(
             "(Electoral Changes)", unprocessed_review.legislation_title
         )
+        self.assertEqual(unprocessed_review.effective_date, "2024-05-02")

@@ -177,6 +177,10 @@ class CompletedOrganisationBoundaryReviewFactory(
     def legislation_title(self: OrganisationBoundaryReview):
         return f"The {self.organisation.common_name} (Electoral Changes) Order 2023"
 
+    @factory.lazy_attribute
+    def effective_date(self: OrganisationBoundaryReview):
+        return self.divisionset.start_date
+
 
 class UnprocessedOrganisationBoundaryReviewFactory(
     factory.django.DjangoModelFactory
@@ -195,6 +199,7 @@ class UnprocessedOrganisationBoundaryReviewFactory(
     latest_event = "Making our recommendation into law"
     legislation_url = "https://www.legislation.gov.uk/uksi/2023/1023/made"
     legislation_made = True
+    effective_date = "2024-05-02"
 
     @factory.lazy_attribute
     def slug(self: OrganisationBoundaryReview):
