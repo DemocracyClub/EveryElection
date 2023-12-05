@@ -77,6 +77,13 @@ class EEOncePerTagCommandRunner(Stack):
                 """OGR_GEOJSON_MAX_OBJ_SIZE=500MB output-on-error ee-manage-py-command add_tags -u "https://ons-cache.s3.eu-west-1.amazonaws.com/NUTS_Level_1_(January_2018)_Boundaries.geojson" --fields '{"NUTS118NM": "value", "NUTS118CD": "key"}' --tag-name NUTS1""",
             )
 
+            # Scrape LGBCE
+            self.add_job(
+                "scrape_lgbce",
+                "cron(16 7 * * ? *)",
+                "output-on-error ee-manage-py-command scrape_lgbce",
+            )
+
     def add_job(
         self,
         command_name,
