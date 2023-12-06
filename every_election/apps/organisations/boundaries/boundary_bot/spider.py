@@ -80,7 +80,7 @@ class LgbceSpider(scrapy.Spider):
             latest_stage.css("div > div > a > h3").xpath("text()")[0].extract()
         )
 
-    def get_eco_title_and_link(self, response):
+    def get_eco_title_and_link(self, response, latest_event):
         def get_link_title(selector):
             return selector.xpath(
                 '*/div[@class="link-title"]//text()'
@@ -95,9 +95,22 @@ class LgbceSpider(scrapy.Spider):
                 '//div[@class="latest-information"]//div[@class="link-name-and-view-container"]'
             )
         ]
+
         made_ecos = [
             (title, link)
             for title, link in links
+            if (("(electoral changes) order" in title.lower()))
+        ]
+        if latest_event == "Effective date" and len(made_ecos) == 1:
+            # This catches draft links and made links.
+            # Sometimes they put a draft link in where the made link should go.
+            # So, if the change is 'effective', and we only have a draft link,
+            # use it
+            return made_ecos[0]
+
+        made_ecos = [
+            (title, link)
+            for title, link in made_ecos
             if (
                 ("(electoral changes) order" in title.lower())
                 and ("ukdsi" not in link)
@@ -106,21 +119,25 @@ class LgbceSpider(scrapy.Spider):
 
         if len(made_ecos) == 1:
             return made_ecos[0]
+
         return None, None
 
     def parse(self, response):
         status = response.css("div.status::text")
         if status:
             status = status.extract_first().strip()
-            title, legislation_url = self.get_eco_title_and_link(response)
+            latest_event = self.get_latest_event(response)
+            legislation_title, legislation_url = self.get_eco_title_and_link(
+                response, latest_event
+            )
             rec = {
                 "slug": response.url.split("/")[-1],
-                "latest_event": self.get_latest_event(response),
+                "latest_event": latest_event,
                 "boundaries_url": self.get_shapefiles(response),
                 "status": status,
                 "legislation_url": legislation_url,
                 "legislation_made": 0,
-                "title": title,
+                "legislation_title": legislation_title,
             }
 
             if rec["legislation_url"]:
