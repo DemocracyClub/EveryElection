@@ -95,7 +95,7 @@ class LGBCEReviewHelper:
             Body=BytesIO(boundaries_response.content),
         )
 
-    def upload_end_date_csv_to_s3(
+    def make_end_date_rows(
         self,
         review: OrganisationBoundaryReview,
         start_date: str,
@@ -114,9 +114,39 @@ class LGBCEReviewHelper:
             self.stdout.write(
                 f"{start_date} is not the the first Thursday in May. Double check."
             )
-            return
+            return None
 
-        end_date_s3_key = f"{review.s3_directory_key}/end_date.csv"
+        return [
+            ["org", "start_date", "end_date"],
+            [
+                review.organisation.official_identifier,
+                start_date,
+                day_before(start_date),
+            ],
+        ]
+
+    def make_end_date_csv(
+        self,
+        review: OrganisationBoundaryReview,
+        start_date: str,
+        thursday_start_day: bool = True,
+    ):
+        rows = self.make_end_date_rows(
+            review, start_date, thursday_start_day=thursday_start_day
+        )
+        buffer = StringIO(newline="")
+        writer = csv.writer(buffer)
+        writer.writerows(rows)
+
+        return bytes(buffer.getvalue().replace("\r\n", "\n"), encoding="utf-8")
+
+    def upload_end_date_csv_to_s3(
+        self,
+        review: OrganisationBoundaryReview,
+        start_date: str,
+        thursday_start_day: bool = True,
+    ):
+        end_date_s3_key = f"{review.s3_end_date_key}"
 
         if (
             check_s3_obj_exists(
@@ -129,21 +159,11 @@ class LGBCEReviewHelper:
             )
             return
 
-        buffer = StringIO(newline="")
-        writer = csv.writer(buffer)
-        writer.writerow(["org", "start_date", "end_date"])
-        writer.writerow(
-            [
-                review.organisation.official_identifier,
-                start_date,
-                day_before(start_date),
-            ]
-        )
-        csv_bytes = bytes(
-            buffer.getvalue().replace("\r\n", "\n"), encoding="utf-8"
+        csv_bytes = self.make_end_date_csv(
+            review, start_date, thursday_start_day=thursday_start_day
         )
         self.stdout.write(
-            f"Uploading end_date_csv to s3://{self.review_bucket}/{review.s3_directory_key}/end_date.csv"
+            f"Uploading end_date_csv to s3://{self.review_bucket}/{review.s3_end_date_key}"
         )
         self.s3_client.put_object(
             Bucket=self.review_bucket,
@@ -249,11 +269,20 @@ class LGBCEReviewHelper:
 
     def upload_eco_csv_to_s3(self, review: OrganisationBoundaryReview):
         csv_bytes = self.make_eco_csv(review)
-        self.stdout.write(
-            f"Uploading end_date_csv to s3://{self.review_bucket}/{review.s3_directory_key}/eco.csv"
-        )
+        s3_eco_key = f"{review.s3_eco_key}"
+        if (
+            check_s3_obj_exists(self.s3_client, self.review_bucket, s3_eco_key)
+            and not self.overwrite
+        ):
+            self.stdout.write(
+                f"s3://{self.review_bucket}/{s3_eco_key} already exists. "
+                f"Perhaps you meant to initialise with 'overwrite=True'?"
+            )
+            return
+
+        self.stdout.write(f"Uploading end_date_csv to {s3_eco_key}")
         self.s3_client.put_object(
             Bucket=self.review_bucket,
-            Key=f"{review.s3_directory_key}/eco.csv",
+            Key=f"{review.s3_eco_key}",
             Body=csv_bytes,
         )

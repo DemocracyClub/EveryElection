@@ -43,7 +43,9 @@ class TestLGBCEReviewHelper(TestCase):
         conn.create_bucket(Bucket=TEST_LGBCE_MIRROR_BUCKET)
 
         # Create fixture objects
-        self.unprocessed_review = UnprocessedOrganisationBoundaryReviewFactory()
+        self.unprocessed_review = UnprocessedOrganisationBoundaryReviewFactory(
+            organisation=OrganisationFactory(official_identifier="FOO")
+        )
         self.processed_review = CompletedOrganisationBoundaryReviewFactory(
             boundaries_url="path/to/processed_review_polys.zip"
         )
@@ -183,6 +185,26 @@ class TestLGBCEReviewHelper(TestCase):
             f"{self.processed_review.s3_directory_key}/end_date.csv already exists. Perhaps you meant to initialise "
             f"with 'overwrite=True'?",
             buffer.getvalue(),
+        )
+
+    def test_make_end_date_rows(self):
+        buffer = StringIO()
+        lgbce_review_helper = LGBCEReviewHelper(stdout=buffer)
+        rows = lgbce_review_helper.make_end_date_rows(
+            self.unprocessed_review, "2024-05-02"
+        )
+        self.assertEqual(2, len(rows))
+        self.assertListEqual(
+            ["org", "start_date", "end_date"],
+            rows[0],
+        )
+        self.assertListEqual(
+            [
+                "FOO",
+                "2024-05-02",
+                "2024-05-01",
+            ],
+            rows[1],
         )
 
     @override_settings(LGBCE_BUCKET=TEST_LGBCE_MIRROR_BUCKET)
