@@ -1,11 +1,21 @@
-from django.test import TestCase
+import os
+from datetime import date
+
+import boto3
+from botocore.exceptions import ClientError
+from django.contrib.auth import get_user_model
+from django.test import TestCase, override_settings
+from django.urls import reverse
 from elections.tests.factories import ElectedRoleFactory
+from mock.mock import Mock, patch
+from moto import mock_s3
 from organisations.models import (
     DivisionProblem,
     OrganisationGeographyProblem,
     OrganisationProblem,
 )
 from organisations.tests.factories import (
+    CompletedOrganisationBoundaryReviewFactory,
     DivisionGeographyFactory,
     OrganisationDivisionFactory,
     OrganisationDivisionSetFactory,
@@ -191,3 +201,274 @@ class DivisionProblemTests(TestCase):
         self.assertTrue(problem.invalid_source)
         self.assertTrue(problem.invalid_source)
         self.assertEqual("No GSS code", problem.problem_text)
+
+
+TEST_LGBCE_MIRROR_BUCKET = "test-lgbce-mirror"
+
+
+def get_content_length(s3_client, bucket, key):
+    response = s3_client.head_object(Bucket=bucket, Key=key)
+    return int(response["ResponseMetadata"]["HTTPHeaders"]["content-length"])
+
+
+@mock_s3
+class WriteCSVToS3Tests(TestCase):
+    def setUp(self):
+        # Don't do anything unintended
+        os.environ["AWS_ACCESS_KEY_ID"] = "testing"
+        os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
+        os.environ["AWS_SECURITY_TOKEN"] = "testing"
+        os.environ["AWS_SESSION_TOKEN"] = "testing"
+        os.environ["AWS_DEFAULT_REGION"] = "eu-west-2"
+
+        # Set up s3 client
+        self.s3 = boto3.client("s3", region_name="eu-west-2")
+
+        # Create mock bucket
+        conn = boto3.resource("s3", region_name="us-east-1")
+        conn.create_bucket(Bucket=TEST_LGBCE_MIRROR_BUCKET)
+
+        self.completed_review = CompletedOrganisationBoundaryReviewFactory(
+            organisation=OrganisationFactory(
+                official_identifier="FOO",
+                official_name="City of Foobar",
+                common_name="Foobar",
+                slug="foobar",
+            )
+        )
+        self.completed_review.effective_date = date(2023, 5, 2)
+        self.completed_review.save()
+
+    @override_settings(LGBCE_BUCKET=TEST_LGBCE_MIRROR_BUCKET)
+    @patch("requests.get")
+    @patch("eco_parser.parser.EcoParser.get_data")
+    def test_post_to_s3(self, get_data_mock, mock_get):
+        with open(
+            "every_election/apps/organisations/boundaries/fixtures/buckinghamshire-eco-data.xml"
+        ) as f:
+            bucks_xml = f.read()
+        get_data_mock.return_value = bucks_xml
+        mock_get.return_value = mock_boundaries_response = Mock()
+        mock_boundaries_response.status_code = 200
+        mock_boundaries_response.content = b"Some polygons!!"
+
+        keys = (
+            (self.completed_review.s3_boundaries_key, 15),
+            (self.completed_review.s3_eco_key, 9322),
+            (self.completed_review.s3_end_date_key, 50),
+        )
+        for key, length in keys:
+            with self.assertRaises(ClientError) as e:
+                get_content_length(
+                    self.s3,
+                    bucket=TEST_LGBCE_MIRROR_BUCKET,
+                    key=key,
+                )
+                self.assertEqual(e.exception.response["Code"], 404)
+
+        user = get_user_model().objects.create(is_staff=True, is_superuser=True)
+        self.client.force_login(user=user)
+        response = self.client.post(
+            reverse(
+                "admin:write_csv_to_s3_view",
+                kwargs={
+                    "object_id": self.completed_review.pk,
+                },
+            ),
+            {"overwrite": "false"},
+            follow=True,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        mock_get.assert_called_once_with(
+            "https://www.lgbce.org.uk/sites/default/files/2023-03/polygons.zip"
+        )
+        print(
+            self.s3.get_object(
+                Bucket=TEST_LGBCE_MIRROR_BUCKET,
+                Key=self.completed_review.s3_eco_key,
+            )["Body"]
+            .read()
+            .decode("utf-8")
+        )
+        for key, length in keys:
+            self.assertEqual(
+                length,
+                get_content_length(
+                    self.s3,
+                    bucket=TEST_LGBCE_MIRROR_BUCKET,
+                    key=key,
+                ),
+            )
+        self.assertEqual(
+            "Start Date,End Date,Name,official_identifier,geography_curie,seats_total,Boundary Commission Consultation URL,Legislation URL,Short Title,Notes,Mapit Generation URI,Organisation ID,"
+            "Organisation ID type",
+            self.s3.get_object(
+                Bucket=TEST_LGBCE_MIRROR_BUCKET,
+                Key=self.completed_review.s3_eco_key,
+            )["Body"]
+            .read()
+            .decode("utf-8")
+            .split("\n")[0],
+        )
+
+    @override_settings(LGBCE_BUCKET=TEST_LGBCE_MIRROR_BUCKET)
+    @patch("requests.get")
+    @patch("eco_parser.parser.EcoParser.get_data")
+    def test_post_to_s3_already_exists_overwrite_false(
+        self, get_data_mock, mock_get
+    ):
+        with open(
+            "every_election/apps/organisations/boundaries/fixtures/buckinghamshire-eco-data.xml"
+        ) as f:
+            bucks_xml = f.read()
+        get_data_mock.return_value = bucks_xml
+        mock_get.return_value = mock_boundaries_response = Mock()
+        mock_boundaries_response.status_code = 200
+        mock_boundaries_response.content = b"Some polygons!!"
+        # Create processed objects on s3
+        self.s3.put_object(
+            Bucket=TEST_LGBCE_MIRROR_BUCKET,
+            Key=self.completed_review.s3_boundaries_key,
+            Body=bytes("polygons!", encoding="utf-8"),
+        )
+        # Create processed objects on s3
+        self.s3.put_object(
+            Bucket=TEST_LGBCE_MIRROR_BUCKET,
+            Key=f"{self.completed_review.s3_directory_key}/end_date.csv",
+            Body=bytes(
+                "org,start_date,end_date\norg_identifier,2023-05-04,2023-05-03\n",
+                encoding="utf-8",
+            ),
+        )
+        # Create processed objects on s3
+        self.s3.put_object(
+            Bucket=TEST_LGBCE_MIRROR_BUCKET,
+            Key=f"{self.completed_review.s3_directory_key}/eco.csv",
+            Body=bytes(
+                "eco,csv,yeah",
+                encoding="utf-8",
+            ),
+        )
+        keys = (
+            (self.completed_review.s3_boundaries_key, 9),
+            (self.completed_review.s3_eco_key, 12),
+            (self.completed_review.s3_end_date_key, 61),
+        )
+        for key, length in keys:
+            self.assertEqual(
+                length,
+                get_content_length(
+                    self.s3,
+                    bucket=TEST_LGBCE_MIRROR_BUCKET,
+                    key=key,
+                ),
+            )
+
+        user = get_user_model().objects.create(is_staff=True, is_superuser=True)
+        self.client.force_login(user=user)
+        response = self.client.post(
+            reverse(
+                "admin:write_csv_to_s3_view",
+                kwargs={
+                    "object_id": self.completed_review.pk,
+                },
+            ),
+            {"overwrite": "False"},
+            follow=True,
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        for key, length in keys:
+            self.assertEqual(
+                length,
+                get_content_length(
+                    self.s3,
+                    bucket=TEST_LGBCE_MIRROR_BUCKET,
+                    key=key,
+                ),
+            )
+
+    @override_settings(LGBCE_BUCKET=TEST_LGBCE_MIRROR_BUCKET)
+    @patch("requests.get")
+    @patch("eco_parser.parser.EcoParser.get_data")
+    def test_post_to_s3_already_exists_overwrite_true(
+        self, get_data_mock, mock_get
+    ):
+        with open(
+            "every_election/apps/organisations/boundaries/fixtures/buckinghamshire-eco-data.xml"
+        ) as f:
+            bucks_xml = f.read()
+        get_data_mock.return_value = bucks_xml
+        mock_get.return_value = mock_boundaries_response = Mock()
+        mock_boundaries_response.status_code = 200
+        mock_boundaries_response.content = b"Some polygons!!"
+        # Create processed objects on s3
+        self.s3.put_object(
+            Bucket=TEST_LGBCE_MIRROR_BUCKET,
+            Key=self.completed_review.s3_boundaries_key,
+            Body=bytes("polygons!", encoding="utf-8"),
+        )
+        # Create processed objects on s3
+        self.s3.put_object(
+            Bucket=TEST_LGBCE_MIRROR_BUCKET,
+            Key=f"{self.completed_review.s3_directory_key}/end_date.csv",
+            Body=bytes(
+                "org,start_date,end_date\norg_identifier,2023-05-04,2023-05-03\n",
+                encoding="utf-8",
+            ),
+        )
+        # Create processed objects on s3
+        self.s3.put_object(
+            Bucket=TEST_LGBCE_MIRROR_BUCKET,
+            Key=f"{self.completed_review.s3_directory_key}/eco.csv",
+            Body=bytes(
+                "eco,csv,yeah",
+                encoding="utf-8",
+            ),
+        )
+        keys = (
+            (self.completed_review.s3_boundaries_key, 9),
+            (self.completed_review.s3_eco_key, 12),
+            (self.completed_review.s3_end_date_key, 61),
+        )
+        for key, length in keys:
+            self.assertEqual(
+                length,
+                get_content_length(
+                    self.s3,
+                    bucket=TEST_LGBCE_MIRROR_BUCKET,
+                    key=key,
+                ),
+            )
+
+        user = get_user_model().objects.create(is_staff=True, is_superuser=True)
+        self.client.force_login(user=user)
+        response = self.client.post(
+            reverse(
+                "admin:write_csv_to_s3_view",
+                kwargs={
+                    "object_id": self.completed_review.pk,
+                },
+            ),
+            {"overwrite": "True"},
+            follow=True,
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        keys = (
+            (self.completed_review.s3_boundaries_key, 15),
+            (self.completed_review.s3_eco_key, 9322),
+            (self.completed_review.s3_end_date_key, 50),
+        )
+        for key, length in keys:
+            self.assertEqual(
+                length,
+                get_content_length(
+                    self.s3,
+                    bucket=TEST_LGBCE_MIRROR_BUCKET,
+                    key=key,
+                ),
+            )

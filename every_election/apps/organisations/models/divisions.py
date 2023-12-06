@@ -2,6 +2,7 @@ import re
 
 from core.mixins import UpdateElectionsTimestampedModel
 from django.contrib.gis.db import models
+from django.db.models import Q
 from django_extensions.db.models import TimeStampedModel
 
 from .mixins import DateConstraintMixin, DateDisplayMixin
@@ -175,6 +176,26 @@ class DivisionGeographySubdivided(models.Model):
     """
 
 
+class OrganisationBoundaryReviewQuerySet(models.QuerySet):
+    def unprocessed(self):
+        """
+        Indicates that the OrganisationBoundaryReview has not been processed yet
+        """
+        return self.exclude(
+            Q(organisation__isnull=True)
+            | Q(boundaries_url__exact="")
+            | Q(legislation_url__exact="")
+            | Q(consultation_url__exact="")
+            | Q(legislation_title__exact="")
+        ).filter(divisionset=None)
+
+    def needs_end_date(self):
+        """
+        Filters where status is complete, but we need to enter an end date before it's ready for processing
+        """
+        return self.unprocessed().filter(effective_date=None)
+
+
 class ReviewStatus(models.TextChoices):
     COMPLETED = "COMPLETED", "Completed"
     CURRENT = "CURRENT", "Currently in Review"
@@ -205,6 +226,11 @@ class OrganisationBoundaryReview(TimeStampedModel):
         choices=EditStatus.choices, default=EditStatus.UNLOCKED
     )
 
+    objects = OrganisationBoundaryReviewQuerySet.as_manager()
+
+    def __str__(self):
+        return f"{self.lgbce_review_title}"
+
     @property
     def lgbce_review_title(self):
         return (
@@ -222,6 +248,14 @@ class OrganisationBoundaryReview(TimeStampedModel):
         if (file_name := self.boundary_file_name) and self.s3_directory_key:
             return f"{self.s3_directory_key}/{file_name}"
         return None
+
+    @property
+    def s3_eco_key(self):
+        return f"{self.s3_directory_key}/eco.csv"
+
+    @property
+    def s3_end_date_key(self):
+        return f"{self.s3_directory_key}/end_date.csv"
 
     @property
     def boundary_file_name(self):
