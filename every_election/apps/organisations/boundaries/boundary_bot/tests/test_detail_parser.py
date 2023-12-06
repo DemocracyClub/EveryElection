@@ -27,7 +27,7 @@ class DetailParserTest(TestCase):
         self.assertEqual(1, len(result))
         self.assertEqual("calderdale", result[0]["slug"])
         self.assertEqual("Consultation on proposals", result[0]["latest_event"])
-        self.assertIsNone(result[0]["title"])
+        self.assertIsNone(result[0]["legislation_title"])
         self.assertIsNone(result[0]["legislation_url"])
         self.assertEqual(0, result[0]["legislation_made"])
         self.assertEqual(
@@ -49,7 +49,8 @@ class DetailParserTest(TestCase):
             result[0]["latest_event"],
         )
         self.assertEqual(
-            "The Fareham (Electoral Changes) Order 2023", result[0]["title"]
+            "The Fareham (Electoral Changes) Order 2023",
+            result[0]["legislation_title"],
         )
         self.assertEqual(
             "http://www.legislation.gov.uk/id/uksi/2023/796",
@@ -76,7 +77,8 @@ class DetailParserTest(TestCase):
         )
 
         self.assertEqual(
-            "The Allerdale (Electoral Changes) Order 2017", result[0]["title"]
+            "The Allerdale (Electoral Changes) Order 2017",
+            result[0]["legislation_title"],
         )
         self.assertEqual(
             "https://www.legislation.gov.uk/uksi/2017/1067/contents/made",
