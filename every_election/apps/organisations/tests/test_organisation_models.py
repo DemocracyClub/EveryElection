@@ -335,3 +335,17 @@ class TestOrganisationDivisionBoundaryReview(TestCase):
                 clean_url,
                 obr.cleaned_legislation_url,
             )
+
+    def test_generic_title(self):
+        self.assertEqual(
+            f"Boundary review for {self.incomplete_review.organisation.common_name} ({self.incomplete_review.status})",
+            self.incomplete_review.generic_title,
+        )
+        self.assertEqual(
+            self.unprocessed_review.legislation_title,
+            self.unprocessed_review.generic_title,
+        )
+        self.assertEqual(
+            self.processed_review.legislation_title,
+            self.processed_review.generic_title,
+        )
