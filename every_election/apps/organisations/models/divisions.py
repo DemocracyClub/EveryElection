@@ -278,6 +278,12 @@ class OrganisationBoundaryReview(TimeStampedModel):
         return f"https://{url}"
 
     @property
+    def generic_title(self):
+        if self.legislation_title:
+            return self.legislation_title
+        return f"Boundary review for {self.organisation.common_name} ({self.status})"
+
+    @property
     def can_upload_boundaries(self):
         if self.boundaries_url:
             return True
