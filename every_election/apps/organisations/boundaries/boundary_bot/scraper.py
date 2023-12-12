@@ -21,6 +21,7 @@ from organisations.boundaries.boundary_bot.spider import (
     SpiderWrapper,
 )
 from organisations.models import Organisation, OrganisationBoundaryReview
+from organisations.models.divisions import EditStatus
 
 AMBIGUOUS_ID_MAP = {
     "SHE": 504,  # Folkestone & Hythe
@@ -264,7 +265,10 @@ class LgbceScraper:
                     }
                 )
 
-            if len(result) == 1:
+            if (
+                len(result) == 1
+                and result[0].edit_status == EditStatus.UNLOCKED
+            ):
                 update_fields = {
                     k: v for k, v in record.items() if k in field_names and v
                 }
@@ -274,6 +278,7 @@ class LgbceScraper:
                             f"Updating {result[0]} with {record_as_string(record)}"
                         )
                         result.update(**update_fields)
+                        break
 
     def send_notifications(self):
         # write the notifications we've generated to
