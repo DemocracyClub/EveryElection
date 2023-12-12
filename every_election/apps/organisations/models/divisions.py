@@ -180,6 +180,11 @@ class ReviewStatus(models.TextChoices):
     CURRENT = "CURRENT", "Currently in Review"
 
 
+class EditStatus(models.TextChoices):
+    UNLOCKED = "UNLOCKED", "Unlocked"
+    LOCKED = "LOCKED", "Locked"
+
+
 class OrganisationBoundaryReview(TimeStampedModel):
     organisation = models.ForeignKey(
         "Organisation", null=True, on_delete=models.CASCADE
@@ -197,6 +202,9 @@ class OrganisationBoundaryReview(TimeStampedModel):
     legislation_url = models.URLField(null=True)
     legislation_made = models.BooleanField(null=True)
     effective_date = models.DateField(null=True)
+    edit_status = models.CharField(
+        choices=EditStatus.choices, default=EditStatus.UNLOCKED
+    )
 
     @property
     def lgbce_review_title(self):
