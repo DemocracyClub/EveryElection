@@ -1,5 +1,6 @@
 import datetime
 import hashlib
+import sys
 from datetime import timedelta
 from typing import Optional
 from urllib.parse import urljoin
@@ -31,8 +32,10 @@ class ElectionSyncer:
     ELECTED_ROLE_CACHE = {}
     ELECTION_TYPE_CACHE = {}
 
-    def __init__(self, since=None):
+    def __init__(self, since=None, stdout=None, stderr=None):
         self.since = since
+        self.stdout = stdout or sys.stdout
+        self.stderr = stderr or sys.stderr
 
     def add_single_election(self, result: dict):
         try:
@@ -231,7 +234,7 @@ class ElectionSyncer:
             self.process_result(result)
 
     def get_last_modified(
-        self, since: Optional[datetime.datetime]
+        self, since: Optional[datetime.datetime] = None
     ) -> datetime.datetime:
         if since:
             return since
@@ -249,10 +252,10 @@ class ElectionSyncer:
         self.url = settings.UPSTREAM_SYNC_URL
         last_modified = self.get_last_modified(self.since)
         self.url = f"{self.url}?modified={last_modified}"
+        self.stdout.write(self.url)
         while self.url:
-            print(last_modified)
+            self.stdout.write(f"Starting import for {last_modified}")
             req = requests.get(self.url)
-            print(req.url)
             req.raise_for_status()
             resp_json = req.json()
             unordered_results = resp_json["results"]
