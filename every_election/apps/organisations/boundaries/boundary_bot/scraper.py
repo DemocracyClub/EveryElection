@@ -21,7 +21,7 @@ from organisations.boundaries.boundary_bot.spider import (
     SpiderWrapper,
 )
 from organisations.models import Organisation, OrganisationBoundaryReview
-from organisations.models.divisions import EditStatus
+from organisations.models.divisions import EditStatus, ReviewStatus
 
 AMBIGUOUS_ID_MAP = {
     "SHE": 504,  # Folkestone & Hythe
@@ -54,8 +54,6 @@ class LgbceScraper:
       based on events in the boundary review process
     """
 
-    CURRENT_LABEL = "Currently in review"
-    COMPLETED_LABEL = "Completed"
     TABLE_NAME = "lgbce_reviews"
 
     def __init__(self, BOOTSTRAP_MODE, SEND_NOTIFICATIONS):
@@ -163,7 +161,7 @@ class LgbceScraper:
 
         return OrganisationBoundaryReview.objects.filter(
             organisation=org, slug=record["slug"]
-        ).exclude(status="Completed Review")
+        ).exclude(status=ReviewStatus.COMPLETED)
 
     def validate(self):
         # perform some consistency checks
@@ -174,12 +172,12 @@ class LgbceScraper:
                 return True
             result = self.get_review_from_db(record)
 
-            if len(result) == 0 and record["status"] == self.COMPLETED_LABEL:
+            if len(result) == 0 and record["status"] == ReviewStatus.COMPLETED:
                 # we shouldn't have found a record for the first time when it is completed
                 # we should find it under review and then it should move to completed
                 raise ScraperException(
                     "New record found but status is '%s':\n%s"
-                    % (self.COMPLETED_LABEL, str(record))
+                    % (ReviewStatus.COMPLETED, str(record))
                 )
 
             if (
@@ -195,13 +193,17 @@ class LgbceScraper:
 
             if (
                 len(result) == 1
-                and record["status"] == self.CURRENT_LABEL
-                and result[0].status == self.COMPLETED_LABEL
+                and record["status"] == ReviewStatus.CURRENT
+                and result[0].status == ReviewStatus.COMPLETED
             ):
                 # reviews shouldn't move backwards from completed to current
                 raise ScraperException(
                     "Record status has changed from '%s' to '%s':\n%s"
-                    % (self.COMPLETED_LABEL, self.CURRENT_LABEL, str(record))
+                    % (
+                        ReviewStatus.COMPLETED,
+                        ReviewStatus.CURRENT,
+                        str(record),
+                    )
                 )
 
             if (
@@ -237,8 +239,8 @@ class LgbceScraper:
             if len(result) == 1:
                 # we've already got our eye on this one
                 if (
-                    record["status"] == self.COMPLETED_LABEL
-                    and result[0].status != self.COMPLETED_LABEL
+                    record["status"] == ReviewStatus.COMPLETED
+                    and result[0].status != ReviewStatus.COMPLETED
                 ):
                     self.slack_helper.append_completed_review_message(record)
                     self.github_helper.append_completed_review_issue(record)

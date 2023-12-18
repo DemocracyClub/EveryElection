@@ -3,6 +3,7 @@ from unittest import mock
 from data_provider import base_data
 from django.test import TestCase
 from organisations.boundaries.boundary_bot.scraper import LgbceScraper
+from organisations.models.divisions import ReviewStatus
 from organisations.tests.factories import OrganisationFactory
 
 
@@ -66,9 +67,9 @@ class NotificationTests(TestCase):
         scraper.data["allerdale"][
             "latest_event"
         ] = "The Allerdale Electoral Changes order"
-        scraper.data["allerdale"]["status"] = scraper.CURRENT_LABEL
+        scraper.data["allerdale"]["status"] = ReviewStatus.CURRENT
         scraper.save()
-        scraper.data["allerdale"]["status"] = scraper.COMPLETED_LABEL
+        scraper.data["allerdale"]["status"] = ReviewStatus.COMPLETED
         scraper.make_notifications()
         self.assertEqual(1, len(scraper.slack_helper.messages))
         assert "Completed boundary review" in scraper.slack_helper.messages[0]

@@ -6,6 +6,7 @@ from organisations.boundaries.boundary_bot.scraper import (
     LgbceScraper,
     ScraperException,
 )
+from organisations.models.divisions import ReviewStatus
 from organisations.tests.factories import OrganisationFactory
 
 
@@ -46,23 +47,22 @@ class ValidationTests(TestCase):
         assert "Failed to populate 'latest_event' field" in str(e.exception)
 
     def test_new_completed(self):
-        # status = scraper.COMPLETED_LABEL but record not in DB
         scraper = LgbceScraper(False, False)
         scraper.data = {
             "allerdale": base_data["allerdale"].copy(),
         }
         scraper.data["allerdale"]["register_code"] = "ALL"
         scraper.data["allerdale"][
-            "title"
+            "legislation_title"
         ] = "The Allerdale Electoral Change order"
         scraper.data["allerdale"]["latest_event"] = "Effective date"
-        scraper.data["allerdale"]["status"] = scraper.COMPLETED_LABEL
+        scraper.data["allerdale"]["status"] = ReviewStatus.COMPLETED
         scraper.data["allerdale"]["eco_made"] = 1
 
         scraper.BOOTSTRAP_MODE = False
         with self.assertRaises(ScraperException) as e:
             scraper.validate()
-        assert "New record found but status is 'Completed'" in str(e.exception)
+        assert "New record found but status is 'COMPLETED'" in str(e.exception)
 
         # this check should be skipped in bootstrap mode
         scraper.BOOTSTRAP_MODE = True
@@ -76,20 +76,19 @@ class ValidationTests(TestCase):
         }
         scraper.data["allerdale"]["register_code"] = "ALL"
         scraper.data["allerdale"][
-            "title"
+            "legislation_title"
         ] = "The Allerdale Electoral Change order"
         scraper.data["allerdale"]["latest_event"] = "Effective date"
         scraper.data["allerdale"]["legislation_made"] = 1
-        scraper.data["allerdale"]["status"] = scraper.COMPLETED_LABEL
+        scraper.data["allerdale"]["status"] = ReviewStatus.COMPLETED
         scraper.save()
-        scraper.data["allerdale"]["status"] = scraper.CURRENT_LABEL
+        scraper.data["allerdale"]["status"] = ReviewStatus.CURRENT
 
         scraper.BOOTSTRAP_MODE = False
         with self.assertRaises(ScraperException) as e:
             scraper.validate()
-        assert (
-            "Record status has changed from 'Completed' to 'Currently in review'"
-            in str(e.exception)
+        assert "Record status has changed from 'COMPLETED' to 'CURRENT'" in str(
+            e.exception
         )
 
         # this check should be skipped in bootstrap mode
@@ -104,11 +103,11 @@ class ValidationTests(TestCase):
         }
         scraper.data["allerdale"]["register_code"] = "ALL"
         scraper.data["allerdale"][
-            "title"
+            "legislation_title"
         ] = "The Allerdale Electoral Change order"
         scraper.data["allerdale"]["latest_event"] = "Effective date"
         scraper.data["allerdale"]["legislation_made"] = 1
-        scraper.data["allerdale"]["status"] = scraper.CURRENT_LABEL
+        scraper.data["allerdale"]["status"] = ReviewStatus.CURRENT
         scraper.save()
         scraper.data["allerdale"]["legislation_made"] = 0
 
