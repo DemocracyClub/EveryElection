@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.gis.db.models.functions import PointOnSurface
 from django.contrib.gis.geos import GEOSGeometry, Point
 from django.db import models
+from django.db.models import Case, When
 from django.utils import timezone
 from elections.query_helpers import get_point_from_postcode
 from organisations.models import (
@@ -88,6 +89,15 @@ class ElectionQuerySet(models.QuerySet):
         if update_modified:
             kwargs["modified"] = kwargs.get("modified", timezone.now())
         return super().update(**kwargs)
+
+    def order_by_group_type(self):
+        order = Case(
+            When(group_type="election", then=0),
+            When(group_type="organisation", then=1),
+            When(group_type="subtype", then=2),
+            When(group_type=None, then=3),
+        )
+        return self.order_by(order)
 
 
 class PublicElectionsManager(models.Manager.from_queryset(ElectionQuerySet)):
