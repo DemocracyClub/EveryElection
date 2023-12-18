@@ -11,6 +11,7 @@ from organisations.models import (
     OrganisationGeography,
     OrganisationGeographySubdivided,
 )
+from organisations.models.divisions import ReviewStatus
 
 
 class OrganisationFactory(factory.django.DjangoModelFactory):
@@ -136,7 +137,7 @@ class IncompleteOrganisationBoundaryReviewFactory(
     organisation = factory.SubFactory(OrganisationFactory)
     divisionset = None
     boundaries_url = "/sites/default/files/2023-03/polygons.zip"
-    status = "Currently in review"
+    status = ReviewStatus.CURRENT
     latest_event = "Consultation on proposals"
     legislation_made = False
     legislation_url = None
@@ -160,7 +161,7 @@ class CompletedOrganisationBoundaryReviewFactory(
     organisation = factory.SubFactory(OrganisationFactory)
     divisionset = factory.SubFactory(OrganisationDivisionSetFactory)
     boundaries_url = "/sites/default/files/2023-03/polygons.zip"
-    status = "Completed"
+    status = ReviewStatus.COMPLETED
     latest_event = "Making our recommendation into law"
     legislation_url = "https://www.legislation.gov.uk/uksi/2023/1023/made"
     legislation_made = True
@@ -195,7 +196,7 @@ class UnprocessedOrganisationBoundaryReviewFactory(
     organisation = factory.SubFactory(OrganisationFactory)
     divisionset = None
     boundaries_url = "/sites/default/files/2023-03/polygons.zip"
-    status = "Completed"
+    status = ReviewStatus.COMPLETED
     latest_event = "Making our recommendation into law"
     legislation_url = "https://www.legislation.gov.uk/uksi/2023/1023/made"
     legislation_made = True

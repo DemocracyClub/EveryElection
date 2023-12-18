@@ -7,6 +7,8 @@ from organisations.boundaries.boundary_bot.common import (
     REQUEST_HEADERS,
     START_PAGE,
 )
+
+from organisations.models.divisions import ReviewStatus
 from scrapy.crawler import CrawlerProcess
 
 
@@ -48,7 +50,7 @@ class LgbceSpider(scrapy.Spider):
         "USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:56.0) Gecko/20100101 Firefox/56.0",
         "FEED_FORMAT": "json",
         "DEFAULT_REQUEST_HEADERS": REQUEST_HEADERS,
-        # "HTTPCACHE_ENABLED": True, # Uncomment for Dev
+        # "HTTPCACHE_ENABLED": True,  # Uncomment for Dev
     }
     allowed_domains = ["lgbce.org.uk"]
     start_urls = [START_PAGE]
@@ -122,11 +124,27 @@ class LgbceSpider(scrapy.Spider):
 
         return None, None
 
+    def get_status(self, response):
+        lgbce_status = response.css("div.status::text")
+        if lgbce_status:
+            lgbce_status = lgbce_status.extract_first().strip()
+        match lgbce_status:
+            case "Currently in review":
+                return ReviewStatus.CURRENT
+            case "Completed":
+                return ReviewStatus.COMPLETED
+            case _:
+                return None
+
     def parse(self, response):
-        status = response.css("div.status::text")
+        status = self.get_status(response)
         if status:
-            status = status.extract_first().strip()
             latest_event = self.get_latest_event(response)
+            if (
+                latest_event == "Initial consultation"
+                and status == ReviewStatus.COMPLETED
+            ):
+                status = ReviewStatus.CURRENT
             legislation_title, legislation_url = self.get_eco_title_and_link(
                 response, latest_event
             )
