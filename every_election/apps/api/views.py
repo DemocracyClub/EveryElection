@@ -120,7 +120,7 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
                 queryset = queryset.filter(group_type=None)
             else:
                 queryset = queryset.filter(group_type=identifier_type)
-        return queryset.order_by()
+        return queryset.order_by_group_type()
 
     def retrieve(self, request, *args, **kwargs):
         if not validate(kwargs["election_id"]):
