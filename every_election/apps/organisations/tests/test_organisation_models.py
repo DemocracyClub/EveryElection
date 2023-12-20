@@ -282,7 +282,7 @@ class TestOrganisationDivisionBoundaryReview(TestCase):
             boundaries_url="path/to/processed_review_polys.zip"
         )
         self.incomplete_review = IncompleteOrganisationBoundaryReviewFactory(
-            boundaries_url=None
+            boundaries_url=""
         )
 
     def test_boundary_file_name(self):
@@ -290,7 +290,7 @@ class TestOrganisationDivisionBoundaryReview(TestCase):
             "processed_review_polys.zip",
             self.processed_review.boundary_file_name,
         )
-        self.assertIsNone(self.incomplete_review.boundary_file_name)
+        self.assertEqual("", self.incomplete_review.boundary_file_name)
         self.assertEqual(
             "polygons.zip", self.unprocessed_review.boundary_file_name
         )

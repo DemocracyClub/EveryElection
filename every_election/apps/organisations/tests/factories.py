@@ -140,8 +140,8 @@ class IncompleteOrganisationBoundaryReviewFactory(
     status = ReviewStatus.CURRENT
     latest_event = "Consultation on proposals"
     legislation_made = False
-    legislation_url = None
-    legislation_title = None
+    legislation_url = ""
+    legislation_title = ""
 
     @factory.lazy_attribute
     def slug(self: OrganisationBoundaryReview):
