@@ -253,11 +253,15 @@ class LgbceScraper:
                 if (
                     record["status"] == ReviewStatus.COMPLETED
                     and result[0].status != ReviewStatus.COMPLETED
+                    and result[0].edit_status == EditStatus.UNLOCKED
                 ):
                     self.slack_helper.append_completed_review_message(record)
                     self.github_helper.append_completed_review_issue(record)
 
-                if result[0].latest_event != record["latest_event"]:
+                if (
+                    result[0].latest_event != record["latest_event"]
+                    and result[0].edit_status == EditStatus.UNLOCKED
+                ):
                     self.slack_helper.append_event_message(record)
 
     def save(self):
