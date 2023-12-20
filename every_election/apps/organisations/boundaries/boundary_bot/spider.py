@@ -7,7 +7,7 @@ from organisations.boundaries.boundary_bot.common import (
     REQUEST_HEADERS,
     START_PAGE,
 )
-
+from organisations.boundaries.constants import LGBCE_SLUG_TO_ORG_SLUG
 from organisations.models.divisions import ReviewStatus
 from scrapy.crawler import CrawlerProcess
 
@@ -148,8 +148,13 @@ class LgbceSpider(scrapy.Spider):
             legislation_title, legislation_url = self.get_eco_title_and_link(
                 response, latest_event
             )
+            lgbce_slug = response.url.split("/")[-1]
+            try:
+                slug = LGBCE_SLUG_TO_ORG_SLUG[lgbce_slug]
+            except KeyError:
+                slug = lgbce_slug
             rec = {
-                "slug": response.url.split("/")[-1],
+                "slug": slug,
                 "latest_event": latest_event,
                 "boundaries_url": self.get_shapefiles(response),
                 "status": status,
