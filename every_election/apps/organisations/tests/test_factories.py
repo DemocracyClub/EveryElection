@@ -10,7 +10,7 @@ from organisations.tests.factories import (
 )
 
 
-class TestElectionIDs(TestCase):
+class TestOrganisationFactories(TestCase):
     def test_organisation_factory(self):
         o = OrganisationFactory()
         assert o.slug == "org-{}".format(o.official_identifier)
@@ -48,8 +48,8 @@ class TestElectionIDs(TestCase):
         self.assertIsNone(incomplete_review.divisionset)
         self.assertTrue(incomplete_review.slug.startswith("org-"))
         self.assertTrue(incomplete_review.consultation_url)
-        self.assertIsNone(incomplete_review.legislation_title)
-        self.assertIsNone(incomplete_review.legislation_url)
+        self.assertEqual("", incomplete_review.legislation_title)
+        self.assertEqual("", incomplete_review.legislation_url)
         self.assertFalse(incomplete_review.legislation_made)
         self.assertIsNone(incomplete_review.effective_date)
 

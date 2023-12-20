@@ -187,20 +187,20 @@ class EditStatus(models.TextChoices):
 
 class OrganisationBoundaryReview(TimeStampedModel):
     organisation = models.ForeignKey(
-        "Organisation", null=True, on_delete=models.CASCADE
+        "Organisation", null=True, blank=True, on_delete=models.CASCADE
     )
     divisionset = models.OneToOneField(
-        OrganisationDivisionSet, null=True, on_delete=models.CASCADE
+        OrganisationDivisionSet, null=True, blank=True, on_delete=models.CASCADE
     )
-    legislation_title = models.CharField(null=True)
+    legislation_title = models.CharField(blank=True, default="")
     slug = models.CharField()
-    consultation_url = models.URLField(null=True)
-    boundaries_url = models.URLField(null=True)
+    consultation_url = models.URLField(blank=True, default="")
+    boundaries_url = models.CharField(blank=True, default="")
     status = models.CharField(choices=ReviewStatus.choices)
-    latest_event = models.CharField(null=True)
-    legislation_url = models.URLField(null=True)
-    legislation_made = models.BooleanField(null=True)
-    effective_date = models.DateField(null=True)
+    latest_event = models.CharField(blank=True, default="")
+    legislation_url = models.URLField(blank=True, default="")
+    legislation_made = models.BooleanField(default=False)
+    effective_date = models.DateField(blank=True, null=True, default=None)
     edit_status = models.CharField(
         choices=EditStatus.choices, default=EditStatus.UNLOCKED
     )

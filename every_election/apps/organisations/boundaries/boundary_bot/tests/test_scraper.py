@@ -157,7 +157,8 @@ class TestScraperSaves(TestCase):
                 slug="allerdale"
             ).latest_event,
         )
-        self.assertIsNone(
+        self.assertEqual(
+            "",
             OrganisationBoundaryReview.objects.get(
                 slug="allerdale"
             ).legislation_title,
@@ -168,7 +169,7 @@ class TestScraperSaves(TestCase):
         self.scraper.data["allerdale"]["legislation_title"] = "test title"
         self.scraper.data["allerdale"]["status"] = ReviewStatus.CURRENT
 
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(5):
             self.scraper.save()
 
         self.assertEqual(1, len(OrganisationBoundaryReview.objects.all()))
@@ -198,7 +199,8 @@ class TestScraperSaves(TestCase):
                 slug="allerdale"
             ).latest_event,
         )
-        self.assertIsNone(
+        self.assertEqual(
+            "",
             OrganisationBoundaryReview.objects.get(
                 slug="allerdale"
             ).legislation_title,
@@ -219,7 +221,8 @@ class TestScraperSaves(TestCase):
                 slug="allerdale"
             ).latest_event,
         )
-        self.assertIsNone(
+        self.assertEqual(
+            "",
             OrganisationBoundaryReview.objects.get(
                 slug="allerdale"
             ).legislation_title,
