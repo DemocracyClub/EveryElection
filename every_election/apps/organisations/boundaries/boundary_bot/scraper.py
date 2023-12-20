@@ -63,6 +63,12 @@ class LgbceScraper:
         self.github_helper = GitHubIssueHelper()
         self.BOOTSTRAP_MODE = BOOTSTRAP_MODE
         self.SEND_NOTIFICATIONS = SEND_NOTIFICATIONS
+        self.ignore = [
+            "east-hertfordshire",
+            "greater-london",
+            "north-yorkshire",
+            "somerset",
+        ]
 
     def scrape_index(self):
         headers = REQUEST_HEADERS
@@ -116,6 +122,12 @@ class LgbceScraper:
                     % (area["slug"], str(list(self.data)))
                 )
             self.data[area["slug"]].update(area)
+
+            if area["slug"] in self.ignore:
+                print(
+                    f"Deleting scraped data for {area['slug']} because it breaks our pipeline"
+                )
+                del self.data[area["slug"]]
 
     def attach_register_codes(self):
         codes_not_found = []
