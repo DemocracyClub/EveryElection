@@ -20,6 +20,7 @@ from organisations.boundaries.boundary_bot.spider import (
     LgbceSpider,
     SpiderWrapper,
 )
+from organisations.boundaries.constants import LGBCE_SLUG_TO_ORG_SLUG
 from organisations.models import Organisation, OrganisationBoundaryReview
 from organisations.models.divisions import EditStatus, ReviewStatus
 
@@ -97,7 +98,14 @@ class LgbceScraper:
                 url = link.get("href")
                 if not url.startswith("http"):
                     url = BASE_URL + url
-                slug = url.split("/")[-1]
+                lgbce_slug = url.split("/")[-1]
+                try:
+                    slug = LGBCE_SLUG_TO_ORG_SLUG[lgbce_slug]
+                except KeyError:
+                    print(f'"{lgbce_slug}":"{lgbce_slug}",')
+                    # raise ScraperException(
+                    #     f"LGBCE slug: {lgbce_slug} ({url}) not found in LGBCE_SLUG_TO_ORG_SLUG"
+                    # )
                 self.data[slug] = {
                     "slug": slug,
                     "name": link.text.strip(),
