@@ -266,7 +266,7 @@ class OrganisationBoundaryReview(TimeStampedModel):
 
     @property
     def lgbce_boundary_url(self):
-        return f"https://www.lgbce.org.uk/{self.boundaries_url}"
+        return f"https://www.lgbce.org.uk{self.boundaries_url}"
 
     @property
     def cleaned_legislation_url(self):

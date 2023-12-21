@@ -47,7 +47,7 @@ class TestLGBCEReviewHelper(TestCase):
             organisation=OrganisationFactory(official_identifier="FOO")
         )
         self.processed_review = CompletedOrganisationBoundaryReviewFactory(
-            boundaries_url="path/to/processed_review_polys.zip"
+            boundaries_url="/path/to/processed_review_polys.zip"
         )
         self.incomplete_review = IncompleteOrganisationBoundaryReviewFactory()
 
@@ -440,4 +440,29 @@ class TestLGBCEReviewHelper(TestCase):
         self.assertEqual(
             expected_value,
             lgbce_review_helper.make_eco_csv(wsk_review).decode("utf-8"),
+        )
+
+    def test_get_number_of_councillors_from_words(self):
+        lgbce_review_helper = LGBCEReviewHelper()
+        texts = [
+            (
+                "(4) The number of councillors to be elected for each ward is three. ",
+                3,
+            ),
+            ("(4) Three councillors are to be elected for each ward. ", 3),
+            (
+                "The number of councillors to be elected for each ward is two",
+                2,
+            ),
+            ("Four councillors are to be elected for each ward", 4),
+        ]
+        for text, number in texts:
+            self.assertEqual(
+                lgbce_review_helper.get_number_of_councillors_from_words(text),
+                number,
+            )
+        self.assertIsNone(
+            lgbce_review_helper.get_number_of_councillors_from_words(
+                "Four councillors are to be elected to six wards. "
+            )
         )
