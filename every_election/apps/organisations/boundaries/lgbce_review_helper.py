@@ -1,8 +1,10 @@
 import copy
 import csv
+import re
 import sys
 from datetime import datetime, timedelta
 from io import BytesIO, StringIO
+from typing import Optional
 
 import boto3
 import botocore
@@ -194,7 +196,9 @@ class LGBCEReviewHelper:
             self.stdout.write(f"Could not parse eco at {xml_link}")
         return None
 
-    def get_seats_total_from_leg_text(self, review: OrganisationBoundaryReview):
+    def get_seats_total_from_legislation(
+        self, review: OrganisationBoundaryReview
+    ):
         """
         If they all have the same number of seats the count isn't included in the ward data :/
         Here are some examples of what the text looks like
@@ -208,13 +212,62 @@ class LGBCEReviewHelper:
         https://www.legislation.gov.uk/uksi/2022/1373/made
             '(4) The number of councillors to be elected for each ward is two. '
 
-        https://www.legislation.gov.uk/uksi/2023/1205/article/3/made
-            '(4) The number of councillors to be elected for each ward is the number specified in relation to that ward in the second column of the table in Schedule 1.'
+        https://www.legislation.gov.uk/uksi/2023/1205/article/3/made '(4) The number of councillors to be elected for
+        each ward is the number specified in relation to that ward in the second column of the table in Schedule 1.'
 
-        https://www.legislation.gov.uk/uksi/2015/70/made
-            '(4) The number of councillors to be elected for each district ward is the number specified in relation to that ward in the second column of the table in Schedule 1. '
+        https://www.legislation.gov.uk/uksi/2015/70/made '(4) The number of councillors to be elected for each
+        district ward is the number specified in relation to that ward in the second column of the table in Schedule
+        1. '
         """
-        pass  # ToDo
+        numbers_as_words = "(one|two|three|four|five|six|seven|eight|nine)"
+        words_after_numbers = (
+            f"{numbers_as_words} councillors are to be elected for each ward."
+        )
+        words_before_numbers = f"The number of councillors to be elected for each ward is {numbers_as_words}"
+        elected_councillors_pattern = re.compile(
+            f"({words_after_numbers})|({words_before_numbers})",
+            re.IGNORECASE | re.UNICODE,
+        )
+
+        m = re.search(
+            elected_councillors_pattern,
+            requests.get(review.cleaned_legislation_url).content.decode(
+                "utf-8"
+            ),
+        )
+        match m.groups():
+            case (None, None, str(), str()):
+                return self.get_number_of_councillors_from_words(m.groups()[2])
+            case (str(), str(), None, None):
+                return self.get_number_of_councillors_from_words(m.groups()[0])
+            case _:
+                return None
+
+    def get_number_of_councillors_from_words(self, text: str) -> Optional[int]:
+        """
+        '(4) The number of councillors to be elected for each ward is three. ' -> 3
+        '(4) Three councillors are to be elected for each ward. ' -> 3
+        '(4) The number of councillors to be elected for each ward is two. ' -> 2
+        '(4) Four councillors are to be elected for each ward. ' -> 4
+        """
+        numbers = {
+            "one": 1,
+            "two": 2,
+            "three": 3,
+            "four": 4,
+            "five": 5,
+            "six": 6,
+            "seven": 7,
+            "eight": 8,
+            "nine": 9,
+        }
+
+        number_as_word = re.findall(
+            r"(one|two|three|four|five|six|seven|eight|nine)", text.lower()
+        )
+        if len(number_as_word) == 1:
+            return numbers[number_as_word[0]]
+        return None
 
     def get_base_eco_row(self, review: OrganisationBoundaryReview):
         return {
@@ -239,8 +292,8 @@ class LGBCEReviewHelper:
         )
         ward_data = self.parse_eco_xml(xml_link)
         base_eco_row = self.get_base_eco_row(review)
-        if ward_data[len(ward_data) // 2] == 1:  # pick one from the middle
-            base_eco_row["seats_total"] = self.get_seats_total_from_leg_text(
+        if len(ward_data[len(ward_data) // 2]) == 1:  # pick one from the middle
+            base_eco_row["seats_total"] = self.get_seats_total_from_legislation(
                 review
             )
         wards = []
