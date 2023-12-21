@@ -2,13 +2,45 @@
 {% block page_title %}Boundary Reviews{% endblock page_title %}
 
 {% block content %}
-	{% for review in object_list%}
-		<h3>
-			<a href="{% url 'single_boundary_review_view' review.id %}">{{review.generic_title}}</a>
-		</h3>
-		<li><strong>Organisation</strong>: <a href={{review.divisionset.organisation.get_absolute_url}}>{{review.divisionset.organisation.name}}</a></li>
-		<li><strong>Consultation</strong>: <a href={{review.consultation_url}}>Link</a></li>
-		<li><strong>Legislation</strong>: <a href={{review.legislation_url}}>Link</a></li>
+
+<style>
+	.boundary_reviews_table {
+		font-size: 1rem;
+	}
+	.boundary_reviews_table td:first-child {
+		width: 50%;
+	}
+</style>
+
+{%regroup boundary_reviews by organisation as boundary_reviews_by_organisation%}
+{% for group in boundary_reviews_by_organisation %}
+	<h5>{{group.grouper}}</h5>
+	<div class="ds-table ds-bordered">
+		<table class="boundary_reviews_table">
+			<tr>
+				<th>Review</th>
+				<th>Consultation</th>
+				<th>Legislation</th>
+				<th>Status</th>
+			</tr>
+			{% for review in group.list%}
+				<tr>
+					<td><a href="{% url 'single_boundary_review_view' review.id %}">{{review.generic_title}}</a></td>
+					{%if review.consultation_url%}
+						<td>Read the <a href={{review.consultation_url}}>Consultation</a></td>
+					{%else%}	
+						<td>Consultation Link Missing</a></td>
+					{%endif%}
+					{%if review.legislation_url%}
+						<td>Read the <a href={{review.legislation_url}}>Legislation</a></td>
+					{%else%}	
+						<td>Legislation Link Missing</a></td>
+					{%endif%}
+					<td>{{review.get_status_display}}</td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
 	{% endfor %}
 
 {% endblock content %}

@@ -83,6 +83,7 @@ class AllBoundaryReviewsView(ListView):
             OrganisationBoundaryReview.objects.all()
             .prefetch_related("organisation")
             .prefetch_related("divisionset")
+            .order_by("organisation")
         )
 
 
