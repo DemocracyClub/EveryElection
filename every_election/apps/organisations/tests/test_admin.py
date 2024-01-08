@@ -228,13 +228,15 @@ class WriteCSVToS3Tests(TestCase):
         conn = boto3.resource("s3", region_name="us-east-1")
         conn.create_bucket(Bucket=TEST_LGBCE_MIRROR_BUCKET)
 
+        org_foo = OrganisationFactory(
+            official_identifier="FOO",
+            official_name="City of Foobar",
+            common_name="Foobar",
+            slug="foobar",
+        )
+        OrganisationDivisionSetFactory(organisation=org_foo, end_date=None)
         self.completed_review = CompletedOrganisationBoundaryReviewFactory(
-            organisation=OrganisationFactory(
-                official_identifier="FOO",
-                official_name="City of Foobar",
-                common_name="Foobar",
-                slug="foobar",
-            )
+            organisation=org_foo
         )
         self.completed_review.effective_date = date(2023, 5, 2)
         self.completed_review.save()
@@ -337,7 +339,7 @@ class WriteCSVToS3Tests(TestCase):
             Bucket=TEST_LGBCE_MIRROR_BUCKET,
             Key=f"{self.completed_review.s3_directory_key}/end_date.csv",
             Body=bytes(
-                "org,start_date,end_date\norg_identifier,2023-05-04,2023-05-03\n",
+                "org,start_date,end_date\norg_identifier,2017-05-04,2023-05-03\n",
                 encoding="utf-8",
             ),
         )
@@ -415,7 +417,7 @@ class WriteCSVToS3Tests(TestCase):
             Bucket=TEST_LGBCE_MIRROR_BUCKET,
             Key=f"{self.completed_review.s3_directory_key}/end_date.csv",
             Body=bytes(
-                "org,start_date,end_date\norg_identifier,2023-05-04,2023-05-03\n",
+                "org,start_date,end_date\norg_identifier,2017-05-04,2023-05-03\n",
                 encoding="utf-8",
             ),
         )

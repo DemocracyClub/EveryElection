@@ -11,7 +11,10 @@ import botocore
 import requests
 from django.conf import settings
 from eco_parser import EcoParser, ParseError
-from organisations.models import OrganisationBoundaryReview
+from organisations.models import (
+    OrganisationBoundaryReview,
+    OrganisationDivisionSet,
+)
 
 
 def check_s3_obj_exists(s3_client: boto3.client, bucket: str, key: str):
@@ -100,21 +103,34 @@ class LGBCEReviewHelper:
     def make_end_date_rows(
         self,
         review: OrganisationBoundaryReview,
-        start_date: str,
+        new_divset_start_date: str,
         thursday_start_day: bool = True,
     ):
-        def day_before(date_str: str):
+        def day_before(date_str: str) -> str:
             date_object = datetime.strptime(date_str, "%Y-%m-%d")
             previous_day = date_object - timedelta(days=1)
             return previous_day.strftime("%Y-%m-%d")
 
-        def is_first_thursday_in_may(date_str: str):
+        def is_first_thursday_in_may(date_str: str) -> str:
             date_object = datetime.strptime(date_str, "%Y-%m-%d")
             return date_object.month == 5 and date_object.weekday() == 3
 
-        if not is_first_thursday_in_may(start_date) and not thursday_start_day:
+        def current_divset_start_date(
+            review: OrganisationBoundaryReview,
+        ) -> str:
+            org = review.organisation
+            org_divsets = OrganisationDivisionSet.objects.filter(
+                organisation=org
+            )
+            current_divset = org_divsets.latest()
+            return current_divset.start_date.strftime("%Y-%m-%d")
+
+        if (
+            not is_first_thursday_in_may(new_divset_start_date)
+            and not thursday_start_day
+        ):
             self.stdout.write(
-                f"{start_date} is not the the first Thursday in May. Double check."
+                f"{new_divset_start_date} is not the the first Thursday in May. Double check."
             )
             return None
 
@@ -122,19 +138,19 @@ class LGBCEReviewHelper:
             ["org", "start_date", "end_date"],
             [
                 review.organisation.official_identifier,
-                start_date,
-                day_before(start_date),
+                current_divset_start_date(review),
+                day_before(new_divset_start_date),
             ],
         ]
 
     def make_end_date_csv(
         self,
         review: OrganisationBoundaryReview,
-        start_date: str,
+        new_divset_start_date: str,
         thursday_start_day: bool = True,
     ):
         rows = self.make_end_date_rows(
-            review, start_date, thursday_start_day=thursday_start_day
+            review, new_divset_start_date, thursday_start_day=thursday_start_day
         )
         buffer = StringIO(newline="")
         writer = csv.writer(buffer)
