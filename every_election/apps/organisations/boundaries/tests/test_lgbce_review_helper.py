@@ -13,6 +13,7 @@ from organisations.boundaries.lgbce_review_helper import (
 from organisations.tests.factories import (
     CompletedOrganisationBoundaryReviewFactory,
     IncompleteOrganisationBoundaryReviewFactory,
+    OrganisationDivisionSetFactory,
     OrganisationFactory,
     UnprocessedOrganisationBoundaryReviewFactory,
 )
@@ -43,8 +44,10 @@ class TestLGBCEReviewHelper(TestCase):
         conn.create_bucket(Bucket=TEST_LGBCE_MIRROR_BUCKET)
 
         # Create fixture objects
+        org1 = OrganisationFactory(official_identifier="FOO")
+        OrganisationDivisionSetFactory(organisation=org1, end_date=None)
         self.unprocessed_review = UnprocessedOrganisationBoundaryReviewFactory(
-            organisation=OrganisationFactory(official_identifier="FOO")
+            organisation=org1
         )
         self.processed_review = CompletedOrganisationBoundaryReviewFactory(
             boundaries_url="/path/to/processed_review_polys.zip"
@@ -62,7 +65,7 @@ class TestLGBCEReviewHelper(TestCase):
             Bucket=TEST_LGBCE_MIRROR_BUCKET,
             Key=f"{self.processed_review.s3_directory_key}/end_date.csv",
             Body=bytes(
-                "org,start_date,end_date\norg_identifier,2023-05-04,2023-05-03\n",
+                "org,start_date,end_date\norg_identifier,2017-05-04,2023-05-03\n",
                 encoding="utf-8",
             ),
         )
@@ -201,7 +204,7 @@ class TestLGBCEReviewHelper(TestCase):
         self.assertListEqual(
             [
                 "FOO",
-                "2024-05-02",
+                "2017-05-04",
                 "2024-05-01",
             ],
             rows[1],
@@ -234,7 +237,7 @@ class TestLGBCEReviewHelper(TestCase):
         )["Body"].read()
         self.assertEqual(
             f"org,start_date,end_date\n"
-            f"{self.unprocessed_review.organisation.official_identifier},2024-05-02,2024-05-01\n",
+            f"{self.unprocessed_review.organisation.official_identifier},2017-05-04,2024-05-01\n",
             csv_body.decode("utf-8"),
         )
 
