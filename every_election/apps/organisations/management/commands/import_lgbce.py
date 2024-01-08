@@ -119,8 +119,9 @@ class Command(BaseCommand):
             # by adding a name_map.json file to the same S3 directory
             # where the shape files are saved
             f = s3.get_file(basepath + "/name_map.json")
-            with json.load(open(f.name)) as name:
-                return name
+            with open(f.name, "r") as tmp_name_map_file:
+                return json.load(tmp_name_map_file)
+
         except ClientError as e:
             if int(e.response["Error"]["Code"]) == 404:
                 # if we didn't find any name map file, return an empty map
