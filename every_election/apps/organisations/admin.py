@@ -76,6 +76,7 @@ class WriteCSVToS3(FormView):
         ward_rows = lgbce_helper.get_eco_csv_rows(review)
         context["ward_rows"] = [row.values() for row in ward_rows]
         context["ward_header"] = ward_rows[0].keys()
+        context["ward_count"] = len(ward_rows)
         context["review_bucket"] = lgbce_helper.review_bucket
         return context
 
