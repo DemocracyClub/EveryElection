@@ -359,14 +359,21 @@ class Election(TimeStampedModel):
 
     def get_example_postcode(self):
         if not self.group_type and self.geography:
+
             return (
-                Onspd.objects.filter(location__within=self.geography.geography)
+                Onspd.objects.filter(
+                    location__within=self.geography.subdivided.first().geography
+                )
                 .filter(
-                    location__dwithin=(self.geography.geography.centroid, 0.08)
+                    location__dwithin=(
+                        self.geography.subdivided.first().geography.centroid,
+                        0.08,
+                    )
                 )
                 .annotate(
                     distance=Distance(
-                        "location", self.geography.geography.centroid
+                        "location",
+                        self.geography.subdivided.first().geography.centroid,
                     )
                 )
                 .order_by("distance")
