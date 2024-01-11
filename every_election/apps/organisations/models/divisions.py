@@ -270,9 +270,10 @@ class OrganisationBoundaryReview(TimeStampedModel):
 
     @property
     def cleaned_legislation_url(self):
+        url = self.legislation_url.replace("/id/", "/")
         url = re.search(
             r"www.legislation.gov.uk/(wsi|uksi|ssi)/\d+/\d+",
-            self.legislation_url,
+            url,
         ).group()
         return f"https://{url}"
 
