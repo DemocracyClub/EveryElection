@@ -38,10 +38,16 @@ class OrganisationDivisionAdminForm(forms.ModelForm):
 
 
 class OrganisationDivisionAdmin(admin.ModelAdmin):
-    list_display = ("official_identifier", "name", "divisionset")
+    empty_value_display = "[NOT SET]"
+    list_display = ("official_identifier", "name", "seats_total", "divisionset")
     ordering = ("divisionset", "name")
     search_fields = ("official_identifier", "name")
-    list_filter = [CurrentDivisionFilter, TempIdFilter, "division_type"]
+    list_filter = [
+        CurrentDivisionFilter,
+        TempIdFilter,
+        "division_type",
+        "seats_total",
+    ]
     form = OrganisationDivisionAdminForm
     readonly_fields = ["created", "modified"]
 
