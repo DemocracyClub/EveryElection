@@ -114,12 +114,23 @@ class ElectionOrganisationDivisionForm(forms.Form):
         super().__init__(*args, **kwargs)
         if not self.division:
             return
+
         self.fields["seats_contested"] = forms.IntegerField(
-            max_value=self.division.seats_total,
+            max_value=self.division.seats_total or 0,
             min_value=0,
-            help_text=f"Up to {self.division.seats_total} seats total",
+            help_text=f"Up to {self.division.seats_total or 0} seats total",
             required=False,
         )
+
+        if not self.division.seats_total:
+            self.fields[
+                "seats_contested"
+            ].help_text = """
+            No seats contested set. Can't make elections for this division. Please ask an admin to set the seats total.
+            """
+            del self.fields["ballot_type"]
+            return
+
         self.fields["division_id"] = forms.CharField(
             initial=self.division.pk, required=False, widget=forms.HiddenInput
         )
