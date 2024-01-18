@@ -78,13 +78,21 @@ class AllBoundaryReviewsView(ListView):
     model = OrganisationBoundaryReview
     context_object_name = "boundary_reviews"
 
-    def get_queryset(self):
-        return (
+    def get_context_data(self, **kwargs):
+        from ..filters import OrganisationBoundaryReviewFilter
+
+        context = super().get_context_data(**kwargs)
+        qs = (
             OrganisationBoundaryReview.objects.all()
             .prefetch_related("organisation")
             .prefetch_related("divisionset")
             .order_by("organisation")
         )
+        f = OrganisationBoundaryReviewFilter(self.request.GET, qs)
+
+        context["filter"] = f
+        context["queryset"] = f.qs
+        return context
 
 
 class SingleBoundaryReviewView(DetailView):

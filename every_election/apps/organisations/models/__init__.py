@@ -9,6 +9,7 @@ from organisations.models.divisions import (
     OrganisationBoundaryReview,
     OrganisationDivision,
     OrganisationDivisionSet,
+    ReviewStatus,
 )
 from organisations.models.organisations import (
     Organisation,
@@ -28,4 +29,5 @@ __all__ = [
     "DivisionGeography",
     "DivisionGeographySubdivided",
     "OrganisationBoundaryReview",
+    "ReviewStatus",
 ]

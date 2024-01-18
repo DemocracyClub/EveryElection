@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block page_title %}Boundary Reviews{% endblock page_title %}
 
+
 {% block content %}
 
 <style>
@@ -12,7 +13,21 @@
 	}
 </style>
 
-{%regroup boundary_reviews by organisation as boundary_reviews_by_organisation%}
+<aside class="ds-filter" aria-labelledby="filter-label">
+	<h6>FILTERS:</h6>
+	<form>
+		<div class="ds-filter-cluster">
+			{% for field in filter.form %}
+				<ul aria-labelledby="adv-filter-label-{{ forloop.counter }}">
+					<li id="adv-filter-label-{{ forloop.counter }}" class="ds-filter-label" aria-hidden="true">{{ field.label }}:</li>
+					{{ field }}
+				</ul>
+			{% endfor %}
+		</div>
+	</form>
+</aside>
+
+{%regroup queryset by organisation as boundary_reviews_by_organisation%}
 {% for group in boundary_reviews_by_organisation %}
 	<h5>{{group.grouper}}</h5>
 	<div class="ds-table ds-bordered">
