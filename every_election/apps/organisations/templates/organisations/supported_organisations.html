@@ -8,7 +8,8 @@
             <div class="ds-card-body">
                 <h2>Supported Organisations</h2>
                 <p>The following is a list of organisations that this project supports.</p>
-                <p>That means, we track elections for organisations on this list</p>
+                <p>That means, we track elections for organisations on this list.</p>
+                <p>We also track <a href={% url "boundary_reviews_view" %}>boundary reviews</a> for these organisations.</p>
 
                 {% regroup object_list by organisation_type as grouped_list %}
 
