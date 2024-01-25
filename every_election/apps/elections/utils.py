@@ -29,6 +29,14 @@ CACHE = {
 }
 
 
+def reset_cache():
+    global CACHE
+    NEW_CACHE = {}
+    for key in CACHE:
+        NEW_CACHE[key] = {}
+    CACHE = NEW_CACHE
+
+
 def get_voter_id_requirement(election: Election) -> Optional[str]:
     """
     Given an Election object, if eligible for voter ID return the related voter ID legislation code
@@ -93,10 +101,6 @@ def get_cached_elected_role(organisation, election_type):
 
 
 class ElectionBuilder:
-    def __del__(self):
-        for key in CACHE:
-            CACHE[key] = {}
-
     def __init__(self, election_type, date):
         # init params
         if type(election_type) == str:

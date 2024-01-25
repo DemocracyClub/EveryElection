@@ -25,6 +25,7 @@ from elections.utils import (
     create_ids_for_each_ballot_paper,
     get_notice_directory,
     get_voter_id_requirement,
+    reset_cache,
 )
 from formtools.wizard.views import NamedUrlSessionWizardView
 from organisations.models import Organisation
@@ -372,7 +373,8 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             )
             se.status = "id_created"
             se.save()
-
+        # Reset the cache created for this ID creation
+        reset_cache()
         return HttpResponseRedirect("/")
 
     def get(self, request, *args, **kwargs):

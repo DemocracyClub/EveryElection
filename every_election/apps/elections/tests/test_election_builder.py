@@ -9,7 +9,7 @@ from elections.models import (
     ElectionSubType,
     ElectionType,
 )
-from elections.utils import ElectionBuilder
+from elections.utils import ElectionBuilder, reset_cache
 from organisations.models import Organisation, OrganisationDivision
 from organisations.tests.factories import (
     OrganisationDivisionFactory,
@@ -20,6 +20,10 @@ from .base_tests import BaseElectionCreatorMixIn
 
 
 class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
+    def setUp(self):
+        super().setUp()
+        reset_cache()
+
     def test_eq(self):
         eb1 = ElectionBuilder("local", "2017-06-08")
 
@@ -67,6 +71,7 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
         self.elected_role1.delete()
 
         with self.assertRaises(Organisation.ValidationError):
+            reset_cache()
             builder.with_organisation(self.org1)
 
     def test_organisation_date_range_invalid(self):
@@ -280,7 +285,7 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
         Regression test for https://github.com/DemocracyClub/EveryElection/issues/1162
 
         If an ID exists for the organisation after creating a ballot ID, later
-        attempts to createt another balot ID for the org on the same day failed
+        attempts to create another ballot ID for the org on the same day failed
         due to a duplicate key error.
 
         """
@@ -294,9 +299,9 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
         org_group = builder.build_organisation_group(election_group).save()
         ballot = builder.build_ballot(org_group)
         ballot.save()
-
+        reset_cache()
         # Later, a user submits another election for that organisation, on the
-        # same day, in a differnet division
+        # same day, in a different division
         builder = (
             ElectionBuilder("local", "2017-06-08")
             .with_organisation(self.org1)
