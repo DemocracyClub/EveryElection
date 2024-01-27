@@ -1,6 +1,7 @@
 import datetime
 
 from django.test import TestCase
+from elections.models import Election, ElectionCancellationReason
 from elections.sync_helper import ElectionSyncer
 from elections.tests.factories import ElectedRoleFactory, ElectionFactory
 from elections.tests.test_election_sync_fixtures import get_local_ballot
@@ -151,3 +152,29 @@ class TestDivisionSetStartAndEndDates(TestCase):
             **ballot["division"]["divisionset"]
         )
         self.assertIsNone(div_set.end_date)
+
+
+class TestElectionSyncerCancelsElection(TestCase):
+    def test_election_cancelled(self):
+        helper = ElectionSyncer()
+
+        # Get a template ballot
+        ballot = get_local_ballot()
+        helper.add_single_election(ballot)
+        created_election: Election = Election.public_objects.get()
+        self.assertEqual(
+            created_election.election_id,
+            "local.reigate-and-banstead.banstead-village.2022-05-05",
+        )
+        self.assertFalse(created_election.cancelled)
+
+        ballot["cancelled"] = True
+        ballot[
+            "cancellation_reason"
+        ] = ElectionCancellationReason.CANDIDATE_DEATH
+        helper.add_single_election(ballot)
+        created_election.refresh_from_db()
+        self.assertTrue(created_election.cancelled)
+        self.assertEqual(
+            created_election.cancellation_reason, "CANDIDATE_DEATH"
+        )
