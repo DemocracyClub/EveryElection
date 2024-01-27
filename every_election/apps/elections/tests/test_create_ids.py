@@ -15,10 +15,15 @@ from organisations.tests.factories import (
     OrganisationGeographyFactory,
 )
 
+from ..utils import reset_cache
 from .base_tests import BaseElectionCreatorMixIn, FuzzyInt
 
 
 class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
+    def setUp(self):
+        super().setUp()
+        reset_cache()
+
     def run_test_with_data(
         self, all_data, expected_ids, expected_titles, **kwargs
     ):
@@ -479,7 +484,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             "Greater London Assembly elections",
             "Greater London Assembly elections (Additional)",
         ]
-        with self.assertNumQueries(FuzzyInt(24, 25)):
+        with self.assertNumQueries(FuzzyInt(23, 25)):
             self.run_test_with_data(
                 all_data,
                 expected_ids,
