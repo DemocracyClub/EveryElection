@@ -16,7 +16,11 @@ from elections.models import (
     Explanation,
     MetaData,
 )
-from organisations.models import Organisation, OrganisationDivision
+from organisations.models import (
+    Organisation,
+    OrganisationDivision,
+    OrganisationDivisionSet,
+)
 
 
 class ParentDoesNotExist(ValueError):
@@ -28,14 +32,13 @@ class ReplacementDoesNotExist(ValueError):
 
 
 class ElectionSyncer:
-    ELECTION_SUBTYPE_CACHE = {}
-    ELECTED_ROLE_CACHE = {}
-    ELECTION_TYPE_CACHE = {}
-
     def __init__(self, since=None, stdout=None, stderr=None):
         self.since = since
         self.stdout = stdout or sys.stdout
         self.stderr = stderr or sys.stderr
+        self.ELECTION_SUBTYPE_CACHE = {}
+        self.ELECTED_ROLE_CACHE = {}
+        self.ELECTION_TYPE_CACHE = {}
 
     def add_single_election(self, result: dict):
         try:
@@ -64,22 +67,55 @@ class ElectionSyncer:
             if key == "organisation" and value:
                 continue
             if key == "division" and value:
-                election_model.division = OrganisationDivision.objects.get(
-                    official_identifier=value["official_identifier"],
-                    divisionset__start_date=value["divisionset"]["start_date"],
-                    divisionset__organisation=election_model.organisation,
-                )
+                try:
+                    divisionset = OrganisationDivisionSet.objects.get(
+                        organisation=election_model.organisation,
+                        start_date=value["divisionset"]["start_date"],
+                    )
+                except OrganisationDivisionSet.DoesNotExist:
+                    # In some case we might have changed the start date
+                    # for an existing divisionset. This is rare, but one
+                    # high profile example is the unknown divisionset start date
+                    # of the 2024/2025 general election.
+                    # We can manage this by looking for the short_title
+                    try:
+                        divisionset = OrganisationDivisionSet.objects.filter(
+                            organisation=election_model.organisation,
+                            short_title=value["divisionset"]["short_title"],
+                        ).get()
+                    except OrganisationDivisionSet.DoesNotExist:
+                        raise
+                    # We have a new divisionset with a new start_date, so we
+                    # need to set the end date of the old divisionset
+                    # before updating this ones start_date
+                    previous_divisionset = (
+                        OrganisationDivisionSet.objects.filter(
+                            organisation=election_model.organisation
+                        )
+                        .filter_by_date(election_model.poll_open_date)
+                        .get()
+                    )
+                    previous_divisionset.end_date = parse(
+                        value["divisionset"]["start_date"]
+                    ) - timedelta(days=1)
+                    previous_divisionset.save()
+                    divisionset.start_date = value["divisionset"]["start_date"]
+                    divisionset.save()
 
-                if (
-                    election_model.division.divisionset.end_date
-                    != value["divisionset"]["end_date"]
-                ):
+                if divisionset.end_date != value["divisionset"]["end_date"]:
                     # Special case where the end date has changed (likely due to an upcoming boundary change)
                     # in this case, update the division set's end date
                     election_model.division.divisionset.end_date = value[
                         "divisionset"
                     ]["end_date"]
                     election_model.division.divisionset.save()
+
+                election_model.division = OrganisationDivision.objects.get(
+                    official_identifier=value["official_identifier"],
+                    divisionset__start_date=value["divisionset"]["start_date"],
+                    divisionset__organisation=election_model.organisation,
+                )
+
                 continue
             if key == "identifier_type":
                 key = "group_type"
