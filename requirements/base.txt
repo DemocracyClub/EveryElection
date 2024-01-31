@@ -34,7 +34,7 @@ django-pipeline==2.1.0
 
 importlib-metadata==6.8.0
 
-git+https://github.com/DemocracyClub/design-system.git@0.4.4
+git+https://github.com/DemocracyClub/design-system.git@0.4.5
 git+https://github.com/DemocracyClub/dc_django_utils.git@2.4.0
 
 django-dotenv==1.4.2
