@@ -8,7 +8,7 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from elections.tests.factories import ElectedRoleFactory
 from mock.mock import Mock, patch
-from moto import mock_s3
+from moto import mock_aws
 from organisations.models import (
     DivisionProblem,
     OrganisationGeographyProblem,
@@ -211,7 +211,7 @@ def get_content_length(s3_client, bucket, key):
     return int(response["ResponseMetadata"]["HTTPHeaders"]["content-length"])
 
 
-@mock_s3
+@mock_aws
 class WriteCSVToS3Tests(TestCase):
     def setUp(self):
         # Don't do anything unintended

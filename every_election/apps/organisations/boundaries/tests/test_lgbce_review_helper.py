@@ -5,7 +5,7 @@ from unittest.mock import Mock, patch
 import boto3
 from botocore.exceptions import ClientError
 from django.test import TestCase, override_settings
-from moto import mock_s3
+from moto import mock_aws
 from organisations.boundaries.lgbce_review_helper import (
     LGBCEReviewHelper,
     check_s3_obj_exists,
@@ -26,7 +26,7 @@ def get_content_length(s3_client, bucket, key):
     return int(response["ResponseMetadata"]["HTTPHeaders"]["content-length"])
 
 
-@mock_s3
+@mock_aws
 class TestLGBCEReviewHelper(TestCase):
     def setUp(self):
         # Don't do anything unintended
