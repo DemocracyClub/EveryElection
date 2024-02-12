@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from django.contrib.gis.geos import MultiPolygon
+from django.contrib.gis.geos import MultiPolygon, Polygon
 from django.core.management import BaseCommand
 from django.db import transaction
 from elections.models import ElectedRole, ElectionType
@@ -15,6 +15,10 @@ def union_list(geoms: [MultiPolygon]) -> MultiPolygon:
     if isinstance(combined, MultiPolygon):
         return combined
     return MultiPolygon(combined)
+
+
+def extract_exterior_ring(geom: MultiPolygon) -> MultiPolygon:
+    return MultiPolygon([Polygon(p.exterior_ring) for p in geom])
 
 
 class Command(BaseCommand):
@@ -77,6 +81,15 @@ class Command(BaseCommand):
             required=True,
             help="Start Date of the new CA yyyy-mm-dd",
         )
+        parser.add_argument(
+            "--exterior-ring",
+            action="store_true",
+            required=False,
+            default=False,
+            help="Only return the exterior ring of the combined geographies. "
+            "This will remove small 'sliver holes' but isn't what you want if there is meant to be internal rings, "
+            "as there is not threshold for size.",
+        )
 
     @transaction.atomic
     def handle(self, *args, **params):
@@ -111,7 +124,8 @@ class Command(BaseCommand):
             ).values_list("geography", flat=True)
 
             ca_geom = union_list(constituent_geoms)
-
+            if params.get("exterior_ring", None):
+                ca_geom = extract_exterior_ring(ca_geom)
             OrganisationGeography.objects.create(
                 start_date=org_start_date,
                 legislation_url=org_legislation,
