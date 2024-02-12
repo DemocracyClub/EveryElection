@@ -3,9 +3,9 @@ from datetime import datetime
 from django.contrib.gis.geos import MultiPolygon, Polygon
 from django.core.management import BaseCommand
 from django.db import transaction
+from django.utils.text import slugify
 from elections.models import ElectedRole, ElectionType
 from organisations.models import Organisation, OrganisationGeography
-from slugify import slugify
 
 
 def union_list(geoms: [MultiPolygon]) -> MultiPolygon:
