@@ -280,11 +280,9 @@ AWS_STORAGE_BUCKET_NAME = NOTICE_OF_ELECTION_BUCKET
 AWS_S3_FILE_OVERWRITE = True
 AWS_DEFAULT_ACL = None
 
-
 # Disable Basic Auth by default
 # We only want to use this on staging deploys
 BASICAUTH_DISABLE = True
-
 
 # elections where polling day is in the range
 # (NOW - CURRENT_PAST_DAYS) - (NOW + CURRENT_FUTURE_DAYS)
@@ -292,15 +290,22 @@ BASICAUTH_DISABLE = True
 CURRENT_PAST_DAYS = 20
 CURRENT_FUTURE_DAYS = 90
 
-
 # .local.py overrides all the common settings.
 
 with contextlib.suppress(ImportError):
     from .local import *  # noqa
-
 
 # importing test settings file if necessary
 if IN_TESTING:
     from .testing import *  # noqa
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+if sentry_dsn := os.environ.get("SENTRY_DSN"):
+    import sentry_sdk
+
+    sentry_sdk.init(
+        dsn=sentry_dsn,
+        # Disable performance monitoring
+        enable_tracing=False,
+    )
