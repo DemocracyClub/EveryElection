@@ -309,6 +309,7 @@ class Election(TimeStampedModel):
 
     class Meta:
         ordering = ("election_id",)
+        get_latest_by = "modified"
 
     def get_absolute_url(self):
         return reverse("single_election_view", args=(self.election_id,))
