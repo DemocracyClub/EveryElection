@@ -155,7 +155,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "/static/"
 
@@ -163,7 +162,6 @@ STATIC_URL = "/static/"
 
 STATICFILES_DIRS = (root("assets"), root("../node_modules"))
 STATIC_ROOT = root("static")
-
 
 MIDDLEWARE = whitenoise_add_middleware(MIDDLEWARE)
 WHITENOISE_MAX_AGE = 60 * 60 * 24 * 40
@@ -200,9 +198,7 @@ PIPELINE["JAVASCRIPT"].update(
     }
 )
 
-
 INTERNAL_IPS = ("127.0.0.1",)
-
 
 TEMPLATES = [
     {
@@ -246,10 +242,8 @@ SITE_TITLE = "Every Election"
 
 DATA_CACHE_DIR = root("data_cache")
 
-
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
-
 
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
@@ -303,9 +297,14 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 if sentry_dsn := os.environ.get("SENTRY_DSN"):
     import sentry_sdk
+    from sentry_sdk.integrations import django
 
     sentry_sdk.init(
         dsn=sentry_dsn,
         # Disable performance monitoring
         enable_tracing=False,
+        integrations=[
+            django.DjangoIntegration(),
+        ],
+        environment=os.environ.get("DC_ENVIRONMENT"),
     )
