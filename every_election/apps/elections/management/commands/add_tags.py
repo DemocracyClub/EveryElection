@@ -1,4 +1,5 @@
 import json
+import shutil
 
 from core.mixins import ReadFromFileMixin
 from core.models import JsonbSet
@@ -8,8 +9,12 @@ from django.db.models import Value
 from elections.models import Election
 
 
-def get_layer(data, layer_index=0):
-    data_source = DataSource(data.name)
+def get_layer(data, layer_index=0, is_gpkg=False):
+    if is_gpkg:
+        shutil.copy(data.name, f"{data.name}.gpkg")
+        data_source = DataSource(f"{data.name}.gpkg")
+    else:
+        data_source = DataSource(data.name)
     if len(data_source) < layer_index + 1:
         raise ValueError(f"Expected layer at index: {layer_index}, None found")
     return data_source[layer_index]
@@ -53,6 +58,11 @@ class Command(ReadFromFileMixin, BaseCommand):
             action="store_true",
             help="Overwrite existing tags where tag_name exists as a top level key",
         )
+        parser.add_argument(
+            "--is-gpkg",
+            action="store_true",
+            help="Pass if using gpkg format.",
+        )
         super().add_arguments(parser)
 
     def handle(self, *args, **options):
@@ -61,7 +71,7 @@ class Command(ReadFromFileMixin, BaseCommand):
         self.stdout.write("Loading data...")
         data = self.load_data(options)
         self.stdout.write("...data loaded.")
-        layer = get_layer(data, options["layer_index"])
+        layer = get_layer(data, options["layer_index"], options["is_gpkg"])
         self.stdout.write(f"Reading data from {layer.name}")
         for feature in layer:
             tags = {}
