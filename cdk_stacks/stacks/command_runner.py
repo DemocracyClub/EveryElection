@@ -74,7 +74,7 @@ class EEOncePerTagCommandRunner(Stack):
             self.add_job(
                 "add_nuts1_tags",
                 "cron(15 2 * * ? *)",
-                """output-on-error ee-manage-py-command add_tags -u "https://s3.eu-west-2.amazonaws.com/ee.public.data/ons-cache/NUTS_Level_1_(January_2018)_Boundaries.gpkg" --fields '{"NUTS118NM": "value", "NUTS118CD": "key"}' --tag-name NUTS1""",
+                """output-on-error ee-manage-py-command add_tags -u "https://s3.eu-west-2.amazonaws.com/ee.public.data/ons-cache/NUTS_Level_1_(January_2018)_Boundaries.gpkg" --fields '{"NUTS118NM": "value", "NUTS118CD": "key"}' --tag-name NUTS1 --is-gpkg""",
             )
 
             # Scrape LGBCE
