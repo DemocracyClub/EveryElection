@@ -95,6 +95,7 @@ class ElectionAdmin(admin.ModelAdmin):
                 "fields": (
                     "election_id",
                     "election_title",
+                    "explanation",
                     "friendly_group_type",
                     "group",
                 )
@@ -112,7 +113,6 @@ class ElectionAdmin(admin.ModelAdmin):
                     "replaces",
                     "requires_voter_id",
                     "voting_system",
-                    "explanation",
                     "metadata",
                 ),
             },
