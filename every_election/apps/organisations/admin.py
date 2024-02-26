@@ -82,10 +82,11 @@ class WriteCSVToS3(FormView):
 
     def form_valid(self, form):
         context = self.get_context_data(**self.kwargs)
-        review = context["object"]
+        review: OrganisationBoundaryReview = context["object"]
         overwrite = form.cleaned_data["overwrite"]
         lgbce_helper = LGBCEReviewHelper(overwrite=overwrite)
-        lgbce_helper.upload_boundaries_to_s3(review)
+        if review.can_upload_boundaries:
+            lgbce_helper.upload_boundaries_to_s3(review)
         lgbce_helper.upload_end_date_csv_to_s3(
             review, f"{review.effective_date:%Y-%m-%d}"
         )

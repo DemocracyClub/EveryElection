@@ -4,7 +4,11 @@
         <h1>{{ object }}</h1>
         <h2>This will write the following to <code>s3://{{ review_bucket }}/{{ object.s3_directory_key }}/</code></h2>
         <h3>Boundaries</h3>
-        LGBCE Boundaries:<a href="{{ object.lgbce_boundary_url }}"> {{ object.lgbce_boundary_url }} </a>
+        {% if object.can_upload_boundaries %}}
+            LGBCE Boundaries:<a href="{{ object.lgbce_boundary_url }}"> {{ object.lgbce_boundary_url }} </a>
+        {% else %}
+            No LGBCE Boundaries provided. Please upload independently.
+        {% endif %}
         <h3>End Date CSV</h3>
         <table>
           <thead>
