@@ -312,7 +312,6 @@ class OrganisationBoundaryReview(TimeStampedModel):
         if (
             self.can_make_eco_csv
             and self.can_make_end_date_csv
-            and self.can_upload_boundaries
             and not self.divisionset
         ):
             return True
