@@ -258,6 +258,19 @@ class ExplanationAdminForm(forms.ModelForm):
 
         widgets = {"explanation": admin.widgets.AdminTextareaWidget}
 
+    def save(self, commit=True):
+        """
+        Call save() on each election the explainer is
+        attached to. This is a simple way to ensure that
+        these elections will be marked as updated when
+        querying the API for recently updated elections.
+
+        """
+        model: Explanation = super().save(commit)
+        for election in model.election_set.all():
+            election.save()
+        return model
+
 
 class ExplanationAdmin(admin.ModelAdmin):
     form = ExplanationAdminForm
