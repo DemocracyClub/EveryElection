@@ -104,3 +104,18 @@ class Election(metaclass=ABCMeta):
 
     def _calendar(self):
         return self.BANK_HOLIDAY_CALENDAR.from_country(self.country)
+
+    def get_date_for_event_type(self, event):
+        for e in self.timetable:
+            if e["event"] == event.name:
+                return e["date"]
+
+    def is_before(self, event, date=None):
+        if not date:
+            date = datetime.now(timezone.utc).date()
+        return self.get_date_for_event_type(event) >= date
+
+    def is_after(self, event, date=None):
+        if not date:
+            date = datetime.now(timezone.utc).date()
+        return self.get_date_for_event_type(event) < date
