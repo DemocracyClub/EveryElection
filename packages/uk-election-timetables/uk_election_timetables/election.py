@@ -1,5 +1,7 @@
 from abc import ABCMeta, abstractmethod
-from datetime import date
+from datetime import date, datetime, timezone
+
+from enum import Enum
 from typing import Dict, List
 
 from uk_election_timetables.calendars import (
@@ -7,6 +9,13 @@ from uk_election_timetables.calendars import (
     Country,
     working_days_before,
 )
+
+
+class TimetableEvent(Enum):
+    REGISTRATION_DEADLINE = "Register to vote deadline"
+    SOPN_PUBLISH_DATE = "List of candidates published"
+    POSTAL_VOTE_APPLICATION_DEADLINE = "Postal vote application deadline"
+    VAC_APPLICATION_DEADLINE = "VAC application deadline"
 
 
 class Election(metaclass=ABCMeta):
@@ -66,23 +75,28 @@ class Election(metaclass=ABCMeta):
 
         :return: a list representing the entire timetable for this particular election.
         """
+
         return sorted(
             [
                 {
-                    "label": "Register to vote deadline",
+                    "label": TimetableEvent.REGISTRATION_DEADLINE.value,
                     "date": self.registration_deadline,
+                    "event": TimetableEvent.REGISTRATION_DEADLINE.name,
                 },
                 {
-                    "label": "List of candidates published",
+                    "label": TimetableEvent.SOPN_PUBLISH_DATE.value,
                     "date": self.sopn_publish_date,
+                    "event": TimetableEvent.SOPN_PUBLISH_DATE.name,
                 },
                 {
-                    "label": "Postal vote application deadline",
+                    "label": TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE.value,
                     "date": self.postal_vote_application_deadline,
+                    "event": TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE.name,
                 },
                 {
-                    "label": "VAC application deadline",
+                    "label": TimetableEvent.VAC_APPLICATION_DEADLINE.value,
                     "date": self.vac_application_deadline,
+                    "event": TimetableEvent.VAC_APPLICATION_DEADLINE.name,
                 },
             ],
             key=lambda r: r["date"],
