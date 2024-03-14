@@ -4,7 +4,12 @@ from datetime import datetime
 from api import filters
 from django.db.models import Prefetch
 from django.http import Http404
-from elections.models import Election, ElectionSubType, ElectionType
+from elections.models import (
+    Election,
+    ElectionSubType,
+    ElectionType,
+    ModerationStatuses,
+)
 from elections.query_helpers import PostcodeError
 from organisations.models import Organisation, OrganisationDivision
 from rest_framework import viewsets
@@ -204,9 +209,31 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
     @action(detail=True, url_path="elections")
     def elections(self, request, **kwargs):
         kwargs.pop("format", None)
-        org = self.get_object(**kwargs)
+        org: Organisation = self.get_object(**kwargs)
         serializer = ElectionSerializer(
-            org.election_set.all(),
+            org.election_set.filter(
+                current_status=ModerationStatuses.approved.value
+            )
+            .select_related(
+                "election_type",
+                "election_subtype",
+                "organisation",
+                "division",
+                "division__divisionset",
+                "elected_role",
+                "explanation",
+                "metadata",
+                "replaces",
+                "group",
+            )
+            .prefetch_related(
+                "_replaced_by",
+                Prefetch(
+                    "_children_qs",
+                    Election.public_objects.all(),
+                    to_attr="children",
+                ),
+            ),
             many=True,
             read_only=True,
             context={"request": request},
