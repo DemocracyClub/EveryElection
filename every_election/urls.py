@@ -2,7 +2,7 @@ from core.views import HomeView
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import include, re_path
+from django.urls import include, path, re_path
 from django.views.generic import TemplateView
 
 handler500 = "dc_utils.urls.dc_server_error"
@@ -23,6 +23,10 @@ urlpatterns = [
     ),
 ]
 
+if "debug_toolbar" in settings.INSTALLED_APPS:
+    urlpatterns.append(
+        path("__debug__/", include("debug_toolbar.urls")),
+    )
 
 if settings.DEBUG:
     urlpatterns += static(

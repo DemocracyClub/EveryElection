@@ -27,3 +27,6 @@ AWS_STORAGE_BUCKET_NAME = "notice-of-election-dev"
 # using cache sessions instead of database sessions
 # in dev makes it easier to debug the wizard
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+
+# Turn Debug tool bar on or off
+DEBUG_TOOLBAR = True
