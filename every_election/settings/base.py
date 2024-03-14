@@ -286,8 +286,16 @@ CURRENT_FUTURE_DAYS = 90
 
 # .local.py overrides all the common settings.
 
+DEBUG_TOOLBAR = False
 with contextlib.suppress(ImportError):
     from .local import *  # noqa
+
+if not os.environ.get("DC_ENVIRONMENT") and DEBUG_TOOLBAR:
+    INSTALLED_APPS += ("debug_toolbar",)
+    MIDDLEWARE = [
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+    ] + MIDDLEWARE
+
 
 # importing test settings file if necessary
 if IN_TESTING:
