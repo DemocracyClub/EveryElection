@@ -197,10 +197,10 @@ class BaseElectionSerializer(serializers.ModelSerializer):
     def get_deleted(self, obj: Election):
         return obj.current_status == ModerationStatuses.deleted.value
 
-    def get_current(self, obj):
+    def get_current(self, obj: Election):
         return obj.get_current
 
-    def get_voting_system(self, obj):
+    def get_voting_system(self, obj: Election):
         if (
             obj.group_type == "organisation"
             or obj.group_type == "subtype"
@@ -212,7 +212,11 @@ class BaseElectionSerializer(serializers.ModelSerializer):
             return system
         return None
 
-    def get_children(self, obj):
+    def get_children(self, obj: Election) -> list[str]:
+        if not obj.group_type:
+            return []
+        if children := getattr(obj, "children", None):
+            return [c.election_id for c in children]
         if self.context["request"].query_params.get("deleted", None):
             children = (
                 obj.get_children("private_objects")
