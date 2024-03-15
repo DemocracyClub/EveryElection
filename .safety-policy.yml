@@ -1,0 +1,16 @@
+# Safety Security and License Configuration file
+security: # configuration for the `safety check` command
+    ignore-cvss-severity-below: 0 # A severity number between 0 and 10. Some helpful reference points: 9=ignore all vulnerabilities except CRITICAL severity. 7=ignore all vulnerabilities except CRITICAL
+    ignore-cvss-unknown-severity: False # True or False. We recommend you set this to False.
+    ignore-vulnerabilities: # Here you can list multiple specific vulnerabilities you want to ignore (optionally for a time period)
+        # We recommend making use of the optional `reason` and `expires` keys for each vulnerability that you ignore.
+        54672: # Scrapy allows remote attackers to cause a denial of service (memory consumption) via large files because arbitrarily many files are read into memory
+            reason: we do not use the vulnerable function # Hopefully LGBCE don't want to ddos us
+            expires: '2025-01-20' # Bump if still applies
+        62105: # something something twisted. Only 5.3, don't think it really matters for us.
+            reason: we do not use the vulnerable function # optional, for internal note purposes to communicate with your team. This reason will be reported in the Safety reports
+            expires: '2025-01-20' # Bump if still applies
+        65213: # vulnerability in the POLY1305 MAC algorithm on PowerPC CPUs
+            reason: we do not use the vulnerable function
+            expires: '2025-01-20' # Bump if still applies
+    continue-on-vulnerability-error: False # Suppress non-zero exit codes when vulnerabilities are found. Enable this in pipelines and CI/CD processes if you want to pass builds that have vulnerabilities
