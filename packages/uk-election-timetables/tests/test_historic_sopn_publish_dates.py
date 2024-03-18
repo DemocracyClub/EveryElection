@@ -1,5 +1,5 @@
 from csv import DictReader
-from datetime import timedelta, datetime
+from datetime import datetime
 
 from pytest import mark
 
@@ -43,7 +43,6 @@ def generate_test_id(val):
 
 
 def generate_test_cases(search, exceptions=None):
-
     exceptions = exceptions if exceptions is not None else []
 
     return [
@@ -55,7 +54,6 @@ def generate_test_cases(search, exceptions=None):
 
 @mark.parametrize("row", generate_test_cases("nia"), ids=generate_test_id)
 def test_northern_ireland_assembly(row):
-
     poll_date = read_date(row["election_date"])
 
     expected_date = NorthernIrelandAssemblyElection(poll_date).sopn_publish_date

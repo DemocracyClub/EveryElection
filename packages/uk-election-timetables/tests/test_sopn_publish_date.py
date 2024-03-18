@@ -19,7 +19,6 @@ from uk_election_timetables.elections import (
 
 
 def test_publish_date_local_id():
-
     with raises(AmbiguousElectionIdError) as err:
         from_election_id("local.2019-02-21")
 
@@ -45,7 +44,6 @@ def test_publish_date_parl_id_without_country():
 
 
 def test_publish_date_not_an_election_type():
-
     with raises(NoSuchElectionTypeError) as err:
         from_election_id("not-an-election.2019-02-21")
 
@@ -59,7 +57,6 @@ def test_publish_date_id_that_does_not_need_country():
 
 
 def test_publish_date_invalid_id():
-
     with raises(InvalidElectionIdError) as err:
         from_election_id("not an election id")
 
@@ -69,7 +66,6 @@ def test_publish_date_invalid_id():
 
 
 def test_publish_date_invalid_date():
-
     with raises(InvalidElectionIdError) as err:
         from_election_id("parl.not-a-date")
 
@@ -83,7 +79,6 @@ def test_publish_date_senedd_election_id():
 
 
 def test_christmas_eve_not_counted():
-
     election_and_expected_sopn_date = {
         PoliceAndCrimeCommissionerElection: date(2018, 12, 11),
         UKParliamentElection: date(2018, 12, 7),

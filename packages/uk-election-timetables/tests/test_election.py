@@ -129,15 +129,15 @@ def test_event_type_enum():
 
 def test_is_before():
     election = from_election_id("parl.2019-02-21", country=Country.ENGLAND)
-    assert election.is_before(TimetableEvent.REGISTRATION_DEADLINE) == False
-    assert election.is_before(TimetableEvent.SOPN_PUBLISH_DATE) == False
-    assert election.is_before(TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE) == False
-    assert election.is_before(TimetableEvent.VAC_APPLICATION_DEADLINE) == False
+    assert election.is_before(TimetableEvent.REGISTRATION_DEADLINE) is False
+    assert election.is_before(TimetableEvent.SOPN_PUBLISH_DATE) is False
+    assert election.is_before(TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE) is False
+    assert election.is_before(TimetableEvent.VAC_APPLICATION_DEADLINE) is False
 
 
 def test_is_after():
     election = from_election_id("parl.2019-02-21", country=Country.ENGLAND)
-    assert election.is_after(TimetableEvent.REGISTRATION_DEADLINE) == True
-    assert election.is_after(TimetableEvent.SOPN_PUBLISH_DATE) == True
-    assert election.is_after(TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE) == True
-    assert election.is_after(TimetableEvent.VAC_APPLICATION_DEADLINE) == True
+    assert election.is_after(TimetableEvent.REGISTRATION_DEADLINE) is True
+    assert election.is_after(TimetableEvent.SOPN_PUBLISH_DATE) is True
+    assert election.is_after(TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE) is True
+    assert election.is_after(TimetableEvent.VAC_APPLICATION_DEADLINE) is True

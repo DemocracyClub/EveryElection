@@ -8,7 +8,6 @@ northern_ireland = uk_calendars.northern_ireland()
 
 
 def test_should_separate_by_country():
-
     should_not_contain_holiday(england_and_wales, "St Patrick’s Day")
 
     should_not_contain_holiday(scotland, "Battle of the Boyne (Orangemen’s Day)")

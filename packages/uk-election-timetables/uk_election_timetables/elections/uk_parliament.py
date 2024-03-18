@@ -1,5 +1,4 @@
 from datetime import date
-from typing import Optional
 
 from uk_election_timetables.calendars import working_days_before, Country
 from uk_election_timetables.election import Election
