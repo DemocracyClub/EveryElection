@@ -119,6 +119,8 @@ class ElectionSyncer:
                 continue
             if key == "identifier_type":
                 key = "group_type"
+                if value == "ballot":
+                    value = None
             if key == "voting_system" and value:
                 value = value["slug"]
             if key == "elected_role" and value:
