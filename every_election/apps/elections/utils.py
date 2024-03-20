@@ -13,6 +13,7 @@ from organisations.models import (
     OrganisationDivision,
     OrganisationDivisionSet,
 )
+from uk_election_ids.datapackage import ELECTION_TYPES
 from uk_election_ids.election_ids import IdBuilder
 from uk_election_ids.metadata_tools import (
     IDRequirementsMatcher,
@@ -37,16 +38,25 @@ def reset_cache():
     CACHE = NEW_CACHE
 
 
+def election_type_has_divisions(election_type: ElectionType):
+    return ELECTION_TYPES.get(election_type.election_type, {}).get(
+        "can_have_divs", True
+    )
+
+
 def get_voter_id_requirement(election: Election) -> Optional[str]:
     """
     Given an Election object, if eligible for voter ID return the related voter ID legislation code
     """
-    if not election.division:
+    can_have_divs = election_type_has_divisions(election.election_type)
+    if can_have_divs and not election.division:
         return None
 
-    nation = election.division.territory_code
-    if not nation:
-        return None
+    nation = None
+    if can_have_divs:
+        nation = election.division.territory_code
+        if not nation:
+            return None
 
     matcher = IDRequirementsMatcher(election.election_id, nation)
 

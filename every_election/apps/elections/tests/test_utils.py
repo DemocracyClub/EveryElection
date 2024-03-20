@@ -1,5 +1,5 @@
 import pytest
-from elections.tests.factories import ElectionFactory
+from elections.tests.factories import ElectionFactory, ElectionTypeFactory
 from elections.utils import get_voter_id_requirement
 
 
@@ -28,3 +28,10 @@ class TestGetVoterIdRequirements:
         with pytest.raises(ValueError):
             election.division.territory_code = "BBQ"
             get_voter_id_requirement(election)
+
+    def test_no_divs_type_can_have_requirements(self):
+        election = ElectionFactory(
+            election_id="pcc.suffolk.2024-05-02",
+            election_type=ElectionTypeFactory(election_type="pcc"),
+        )
+        assert get_voter_id_requirement(election) == "EA-2022"
