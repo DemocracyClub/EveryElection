@@ -18,7 +18,7 @@ eco-parser==0.2.0
 geojson==3.0.1
 glob2==0.7
 markdown==3.4.3
-psutil==5.9.4
+psutil==5.9.8
 psycopg2-binary==2.9.6
 rapidfuzz==3.4.0
 requests==2.31.0
