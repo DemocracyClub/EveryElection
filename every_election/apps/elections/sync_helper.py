@@ -102,7 +102,11 @@ class ElectionSyncer:
                     divisionset.start_date = value["divisionset"]["start_date"]
                     divisionset.save()
 
-                if divisionset.end_date != value["divisionset"]["end_date"]:
+                if (
+                    divisionset.end_date
+                    and divisionset.end_date.isoformat()
+                    != value["divisionset"]["end_date"]
+                ):
                     # Special case where the end date has changed (likely due to an upcoming boundary change)
                     # in this case, update the division set's end date
                     election_model.division.divisionset.end_date = value[
