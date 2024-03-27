@@ -30,7 +30,7 @@ uk-election-ids==0.7.5
 uk-election-timetables==2.4.1
 uk-geo-utils==0.12.0
 
-django-pipeline==2.1.0
+django-pipeline==3.0.0
 
 importlib-metadata==6.8.0
 
