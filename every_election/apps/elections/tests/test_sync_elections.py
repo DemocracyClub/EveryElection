@@ -127,6 +127,33 @@ class TestDivisionSetStartAndEndDates(TestCase):
         div_set.refresh_from_db()
         self.assertEqual(div_set.end_date, datetime.date(2022, 5, 2))
 
+    def test_can_update_divisionset_end_date(self):
+        helper = ElectionSyncer()
+
+        # First, make an election from the API response
+        ballot = get_local_ballot()
+        helper.add_single_election(ballot)
+        div_set = OrganisationDivisionSet.objects.get(
+            **ballot["division"]["divisionset"]
+        )
+
+        # Set an end date
+        div_set.end_date = datetime.date(2023, 5, 4)
+        div_set.save()
+
+        # Check we set it
+        div_set.refresh_from_db()
+        self.assertEqual(div_set.end_date, datetime.date(2023, 5, 4))
+
+        # Then, add a new end date via the syncer
+        updated_ballot = ballot.copy()
+        updated_ballot["division"]["divisionset"]["end_date"] = "2022-05-02"
+        helper.add_single_election(updated_ballot)
+
+        # Check it's changed
+        div_set.refresh_from_db()
+        self.assertEqual(div_set.end_date, datetime.date(2022, 5, 2))
+
     def test_can_change_start_date(self):
         """
         We see an election a divisionset that doesn't match the start date we expect it to have.
