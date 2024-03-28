@@ -15,5 +15,3 @@ class Command(BaseCommand):
             cursor.execute(OrganisationGeographySubdivided.POPULATE_SQL)
             self.stdout.write("Divs")
             cursor.execute(DivisionGeographySubdivided.POPULATE_SQL)
-            self.stdout.write("Divs")
-            cursor.execute(DivisionGeographySubdivided.POPULATE_SQL)
