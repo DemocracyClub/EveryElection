@@ -102,6 +102,12 @@ class ElectionSyncer:
                     divisionset.start_date = value["divisionset"]["start_date"]
                     divisionset.save()
 
+                election_model.division = OrganisationDivision.objects.get(
+                    official_identifier=value["official_identifier"],
+                    divisionset__start_date=value["divisionset"]["start_date"],
+                    divisionset__organisation=election_model.organisation,
+                )
+
                 if (
                     not divisionset.end_date
                     and value["divisionset"]["end_date"]
@@ -118,12 +124,6 @@ class ElectionSyncer:
                         "divisionset"
                     ]["end_date"]
                     election_model.division.divisionset.save()
-
-                election_model.division = OrganisationDivision.objects.get(
-                    official_identifier=value["official_identifier"],
-                    divisionset__start_date=value["divisionset"]["start_date"],
-                    divisionset__organisation=election_model.organisation,
-                )
 
                 continue
             if key == "identifier_type":
