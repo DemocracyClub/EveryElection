@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% load dc_forms %}
 
+{% block page_title %}Moderation Queue{% endblock page_title %}
+
+
 {% block content %}
 
     <div class="ds-stack">
@@ -30,7 +33,7 @@
             </div>
 
         {% empty %}
-            <div class="ds-card">
+            <div>
                 No items!
             </div>
         {% endfor %}
