@@ -84,6 +84,13 @@ class EEOncePerTagCommandRunner(Stack):
                 "output-on-error ee-manage-py-command scrape_lgbce",
             )
 
+            # Export WKT Ballots
+            self.add_job(
+                "export_wkt_ballots",
+                "cron(30 2 * * ? *)",
+                f"output-on-error ee-manage-py-command export_ballots_as_wkt_csv --bucket 'ee.data-cache.{dc_environment}' --prefix 'ballots-with-wkt'",
+            )
+
     def add_job(
         self,
         command_name,
