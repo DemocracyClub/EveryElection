@@ -175,6 +175,20 @@ class DivisionGeographySubdivided(models.Model):
         FROM organisations_divisiongeography;
     """
 
+    POPULATE_WHERE_MISSING_SQL = """
+    WITH missing_subdivided_geography AS (
+    SELECT odg.id
+    FROM organisations_divisiongeography odg
+        LEFT JOIN organisations_divisiongeographysubdivided odgs
+            ON odg.id = odgs.division_geography_id
+    WHERE odgs.id IS NULL
+    )
+    INSERT INTO organisations_divisiongeographysubdivided (geography, division_geography_id)
+        SELECT st_subdivide(geography) as geography, id as division_geography_id
+        FROM organisations_divisiongeography dg
+        WHERE dg.id IN (SELECT id FROM missing_subdivided_geography);
+    """
+
 
 class OrganisationBoundaryReviewQuerySet(models.QuerySet):
     def unprocessed(self):
