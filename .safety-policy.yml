@@ -13,4 +13,7 @@ security: # configuration for the `safety check` command
         65213: # vulnerability in the POLY1305 MAC algorithm on PowerPC CPUs
             reason: we do not use the vulnerable function
             expires: '2025-01-20' # Bump if still applies
+        66742: # Don't do stupid things with Black. We don't. Remove when we go to ruff
+            reason: we do not use loads of leading tabs
+            expires: '2025-01-20' # Bump if still applies
     continue-on-vulnerability-error: False # Suppress non-zero exit codes when vulnerabilities are found. Enable this in pipelines and CI/CD processes if you want to pass builds that have vulnerabilities
