@@ -3,7 +3,7 @@ import datetime
 import io
 
 import boto3
-import settings
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import connection
 
@@ -54,7 +54,6 @@ class Command(BaseCommand):
             help="Name of file to export to.",
             action="store",
             default="current_elections.csv",
-            required=True,
         )
         parser.add_argument(
             "--from-when",
