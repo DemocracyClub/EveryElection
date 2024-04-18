@@ -187,3 +187,17 @@ class OrganisationGeographySubdivided(models.Model):
         SELECT st_subdivide(geography) as geography, id as organisation_geography_id 
         FROM organisations_organisationgeography;
     """
+
+    POPULATE_WHERE_MISSING_SQL = """
+    WITH missing_subdivided_geography AS (
+    SELECT og.id
+    FROM organisations_organisationgeography og
+        LEFT JOIN organisations_organisationgeographysubdivided ogs
+            ON og.id = ogs.organisation_geography_id
+    WHERE ogs.id IS NULL
+    )
+    INSERT INTO organisations_organisationgeographysubdivided (geography, organisation_geography_id)
+        SELECT st_subdivide(geography) as geography, id as division_geography_id
+        FROM organisations_organisationgeography og
+        WHERE og.id IN (SELECT id FROM missing_subdivided_geography);
+    """
