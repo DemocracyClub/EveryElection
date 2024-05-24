@@ -7,12 +7,8 @@
     {% stylesheet 'styles' %}
 {% endblock extra_site_css %}
 
-{% block header_base %}
-    <header class="ds-header">
-        <a class="ds-logo" href="/">
-            <img src="{%  static 'images/logo_icon.svg' %}" alt="" />
-            <span>Every Election</span>
-        </a>
+
+
         {% block site_menu %}
             <nav>
                 <ul>
@@ -39,8 +35,6 @@
                 {% endif %}
             </nav>
         {% endblock site_menu %}
-    </header>
-{% endblock header_base %}
 
 {% block main_base %}
     <main id="main" tabindex="-1" class="ds-stack">
