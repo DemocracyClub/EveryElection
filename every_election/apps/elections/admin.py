@@ -266,7 +266,9 @@ class ExplanationAdminForm(forms.ModelForm):
         querying the API for recently updated elections.
 
         """
+
         model: Explanation = super().save(commit)
+        model.save()
         for election in model.election_set.all():
             election.save()
         return model
