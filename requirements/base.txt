@@ -21,7 +21,7 @@ markdown==3.4.3
 psutil==5.9.4
 psycopg-binary==3.1.19
 rapidfuzz==3.4.0
-requests==2.31.0
+requests==2.32.2
 retry2==0.9.5
 scrapy==2.11.2
 six==1.16.0
