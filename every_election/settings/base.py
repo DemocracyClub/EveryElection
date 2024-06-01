@@ -139,7 +139,7 @@ DATABASES = {
         "PASSWORD": os.environ.get("EE_DATABASE_PASSWORD", ""),
         "HOST": os.environ.get("EE_DATABASE_HOST", ""),
         "PORT": os.environ.get("EE_DATABASE_PORT", ""),
-        "CONN_MAX_AGE": None,
+        "CONN_MAX_AGE": 0,
     }
 }
 
