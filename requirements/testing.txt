@@ -3,7 +3,7 @@
 black==23.7.0
 mock
 model-mommy
-pytest==7.4.0
+pytest==8.2.2
 pluggy
 pytest-django==4.5.2
 pytest-cov
