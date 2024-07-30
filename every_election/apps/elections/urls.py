@@ -1,5 +1,4 @@
 from django.urls import re_path
-from elections.views.sync import get_election_fixture
 
 from .views import (
     CONDITION_DICT,
@@ -40,5 +39,4 @@ urlpatterns = [
         r"^id_creator/(?P<step>.+)/$", id_creator_wizard, name="id_creator_step"
     ),
     re_path(r"^id_creator/$", id_creator_wizard, name="id_creator"),
-    re_path(r"^sync/$", get_election_fixture),
 ]
