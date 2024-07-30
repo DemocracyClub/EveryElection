@@ -13,6 +13,18 @@ Gotcha: If you're having trouble installing psycopg2-binary on Apple silicon, se
 export LIBRARY_PATH=$LIBRARY_PATH:/opt/homebrew/opt/openssl/lib
 ```
 
+## Install JS Packages
+
+```
+npm ci
+```
+
+## Collectstatic
+
+```
+python manage.py collectstatic
+```
+
 ## Set up database
 By default, EveryElection uses PostgreSQL with the PostGIS extension. 
 To set this up locally, first install the packages:
