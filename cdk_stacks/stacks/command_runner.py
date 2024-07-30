@@ -91,6 +91,14 @@ class EEOncePerTagCommandRunner(Stack):
                 f"output-on-error ee-manage-py-command export_ballots_as_wkt_csv --bucket 'ee.data-cache.{dc_environment}' --prefix 'ballots-with-wkt'",
             )
 
+        if dc_environment == "staging":
+            # Restore staging from prod backup
+            self.add_job(
+                "restore_staging_from_s3",
+                "cron(0 2 * * ? *)",
+                "output-on-error /var/www/every_election/repo/serverscripts/rebuild_local_db.sh",
+            )
+
     def add_job(
         self,
         command_name,
