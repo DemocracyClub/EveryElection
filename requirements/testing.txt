@@ -13,7 +13,7 @@ vcrpy
 pytest-xdist
 safety
 ruff==0.0.280
-pytest-ruff
+pytest-ruff==0.3.2
 pytest-black
 playwright==1.36.0
 pytest-playwright==0.4.2
