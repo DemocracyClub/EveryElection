@@ -57,11 +57,11 @@ class EEOncePerTagCommandRunner(Stack):
             )
 
             # New elections
-            # self.add_job(
-            #     "snoop",
-            #     "cron(30 * * * ? *)",
-            #     "output-on-error ee-manage-py-command snoop",
-            # )
+            self.add_job(
+                "snoop",
+                "cron(30 * * * ? *)",
+                "output-on-error ee-manage-py-command snoop",
+            )
 
             # Generate map layers and sync to S3
             self.add_job(
