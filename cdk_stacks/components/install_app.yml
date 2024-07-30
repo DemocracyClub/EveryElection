@@ -49,7 +49,7 @@ phases:
             - pip install -U pip
             - pip install -r requirements/production.txt
             - pip install gevent
-            - npm install
+            - npm ci
       - name: CreateEnvWriterFile
         action: CreateFile
         inputs:
