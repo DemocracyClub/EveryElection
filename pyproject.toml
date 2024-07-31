@@ -21,7 +21,6 @@ norecursedirs = [
     "src",
     "every_election/static_root",
     "every_election/static",
-    "cdk_stacks",
     ".aws-sam",
     ".ruff-cache",
     ".circleci",
