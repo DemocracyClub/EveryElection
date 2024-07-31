@@ -75,7 +75,7 @@ jobs:
           name: Run tests
           command: |
             . .venv/bin/activate
-            pytest --ruff --cov-report= --cov=every_election --junitxml=test-results/junit.xml
+            pytest --cov-report= --cov=every_election --junitxml=test-results/junit.xml
 
       - run:
           name: Submit coverage
