@@ -1,3 +1,5 @@
+DEBUG = True
+
 DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
