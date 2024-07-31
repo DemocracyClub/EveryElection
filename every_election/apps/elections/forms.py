@@ -123,9 +123,7 @@ class ElectionOrganisationDivisionForm(forms.Form):
         )
 
         if not self.division.seats_total:
-            self.fields[
-                "seats_contested"
-            ].help_text = """
+            self.fields["seats_contested"].help_text = """
             No seats contested set. Can't make elections for this division. Please ask an admin to set the seats total.
             """
             del self.fields["ballot_type"]

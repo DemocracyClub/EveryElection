@@ -18,7 +18,6 @@ Usually we will import from S3:
 python manage.py update_end_dates -s "foo/bar/baz.csv"
 """
 
-
 import datetime
 from collections import namedtuple
 

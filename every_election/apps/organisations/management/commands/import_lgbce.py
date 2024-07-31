@@ -14,7 +14,6 @@ DivisionSet with a NULL end date.
 manage.py import_lgbce FOO -s "foo/bar/baz.zip"
 """
 
-
 import json
 import os
 import shutil
