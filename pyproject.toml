@@ -16,14 +16,17 @@ extend-select = [
 ]
 
 [tool.pytest.ini_options]
-norecursedirs =[
+norecursedirs = [
+    "node_modules",
     "src",
     "every_election/static_root",
+    "every_election/static",
+    "cdk_stacks",
     ".aws-sam",
     ".ruff-cache",
     ".circleci",
 ]
-DJANGO_SETTINGS_MODULE = "every_election.settings.base"
+DJANGO_SETTINGS_MODULE = "every_election.settings.testing"
 addopts =[
     "--ignore=*/__pycache__",
     "--ignore=.*",
