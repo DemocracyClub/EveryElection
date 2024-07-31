@@ -34,5 +34,5 @@ addopts =[
     "--ignore=every_election/settings/local.py",
     "--ignore=lib",
     "--ruff",
-    "--black",
+    "--ruff-format",
 ]

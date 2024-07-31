@@ -68,7 +68,6 @@ jobs:
             . .venv/bin/activate
             python --version
             python manage.py --version
-            black --check .
             python manage.py check
             python manage.py makemigrations --check
 
