@@ -11,7 +11,7 @@ factory_boy
 vcrpy
 pytest-xdist
 safety
-ruff==0.0.280
+ruff==0.2.2
 pytest-ruff==0.3.2
 playwright==1.45.1
 pytest-playwright==0.4.2

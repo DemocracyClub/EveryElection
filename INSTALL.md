@@ -94,24 +94,13 @@ It is recommended to attempt to add an election ID
 to verify that the install was a success.
 
 ## Formatting
-This project is [Black](https://black.readthedocs.io/en/stable/) formatted. 
-To format a specific file, run:
-```commandline
-black path/your_file.py
-```
-To run a project-wide reformat, run:
-```commandline
-black .
 
-```
+This project uses [ruff](https://beta.ruff.rs/docs/) for linting and formatting. You can run it with:
 
-Additionally, this project uses [ruff](https://beta.ruff.rs/docs/) for linting. You can run it with:
-
-    ruff . 
+    ruff check .
+    ruff format .
 
 ruff has in-built functionality to fix common linting errors. Use the `--fix` option to do this.
-
-Both Black and ruff are both automatically called as part of pytest in this project.
 
 ## Development Notes
 
