@@ -91,7 +91,7 @@ jobs:
 
   cdk_synth:
     machine:
-      image: ubuntu-2204:2022.10.2
+      image: ubuntu-2404:2024.05.1
     working_directory: ~/repo
     parameters:
       dc-environment:
@@ -140,7 +140,7 @@ jobs:
 
   cdk_deploy:
     machine:
-      image: ubuntu-2204:2022.10.2
+      image: ubuntu-2404:2024.05.1
     working_directory: ~/repo
     parameters:
       dc-environment:
