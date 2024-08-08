@@ -101,7 +101,6 @@ class ElectionQuerySet(models.QuerySet):
 
 
 class PublicElectionsManager(models.Manager.from_queryset(ElectionQuerySet)):
-
     """
     In most cases, we want to expose elections which are approved
     and hide any which are suggested/rejected/deleted
@@ -114,7 +113,6 @@ class PublicElectionsManager(models.Manager.from_queryset(ElectionQuerySet)):
 
 
 class PrivateElectionsManager(models.Manager.from_queryset(ElectionQuerySet)):
-
     """
     In some contexts
     (some API outputs, moderation queue code, /admin, unit tests, etc)

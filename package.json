@@ -22,5 +22,8 @@
     "topojson": "^3.0.2",
     "aws-cdk": "2.50.0",
     "leaflet": "^1.9.2"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

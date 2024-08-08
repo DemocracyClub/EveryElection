@@ -44,7 +44,7 @@ class PowerOffAtEndOfDay(Stack):
             function_name="power_off_at_day_end_function",
             entry="./cdk_stacks/aws_lambda_functions/power_off_at_day_end_function",
             index="main.py",
-            runtime=aws_lambda.Runtime.PYTHON_3_9,
+            runtime=aws_lambda.Runtime.PYTHON_3_12,
             timeout=Duration.minutes(10),
             role=role,
         )

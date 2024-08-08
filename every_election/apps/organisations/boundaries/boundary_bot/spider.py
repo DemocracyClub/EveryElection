@@ -106,7 +106,7 @@ class LgbceSpider(scrapy.Spider):
         made_ecos = [
             (title, link)
             for title, link in links
-            if (("(electoral changes) order" in title.lower()))
+            if ("(electoral changes) order" in title.lower())
         ]
         if latest_event == "Effective date" and len(made_ecos) == 1:
             # This catches draft links and made links.

@@ -39,13 +39,28 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
 ]
-try:
-    EC2_IP = requests.get(
-        "http://169.254.169.254/latest/meta-data/local-ipv4", timeout=2
-    ).text
-    ALLOWED_HOSTS.append(EC2_IP)
-except requests.exceptions.RequestException:
-    pass
+
+
+def get_ec2_ip():
+    token_req = requests.put(
+        "http://169.254.169.254/latest/api/token",
+        headers={"X-aws-ec2-metadata-token-ttl-seconds": "21600"},
+        timeout=2,
+    )
+    token_req.raise_for_status()
+    token_req.text
+    ip_req = requests.get(
+        "http://169.254.169.254/latest/meta-data/local-ipv4",
+        headers={"X-aws-ec2-metadata-token": token_req.text},
+        timeout=2,
+    )
+    ip_req.raise_for_status()
+    return ip_req.text
+
+
+if os.environ.get("DC_ENVIRONMENT"):
+    ALLOWED_HOSTS.append(get_ec2_ip())
+
 USE_X_FORWARDED_HOST = True
 
 if fqdn := os.environ.get("FQDN"):

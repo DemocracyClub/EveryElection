@@ -113,13 +113,13 @@ def get_cached_elected_role(organisation, election_type):
 class ElectionBuilder:
     def __init__(self, election_type, date):
         # init params
-        if type(election_type) == str:
+        if isinstance(election_type, str):
             election_type = get_cached_election_type(election_type)
         self.election_type = election_type
 
-        if type(date) == str:
+        if isinstance(date, str):
             date = datetime.strptime(date, "%Y-%m-%d")
-        if type(date) == datetime:
+        if isinstance(date, datetime):
             date = date.date()
         self.date = date
 

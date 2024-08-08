@@ -13,7 +13,7 @@ class DateDisplayMixin:
 
 class DateConstraintMixin:
     def check_start_date(self):
-        if type(self.start_date) == str:
+        if isinstance(self.start_date, str):
             self.start_date = parse_date(self.start_date)
         if (
             self.start_date
@@ -29,7 +29,7 @@ class DateConstraintMixin:
             )
 
     def check_end_date(self):
-        if type(self.end_date) == str:
+        if isinstance(self.end_date, str):
             self.end_date = parse_date(self.end_date)
         if (
             self.end_date

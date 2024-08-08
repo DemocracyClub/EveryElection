@@ -11,7 +11,6 @@ Usually we will import from S3:
 python manage.py import_divisionsets_from_csv -s "foo/bar/baz.csv"
 """
 
-
 import datetime
 
 from core.mixins import ReadFromCSVMixin

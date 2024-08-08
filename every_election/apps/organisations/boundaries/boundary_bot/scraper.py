@@ -44,7 +44,6 @@ def record_as_string(record):
 
 
 class LgbceScraper:
-
     """
     Scraper for The Local Government Boundary Commission for England's website
 
