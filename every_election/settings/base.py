@@ -58,9 +58,7 @@ def get_ec2_ip():
     return ip_req.text
 
 
-with contextlib.suppress(
-    requests.exceptions.Timeout, requests.exceptions.ConnectionError
-):
+if os.environ.get("DC_ENVIRONMENT"):
     ALLOWED_HOSTS.append(get_ec2_ip())
 
 USE_X_FORWARDED_HOST = True
