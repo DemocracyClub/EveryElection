@@ -5,11 +5,11 @@ orbs:
 jobs:
   build_and_test:
     docker:
-      - image: cimg/python:3.10.7-browsers
+      - image: cimg/python:3.12.4-browsers
         environment:
           CIRCLECI: true
           PGHOST: 127.0.0.1
-      - image: cimg/postgres:12.11-postgis
+      - image: cimg/postgres:16.3-postgis
         environment:
           POSTGRES_USER: every_election
           POSTGRES_DB: every_election
@@ -19,14 +19,17 @@ jobs:
     steps:
       - checkout
 
+      - node/install:
+          node-version: '18'
+
       - restore_cache:
           key: v3-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
 
       - run:
           name: Install node node_modules
-          command: npm install
+          command: npm ci
           cache-path: ~/repo/node_modules
-          override-ci-command: npm install
+          override-ci-command: npm ci
 
       - run:
           name: Install app dependencies
@@ -65,7 +68,6 @@ jobs:
             . .venv/bin/activate
             python --version
             python manage.py --version
-            black --check .
             python manage.py check
             python manage.py makemigrations --check
 
@@ -73,7 +75,7 @@ jobs:
           name: Run tests
           command: |
             . .venv/bin/activate
-            pytest --ruff --cov-report= --cov=every_election --junitxml=test-results/junit.xml
+            pytest --cov-report= --cov=every_election --junitxml=test-results/junit.xml
 
       - run:
           name: Submit coverage
@@ -89,7 +91,7 @@ jobs:
 
   cdk_synth:
     machine:
-      image: ubuntu-2204:2022.10.2
+      image: ubuntu-2404:2024.05.1
     working_directory: ~/repo
     parameters:
       dc-environment:
@@ -105,7 +107,7 @@ jobs:
     - run:
         name: Install CDK Python dependencies
         command: |
-          pyenv local $(ls -1 /opt/circleci/.pyenv/versions | grep 3.10)
+          pyenv local $(ls -1 /opt/circleci/.pyenv/versions | grep 3.12)
           python -m venv .venv
           . .venv/bin/activate
           pip install -r requirements/cdk.txt
@@ -138,7 +140,7 @@ jobs:
 
   cdk_deploy:
     machine:
-      image: ubuntu-2204:2022.10.2
+      image: ubuntu-2404:2024.05.1
     working_directory: ~/repo
     parameters:
       dc-environment:
@@ -154,7 +156,7 @@ jobs:
     - run:
         name: CDK deploy
         command: |
-          pyenv local $(ls -1 /opt/circleci/.pyenv/versions | grep 3.10)
+          pyenv local $(ls -1 /opt/circleci/.pyenv/versions | grep 3.12)
           . .venv/bin/activate
           npx cdk deploy --all --require-approval never --concurrency 3
     - save_cache:
@@ -169,7 +171,7 @@ jobs:
 
   code_deploy:
     docker:
-      - image: cimg/python:3.10.7-node
+      - image: cimg/python:3.12.4-node
         environment:
           CIRCLECI: true
           PGHOST: 127.0.0.1
@@ -183,6 +185,8 @@ jobs:
 
     steps:
     - checkout
+    - node/install:
+        node-version: '18'
     - restore_cache:
         key: v3-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
     - run:

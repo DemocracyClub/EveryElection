@@ -351,16 +351,12 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                 message = """
                     New election {} suggested by anonymous user:\n
                     <https://elections.democracyclub.org.uk/election_radar/moderation_queue/>
-                """.format(
-                    ballots[0].election_id
-                )
+                """.format(ballots[0].election_id)
             else:
                 message = """
                     {} New elections suggested by anonymous user:\n
                     <https://elections.democracyclub.org.uk/election_radar/moderation_queue/>
-                """.format(
-                    len(ballots)
-                )
+                """.format(len(ballots))
             post_to_slack(message)
 
         # if this election was created from a radar entry set the status

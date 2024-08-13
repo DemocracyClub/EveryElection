@@ -1,6 +1,5 @@
 -r base.txt
 
-ec2_tag_conditional==0.1.2
 gunicorn==22.0.0
 jsmin==3.0.1
 sentry-sdk

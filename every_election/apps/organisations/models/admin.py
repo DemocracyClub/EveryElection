@@ -152,8 +152,7 @@ class OrganisationGeographyProblemManager(Manager):
         return qs.filter(
             (
                 # OrganisationGeographies should have a GSS code...mostly
-                Q(gss="")
-                & ~Q(organisation__organisation_type="police-area")
+                Q(gss="") & ~Q(organisation__organisation_type="police-area")
             )
             | (
                 # OrganisationGeography with NULL
