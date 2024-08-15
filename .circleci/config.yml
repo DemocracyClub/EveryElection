@@ -70,6 +70,9 @@ jobs:
             python manage.py --version
             python manage.py check
             python manage.py makemigrations --check
+            pip check
+            ruff format . --check
+            ruff check .
 
       - run:
           name: Run tests
