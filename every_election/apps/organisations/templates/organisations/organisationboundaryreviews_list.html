@@ -3,60 +3,60 @@
 
 
 {% block content %}
-<style>
-	.boundary_reviews_table {
-		font-size: 1rem;
-	}
-	.boundary_reviews_table td:first-child {
-		width: 50%;
-	}
-</style>
+    <style>
+        .boundary_reviews_table {
+            font-size: 1rem;
+        }
+        .boundary_reviews_table td:first-child {
+            width: 50%;
+        }
+    </style>
 
-<h2> Boundary Reviews </h2>
+    <h2> Boundary Reviews </h2>
 
-<aside class="ds-filter" aria-labelledby="filter-label">
-	<h6>FILTERS:</h6>
-	<form>
-		<div class="ds-filter-cluster">
-			{% for field in filter.form %}
-				<ul aria-labelledby="adv-filter-label-{{ forloop.counter }}">
-					<li id="adv-filter-label-{{ forloop.counter }}" class="ds-filter-label" aria-hidden="true">{{ field.label }}:</li>
-					{{ field }}
-				</ul>
-			{% endfor %}
-		</div>
-	</form>
-</aside>
+    <aside class="ds-filter" aria-labelledby="filter-label">
+        <h6>FILTERS:</h6>
+        <form>
+            <div class="ds-filter-cluster">
+                {% for field in filter.form %}
+                    <ul aria-labelledby="adv-filter-label-{{ forloop.counter }}">
+                        <li id="adv-filter-label-{{ forloop.counter }}" class="ds-filter-label" aria-hidden="true">{{ field.label }}:</li>
+                        {{ field }}
+                    </ul>
+                {% endfor %}
+            </div>
+        </form>
+    </aside>
 
-{%regroup queryset by organisation as boundary_reviews_by_organisation%}
-{% for group in boundary_reviews_by_organisation %}
-	<h5>{{group.grouper}}</h5>
-	<div class="ds-table ds-bordered">
-		<table class="boundary_reviews_table">
-			<tr>
-				<th>Review</th>
-				<th>Consultation</th>
-				<th>Legislation</th>
-				<th>Status</th>
-			</tr>
-			{% for review in group.list%}
-				<tr>
-					<td><a href="{% url 'single_boundary_review_view' review.id %}">{{review.generic_title}}</a></td>
-					{%if review.consultation_url%}
-						<td>Read the <a href={{review.consultation_url}}>Consultation</a></td>
-					{%else%}	
-						<td>Consultation Link Missing</a></td>
-					{%endif%}
-					{%if review.legislation_url%}
-						<td>Read the <a href={{review.legislation_url}}>Legislation</a></td>
-					{%else%}	
-						<td>Legislation Link Missing</a></td>
-					{%endif%}
-					<td>{{review.get_status_display}}</td>
-				</tr>
-			{% endfor %}
-		</table>
-	</div>
-	{% endfor %}
+    {%regroup queryset by organisation as boundary_reviews_by_organisation%}
+    {% for group in boundary_reviews_by_organisation %}
+        <h5>{{group.grouper}}</h5>
+        <div class="ds-table ds-bordered">
+            <table class="boundary_reviews_table">
+                <tr>
+                    <th>Review</th>
+                    <th>Consultation</th>
+                    <th>Legislation</th>
+                    <th>Status</th>
+                </tr>
+                {% for review in group.list%}
+                    <tr>
+                        <td><a href="{% url 'single_boundary_review_view' review.id %}">{{review.generic_title}}</a></td>
+                        {%if review.consultation_url%}
+                            <td>Read the <a href={{review.consultation_url}}>Consultation</a></td>
+                        {%else%}
+                            <td>Consultation Link Missing</a></td>
+                        {%endif%}
+                        {%if review.legislation_url%}
+                            <td>Read the <a href={{review.legislation_url}}>Legislation</a></td>
+                        {%else%}
+                            <td>Legislation Link Missing</a></td>
+                        {%endif%}
+                        <td>{{review.get_status_display}}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% endfor %}
 
 {% endblock content %}
