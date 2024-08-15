@@ -12,6 +12,7 @@ vcrpy
 pytest-xdist
 safety
 ruff==0.2.2
+djhtml==3.0.6
 pytest-ruff==0.3.2
 playwright==1.45.1
 pytest-playwright==0.4.2

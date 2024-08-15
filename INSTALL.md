@@ -95,10 +95,11 @@ to verify that the install was a success.
 
 ## Formatting
 
-This project uses [ruff](https://beta.ruff.rs/docs/) for linting and formatting. You can run it with:
+This project uses [ruff](https://beta.ruff.rs/docs/) and [djhtml](https://github.com/rtts/djhtml) for linting and formatting. You can run them with:
 
     ruff check .
     ruff format .
+    git ls-files '*.html' | xargs djhtml
 
 ruff has in-built functionality to fix common linting errors. Use the `--fix` option to do this.
 
