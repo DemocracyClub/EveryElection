@@ -20,6 +20,6 @@ security: # configuration for the `safety check` command
             reason: We need to be able to pip install things.
             expires: '2024-08-20' # Bump if still applies
         70612: #  jinja2 version 3.1.4
-            reason: Only used in tests and there's a general election on
-            expires: '2024-08-20' # Bump if still applies
+            reason: Only used in tests, no fixed version available, maintainer disputes it is a vuln
+            expires: '2024-10-20' # Bump if still applies
     continue-on-vulnerability-error: False # Suppress non-zero exit codes when vulnerabilities are found. Enable this in pipelines and CI/CD processes if you want to pass builds that have vulnerabilities
