@@ -39,8 +39,8 @@
                     } else {
                         popup = feature.properties.organisation["common_name"]
                     }
-                layer.bindPopup(
-                    `<a href={% url 'api:election-geo' election_id=object.election_id format='json' %} download=\'{{object.election_title }}.geojson\'>${popup}</a>`)
+                    layer.bindPopup(
+                        `<a href={% url 'api:election-geo' election_id=object.election_id format='json' %} download=\'{{object.election_title }}.geojson\'>${popup}</a>`)
                 };
 
                 fetch("{% url 'api:election-geo' election_id=object.election_id format='json' %}").then((response) => {

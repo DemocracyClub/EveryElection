@@ -9,32 +9,32 @@
 
 
 
-        {% block site_menu %}
-            <nav>
-                <ul>
-                    <li><a href="{% url "home"%}">Home</a></li>
-                    <li><a href="{% url "organisations_view"%}">Organisations</a></li>
-                    <li><a href="{% url "election_types_view"%}">Election Types</a></li>
-                    <li><a href="{% url "reference_definition_view"%}">Reference Definition</a></li>
-                    <li><a href="{% url "elections_view"%}">Elections</a></li>
-                    <li><a href="{% url "id_creator"%}">ID Creator</a></li>
-                    {% if not user.is_authenticated %}
-                        <li>|</li>
-                        <li><a href="{% url "login"%}">Log In</a></li>
-                    {% endif %}
-                </ul>
+{% block site_menu %}
+    <nav>
+        <ul>
+            <li><a href="{% url "home"%}">Home</a></li>
+            <li><a href="{% url "organisations_view"%}">Organisations</a></li>
+            <li><a href="{% url "election_types_view"%}">Election Types</a></li>
+            <li><a href="{% url "reference_definition_view"%}">Reference Definition</a></li>
+            <li><a href="{% url "elections_view"%}">Elections</a></li>
+            <li><a href="{% url "id_creator"%}">ID Creator</a></li>
+            {% if not user.is_authenticated %}
+                <li>|</li>
+                <li><a href="{% url "login"%}">Log In</a></li>
+            {% endif %}
+        </ul>
 
-                {% if user.is_authenticated %}
-                    <ul>
-                        <li><a href="{% url "snooped_election_view"%}">Election Radar</a></li>
-                        <li><a href="{% url "election_moderation_queue"%}">Moderation</a></li>
-                        <li>|</li>
-                        <li><a href="{% url "logout"%}">Log Out {{ user }}</a></li>
-                        <li><a href="{% url "password_change"%}">Change Password</a></li>
-                    </ul>
-                {% endif %}
-            </nav>
-        {% endblock site_menu %}
+        {% if user.is_authenticated %}
+            <ul>
+                <li><a href="{% url "snooped_election_view"%}">Election Radar</a></li>
+                <li><a href="{% url "election_moderation_queue"%}">Moderation</a></li>
+                <li>|</li>
+                <li><a href="{% url "logout"%}">Log Out {{ user }}</a></li>
+                <li><a href="{% url "password_change"%}">Change Password</a></li>
+            </ul>
+        {% endif %}
+    </nav>
+{% endblock site_menu %}
 
 {% block main_base %}
     <main id="main" tabindex="-1" class="ds-stack">
@@ -55,29 +55,29 @@
         {% endblock content %}
     </main>
 {% endblock main_base %}
-{% block mailing_list %}{% endblock mailing_list %} 
-{% block footer_menu %} 
-<div class="ds-cluster-center">
-    <ul>
-        <li><a href="{% url 'home' %}">Home</a></li>
-        <li><a href="https://democracyclub.org.uk/about/">About</a></li>
-        <li><a href="https://democracyclub.org.uk/privacy/">Privacy</a></li>
-        <li><a href="https://democracyclub.org.uk/blog/">Blog</a></li>
-        <li><a href="https://democracyclub.org.uk/contact/">Contact</a></li>
-        <li><a href="https://democracyclub.org.uk/donate/">Donate</a></li>
-        <li><a href="https://www.facebook.com/democracyclub/">Facebook</a></li>
-        <li><a href="https://twitter.com/democlub">Twitter</a></li>
-        <li><a href="https://github.com/DemocracyClub/EveryElection">GitHub</a></li>
-    </ul>
-</div>
-{% endblock footer_menu %}  
+{% block mailing_list %}{% endblock mailing_list %}
+{% block footer_menu %}
+    <div class="ds-cluster-center">
+        <ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="https://democracyclub.org.uk/about/">About</a></li>
+            <li><a href="https://democracyclub.org.uk/privacy/">Privacy</a></li>
+            <li><a href="https://democracyclub.org.uk/blog/">Blog</a></li>
+            <li><a href="https://democracyclub.org.uk/contact/">Contact</a></li>
+            <li><a href="https://democracyclub.org.uk/donate/">Donate</a></li>
+            <li><a href="https://www.facebook.com/democracyclub/">Facebook</a></li>
+            <li><a href="https://twitter.com/democlub">Twitter</a></li>
+            <li><a href="https://github.com/DemocracyClub/EveryElection">GitHub</a></li>
+        </ul>
+    </div>
+{% endblock footer_menu %}
 {% block extra_footer_text %}
-<div class="ds-copyright">
-    <p>Contains OS data © Crown copyright and database right {% now 'Y' %}</p>
-    <p>Contains Royal Mail data © Royal Mail copyright and database right {% now 'Y' %}</p>
-    <p>Contains National Statistics data © Crown copyright and database right {% now 'Y' %}</p>
-</div>
-{% endblock extra_footer_text %}        
+    <div class="ds-copyright">
+        <p>Contains OS data © Crown copyright and database right {% now 'Y' %}</p>
+        <p>Contains Royal Mail data © Royal Mail copyright and database right {% now 'Y' %}</p>
+        <p>Contains National Statistics data © Crown copyright and database right {% now 'Y' %}</p>
+    </div>
+{% endblock extra_footer_text %}
 {% block extra_site_js %}
     {% javascript "scripts" %}
 {% endblock extra_site_js %}

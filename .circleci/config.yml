@@ -70,6 +70,10 @@ jobs:
             python manage.py --version
             python manage.py check
             python manage.py makemigrations --check
+            pip check
+            ruff format . --check
+            ruff check .
+            git ls-files '*.html' | xargs djhtml --check
 
       - run:
           name: Run tests

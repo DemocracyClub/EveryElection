@@ -2,39 +2,39 @@
 {% block page_title %}Boundary Review Summary{% endblock page_title %}
 
 {% block content %}
-<div class="ds-card">
-	<div class="ds-card-body">
-		<h1>
-			{{boundary_review.generic_title}}
-		</h1>
+    <div class="ds-card">
+        <div class="ds-card-body">
+            <h1>
+                {{boundary_review.generic_title}}
+            </h1>
 
-		<dl class="ds-descriptions">
-			<div>
-				<dt>Organisation</dt>
-				<dd><a href={{boundary_review.organisation.get_absolute_url}}>{{boundary_review.organisation.name}}</a></dd>
-			</div>
-			<div>
-				<dt>Status</dt>
-				<dd>{{ boundary_review.get_status_display }}</dd>
-			</div>
-			<div>
-				<dt>Consultation</dt>
-				{% if boundary_review.consultation_url %}
-					<dd>Read <a href="{{ boundary_review.consultation_url }}">the consultation</a> for this review</dd>
-				{% else %}
-					<dd>Consultation Link Missing</dd>
-				{% endif %}
-				</div> 
-				<div>
-					<dt>Legislation</dt>
-				{% if boundary_review.legislation_url%}
-					<dd>Read <a href="{{ boundary_review.legislation_url }}">the legislation</a> for this review</dd>
-				{% else %}
-					<dd>Legislation Link Missing</dd>
-				{% endif %}
-			</div>
-		</dl>
-	</div class="ds-card-body">
-</div>
+            <dl class="ds-descriptions">
+                <div>
+                    <dt>Organisation</dt>
+                    <dd><a href={{boundary_review.organisation.get_absolute_url}}>{{boundary_review.organisation.name}}</a></dd>
+                </div>
+                <div>
+                    <dt>Status</dt>
+                    <dd>{{ boundary_review.get_status_display }}</dd>
+                </div>
+                <div>
+                    <dt>Consultation</dt>
+                    {% if boundary_review.consultation_url %}
+                        <dd>Read <a href="{{ boundary_review.consultation_url }}">the consultation</a> for this review</dd>
+                    {% else %}
+                        <dd>Consultation Link Missing</dd>
+                    {% endif %}
+                </div>
+                <div>
+                    <dt>Legislation</dt>
+                    {% if boundary_review.legislation_url%}
+                        <dd>Read <a href="{{ boundary_review.legislation_url }}">the legislation</a> for this review</dd>
+                    {% else %}
+                        <dd>Legislation Link Missing</dd>
+                    {% endif %}
+                </div>
+            </dl>
+        </div class="ds-card-body">
+    </div>
 
 {% endblock content %}
