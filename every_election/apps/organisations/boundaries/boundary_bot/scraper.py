@@ -163,17 +163,21 @@ class LgbceScraper:
         return org
 
     def get_review_from_db(self, record):
-        if record["legislation_title"]:
+        if record["legislation_url"]:
+            legislation_year = self.get_legislation_year(
+                record["legislation_url"]
+            )
+
             try:
                 result = OrganisationBoundaryReview.objects.filter(
-                    legislation_title=record["legislation_title"],
+                    legislation_url__contains=f"/{legislation_year}/",
                     slug=record["slug"],
                 )
                 if len(result) == 1:
                     return result
                 if len(result) > 1:
                     raise ScraperException(
-                        f"More than one review found with same legislation_title: {record['legislation_title']}"
+                        f"More than one review found for {record['slug']} with year {legislation_year}",
                     )
             except OrganisationBoundaryReview.DoesNotExist:
                 pass
