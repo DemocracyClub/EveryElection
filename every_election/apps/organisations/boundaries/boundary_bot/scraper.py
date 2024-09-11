@@ -70,6 +70,7 @@ class LgbceScraper:
             "greater-london",
             "north-yorkshire",
             "somerset",
+            "north-warwickshire",  # LGBCE site links to webarchive version of legislation rather than legislation.gov.uk
         ]
 
     def scrape_index(self):
