@@ -21,21 +21,22 @@ class TestScraper(TestCase):
     def setUp(self):
         self.scraper = LgbceScraper(False, False)
 
-    def test_get_review_from_db_duplicate_title(self):
+    def test_get_review_from_db_duplicate_link(self):
         org1 = OrganisationFactory()
         CompletedOrganisationBoundaryReviewFactory(
             organisation=org1,
-            legislation_title="complete review - duplicate title",
+            legislation_url="https://www.legislation.gov.uk/uksi/2016/1222/contents/made",
         )
         CompletedOrganisationBoundaryReviewFactory(
             organisation=org1,
-            legislation_title="complete review - duplicate title",
+            legislation_url="https://www.legislation.gov.uk/uksi/2016/1222/contents/made",
         )
         with self.assertRaises(ScraperException):
             self.scraper.get_review_from_db(
                 {
                     "register_code": org1.official_identifier,
-                    "legislation_title": "complete review - duplicate title",
+                    "legislation_title": "scraped title",
+                    "legislation_url": "https://www.legislation.gov.uk/uksi/2016/1222/contents/made",
                     "slug": org1.slug,
                 }
             )
@@ -48,43 +49,47 @@ class TestScraper(TestCase):
         incomplete_br = IncompleteOrganisationBoundaryReviewFactory(
             organisation=org1, legislation_title="uncompleted title"
         )
-        comlete_qs = self.scraper.get_review_from_db(
+        complete_qs = self.scraper.get_review_from_db(
             {
                 "register_code": org1.official_identifier,
                 "legislation_title": "completed title",
+                "legislation_url": "https://www.legislation.gov.uk/uksi/2023/1023/made",
                 "slug": org1.slug,
             }
         )
-        incomlete_qs = self.scraper.get_review_from_db(
+        incomplete_qs = self.scraper.get_review_from_db(
             {
                 "register_code": org1.official_identifier,
                 "legislation_title": "uncompleted title",
+                "legislation_url": "",
                 "slug": org1.slug,
             }
         )
-        self.assertEqual(1, len(comlete_qs))
+
+        self.assertEqual(1, len(complete_qs))
         self.assertEqual(
             complete_br,
-            comlete_qs[0],
+            complete_qs[0],
         )
-        self.assertEqual(1, len(incomlete_qs))
+        self.assertEqual(1, len(incomplete_qs))
         self.assertEqual(
             incomplete_br,
-            incomlete_qs[0],
+            incomplete_qs[0],
         )
 
-    def test_get_review_from_db_no_title(self):
+    def test_get_review_from_db_draft_url(self):
         org1 = OrganisationFactory()
         CompletedOrganisationBoundaryReviewFactory(
             organisation=org1,
         )
         incomplete_br = IncompleteOrganisationBoundaryReviewFactory(
             organisation=org1,
+            legislation_url="https://www.legislation.gov.uk/ukdsi/2018/9780111173626/contents",
         )
         qs = self.scraper.get_review_from_db(
             {
                 "register_code": org1.official_identifier,
-                "legislation_title": None,
+                "legislation_url": "https://www.legislation.gov.uk/ukdsi/2018/9780111173626/contents",
                 "slug": org1.slug,
             }
         )
@@ -169,7 +174,7 @@ class TestScraperSaves(TestCase):
         self.scraper.data["allerdale"]["legislation_title"] = "test title"
         self.scraper.data["allerdale"]["status"] = ReviewStatus.CURRENT
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(4):
             self.scraper.save()
 
         self.assertEqual(1, len(OrganisationBoundaryReview.objects.all()))
@@ -211,7 +216,7 @@ class TestScraperSaves(TestCase):
         self.scraper.data["allerdale"]["legislation_title"] = "test title"
         self.scraper.data["allerdale"]["status"] = ReviewStatus.CURRENT
 
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(2):
             self.scraper.save()
 
         self.assertEqual(1, len(OrganisationBoundaryReview.objects.all()))
