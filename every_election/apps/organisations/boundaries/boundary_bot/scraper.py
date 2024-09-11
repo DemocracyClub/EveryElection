@@ -1,4 +1,5 @@
 import pprint
+import re
 
 import lxml.html
 import requests
@@ -181,6 +182,14 @@ class LgbceScraper:
         return OrganisationBoundaryReview.objects.filter(
             organisation=org, slug=record["slug"]
         ).exclude(status=ReviewStatus.COMPLETED)
+
+    def clean_legislation_url(self, url):
+        url = url.replace("/id/", "/")
+        url = re.search(
+            r"(?:www\.)?legislation.gov.uk/(wsi|ukdsi|uksi|ssi)/\d+/\d+",
+            url,
+        ).group()
+        return f"https://{url}"
 
     def validate(self):
         # perform some consistency checks
