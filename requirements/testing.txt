@@ -2,7 +2,7 @@
 
 mock
 model-mommy
-pytest==7.4.0
+pytest==8.3.3
 pluggy
 pytest-django==4.5.2
 pytest-cov
