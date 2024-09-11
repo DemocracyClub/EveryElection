@@ -1,5 +1,6 @@
 import pprint
 import re
+from urllib.parse import urlparse
 
 import lxml.html
 import requests
@@ -190,6 +191,16 @@ class LgbceScraper:
             url,
         ).group()
         return f"https://{url}"
+
+    def get_legislation_year(self, url):
+        try:
+            cleaned_url = self.clean_legislation_url(url)
+        except AttributeError:
+            raise ScraperException(f"Failed to clean legislation URL: {url}")
+
+        urlparse_result = urlparse(cleaned_url)
+        path = urlparse_result.path
+        return path.split("/")[2]
 
     def validate(self):
         # perform some consistency checks

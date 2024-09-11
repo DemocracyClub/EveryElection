@@ -227,3 +227,57 @@ class TestScraperSaves(TestCase):
                 slug="allerdale"
             ).legislation_title,
         )
+
+
+class TestGetLegislationYear(TestCase):
+    def setUp(self):
+        self.scraper = LgbceScraper(False, False)
+
+    def test_get_legislation_year_uksi_url(self):
+        legislation_url = "https://www.legislation.gov.uk/uksi/2023/1023/made"
+        year = self.scraper.get_legislation_year(legislation_url)
+        self.assertEqual(year, "2023")
+
+    def test_get_legislation_year_uksi_url_with_id(self):
+        legislation_url = "http://www.legislation.gov.uk/id/uksi/2023/732"
+        year = self.scraper.get_legislation_year(legislation_url)
+        self.assertEqual(year, "2023")
+
+    def test_get_legislation_year_no_subdomain(self):
+        legislation_url = "legislation.gov.uk/id/uksi/2023/732"
+        year = self.scraper.get_legislation_year(legislation_url)
+        self.assertEqual(year, "2023")
+
+    def test_get_legislation_year_ukdsi_url(self):
+        legislation_url = (
+            "https://www.legislation.gov.uk/ukdsi/2024/9780348262735/contents"
+        )
+        year = self.scraper.get_legislation_year(legislation_url)
+        self.assertEqual(year, "2024")
+
+    def test_get_legislation_year_wsi_url(self):
+        legislation_url = (
+            "https://www.legislation.gov.uk/wsi/2021/1081/contents/made"
+        )
+        year = self.scraper.get_legislation_year(legislation_url)
+        self.assertEqual(year, "2021")
+
+    def test_get_legislation_year_ssi_url(self):
+        legislation_url = "https://www.legislation.gov.uk/ssi/2021/370/made"
+        year = self.scraper.get_legislation_year(legislation_url)
+        self.assertEqual(year, "2021")
+
+    def test_get_legislation_year_invalid_url(self):
+        legislation_url = "https://www.invalid-url.com/uksi/2023/1023/made"
+        with self.assertRaises(ScraperException):
+            self.scraper.get_legislation_year(legislation_url)
+
+    def test_get_legislation_year_no_url(self):
+        legislation_url = ""
+        with self.assertRaises(ScraperException):
+            self.scraper.get_legislation_year(legislation_url)
+
+    def test_get_legislation_year_malformed_url(self):
+        legislation_url = "https://www.legislation.gov.uk/uksi/2023"
+        with self.assertRaises(ScraperException):
+            self.scraper.get_legislation_year(legislation_url)
