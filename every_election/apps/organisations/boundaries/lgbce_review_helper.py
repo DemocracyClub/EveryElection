@@ -228,6 +228,9 @@ class LGBCEReviewHelper:
         https://www.legislation.gov.uk/uksi/2022/1373/made
             '(4) The number of councillors to be elected for each ward is two. '
 
+        https://www.legislation.gov.uk/uksi/2024/124/made
+            'The number of councillors to be elected for each electoral division is one'
+
         https://www.legislation.gov.uk/uksi/2023/1205/article/3/made '(4) The number of councillors to be elected for
         each ward is the number specified in relation to that ward in the second column of the table in Schedule 1.'
 
@@ -236,10 +239,8 @@ class LGBCEReviewHelper:
         1. '
         """
         numbers_as_words = "(one|two|three|four|five|six|seven|eight|nine)"
-        words_after_numbers = (
-            f"{numbers_as_words} councillors are to be elected for each ward."
-        )
-        words_before_numbers = f"The number of councillors to be elected for each ward is {numbers_as_words}"
+        words_after_numbers = f"{numbers_as_words} councillors are to be elected for each (?:ward|electoral division)."
+        words_before_numbers = f"The number of councillors to be elected for each (?:ward|electoral division) is {numbers_as_words}"
         elected_councillors_pattern = re.compile(
             f"({words_after_numbers})|({words_before_numbers})",
             re.IGNORECASE | re.UNICODE,
