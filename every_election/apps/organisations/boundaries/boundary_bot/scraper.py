@@ -192,7 +192,7 @@ class LgbceScraper:
     def clean_legislation_url(self, url):
         url = url.replace("/id/", "/")
         url = re.search(
-            r"(?:www\.)?legislation.gov.uk/(wsi|ukdsi|uksi|ssi)/\d+/\d+",
+            r"(?:www\.)?legislation.gov.uk/(wsi|ukdsi|uksi|ssi|ukpga)/\d+/\d+",
             url,
         ).group()
         return f"https://{url}"
