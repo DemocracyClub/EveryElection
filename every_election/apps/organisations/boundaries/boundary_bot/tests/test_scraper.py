@@ -260,6 +260,13 @@ class TestGetLegislationYear(TestCase):
         year = self.scraper.get_legislation_year(legislation_url)
         self.assertEqual(year, "2024")
 
+    def test_get_legislation_year_ukpga_url(self):
+        legislation_url = (
+            "https://www.legislation.gov.uk/ukpga/1999/29/contents"
+        )
+        year = self.scraper.get_legislation_year(legislation_url)
+        self.assertEqual(year, "1999")
+
     def test_get_legislation_year_wsi_url(self):
         legislation_url = (
             "https://www.legislation.gov.uk/wsi/2021/1081/contents/made"

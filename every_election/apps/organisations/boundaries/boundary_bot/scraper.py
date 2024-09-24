@@ -66,11 +66,8 @@ class LgbceScraper:
         self.BOOTSTRAP_MODE = BOOTSTRAP_MODE
         self.SEND_NOTIFICATIONS = SEND_NOTIFICATIONS
         self.ignore = [
-            "east-hertfordshire",
-            "greater-london",
-            "north-yorkshire",
-            "somerset",
-            "north-warwickshire",  # LGBCE site links to webarchive version of legislation rather than legislation.gov.uk
+            "east-hertfordshire",  # LGBCE site has 'Name of Order' in the div used to parse legislation title and link so the scraper thinks its a new review (https://www.lgbce.org.uk/all-reviews/east-hertfordshire)
+            "north-warwickshire",  # LGBCE site links to webarchive version of legislation rather than legislation.gov.uk (https://www.lgbce.org.uk/all-reviews/north-warwickshire)
         ]
 
     def scrape_index(self):
@@ -192,7 +189,7 @@ class LgbceScraper:
     def clean_legislation_url(self, url):
         url = url.replace("/id/", "/")
         url = re.search(
-            r"(?:www\.)?legislation.gov.uk/(wsi|ukdsi|uksi|ssi)/\d+/\d+",
+            r"(?:www\.)?legislation.gov.uk/(wsi|ukdsi|uksi|ssi|ukpga)/\d+/\d+",
             url,
         ).group()
         return f"https://{url}"

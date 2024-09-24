@@ -96,6 +96,14 @@ class LgbceSpider(scrapy.Spider):
         def get_link(selector):
             return selector.xpath("*/a/@href").extract_first()
 
+        def is_relevant_review(title):
+            return (
+                "(electoral changes) order" in title.lower()
+                or "(structural changes) order" in title.lower()
+                or "greater london authority"  # edge case to handle https://www.lgbce.org.uk/all-reviews/greater-london-authority
+                in title.lower()
+            )
+
         links = [
             (get_link_title(selector), get_link(selector))
             for selector in response.xpath(
@@ -104,10 +112,9 @@ class LgbceSpider(scrapy.Spider):
         ]
 
         made_ecos = [
-            (title, link)
-            for title, link in links
-            if ("(electoral changes) order" in title.lower())
+            (title, link) for title, link in links if is_relevant_review(title)
         ]
+
         if latest_event == "Effective date" and len(made_ecos) == 1:
             # This catches draft links and made links.
             # Sometimes they put a draft link in where the made link should go.
@@ -118,10 +125,7 @@ class LgbceSpider(scrapy.Spider):
         made_ecos = [
             (title, link)
             for title, link in made_ecos
-            if (
-                ("(electoral changes) order" in title.lower())
-                and ("ukdsi" not in link)
-            )
+            if is_relevant_review(title) and "ukdsi" not in link
         ]
 
         if len(made_ecos) == 1:
