@@ -137,6 +137,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "dc_utils.middleware.BasicAuthMiddleware",
 ]
 
 ROOT_URLCONF = "every_election.urls"
@@ -289,9 +290,12 @@ AWS_STORAGE_BUCKET_NAME = NOTICE_OF_ELECTION_BUCKET
 AWS_S3_FILE_OVERWRITE = True
 AWS_DEFAULT_ACL = None
 
-# Disable Basic Auth by default
-# We only want to use this on staging deploys
-BASICAUTH_DISABLE = True
+# Allowlist of URLs that should be ignored by DC BasicAuthMiddleware
+BASIC_AUTH_ALLOWLIST = [
+    "/",  # load balancer health check
+    "/api",
+    "/api/*",
+]
 
 # elections where polling day is in the range
 # (NOW - CURRENT_PAST_DAYS) - (NOW + CURRENT_FUTURE_DAYS)
