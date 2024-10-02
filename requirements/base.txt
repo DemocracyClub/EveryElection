@@ -1,6 +1,6 @@
 beautifulsoup4==4.12.1
 boto3==1.34.148
-botocore==1.34.148
+botocore==1.35.31
 commitment==3.0.1
 Django==4.2.15
 django-cors-headers==4.2.0
