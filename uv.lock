@@ -400,8 +400,8 @@ sdist = { url = "https://github.com/DemocracyClub/design-system/archive/refs/tag
 
 [[package]]
 name = "dc-django-utils"
-version = "6.1.1"
-source = { git = "https://github.com/DemocracyClub/dc_django_utils.git?rev=6.1.1#95bb42d3eb2f15d49427016e1aca2e57866cfe3d" }
+version = "7.0.1"
+source = { git = "https://github.com/DemocracyClub/dc_django_utils.git?rev=7.0.1#78b20cf5e955c2994f49fd3d5db3fdad8ee5beba" }
 dependencies = [
     { name = "django" },
     { name = "django-localflavor" },
@@ -739,7 +739,7 @@ requires-dist = [
     { name = "commitment", specifier = "==3.0.1" },
     { name = "constructs", marker = "extra == 'cdk'", specifier = "==10.0.0" },
     { name = "dc-design-system", url = "https://github.com/DemocracyClub/design-system/archive/refs/tags/0.5.0.zip" },
-    { name = "dc-django-utils", git = "https://github.com/DemocracyClub/dc_django_utils.git?rev=6.1.1" },
+    { name = "dc-django-utils", git = "https://github.com/DemocracyClub/dc_django_utils.git?rev=7.0.1" },
     { name = "diagrams", marker = "extra == 'cdk'", specifier = "==0.23.3" },
     { name = "django", specifier = "==4.2.15" },
     { name = "django-cors-headers", specifier = "==4.2.0" },
