@@ -88,9 +88,6 @@ dev-dependencies = [
 ]
 
 
-[tool.black]
-line-length = 80
-
 [tool.ruff]
 line-length = 80
 ignore = ["E501"]
