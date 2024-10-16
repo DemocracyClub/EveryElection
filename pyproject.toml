@@ -23,15 +23,12 @@ dependencies = [
     "djangorestframework-jsonp==1.0.2",
     "eco-parser==0.2.0",
     "geojson==3.1.0",
-    "glob2==0.7",
-    "markdown==3.4.3",
     "psutil==6.0.0",
     "psycopg-binary==3.1.19",
     "rapidfuzz==3.4.0",
     "requests==2.32.3",
     "retry2==0.9.5",
     "scrapy==2.11.2",
-    "six==1.16.0",
     "sqlparse==0.5.0",
     "uk-election-ids==0.7.5",
     "uk-election-timetables==2.4.1",
@@ -47,7 +44,6 @@ cdk = [
     "aws-cdk-lib==2.160.0",
     "aws_cdk.aws_lambda_python_alpha==2.160.0a0",
     "constructs==10.0.0",
-    "pyyaml==6.0.1",
     "diagrams==0.23.3",
 ]
 local = [
@@ -55,7 +51,6 @@ local = [
 ]
 production = [
     "gunicorn==22.0.0",
-    "jsmin==3.0.1",
     "sentry-sdk==2.14.0",
 ]
 
@@ -69,9 +64,7 @@ package = false
 
 dev-dependencies = [
     "mock==5.1.0",
-    "model-mommy==2.0.0",
     "pytest==7.4.0",
-    "pluggy==1.5.0",
     "pytest-django==4.5.2",
     "pytest-cov==5.0.0",
     "pytest-freezegun==0.4.2",
