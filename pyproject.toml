@@ -59,7 +59,11 @@ production = [
     "sentry-sdk==2.14.0",
 ]
 
+
 [tool.uv]
+
+# safety depends on a pre-release version of dparse
+prerelease = "allow"
 
 package = false
 
