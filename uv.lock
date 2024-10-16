@@ -676,15 +676,12 @@ dependencies = [
     { name = "djangorestframework-jsonp" },
     { name = "eco-parser" },
     { name = "geojson" },
-    { name = "glob2" },
-    { name = "markdown" },
     { name = "psutil" },
     { name = "psycopg-binary" },
     { name = "rapidfuzz" },
     { name = "requests" },
     { name = "retry2" },
     { name = "scrapy" },
-    { name = "six" },
     { name = "sqlparse" },
     { name = "uk-election-ids" },
     { name = "uk-election-timetables" },
@@ -697,14 +694,12 @@ cdk = [
     { name = "aws-cdk-lib" },
     { name = "constructs" },
     { name = "diagrams" },
-    { name = "pyyaml" },
 ]
 local = [
     { name = "django-debug-toolbar" },
 ]
 production = [
     { name = "gunicorn" },
-    { name = "jsmin" },
     { name = "sentry-sdk" },
 ]
 
@@ -713,10 +708,8 @@ dev = [
     { name = "djhtml" },
     { name = "factory-boy" },
     { name = "mock" },
-    { name = "model-mommy" },
     { name = "moto" },
     { name = "playwright" },
-    { name = "pluggy" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "pytest-django" },
@@ -758,19 +751,14 @@ requires-dist = [
     { name = "djangorestframework-jsonp", specifier = "==1.0.2" },
     { name = "eco-parser", specifier = "==0.2.0" },
     { name = "geojson", specifier = "==3.1.0" },
-    { name = "glob2", specifier = "==0.7" },
     { name = "gunicorn", marker = "extra == 'production'", specifier = "==22.0.0" },
-    { name = "jsmin", marker = "extra == 'production'", specifier = "==3.0.1" },
-    { name = "markdown", specifier = "==3.4.3" },
     { name = "psutil", specifier = "==6.0.0" },
     { name = "psycopg-binary", specifier = "==3.1.19" },
-    { name = "pyyaml", marker = "extra == 'cdk'", specifier = "==6.0.1" },
     { name = "rapidfuzz", specifier = "==3.4.0" },
     { name = "requests", specifier = "==2.32.3" },
     { name = "retry2", specifier = "==0.9.5" },
     { name = "scrapy", specifier = "==2.11.2" },
     { name = "sentry-sdk", marker = "extra == 'production'", specifier = "==2.14.0" },
-    { name = "six", specifier = "==1.16.0" },
     { name = "sqlparse", specifier = "==0.5.0" },
     { name = "uk-election-ids", specifier = "==0.7.5" },
     { name = "uk-election-timetables", specifier = "==2.4.1" },
@@ -782,10 +770,8 @@ dev = [
     { name = "djhtml", specifier = "==3.0.6" },
     { name = "factory-boy", specifier = "==3.3.1" },
     { name = "mock", specifier = "==5.1.0" },
-    { name = "model-mommy", specifier = "==2.0.0" },
     { name = "moto", specifier = "==5.0.9" },
     { name = "playwright", specifier = "==1.45.1" },
-    { name = "pluggy", specifier = "==1.5.0" },
     { name = "pytest", specifier = "==7.4.0" },
     { name = "pytest-cov", specifier = "==5.0.0" },
     { name = "pytest-django", specifier = "==4.5.2" },
@@ -860,12 +846,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/0f/34/0ea653dec93d3a360
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8e/1b/4f57660aa148d3e3043d048b7e1ab87dfeb85204d0fdb5b4e19c08202162/geojson-3.1.0-py3-none-any.whl", hash = "sha256:68a9771827237adb8c0c71f8527509c8f5bef61733aa434cefc9c9d4f0ebe8f3", size = 15044 },
 ]
-
-[[package]]
-name = "glob2"
-version = "0.7"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/d7/a5/bbbc3b74a94fbdbd7915e7ad030f16539bfdc1362f7e9003b594f0537950/glob2-0.7.tar.gz", hash = "sha256:85c3dbd07c8aa26d63d7aacee34fa86e9a91a3873bc30bf62ec46e531f92ab8c", size = 10697 }
 
 [[package]]
 name = "graphviz"
@@ -1147,18 +1127,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/66/ab/41d09a46985ead5839d8be987acda54b5bb93f713b3969cc0be4f81c455b/mock-5.1.0.tar.gz", hash = "sha256:5e96aad5ccda4718e0a229ed94b2024df75cc2d55575ba5762d31f5767b8767d", size = 80232 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/6b/20/471f41173930550f279ccb65596a5ac19b9ac974a8d93679bcd3e0c31498/mock-5.1.0-py3-none-any.whl", hash = "sha256:18c694e5ae8a208cdb3d2c20a993ca1a7b0efa258c247a1e565150f477f83744", size = 30938 },
-]
-
-[[package]]
-name = "model-mommy"
-version = "2.0.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/0b/71/ae2850e1a466020e10f218ef5a917bed1812b50f9f0fd794330cb0475e70/model_mommy-2.0.0.tar.gz", hash = "sha256:3d332afce941c57f1990f45b083ba13252ba74fcd1ae43fd047e5af7a70fb312", size = 30412 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/35/69/1d588507ba30f51e5347696a42bd37d4bf5d46cfc12ad335ed9d77ccfac3/model_mommy-2.0.0-py2.py3-none-any.whl", hash = "sha256:40d6e740aad7509e696a324b94cf2b0a104da93c3d4a7924cea1be3d0eb95b4f", size = 16513 },
 ]
 
 [[package]]
