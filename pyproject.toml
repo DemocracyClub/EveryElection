@@ -46,9 +46,6 @@ cdk = [
     "constructs==10.0.0",
     "diagrams==0.23.3",
 ]
-local = [
-    "django-debug-toolbar==4.4.6",
-]
 production = [
     "gunicorn==22.0.0",
     "sentry-sdk==2.14.0",
@@ -63,6 +60,7 @@ prerelease = "allow"
 package = false
 
 dev-dependencies = [
+    "django-debug-toolbar==4.4.6",
     "mock==5.1.0",
     "pytest==7.4.0",
     "pytest-django==4.5.2",
