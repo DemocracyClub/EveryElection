@@ -3,11 +3,13 @@ EveryElection requires Python 3.x and Postgres.
 
 ## Install Python dependencies
 
+Every Election uses [uv](https://docs.astral.sh/uv/) to manage python packages.
+[Install uv](https://docs.astral.sh/uv/getting-started/installation/) first if you don't already have it. Then
+
 ```
-pip install -U pip
-pip install -r requirements.txt
-pip install -r requirements/local.txt
+uv sync
 ```
+
 Gotcha: If you're having trouble installing psycopg2-binary on Apple silicon, set your library path before retrying the install:
 ```commandline
 export LIBRARY_PATH=$LIBRARY_PATH:/opt/homebrew/opt/openssl/lib
