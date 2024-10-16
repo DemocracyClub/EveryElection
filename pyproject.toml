@@ -39,7 +39,7 @@ dependencies = [
     "django-pipeline==3.0.0",
     "django-dotenv==1.4.2",
     "dc_design_system @ https://github.com/DemocracyClub/design-system/archive/refs/tags/0.5.0.zip",
-    "dc_django_utils @ git+https://github.com/DemocracyClub/dc_django_utils.git@6.1.1",
+    "dc_django_utils @ git+https://github.com/DemocracyClub/dc_django_utils.git@7.0.1",
 ]
 
 [project.optional-dependencies]
