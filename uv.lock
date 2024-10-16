@@ -695,9 +695,6 @@ cdk = [
     { name = "constructs" },
     { name = "diagrams" },
 ]
-local = [
-    { name = "django-debug-toolbar" },
-]
 production = [
     { name = "gunicorn" },
     { name = "sentry-sdk" },
@@ -705,6 +702,7 @@ production = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "django-debug-toolbar" },
     { name = "djhtml" },
     { name = "factory-boy" },
     { name = "mock" },
@@ -736,7 +734,6 @@ requires-dist = [
     { name = "diagrams", marker = "extra == 'cdk'", specifier = "==0.23.3" },
     { name = "django", specifier = "==4.2.16" },
     { name = "django-cors-headers", specifier = "==4.2.0" },
-    { name = "django-debug-toolbar", marker = "extra == 'local'", specifier = "==4.4.6" },
     { name = "django-dotenv", specifier = "==1.4.2" },
     { name = "django-extensions", specifier = "==3.2.3" },
     { name = "django-filter", specifier = "==24.2" },
@@ -767,6 +764,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "django-debug-toolbar", specifier = "==4.4.6" },
     { name = "djhtml", specifier = "==3.0.6" },
     { name = "factory-boy", specifier = "==3.3.1" },
     { name = "mock", specifier = "==5.1.0" },
