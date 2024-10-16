@@ -113,7 +113,7 @@ norecursedirs = [
     ".circleci",
 ]
 DJANGO_SETTINGS_MODULE = "every_election.settings.testing"
-addopts =[
+addopts = [
     "--ignore=*/__pycache__",
     "--ignore=.*",
     "--ignore=.download-cache",
