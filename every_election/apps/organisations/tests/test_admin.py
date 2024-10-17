@@ -1,5 +1,6 @@
 import os
 from datetime import date
+from unittest.mock import Mock, patch
 
 import boto3
 from botocore.exceptions import ClientError
@@ -7,7 +8,6 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from elections.tests.factories import ElectedRoleFactory
-from mock.mock import Mock, patch
 from moto import mock_aws
 from organisations.models import (
     DivisionProblem,

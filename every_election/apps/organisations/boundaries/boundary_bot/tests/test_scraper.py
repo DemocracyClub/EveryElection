@@ -1,6 +1,7 @@
+from unittest import mock
+
 from data_provider import base_data
 from django.test import TestCase
-from mock import mock
 from organisations.boundaries.boundary_bot.scraper import (
     LgbceScraper,
     ScraperException,
