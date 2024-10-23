@@ -45,6 +45,7 @@ cdk = [
     "aws_cdk.aws_lambda_python_alpha==2.160.0a0",
     "constructs==10.0.0",
     "diagrams==0.23.3",
+    "pyyaml==6.0.2",
 ]
 production = [
     "gunicorn==23.0.0",
