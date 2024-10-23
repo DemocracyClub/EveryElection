@@ -43,12 +43,12 @@ phases:
             - git checkout {{ git_branch }}
             - git pull --rebase origin {{ git_branch }}
             - git branch
-            - python3 -m venv .venv
+            - ./deployscripts/install_uv.sh
+            - . $HOME/.cargo/env
+            - uv venv
             - sudo chown -R {{ username }} /var/www/{{ username }}
             - . .venv/bin/activate
-            - pip install -U pip
-            - pip install -r requirements/production.txt
-            - pip install gevent
+            - uv sync --extra production --no-dev
             - npm ci
       - name: CreateEnvWriterFile
         action: CreateFile

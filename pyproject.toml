@@ -50,6 +50,7 @@ cdk = [
 production = [
     "gunicorn==23.0.0",
     "sentry-sdk==2.14.0",
+    "gevent==24.10.3",
 ]
 
 
@@ -73,7 +74,7 @@ dev-dependencies = [
     "ruff==0.2.2",
     "djhtml==3.0.6",
     "pytest-ruff==0.3.2",
-    "playwright==1.45.1",
+    "playwright==1.48.0",
     "pytest-playwright==0.4.2",
     "moto==5.0.9"
 ]

@@ -666,6 +666,7 @@ cdk = [
     { name = "pyyaml" },
 ]
 production = [
+    { name = "gevent" },
     { name = "gunicorn" },
     { name = "sentry-sdk" },
 ]
@@ -717,6 +718,7 @@ requires-dist = [
     { name = "djangorestframework-jsonp", specifier = "==1.0.2" },
     { name = "eco-parser", specifier = "==0.2.0" },
     { name = "geojson", specifier = "==3.1.0" },
+    { name = "gevent", marker = "extra == 'production'", specifier = "==24.10.3" },
     { name = "gunicorn", marker = "extra == 'production'", specifier = "==23.0.0" },
     { name = "psutil", specifier = "==6.0.0" },
     { name = "psycopg-binary", specifier = "==3.1.19" },
@@ -738,7 +740,7 @@ dev = [
     { name = "djhtml", specifier = "==3.0.6" },
     { name = "factory-boy", specifier = "==3.3.1" },
     { name = "moto", specifier = "==5.0.9" },
-    { name = "playwright", specifier = "==1.45.1" },
+    { name = "playwright", specifier = "==1.48.0" },
     { name = "pytest", specifier = "==7.4.0" },
     { name = "pytest-cov", specifier = "==5.0.0" },
     { name = "pytest-django", specifier = "==4.5.2" },
@@ -815,6 +817,28 @@ wheels = [
 ]
 
 [[package]]
+name = "gevent"
+version = "24.10.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "cffi", marker = "platform_python_implementation == 'CPython' and sys_platform == 'win32'" },
+    { name = "greenlet", marker = "platform_python_implementation == 'CPython'" },
+    { name = "zope-event" },
+    { name = "zope-interface" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/70/f0/be10ed5d7721ed2317d7feb59e167603217156c2a6d57f128523e24e673d/gevent-24.10.3.tar.gz", hash = "sha256:aa7ee1bd5cabb2b7ef35105f863b386c8d5e332f754b60cfc354148bd70d35d1", size = 6108837 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d9/e4/4edbe17001bb3e6fade4ad2d85ca8f9e4eabcbde4aa29aa6889281616e3e/gevent-24.10.3-cp312-cp312-macosx_11_0_universal2.whl", hash = "sha256:3ad8fb70aa0ebc935729c9699ac31b210a49b689a7b27b7ac9f91676475f3f53", size = 2970952 },
+    { url = "https://files.pythonhosted.org/packages/3c/a6/ce0824fe9398ba6b00028a74840f12be1165d5feaacdc028ea953db3d6c3/gevent-24.10.3-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f18689f7a70d2ed0e75bad5036ec3c89690a493d4cfac8d7cdb258ac04b132bd", size = 5172230 },
+    { url = "https://files.pythonhosted.org/packages/25/d4/9002cfb585bfa52c860ed4b1349d1a6400bdf2df9f1bd21df5ff33eea33c/gevent-24.10.3-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:f7f4f171d4d2018170454d84c934842e1b5f6ce7468ba298f6e7f7cff15000a3", size = 5338394 },
+    { url = "https://files.pythonhosted.org/packages/0c/98/222f1a14f22ad2d1cbcc37edb74095264c1f9c7ab49e6423693383462b8a/gevent-24.10.3-cp312-cp312-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:7021e26d70189b33c27173d4173f27bf4685d6b6f1c0ea50e5335f8491cb110c", size = 5437989 },
+    { url = "https://files.pythonhosted.org/packages/bf/e8/cbb46afea3c7ecdc7289e15cb4a6f89903f4f9754a27ca320d3e465abc78/gevent-24.10.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:34aea15f9c79f27a8faeaa361bc1e72c773a9b54a1996a2ec4eefc8bcd59a824", size = 6838539 },
+    { url = "https://files.pythonhosted.org/packages/69/c3/e43e348f23da404a6d4368a14453ed097cdfca97d5212eaceb987d04a0e1/gevent-24.10.3-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:8af65a4d4feaec6042c666d22c322a310fba3b47e841ad52f724b9c3ce5da48e", size = 5513842 },
+    { url = "https://files.pythonhosted.org/packages/c2/76/84b7c19c072a80900118717a85236859127d630cdf8b079fe42f19649f12/gevent-24.10.3-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:89c4115e3f5ada55f92b61701a46043fe42f702b5af863b029e4c1a76f6cc2d4", size = 6927374 },
+    { url = "https://files.pythonhosted.org/packages/5e/69/0ab1b04c363547058fb5035275c144957b80b36cb6aee715fe6181b0cee9/gevent-24.10.3-cp312-cp312-win_amd64.whl", hash = "sha256:1ce6dab94c0b0d24425ba55712de2f8c9cb21267150ca63f5bb3a0e1f165da99", size = 1546701 },
+]
+
+[[package]]
 name = "graphviz"
 version = "0.20.3"
 source = { registry = "https://pypi.org/simple" }
@@ -825,19 +849,19 @@ wheels = [
 
 [[package]]
 name = "greenlet"
-version = "3.0.3"
+version = "3.1.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/17/14/3bddb1298b9a6786539ac609ba4b7c9c0842e12aa73aaa4d8d73ec8f8185/greenlet-3.0.3.tar.gz", hash = "sha256:43374442353259554ce33599da8b692d5aa96f8976d567d4badf263371fbe491", size = 182013 }
+sdist = { url = "https://files.pythonhosted.org/packages/2f/ff/df5fede753cc10f6a5be0931204ea30c35fa2f2ea7a35b25bdaf4fe40e46/greenlet-3.1.1.tar.gz", hash = "sha256:4ce3ac6cdb6adf7946475d7ef31777c26d94bccc377e070a7986bd2d5c515467", size = 186022 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a2/2f/461615adc53ba81e99471303b15ac6b2a6daa8d2a0f7f77fd15605e16d5b/greenlet-3.0.3-cp312-cp312-macosx_11_0_universal2.whl", hash = "sha256:70fb482fdf2c707765ab5f0b6655e9cfcf3780d8d87355a063547b41177599be", size = 273085 },
-    { url = "https://files.pythonhosted.org/packages/e9/55/2c3cfa3cdbb940cf7321fbcf544f0e9c74898eed43bf678abf416812d132/greenlet-3.0.3-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d4d1ac74f5c0c0524e4a24335350edad7e5f03b9532da7ea4d3c54d527784f2e", size = 660514 },
-    { url = "https://files.pythonhosted.org/packages/38/77/efb21ab402651896c74f24a172eb4d7479f9f53898bd5e56b9e20bb24ffd/greenlet-3.0.3-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:149e94a2dd82d19838fe4b2259f1b6b9957d5ba1b25640d2380bea9c5df37676", size = 674295 },
-    { url = "https://files.pythonhosted.org/packages/74/3a/92f188ace0190f0066dca3636cf1b09481d0854c46e92ec5e29c7cefe5b1/greenlet-3.0.3-cp312-cp312-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:15d79dd26056573940fcb8c7413d84118086f2ec1a8acdfa854631084393efcc", size = 669395 },
-    { url = "https://files.pythonhosted.org/packages/63/0f/847ed02cdfce10f0e6e3425cd054296bddb11a17ef1b34681fa01a055187/greenlet-3.0.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:881b7db1ebff4ba09aaaeae6aa491daeb226c8150fc20e836ad00041bcb11230", size = 670455 },
-    { url = "https://files.pythonhosted.org/packages/bd/37/56b0da468a85e7704f3b2bc045015301bdf4be2184a44868c71f6dca6fe2/greenlet-3.0.3-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:fcd2469d6a2cf298f198f0487e0a5b1a47a42ca0fa4dfd1b6862c999f018ebbf", size = 625692 },
-    { url = "https://files.pythonhosted.org/packages/7c/68/b5f4084c0a252d7e9c0d95fc1cfc845d08622037adb74e05be3a49831186/greenlet-3.0.3-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:1f672519db1796ca0d8753f9e78ec02355e862d0998193038c7073045899f305", size = 1152597 },
-    { url = "https://files.pythonhosted.org/packages/a4/fa/31e22345518adcd69d1d6ab5087a12c178aa7f3c51103f6d5d702199d243/greenlet-3.0.3-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:2516a9957eed41dd8f1ec0c604f1cdc86758b587d964668b5b196a9db5bfcde6", size = 1181043 },
-    { url = "https://files.pythonhosted.org/packages/53/80/3d94d5999b4179d91bcc93745d1b0815b073d61be79dd546b840d17adb18/greenlet-3.0.3-cp312-cp312-win_amd64.whl", hash = "sha256:bba5387a6975598857d86de9eac14210a49d554a77eb8261cc68b7d082f78ce2", size = 293635 },
+    { url = "https://files.pythonhosted.org/packages/7d/ec/bad1ac26764d26aa1353216fcbfa4670050f66d445448aafa227f8b16e80/greenlet-3.1.1-cp312-cp312-macosx_11_0_universal2.whl", hash = "sha256:4afe7ea89de619adc868e087b4d2359282058479d7cfb94970adf4b55284574d", size = 274260 },
+    { url = "https://files.pythonhosted.org/packages/66/d4/c8c04958870f482459ab5956c2942c4ec35cac7fe245527f1039837c17a9/greenlet-3.1.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f406b22b7c9a9b4f8aa9d2ab13d6ae0ac3e85c9a809bd590ad53fed2bf70dc79", size = 649064 },
+    { url = "https://files.pythonhosted.org/packages/51/41/467b12a8c7c1303d20abcca145db2be4e6cd50a951fa30af48b6ec607581/greenlet-3.1.1-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:c3a701fe5a9695b238503ce5bbe8218e03c3bcccf7e204e455e7462d770268aa", size = 663420 },
+    { url = "https://files.pythonhosted.org/packages/27/8f/2a93cd9b1e7107d5c7b3b7816eeadcac2ebcaf6d6513df9abaf0334777f6/greenlet-3.1.1-cp312-cp312-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:2846930c65b47d70b9d178e89c7e1a69c95c1f68ea5aa0a58646b7a96df12441", size = 658035 },
+    { url = "https://files.pythonhosted.org/packages/57/5c/7c6f50cb12be092e1dccb2599be5a942c3416dbcfb76efcf54b3f8be4d8d/greenlet-3.1.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:99cfaa2110534e2cf3ba31a7abcac9d328d1d9f1b95beede58294a60348fba36", size = 660105 },
+    { url = "https://files.pythonhosted.org/packages/f1/66/033e58a50fd9ec9df00a8671c74f1f3a320564c6415a4ed82a1c651654ba/greenlet-3.1.1-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:1443279c19fca463fc33e65ef2a935a5b09bb90f978beab37729e1c3c6c25fe9", size = 613077 },
+    { url = "https://files.pythonhosted.org/packages/19/c5/36384a06f748044d06bdd8776e231fadf92fc896bd12cb1c9f5a1bda9578/greenlet-3.1.1-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:b7cede291382a78f7bb5f04a529cb18e068dd29e0fb27376074b6d0317bf4dd0", size = 1135975 },
+    { url = "https://files.pythonhosted.org/packages/38/f9/c0a0eb61bdf808d23266ecf1d63309f0e1471f284300ce6dac0ae1231881/greenlet-3.1.1-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:23f20bb60ae298d7d8656c6ec6db134bca379ecefadb0b19ce6f19d1f232a942", size = 1163955 },
+    { url = "https://files.pythonhosted.org/packages/43/21/a5d9df1d21514883333fc86584c07c2b49ba7c602e670b174bd73cfc9c7f/greenlet-3.1.1-cp312-cp312-win_amd64.whl", hash = "sha256:7124e16b4c55d417577c2077be379514321916d5790fa287c9ed6f23bd2ffd01", size = 299655 },
 ]
 
 [[package]]
@@ -1141,20 +1165,20 @@ wheels = [
 
 [[package]]
 name = "playwright"
-version = "1.45.1"
+version = "1.48.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "greenlet" },
     { name = "pyee" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a7/fe/23b5ed477aa950723718c2e6c6d6d1f3f27078011a57d927d15f6cf9db40/playwright-1.45.1-py3-none-macosx_10_13_x86_64.whl", hash = "sha256:360607e37c00cdf97c74317f010e106ac4671aeaec6a192431dd71a30941da9d", size = 34742943 },
-    { url = "https://files.pythonhosted.org/packages/75/94/d36563b81df071205865b7ccb374a0f523ad7f351a5eb27bfb2625a93a97/playwright-1.45.1-py3-none-macosx_11_0_arm64.whl", hash = "sha256:20adc2abf164c5e8969f9066011b152e12c210549edec78cd05bd0e9cf4135b7", size = 33060239 },
-    { url = "https://files.pythonhosted.org/packages/ab/aa/7b7e8d89cc77150c05f7f82cc04cc37faf715be8324f69c4781f3a35c3cc/playwright-1.45.1-py3-none-macosx_11_0_universal2.whl", hash = "sha256:5f047cdc6accf4c7084dfc7587a2a5ef790cddc44cbb111e471293c5a91119db", size = 34742939 },
-    { url = "https://files.pythonhosted.org/packages/8c/9c/54b161852448d4c3c15b78ecd55b2ac73f7aeda1caf0f4069f9fc0459088/playwright-1.45.1-py3-none-manylinux1_x86_64.whl", hash = "sha256:f06f6659abe0abf263e5f6661d379fbf85c112745dd31d82332ceae914f58df7", size = 37857420 },
-    { url = "https://files.pythonhosted.org/packages/eb/43/d2fa94806abdaaa9a6ce47d6b5888ddc1b0d1a5794b6ec6eea9fe73a072d/playwright-1.45.1-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:87dc3b3d17e12c68830c29b7fdf5e93315221bbb4c6090e83e967e154e2c1828", size = 37601594 },
-    { url = "https://files.pythonhosted.org/packages/69/49/6d3be3cc6702bbd7fa5b162e5cb8a79139956c8155eeb0ee39768dae636c/playwright-1.45.1-py3-none-win32.whl", hash = "sha256:2b8f517886ef1e2151982f6e7be84be3ef7d8135bdcf8ee705b4e4e99566e866", size = 29688335 },
-    { url = "https://files.pythonhosted.org/packages/ab/78/779da49df6e036aaafbe47d1f55c95571855d6c5b4915bed41ab730412b5/playwright-1.45.1-py3-none-win_amd64.whl", hash = "sha256:0d236cf427784e77de352ba1b7d700693c5fe455b8e5f627f6d84ad5b84b5bf5", size = 29688336 },
+    { url = "https://files.pythonhosted.org/packages/b8/41/0166d58c3eeae72377cbcd4cbed84b36cddc551a2b094bf7984198aafb79/playwright-1.48.0-py3-none-macosx_10_13_x86_64.whl", hash = "sha256:082bce2739f1078acc7d0734da8cc0e23eb91b7fae553f3316d733276f09a6b1", size = 34989519 },
+    { url = "https://files.pythonhosted.org/packages/64/41/d77c47743800fbeb86657611e651e56a17cbb4ebfefa1da0318dc39092df/playwright-1.48.0-py3-none-macosx_11_0_arm64.whl", hash = "sha256:7da2eb51a19c7f3b523e9faa9d98e7af92e52eb983a099979ea79c9668e3cbf7", size = 33302881 },
+    { url = "https://files.pythonhosted.org/packages/b0/f2/f184f613e6f496ed78e7808ac729900257567d2c1a7930e61026f0e48a5f/playwright-1.48.0-py3-none-macosx_11_0_universal2.whl", hash = "sha256:115b988d1da322358b77bc3bf2d3cc90f8c881e691461538e7df91614c4833c9", size = 34989518 },
+    { url = "https://files.pythonhosted.org/packages/f9/0c/8cde1a86a9a7449a0ba95197f42156198083be1749b717831fba16ab2b5f/playwright-1.48.0-py3-none-manylinux1_x86_64.whl", hash = "sha256:8dabb80e62f667fe2640a8b694e26a7b884c0b4803f7514a3954fc849126227b", size = 38171658 },
+    { url = "https://files.pythonhosted.org/packages/31/dc/121be574222fc74d12ac42921728fb6ba8ac17264a1fdab1993263389082/playwright-1.48.0-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8ff8303409ebed76bed4c3d655340320b768817d900ba208b394fdd7d7939a5c", size = 37919223 },
+    { url = "https://files.pythonhosted.org/packages/3a/c5/ff02a780c76e9cf20296e2d1743bb42b1e81d62535802eb6d67b1b6b7b47/playwright-1.48.0-py3-none-win32.whl", hash = "sha256:85598c360c590076d4f435525be991246d74a905b654ac19d26eab7ed9b98b2d", size = 29983089 },
+    { url = "https://files.pythonhosted.org/packages/45/88/b6459c93a8bc0b96e7a33b6744bbef2740a0b78b0534542a037d220427f0/playwright-1.48.0-py3-none-win_amd64.whl", hash = "sha256:e0e87b0c4dc8fce83c725dd851aec37bc4e882bb225ec8a96bd83cf32d4f1623", size = 29983099 },
 ]
 
 [[package]]
@@ -1315,14 +1339,14 @@ wheels = [
 
 [[package]]
 name = "pyee"
-version = "11.1.0"
+version = "12.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f7/22/b4c7f3d9579204a014c4eda0e019e6bfe56af52a96cacc82004b60eec079/pyee-11.1.0.tar.gz", hash = "sha256:b53af98f6990c810edd9b56b87791021a8f54fd13db4edd1142438d44ba2263f", size = 29806 }
+sdist = { url = "https://files.pythonhosted.org/packages/d2/a7/8faaa62a488a2a1e0d56969757f087cbd2729e9bcfa508c230299f366b4c/pyee-12.0.0.tar.gz", hash = "sha256:c480603f4aa2927d4766eb41fa82793fe60a82cbfdb8d688e0d08c55a534e145", size = 29675 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/16/cc/5cea8a0a0d3deb90b5a0d39ad1a6a1ccaa40a9ea86d793eb8a49d32a6ed0/pyee-11.1.0-py3-none-any.whl", hash = "sha256:5d346a7d0f861a4b2e6c47960295bd895f816725b27d656181947346be98d7c1", size = 15263 },
+    { url = "https://files.pythonhosted.org/packages/1d/0d/95993c08c721ec68892547f2117e8f9dfbcef2ca71e098533541b4a54d5f/pyee-12.0.0-py3-none-any.whl", hash = "sha256:7b14b74320600049ccc7d0e0b1becd3b4bd0a03c745758225e31a59f4095c990", size = 14831 },
 ]
 
 [[package]]
@@ -2084,6 +2108,18 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/2f/df/b3deaf0fa5441288486292cfbf56f1e941448e69fd43a0beabbe012f3bfc/yarl-1.12.1-cp312-cp312-win32.whl", hash = "sha256:0ac33d22b2604b020569a82d5f8a03ba637ba42cc1adf31f616af70baf81710b", size = 101311 },
     { url = "https://files.pythonhosted.org/packages/ce/f9/13df3943cc16a45e980829c23b8d762d91cf71946c6c3d2b34cfd35598ee/yarl-1.12.1-cp312-cp312-win_amd64.whl", hash = "sha256:fd24996e12e1ba7c397c44be75ca299da14cde34d74bc5508cce233676cc68d0", size = 110687 },
     { url = "https://files.pythonhosted.org/packages/63/42/ec4ddfdf41408c13cdac6e0cc8da43bb0111ac1ec718987f5097f49e6871/yarl-1.12.1-py3-none-any.whl", hash = "sha256:dc3192a81ecd5ff954cecd690327badd5a84d00b877e1573f7c9097ce13e5bfb", size = 38824 },
+]
+
+[[package]]
+name = "zope-event"
+version = "5.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "setuptools" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/46/c2/427f1867bb96555d1d34342f1dd97f8c420966ab564d58d18469a1db8736/zope.event-5.0.tar.gz", hash = "sha256:bac440d8d9891b4068e2b5a2c5e2c9765a9df762944bda6955f96bb9b91e67cd", size = 17350 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/fe/42/f8dbc2b9ad59e927940325a22d6d3931d630c3644dae7e2369ef5d9ba230/zope.event-5.0-py3-none-any.whl", hash = "sha256:2832e95014f4db26c47a13fdaef84cef2f4df37e66b59d8f1f4a8f319a632c26", size = 6824 },
 ]
 
 [[package]]
