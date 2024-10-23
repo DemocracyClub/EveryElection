@@ -36,8 +36,6 @@ jobs:
           command: |
             sudo apt update && sudo apt install -y gdal-bin python3-gdal python3-dev
             deployscripts/install_uv.sh
-            echo 'export PATH=$HOME/.cargo/bin:$PATH' >> $BASH_ENV
-            source $BASH_ENV
             uv venv --python 3.12
             . .venv/bin/activate
             uv sync --all-extras
@@ -109,8 +107,6 @@ jobs:
         name: Install CDK Python dependencies
         command: |
           deployscripts/install_uv.sh
-          echo 'export PATH=$HOME/.cargo/bin:$PATH' >> $BASH_ENV
-          source $BASH_ENV
           uv venv --python 3.12
           . .venv/bin/activate
           uv sync --extra cdk --no-dev

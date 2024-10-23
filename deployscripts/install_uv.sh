@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
 set -xeE
 
-curl -LsSf https://astral.sh/uv/0.4.23/install.sh | sh
+UV_CONSTRAINT=">=0.4.0,<0.5.0"
+
+if [ "$CI" = "true" ]; then
+    pip install uv"$UV_CONSTRAINT"
+else
+    sudo PIP_BREAK_SYSTEM_PACKAGES=1 pip install uv"$UV_CONSTRAINT"
+fi
