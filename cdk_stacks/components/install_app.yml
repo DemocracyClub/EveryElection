@@ -1,7 +1,7 @@
 name: InstallApp
 description: Installs the EE Django app
 schemaVersion: 1.0
-component_version: 0.0.22
+component_version: 0.0.27
 parameters:
   - git_branch:
       type: string
