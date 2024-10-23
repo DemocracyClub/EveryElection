@@ -23,7 +23,7 @@ jobs:
           node-version: '18'
 
       - restore_cache:
-          key: v3-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
+          key: v3-dependencies-{{ checksum "pyproject.toml" }}-{{ checksum "uv.lock" }}
 
       - run:
           name: Install node node_modules
@@ -35,22 +35,17 @@ jobs:
           name: Install app dependencies
           command: |
             sudo apt update && sudo apt install -y gdal-bin python3-gdal python3-dev
-            pyenv local $(ls ~/.pyenv/versions/)
-            python -m venv .venv
+            curl -LsSf https://astral.sh/uv/0.4.23/install.sh | sh
+            echo 'export PATH=$HOME/.cargo/bin:$PATH' >> $BASH_ENV
+            source $BASH_ENV
+            uv venv --python 3.12
             . .venv/bin/activate
-            pip install --upgrade pip
-            pip install coveralls wheel
-            pip install -r requirements/testing.txt
+            uv sync --all-extras
       - run:
           name: Install Playwright
           command: |
             . .venv/bin/activate
             playwright install
-      - run:
-          name: Install CDK Python dependencies
-          command: |
-            . .venv/bin/activate
-            pip install -r requirements/cdk.txt
       - run:
           name: Pip safety check
           command: |
@@ -60,7 +55,7 @@ jobs:
           paths:
             - ./.venv
             - ./node_modules
-          key: v3-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
+          key: v3-dependencies-{{ checksum "pyproject.toml" }}-{{ checksum "uv.lock" }}
 
       - run:
           name: Pre-test checks
@@ -70,7 +65,8 @@ jobs:
             python manage.py --version
             python manage.py check
             python manage.py makemigrations --check
-            pip check
+            uv lock --locked
+            uv pip check
             ruff format . --check
             ruff check .
             git ls-files '*.html' | xargs djhtml --check
@@ -85,6 +81,7 @@ jobs:
           name: Submit coverage
           command: |
             . .venv/bin/activate
+            uv pip install coveralls
             coveralls
 
       - store_artifacts:
@@ -107,20 +104,22 @@ jobs:
     steps:
     - checkout
     - restore_cache:
-        key: v3-machine-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
+        key: v3-machine-dependencies-{{ checksum "pyproject.toml" }}-{{ checksum "uv.lock" }}
     - run:
         name: Install CDK Python dependencies
         command: |
-          pyenv local $(ls -1 /opt/circleci/.pyenv/versions | grep 3.12)
-          python -m venv .venv
+          curl -LsSf https://astral.sh/uv/0.4.23/install.sh | sh
+          echo 'export PATH=$HOME/.cargo/bin:$PATH' >> $BASH_ENV
+          source $BASH_ENV
+          uv venv --python 3.12
           . .venv/bin/activate
-          pip install -r requirements/cdk.txt
+          uv sync --extra cdk --no-dev
 
     - save_cache:
         paths:
           - ./.venv
           - ./node_modules
-        key: v3-machine-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
+        key: v3-machine-dependencies-{{ checksum "pyproject.toml" }}-{{ checksum "uv.lock" }}
 
     - run:
         name: CDK version
@@ -156,17 +155,16 @@ jobs:
     steps:
     - checkout
     - restore_cache:
-        key: v3-machine-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
+        key: v3-machine-dependencies-{{ checksum "pyproject.toml" }}-{{ checksum "uv.lock" }}
     - run:
         name: CDK deploy
         command: |
-          pyenv local $(ls -1 /opt/circleci/.pyenv/versions | grep 3.12)
           . .venv/bin/activate
           npx cdk deploy --all --require-approval never --concurrency 3
     - save_cache:
         paths:
         - .cdk.out
-        key: v3-machine-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
+        key: v3-machine-dependencies-{{ checksum "pyproject.toml" }}-{{ checksum "uv.lock" }}
     - slack/notify:
           event: fail
           template: basic_fail_1
@@ -192,11 +190,10 @@ jobs:
     - node/install:
         node-version: '18'
     - restore_cache:
-        key: v3-dependencies-{{ checksum "requirements/base.txt" }}-{{ checksum "requirements/testing.txt" }}-{{ checksum "requirements/cdk.txt" }}
+        key: v3-dependencies-{{ checksum "pyproject.toml" }}-{{ checksum "uv.lock" }}
     - run:
         name: "Code Deploy: Create deployment group"
         command: |
-          pyenv local $(ls ~/.pyenv/versions/)
           . .venv/bin/activate
           python deployscripts/create_deployment_group.py
     - run:
