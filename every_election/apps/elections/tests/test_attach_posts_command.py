@@ -1,6 +1,6 @@
 from io import StringIO
+from unittest import mock
 
-import mock
 from django.test import TestCase
 from elections.management.commands import attach_posts_per_election_from_csv
 from elections.models import Election
