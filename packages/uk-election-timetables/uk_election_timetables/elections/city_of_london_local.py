@@ -13,6 +13,9 @@ https://github.com/DemocracyClub/uk-election-timetables/issues/8
 
 class CityOfLondonLocalElection(Election):
     def __init__(self, poll_date: date):
+        """
+        :param poll_date: a datetime representing the date of the poll
+        """
         Election.__init__(self, poll_date, Country.ENGLAND)
 
     @property
