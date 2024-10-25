@@ -6,6 +6,10 @@ from uk_election_timetables.election import Election
 
 class UKParliamentElection(Election):
     def __init__(self, poll_date: date, country: Country = None):
+        """
+        :param poll_date: a datetime representing the date of the poll
+        :param country: an optional Country representing the country where the election will be held
+        """
         Election.__init__(self, poll_date, country)
 
     @property
@@ -15,8 +19,6 @@ class UKParliamentElection(Election):
 
         This is set out in `Representation of the People Act 1983 <https://www.legislation.gov.uk/ukpga/1983/2/contents>`_ and its amendments.
 
-        :param poll_date: a datetime representing the date of the poll
-        :param country: an optional Country representing the country where the election will be held
         :return: a datetime representing the expected publish date
         """
 

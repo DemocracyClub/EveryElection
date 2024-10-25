@@ -6,6 +6,9 @@ from uk_election_timetables.election import Election
 
 class ScottishParliamentElection(Election):
     def __init__(self, poll_date: date):
+        """
+        :param poll_date: a datetime representing the date of the poll
+        """
         Election.__init__(self, poll_date, Country.SCOTLAND)
 
     @property
@@ -30,7 +33,6 @@ class ScottishParliamentElection(Election):
 
         This is set out in `The Scottish Parliament (Elections etc.) Order 2015 <https://www.legislation.gov.uk/ssi/2015/425/made>`_
 
-        :param poll_date: a datetime representing the date of the poll
         :return: a datetime representing the expected publish date
         """
         return working_days_before(self.poll_date, 23, super()._calendar())

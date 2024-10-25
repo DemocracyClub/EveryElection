@@ -6,6 +6,9 @@ from uk_election_timetables.election import Election
 
 class MayoralElection(Election):
     def __init__(self, poll_date: date):
+        """
+        :param poll_date: a datetime representing the date of the poll
+        """
         Election.__init__(self, poll_date, Country.ENGLAND)
 
     @property
@@ -15,7 +18,6 @@ class MayoralElection(Election):
 
         This is set out in `The Local Authorities (Mayoral Elections) (England and Wales) (Amendment) Regulations 2014 <https://www.legislation.gov.uk/uksi/2014/370/made>`_
 
-        :param poll_date: a datetime representing the date of the poll
         :return: a datetime representing the expected publish date
         """
         return working_days_before(self.poll_date, 19, super()._calendar())
