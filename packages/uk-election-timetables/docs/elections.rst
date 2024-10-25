@@ -20,6 +20,14 @@ elections.local
    :undoc-members:
    :show-inheritance:
 
+elections.city\_of\_london\_local
+----------------------
+
+.. automodule:: uk_election_timetables.elections.city_of_london_local
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 elections.mayor
 ----------------------
 
