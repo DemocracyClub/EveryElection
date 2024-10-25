@@ -1,10 +1,12 @@
 import datetime
 from typing import Dict
+import pytest
 
 from uk_election_timetables.calendars import Country
 from uk_election_timetables.election import Election, TimetableEvent
 
 from uk_election_timetables.election_ids import from_election_id
+from uk_election_timetables import elections
 
 
 def test_timetable_sopn_publish_date():
@@ -141,3 +143,78 @@ def test_is_after():
     assert election.is_after(TimetableEvent.SOPN_PUBLISH_DATE) is True
     assert election.is_after(TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE) is True
     assert election.is_after(TimetableEvent.VAC_APPLICATION_DEADLINE) is True
+
+
+election_types = [
+    {
+        "election_id": "nia.2019-02-21",
+        "country": None,
+        "expected_type": elections.NorthernIrelandAssemblyElection,
+    },
+    {
+        "election_id": "naw.2019-02-21",
+        "country": None,
+        "expected_type": elections.SeneddCymruElection,
+    },
+    {
+        "election_id": "senedd.2019-02-21",
+        "country": None,
+        "expected_type": elections.SeneddCymruElection,
+    },
+    {
+        "election_id": "gla.2019-02-21",
+        "country": None,
+        "expected_type": elections.GreaterLondonAssemblyElection,
+    },
+    {
+        "election_id": "pcc.2019-02-21",
+        "country": None,
+        "expected_type": elections.PoliceAndCrimeCommissionerElection,
+    },
+    {
+        "election_id": "mayor.2019-02-21",
+        "country": None,
+        "expected_type": elections.MayoralElection,
+    },
+    # City of London
+    {
+        "election_id": "local.city-of-london.2019-02-21",  # Common Council
+        "country": None,
+        "expected_type": elections.CityOfLondonLocalElection,
+    },
+    {
+        "election_id": "local.city-of-london-alder.2019-02-21",  # Aldermen
+        "country": None,
+        "expected_type": elections.CityOfLondonLocalElection,
+    },
+    # local
+    {
+        "election_id": "local.somewhere.2019-02-21",
+        "country": Country.ENGLAND,
+        "expected_type": elections.LocalElection,
+    },
+    {
+        "election_id": "local.somewhere.2019-02-21",
+        "country": Country.WALES,
+        "expected_type": elections.LocalElection,
+    },
+    # parl
+    {
+        "election_id": "parl.somewhere.2019-02-21",
+        "country": Country.ENGLAND,
+        "expected_type": elections.UKParliamentElection,
+    },
+    {
+        "election_id": "parl.somewhere.2019-02-21",
+        "country": Country.WALES,
+        "expected_type": elections.UKParliamentElection,
+    },
+]
+
+
+@pytest.mark.parametrize("election", election_types)
+def test_from_election_types_types(election):
+    assert isinstance(
+        from_election_id(election["election_id"], election["country"]),
+        election["expected_type"],
+    )
