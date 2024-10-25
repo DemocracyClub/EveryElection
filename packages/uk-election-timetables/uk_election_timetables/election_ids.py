@@ -12,6 +12,7 @@ from uk_election_timetables.elections import (
     PoliceAndCrimeCommissionerElection,
     MayoralElection,
     LocalElection,
+    CityOfLondonLocalElection,
     UKParliamentElection,
 )
 
@@ -100,6 +101,10 @@ def from_election_id(election_id: str, country: Country = None) -> Election:
 
     if not valid_election_type(election_type):
         raise NoSuchElectionTypeError(election_type)
+
+    if election_id.startswith("local.city-of-london"):
+        # The City of London is special and different
+        return CityOfLondonLocalElection(poll_date)
 
     if requires_country(election_type) and country is None:
         raise AmbiguousElectionIdError(election_id)
