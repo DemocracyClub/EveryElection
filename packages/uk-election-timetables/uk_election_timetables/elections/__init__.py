@@ -9,6 +9,9 @@ from uk_election_timetables.elections.northern_ireland_assembly import (
     NorthernIrelandAssemblyElection,
 )
 from uk_election_timetables.elections.local import LocalElection
+from uk_election_timetables.elections.city_of_london_local import (
+    CityOfLondonLocalElection,
+)
 from uk_election_timetables.elections.uk_parliament import UKParliamentElection
 from uk_election_timetables.elections.police_and_crime_commissioner import (
     PoliceAndCrimeCommissionerElection,
@@ -21,6 +24,7 @@ __ALL__ = (
     GreaterLondonAssemblyElection,
     NorthernIrelandAssemblyElection,
     LocalElection,
+    CityOfLondonLocalElection,
     UKParliamentElection,
     PoliceAndCrimeCommissionerElection,
     MayoralElection,
