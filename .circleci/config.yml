@@ -53,6 +53,7 @@ jobs:
           paths:
             - ./.venv
             - ./node_modules
+            - $HOME/.cache/uv
           key: v3-dependencies-{{ checksum "pyproject.toml" }}-{{ checksum "uv.lock" }}
 
       - run:
@@ -115,6 +116,7 @@ jobs:
         paths:
           - ./.venv
           - ./node_modules
+          - $HOME/.cache/uv
         key: v3-machine-dependencies-{{ checksum "pyproject.toml" }}-{{ checksum "uv.lock" }}
 
     - run:
