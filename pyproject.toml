@@ -39,7 +39,7 @@ dependencies = [
     "dc_django_utils @ git+https://github.com/DemocracyClub/dc_django_utils.git@7.0.1",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 cdk = [
     "aws-cdk-lib==2.160.0",
     "aws-cdk.aws-lambda-python-alpha==2.160.0a0",
@@ -52,16 +52,7 @@ production = [
     "sentry-sdk==2.14.0",
     "gevent==24.10.3",
 ]
-
-
-[tool.uv]
-
-# safety depends on a pre-release version of dparse
-prerelease = "allow"
-
-package = false
-
-dev-dependencies = [
+dev = [
     "django-debug-toolbar==4.4.6",
     "pytest==7.4.0",
     "pytest-django==4.5.2",
@@ -79,6 +70,13 @@ dev-dependencies = [
     "moto==5.0.9"
 ]
 
+
+[tool.uv]
+
+# safety depends on a pre-release version of dparse
+prerelease = "allow"
+
+package = false
 
 [tool.ruff]
 line-length = 80

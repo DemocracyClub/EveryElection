@@ -5,4 +5,4 @@ set -xeE
 cd /var/www/every_election/repo/
 uv venv
 . .venv/bin/activate
-uv sync --extra production --no-dev
+uv sync --group production --no-group dev --no-group cdk

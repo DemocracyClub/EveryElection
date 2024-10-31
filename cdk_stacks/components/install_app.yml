@@ -47,7 +47,7 @@ phases:
             - uv venv
             - sudo chown -R {{ username }} /var/www/{{ username }}
             - . .venv/bin/activate
-            - uv sync --extra production --no-dev
+            - uv sync --group production --no-group dev --no-group cdk
             - npm ci
       - name: CreateEnvWriterFile
         action: CreateFile

@@ -38,7 +38,7 @@ jobs:
             deployscripts/install_uv.sh
             uv venv --python 3.12
             . .venv/bin/activate
-            uv sync --all-extras
+            uv sync --group cdk --group production
       - run:
           name: Install Playwright
           command: |
@@ -109,7 +109,7 @@ jobs:
           deployscripts/install_uv.sh
           uv venv --python 3.12
           . .venv/bin/activate
-          uv sync --extra cdk --no-dev
+          uv sync --only-group cdk
 
     - save_cache:
         paths:

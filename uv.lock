@@ -657,7 +657,7 @@ dependencies = [
     { name = "uk-geo-utils" },
 ]
 
-[package.optional-dependencies]
+[package.dev-dependencies]
 cdk = [
     { name = "aws-cdk-aws-lambda-python-alpha" },
     { name = "aws-cdk-lib" },
@@ -665,13 +665,6 @@ cdk = [
     { name = "diagrams" },
     { name = "pyyaml" },
 ]
-production = [
-    { name = "gevent" },
-    { name = "gunicorn" },
-    { name = "sentry-sdk" },
-]
-
-[package.dev-dependencies]
 dev = [
     { name = "django-debug-toolbar" },
     { name = "djhtml" },
@@ -689,19 +682,20 @@ dev = [
     { name = "safety" },
     { name = "vcrpy" },
 ]
+production = [
+    { name = "gevent" },
+    { name = "gunicorn" },
+    { name = "sentry-sdk" },
+]
 
 [package.metadata]
 requires-dist = [
-    { name = "aws-cdk-aws-lambda-python-alpha", marker = "extra == 'cdk'", specifier = "==2.160.0a0" },
-    { name = "aws-cdk-lib", marker = "extra == 'cdk'", specifier = "==2.160.0" },
     { name = "beautifulsoup4", specifier = "==4.12.1" },
     { name = "boto3", specifier = "==1.34.148" },
     { name = "botocore", specifier = "==1.34.148" },
     { name = "commitment", specifier = "==3.0.1" },
-    { name = "constructs", marker = "extra == 'cdk'", specifier = "==10.0.0" },
     { name = "dc-design-system", url = "https://github.com/DemocracyClub/design-system/archive/refs/tags/0.5.0.zip" },
     { name = "dc-django-utils", git = "https://github.com/DemocracyClub/dc_django_utils.git?rev=7.0.1" },
-    { name = "diagrams", marker = "extra == 'cdk'", specifier = "==0.23.3" },
     { name = "django", specifier = "==4.2.16" },
     { name = "django-cors-headers", specifier = "==4.2.0" },
     { name = "django-dotenv", specifier = "==1.4.2" },
@@ -718,16 +712,12 @@ requires-dist = [
     { name = "djangorestframework-jsonp", specifier = "==1.0.2" },
     { name = "eco-parser", specifier = "==0.2.0" },
     { name = "geojson", specifier = "==3.1.0" },
-    { name = "gevent", marker = "extra == 'production'", specifier = "==24.10.3" },
-    { name = "gunicorn", marker = "extra == 'production'", specifier = "==23.0.0" },
     { name = "psutil", specifier = "==6.0.0" },
     { name = "psycopg-binary", specifier = "==3.1.19" },
-    { name = "pyyaml", marker = "extra == 'cdk'", specifier = "==6.0.2" },
     { name = "rapidfuzz", specifier = "==3.4.0" },
     { name = "requests", specifier = "==2.32.3" },
     { name = "retry2", specifier = "==0.9.5" },
     { name = "scrapy", specifier = "==2.11.2" },
-    { name = "sentry-sdk", marker = "extra == 'production'", specifier = "==2.14.0" },
     { name = "sqlparse", specifier = "==0.5.0" },
     { name = "uk-election-ids", specifier = "==0.7.5" },
     { name = "uk-election-timetables", specifier = "==2.4.1" },
@@ -735,6 +725,13 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
+cdk = [
+    { name = "aws-cdk-aws-lambda-python-alpha", specifier = "==2.160.0a0" },
+    { name = "aws-cdk-lib", specifier = "==2.160.0" },
+    { name = "constructs", specifier = "==10.0.0" },
+    { name = "diagrams", specifier = "==0.23.3" },
+    { name = "pyyaml", specifier = "==6.0.2" },
+]
 dev = [
     { name = "django-debug-toolbar", specifier = "==4.4.6" },
     { name = "djhtml", specifier = "==3.0.6" },
@@ -751,6 +748,11 @@ dev = [
     { name = "ruff", specifier = "==0.2.2" },
     { name = "safety", specifier = "==3.2.7" },
     { name = "vcrpy", specifier = "==6.0.1" },
+]
+production = [
+    { name = "gevent", specifier = "==24.10.3" },
+    { name = "gunicorn", specifier = "==23.0.0" },
+    { name = "sentry-sdk", specifier = "==2.14.0" },
 ]
 
 [[package]]
