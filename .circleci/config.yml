@@ -80,8 +80,7 @@ jobs:
           name: Submit coverage
           command: |
             . .venv/bin/activate
-            uv pip install coveralls
-            coveralls
+            uv run --with coveralls coveralls
 
       - store_artifacts:
           path: test-results
