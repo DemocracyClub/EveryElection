@@ -29,7 +29,7 @@ dependencies = [
     "requests==2.32.3",
     "retry2==0.9.5",
     "scrapy==2.11.2",
-    "sqlparse==0.5.0",
+    "sqlparse==0.5.1",
     "uk-election-ids==0.7.5",
     "uk-election-timetables==4.0.0",
     "uk-geo-utils==0.12.0",
