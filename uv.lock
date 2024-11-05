@@ -145,14 +145,14 @@ wheels = [
 
 [[package]]
 name = "beautifulsoup4"
-version = "4.12.1"
+version = "4.12.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "soupsieve" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/4e/2f/63c252850ca79759810a988c0555cdfb67a89750743ae3943a1de106a5d2/beautifulsoup4-4.12.1.tar.gz", hash = "sha256:c7bdbfb20a0dbe09518b96a809d93351b2e2bcb8046c0809466fa6632a10c257", size = 504683 }
+sdist = { url = "https://files.pythonhosted.org/packages/b3/ca/824b1195773ce6166d388573fc106ce56d4a805bd7427b624e063596ec58/beautifulsoup4-4.12.3.tar.gz", hash = "sha256:74e3d1928edc070d21748185c46e3fb33490f22f52a3addee9aee0f4f7781051", size = 581181 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/29/15/236481b1310857378b0d7d00e1a56018fb88e6cab18cc8076d858cdc565b/beautifulsoup4-4.12.1-py3-none-any.whl", hash = "sha256:e44795bb4f156d94abb5fbc56efff871c1045bfef72e9efe77558db9f9616ac3", size = 142490 },
+    { url = "https://files.pythonhosted.org/packages/b1/fe/e8c672695b37eecc5cbf43e1d0638d88d66ba3a44c4d321c796f4e59167f/beautifulsoup4-4.12.3-py3-none-any.whl", hash = "sha256:b80878c9f40111313e55da8ba20bdba06d8fa3969fc68304167741bbf9e082ed", size = 147925 },
 ]
 
 [[package]]
@@ -691,7 +691,7 @@ production = [
 
 [package.metadata]
 requires-dist = [
-    { name = "beautifulsoup4", specifier = "==4.12.1" },
+    { name = "beautifulsoup4", specifier = "==4.12.3" },
     { name = "boto3", specifier = "==1.34.148" },
     { name = "botocore", specifier = "==1.34.148" },
     { name = "commitment", specifier = "==3.0.1" },
