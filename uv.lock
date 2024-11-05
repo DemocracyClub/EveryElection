@@ -572,14 +572,15 @@ wheels = [
 
 [[package]]
 name = "djangorestframework-gis"
-version = "1.0"
+version = "1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
+    { name = "django-filter" },
     { name = "djangorestframework" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/54/69/d099e8f8aa65d5158e9e0e34c7e0aefadfd98e62754d74dac55ecddba28a/djangorestframework-gis-1.0.tar.gz", hash = "sha256:921c5adbc9a7c0502c905957a6695b67f55d7bf6582e1ab837888b55a1fce5a6", size = 48774 }
+sdist = { url = "https://files.pythonhosted.org/packages/96/56/87d5921170e05af629d04f733c6991fdfb9f8fde210beef9d63f3ae087c4/djangorestframework_gis-1.1.tar.gz", hash = "sha256:84b915503a59263ed9473ecde34b19260c3e9c5c8ebb3aea8d91a67fd39f7215", size = 49563 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0c/f7/d8de1feebcf0d8bc9e5a98cd9a50b0739445b0aa3586bae26139a703f066/djangorestframework_gis-1.0-py2.py3-none-any.whl", hash = "sha256:bb715f05a111c02b9acc4021b17566e40c0b90dd833c583bac3d67f92be9667d", size = 21782 },
+    { url = "https://files.pythonhosted.org/packages/f4/c4/09f9d899e827fd7fbed450962c9b6c67d501c06f7e29e0abee30c13e53d0/djangorestframework_gis-1.1-py2.py3-none-any.whl", hash = "sha256:fd8631c2c10208df5f05ee297ce333aaa9a794acd654420207f72e8f9acd59ea", size = 21836 },
 ]
 
 [[package]]
@@ -709,7 +710,7 @@ requires-dist = [
     { name = "django-pipeline", specifier = "==3.1.0" },
     { name = "django-storages", specifier = "==1.13.2" },
     { name = "djangorestframework", specifier = "==3.15.2" },
-    { name = "djangorestframework-gis", specifier = "==1.0" },
+    { name = "djangorestframework-gis", specifier = "==1.1" },
     { name = "djangorestframework-jsonp", specifier = "==1.0.2" },
     { name = "eco-parser", specifier = "==0.2.0" },
     { name = "geojson", specifier = "==3.1.0" },
