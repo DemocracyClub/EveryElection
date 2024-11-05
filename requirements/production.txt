@@ -1,5 +1,0 @@
--r base.txt
-
-gunicorn==22.0.0
-jsmin==3.0.1
-sentry-sdk
