@@ -49,6 +49,10 @@ jobs:
           command: |
             . .venv/bin/activate
             safety check
+
+      - run:
+          name: Prune UV cache
+          command: uv cache prune --ci
       - save_cache:
           paths:
             - ./.venv
@@ -111,6 +115,9 @@ jobs:
           . .venv/bin/activate
           uv sync --only-group cdk
 
+    - run:
+        name: Prune UV cache
+        command: uv cache prune --ci
     - save_cache:
         paths:
           - ./.venv
