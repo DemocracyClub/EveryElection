@@ -548,14 +548,14 @@ wheels = [
 
 [[package]]
 name = "django-storages"
-version = "1.13.2"
+version = "1.14.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/cb/8a/3872af7e3d61a8eb7616872549cd74f7f1090de41792a059adb7ce6854dc/django-storages-1.13.2.tar.gz", hash = "sha256:cbadd15c909ceb7247d4ffc503f12a9bec36999df8d0bef7c31e57177d512688", size = 107522 }
+sdist = { url = "https://files.pythonhosted.org/packages/6d/88/77b5ede11147941dece064bd80ac618f6a4b91b4c9d5d305a2660014941e/django-storages-1.14.4.tar.gz", hash = "sha256:69aca94d26e6714d14ad63f33d13619e697508ee33ede184e462ed766dc2a73f", size = 83496 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/06/ed/6eef8d009138d4c58c63026bf24e946a7e09caac77aca33ab46a5e5bc51f/django_storages-1.13.2-py3-none-any.whl", hash = "sha256:31dc5a992520be571908c4c40d55d292660ece3a55b8141462b4e719aa38eab3", size = 46715 },
+    { url = "https://files.pythonhosted.org/packages/e0/69/a4b2f2dfa51fd18fd898e10cc41d73a30965da7cb3b683f1375b1dc3dd5c/django_storages-1.14.4-py3-none-any.whl", hash = "sha256:d61930acb4a25e3aebebc6addaf946a3b1df31c803a6bf1af2f31c9047febaa3", size = 31809 },
 ]
 
 [[package]]
@@ -707,7 +707,7 @@ requires-dist = [
     { name = "django-middleware-global-request", specifier = "==0.3.1" },
     { name = "django-model-utils", specifier = "==4.3.1" },
     { name = "django-pipeline", specifier = "==3.1.0" },
-    { name = "django-storages", specifier = "==1.13.2" },
+    { name = "django-storages", specifier = "==1.14.4" },
     { name = "djangorestframework", specifier = "==3.15.2" },
     { name = "djangorestframework-gis", specifier = "==1.0" },
     { name = "djangorestframework-jsonp", specifier = "==1.0.2" },
