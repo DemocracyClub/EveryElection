@@ -431,14 +431,15 @@ wheels = [
 
 [[package]]
 name = "django-cors-headers"
-version = "4.2.0"
+version = "4.6.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
+    { name = "asgiref" },
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/cb/5d/739ec1adbe848cdb0f07c3b621561c9589e491cc0443a8d16cec23c107a5/django_cors_headers-4.2.0.tar.gz", hash = "sha256:f9749c6410fe738278bc2b6ef17f05195bc7b251693c035752d8257026af024f", size = 21183 }
+sdist = { url = "https://files.pythonhosted.org/packages/c6/e5/3b67fc05b9c02b926411436dfc553829bc00843706ce7f99752433017f47/django_cors_headers-4.6.0.tar.gz", hash = "sha256:14d76b4b4c8d39375baeddd89e4f08899051eeaf177cb02a29bd6eae8cf63aa8", size = 20961 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a7/f7/ae456ea653acf99c471287741f84f9e5c8a1458d1b44715ea94869e27b56/django_cors_headers-4.2.0-py3-none-any.whl", hash = "sha256:9ada212b0e2efd4a5e339360ffc869cb21ac5605e810afe69f7308e577ea5bde", size = 12852 },
+    { url = "https://files.pythonhosted.org/packages/52/73/689532cf164ab10ed1521d825ea156656520cec98886c8d2ac1ce8829220/django_cors_headers-4.6.0-py3-none-any.whl", hash = "sha256:8edbc0497e611c24d5150e0055d3b178c6534b8ed826fb6f53b21c63f5d48ba3", size = 12791 },
 ]
 
 [[package]]
@@ -697,7 +698,7 @@ requires-dist = [
     { name = "dc-design-system", url = "https://github.com/DemocracyClub/design-system/archive/refs/tags/0.5.0.zip" },
     { name = "dc-django-utils", git = "https://github.com/DemocracyClub/dc_django_utils.git?rev=7.0.1" },
     { name = "django", specifier = "==4.2.16" },
-    { name = "django-cors-headers", specifier = "==4.2.0" },
+    { name = "django-cors-headers", specifier = "==4.6.0" },
     { name = "django-dotenv", specifier = "==1.4.2" },
     { name = "django-extensions", specifier = "==3.2.3" },
     { name = "django-filter", specifier = "==24.2" },
