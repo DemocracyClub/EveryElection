@@ -23,7 +23,7 @@ dependencies = [
     "djangorestframework-jsonp==1.0.2",
     "eco-parser==0.2.0",
     "geojson==3.1.0",
-    "psutil==6.0.0",
+    "psutil==6.1.0",
     "psycopg-binary==3.2.3",
     "rapidfuzz==3.10.1",
     "requests==2.32.3",
