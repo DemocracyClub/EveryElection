@@ -515,14 +515,14 @@ wheels = [
 
 [[package]]
 name = "django-middleware-global-request"
-version = "0.3.1"
+version = "0.3.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/91/e2/638e6500cc4ebc9ddfa3687bfd02271afd8d3ef1e80050942b54f7b622ad/django-middleware-global-request-0.3.1.tar.gz", hash = "sha256:98f3012414ca56197f456c6472791e9a3eb1cddf53359a38f515a9b6d3d157ac", size = 6148 }
+sdist = { url = "https://files.pythonhosted.org/packages/16/9a/e83cdf055240a60b6da5f51cc12ec31a33c11f20092b79f2871acc85a122/django-middleware-global-request-0.3.5.tar.gz", hash = "sha256:37c79c9cd80e73751ae2821696e20af13ba7628a0915ff1818d124e0e72980b1", size = 5943 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/25/26/dad2444a3711f50ebb2fbcd47c3ed4d7b80ba19f0afeb86cb0fb2b6e97ee/django_middleware_global_request-0.3.1-py3-none-any.whl", hash = "sha256:042c7e1fda5e23088a9d38fb26c62b6c68608cc6c0411f69004e26293cef6eee", size = 8242 },
+    { url = "https://files.pythonhosted.org/packages/3c/80/9cab9c945eb5f7a8fc21c044a4d531527a18068f90c7177d00ccbf3eeeb6/django_middleware_global_request-0.3.5-py3-none-any.whl", hash = "sha256:7beb2c8ca9106aac641692cda2bac290bd7083a315446a12db06fa91b73903d6", size = 7037 },
 ]
 
 [[package]]
@@ -705,7 +705,7 @@ requires-dist = [
     { name = "django-filter", specifier = "==24.3" },
     { name = "django-formtools", specifier = "==2.3" },
     { name = "django-localflavor", specifier = "==4.0" },
-    { name = "django-middleware-global-request", specifier = "==0.3.1" },
+    { name = "django-middleware-global-request", specifier = "==0.3.5" },
     { name = "django-model-utils", specifier = "==4.3.1" },
     { name = "django-pipeline", specifier = "==3.1.0" },
     { name = "django-storages", specifier = "==1.14.4" },
