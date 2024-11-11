@@ -17,6 +17,7 @@ class CodeMatcher:
         r = requests.get(
             "https://raw.githubusercontent.com/mysociety/uk_local_authority_names_and_codes/main/data/lookup_name_to_registry.csv"
         )
+        r.raise_for_status()
 
         csv_reader = csv.DictReader(r.text.splitlines())
         return list(csv_reader)
