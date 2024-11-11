@@ -1,18 +1,16 @@
-from datetime import datetime, date
+from datetime import date, datetime
 
 from uk_election_timetables.calendars import Country
-
 from uk_election_timetables.election import Election
-
 from uk_election_timetables.elections import (
+    CityOfLondonLocalElection,
+    GreaterLondonAssemblyElection,
+    LocalElection,
+    MayoralElection,
     NorthernIrelandAssemblyElection,
+    PoliceAndCrimeCommissionerElection,
     ScottishParliamentElection,
     SeneddCymruElection,
-    GreaterLondonAssemblyElection,
-    PoliceAndCrimeCommissionerElection,
-    MayoralElection,
-    LocalElection,
-    CityOfLondonLocalElection,
     UKParliamentElection,
 )
 

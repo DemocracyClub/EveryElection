@@ -1,13 +1,13 @@
 from datetime import date, datetime
 
 import pytest
+
 from uk_election_timetables.calendars import Country, UnitedKingdomBankHolidays
 from uk_election_timetables.elections import CityOfLondonLocalElection
 from uk_election_timetables.elections.city_of_london_local import (
     _get_christmas_break,
     _get_easter_break,
 )
-
 
 registration_test_cases = [
     {

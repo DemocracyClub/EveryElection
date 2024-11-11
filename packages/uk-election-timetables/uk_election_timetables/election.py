@@ -1,12 +1,11 @@
 from abc import ABCMeta, abstractmethod
 from datetime import date, datetime, timezone
-
 from enum import Enum
 from typing import Dict, List
 
 from uk_election_timetables.calendars import (
-    UnitedKingdomBankHolidays,
     Country,
+    UnitedKingdomBankHolidays,
     working_days_before,
 )
 

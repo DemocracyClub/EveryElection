@@ -1,17 +1,24 @@
 import copy
-import pytest
 from typing import Dict
+
+import pytest
+
+from uk_election_timetables.bank_holidays import (
+    combine_bank_holiday_lists,
+    get_additions_count,
+)
+
 from .data.bank_holidays import (
     base_data,
-    single_new_event_per_division as gov_data,
-    single_historical_event_per_division as historical_data,
     changed_name,
     changed_name_and_date,
     complete_data,
 )
-from uk_election_timetables.bank_holidays import (
-    get_additions_count,
-    combine_bank_holiday_lists,
+from .data.bank_holidays import (
+    single_historical_event_per_division as historical_data,
+)
+from .data.bank_holidays import (
+    single_new_event_per_division as gov_data,
 )
 
 

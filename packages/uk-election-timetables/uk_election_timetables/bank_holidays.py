@@ -1,9 +1,9 @@
-import os
 import json
-import requests
+import os
 from datetime import datetime
-
 from typing import Dict, List
+
+import requests
 
 GOV_BANK_HOLIDAY_URL = "https://www.gov.uk/bank-holidays.json"
 LOCAL_BANK_HOLIDAY_FILE = "bank-holidays.json"
@@ -17,7 +17,7 @@ def get_additions_count(existing_dataset: Dict, new_dataset: Dict) -> int:
     :return: int
     """
     total_count: int = 0
-    for key in new_dataset.keys():
+    for key in new_dataset:
         current_events: List = existing_dataset.get(key, {}).get("events", [])
         new_events: List = new_dataset.get(key, {}).get("events", [])
         total_count += sum([1 for x in new_events if x not in current_events])
@@ -35,7 +35,7 @@ def combine_bank_holiday_lists(
     :return: Dict
     """
     combined_dataset = existing_dataset
-    for key in new_dataset.keys():
+    for key in new_dataset:
         current_events: List = existing_dataset.get(key, {}).get("events", [])
         new_events: List = new_dataset.get(key, {}).get("events", [])
         new_events = sorted(new_events, key=lambda d: d["date"])

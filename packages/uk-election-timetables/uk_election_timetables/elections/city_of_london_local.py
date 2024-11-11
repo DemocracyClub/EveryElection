@@ -2,11 +2,11 @@ from datetime import date, datetime, timedelta
 from typing import List
 
 from uk_election_timetables.calendars import (
-    working_days_before,
     Country,
     UnitedKingdomBankHolidays,
+    working_days_before,
 )
-from uk_election_timetables.date import DateMatcher, WEEKEND
+from uk_election_timetables.date import WEEKEND, DateMatcher
 from uk_election_timetables.election import Election
 
 

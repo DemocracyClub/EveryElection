@@ -1,5 +1,6 @@
-import pytest
 from datetime import date
+
+import pytest
 
 from uk_election_timetables.calendars import Country
 from uk_election_timetables.elections import UKParliamentElection

@@ -1,9 +1,9 @@
 import json
 import os
-from datetime import datetime, date
+from datetime import date, datetime
 from enum import Enum
 
-from uk_election_timetables.date import days_before, DateMatcher
+from uk_election_timetables.date import DateMatcher, days_before
 
 
 class Country(Enum):

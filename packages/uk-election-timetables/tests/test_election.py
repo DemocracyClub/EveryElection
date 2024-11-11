@@ -1,12 +1,12 @@
 import datetime
 from typing import Dict
+
 import pytest
 
+from uk_election_timetables import elections
 from uk_election_timetables.calendars import Country
 from uk_election_timetables.election import Election, TimetableEvent
-
 from uk_election_timetables.election_ids import from_election_id
-from uk_election_timetables import elections
 
 
 def test_timetable_sopn_publish_date():

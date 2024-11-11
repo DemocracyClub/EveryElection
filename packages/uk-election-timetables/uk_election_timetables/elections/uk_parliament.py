@@ -1,6 +1,6 @@
 from datetime import date
 
-from uk_election_timetables.calendars import working_days_before, Country
+from uk_election_timetables.calendars import Country, working_days_before
 from uk_election_timetables.election import Election
 
 

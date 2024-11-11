@@ -1,5 +1,6 @@
-from uk_election_timetables.date import days_before, DateMatcher
 from datetime import date
+
+from uk_election_timetables.date import DateMatcher, days_before
 
 
 def test_zero_days_before():

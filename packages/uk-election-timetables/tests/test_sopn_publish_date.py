@@ -3,18 +3,18 @@ from datetime import date
 from pytest import raises
 
 from uk_election_timetables.calendars import Country
-from uk_election_timetables.election_ids import from_election_id
 from uk_election_timetables.election_ids import (
-    InvalidElectionIdError,
     AmbiguousElectionIdError,
+    InvalidElectionIdError,
     NoSuchElectionTypeError,
+    from_election_id,
 )
 from uk_election_timetables.elections import (
+    NorthernIrelandAssemblyElection,
+    PoliceAndCrimeCommissionerElection,
     ScottishParliamentElection,
     SeneddCymruElection,
-    NorthernIrelandAssemblyElection,
     UKParliamentElection,
-    PoliceAndCrimeCommissionerElection,
 )
 
 

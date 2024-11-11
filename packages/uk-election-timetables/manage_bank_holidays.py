@@ -1,5 +1,6 @@
-import sys
 import argparse
+import sys
+
 from uk_election_timetables.bank_holidays import (
     diff_bank_holidays,
     update_bank_holidays,

@@ -1,4 +1,5 @@
 from datetime import date
+
 from uk_election_timetables.elections import NorthernIrelandAssemblyElection
 
 

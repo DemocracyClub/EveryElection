@@ -1,5 +1,5 @@
-from typing import List
 from datetime import date, timedelta
+from typing import List
 
 SATURDAY = 5
 SUNDAY = 6

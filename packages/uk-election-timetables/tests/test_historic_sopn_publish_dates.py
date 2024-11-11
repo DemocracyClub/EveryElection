@@ -3,17 +3,16 @@ from datetime import datetime
 
 from pytest import mark
 
+from uk_election_timetables.date import days_before
 from uk_election_timetables.elections import (
+    GreaterLondonAssemblyElection,
+    MayoralElection,
     NorthernIrelandAssemblyElection,
+    PoliceAndCrimeCommissionerElection,
     ScottishParliamentElection,
     SeneddCymruElection,
-    GreaterLondonAssemblyElection,
-    PoliceAndCrimeCommissionerElection,
-    MayoralElection,
     UKParliamentElection,
 )
-
-from uk_election_timetables.date import days_before
 
 with open("./tests/historic_sopn_data.csv") as f:
     historic_data = list(
