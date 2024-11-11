@@ -3,6 +3,7 @@ from datetime import date, timedelta
 
 SATURDAY = 5
 SUNDAY = 6
+WEEKEND = [SATURDAY, SUNDAY]
 
 
 class DateMatcher:
@@ -49,7 +50,7 @@ def days_before(poll_date: date, days: int, ignore: List[DateMatcher] = None) ->
     while days > 0:
         poll_date -= timedelta(days=1)
 
-        if poll_date.weekday() in [SATURDAY, SUNDAY]:
+        if poll_date.weekday() in WEEKEND:
             continue
 
         if ignore and any([day.matches(poll_date) for day in ignore]):

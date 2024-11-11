@@ -38,7 +38,7 @@ class Region(Enum):
 
 class BankHolidayCalendar:
     """
-    A calendar that honours the standard 5-day week in addition to the input list of dates.
+    A calendar that excludes the input list of dates.
     """
 
     @staticmethod
@@ -46,7 +46,10 @@ class BankHolidayCalendar:
         event_date = datetime.strptime(entry["date"], "%Y-%m-%d")
 
         return DateMatcher(
-            year=event_date.year, month=event_date.month, day=event_date.day
+            name=entry["title"],
+            year=event_date.year,
+            month=event_date.month,
+            day=event_date.day,
         )
 
     def __init__(self, dates):
@@ -56,9 +59,9 @@ class BankHolidayCalendar:
             BankHolidayCalendar.create_matcher_from_entry(entry) for entry in dates
         ]
 
-        days_not_counted.append(christmas_eve)
+        self._bank_holidays = days_not_counted
 
-        self._exempted_dates = days_not_counted
+        self._exempted_dates = self._bank_holidays + [christmas_eve]
 
     def exempted_dates(self):
         return self._exempted_dates
