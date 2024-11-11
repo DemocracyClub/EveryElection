@@ -22,18 +22,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.diff:
-        try:
-            additions_count: int = diff_bank_holidays()
-            print(f"No. of additions: {additions_count}")
-            sys.exit(additions_count)
-        except Exception:
-            print("Unable to diff files")
-            sys.exit(0)
+        additions_count: int = diff_bank_holidays()
+        print(f"No. of additions: {additions_count}")
+        sys.exit(additions_count)
     elif args.update:
-        try:
-            update_bank_holidays()
-            print("Update complete")
-        except Exception as ex:
-            print(f"Unable to update bank-holidays.json: {ex}")
+        update_bank_holidays()
+        print("Update complete")
     else:
         print("No action provided. Check --help for a list of actions.")
