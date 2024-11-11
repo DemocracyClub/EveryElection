@@ -12,7 +12,9 @@ class DateMatcher:
     a month, and an optional year.
     """
 
-    def __init__(self, day: int, month: int, year: int = None, name: str = None):
+    def __init__(
+        self, day: int, month: int, year: int = None, name: str = None
+    ):
         self.name = name
         self.month = month
         self.day = day
@@ -37,7 +39,9 @@ class DateMatcher:
         return True
 
 
-def days_before(poll_date: date, days: int, ignore: List[DateMatcher] = None) -> date:
+def days_before(
+    poll_date: date, days: int, ignore: List[DateMatcher] = None
+) -> date:
     """
     Return date corresponding to `days` working days before `poll_date`, not counting the list of provided exemptions
 

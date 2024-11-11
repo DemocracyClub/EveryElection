@@ -16,7 +16,9 @@ from uk_election_timetables.elections import (
 from uk_election_timetables.date import days_before
 
 with open("./tests/historic_sopn_data.csv") as f:
-    historic_data = list(DictReader(row for row in f if not row.startswith("--")))
+    historic_data = list(
+        DictReader(row for row in f if not row.startswith("--"))
+    )
 
 
 def read_date(date_as_string):
@@ -33,9 +35,9 @@ def no_later_than(actual_date, expected_date):
 
 
 def within_one_day(actual_date, expected_date):
-    return same_or_next_day(actual_date, expected_date) or actual_date == days_before(
-        expected_date, 1
-    )
+    return same_or_next_day(
+        actual_date, expected_date
+    ) or actual_date == days_before(expected_date, 1)
 
 
 def generate_test_id(val):
@@ -100,7 +102,9 @@ def test_greater_london_assembly(row):
 def test_police_and_crime_commissioner(row):
     poll_date = read_date(row["election_date"])
 
-    expected_date = PoliceAndCrimeCommissionerElection(poll_date).sopn_publish_date
+    expected_date = PoliceAndCrimeCommissionerElection(
+        poll_date
+    ).sopn_publish_date
 
     actual_date = read_date(row["sopn_publish_date"])
 
@@ -122,7 +126,9 @@ def test_mayoral(row):
     assert within_one_day(actual_date, expected_date)
 
 
-@mark.parametrize("row", generate_test_cases("mayor.london"), ids=generate_test_id)
+@mark.parametrize(
+    "row", generate_test_cases("mayor.london"), ids=generate_test_id
+)
 def test_mayor_of_london(row):
     poll_date = read_date(row["election_date"])
 

@@ -20,7 +20,9 @@ def test_timetable_sopn_publish_date():
 def test_timetable_registration_deadline():
     election = from_election_id("local.2021-05-06", country=Country.ENGLAND)
 
-    electoral_registration_deadline = lookup(election, "Register to vote deadline")
+    electoral_registration_deadline = lookup(
+        election, "Register to vote deadline"
+    )
 
     assert electoral_registration_deadline["date"] == datetime.date(2021, 4, 19)
 
@@ -100,7 +102,9 @@ def test_timetable_sort_order_scottish_parliament_postal_vote():
 
 
 def lookup(election: Election, label: str) -> Dict:
-    return next(entry for entry in election.timetable if entry["label"] == label)
+    return next(
+        entry for entry in election.timetable if entry["label"] == label
+    )
 
 
 def test_get_date_for_event_type():
@@ -120,20 +124,31 @@ def test_get_date_for_event_type():
 
 
 def test_event_type_enum():
-    assert TimetableEvent.REGISTRATION_DEADLINE.value == "Register to vote deadline"
-    assert TimetableEvent.SOPN_PUBLISH_DATE.value == "List of candidates published"
+    assert (
+        TimetableEvent.REGISTRATION_DEADLINE.value
+        == "Register to vote deadline"
+    )
+    assert (
+        TimetableEvent.SOPN_PUBLISH_DATE.value == "List of candidates published"
+    )
     assert (
         TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE.value
         == "Postal vote application deadline"
     )
-    assert TimetableEvent.VAC_APPLICATION_DEADLINE.value == "VAC application deadline"
+    assert (
+        TimetableEvent.VAC_APPLICATION_DEADLINE.value
+        == "VAC application deadline"
+    )
 
 
 def test_is_before():
     election = from_election_id("parl.2019-02-21", country=Country.ENGLAND)
     assert election.is_before(TimetableEvent.REGISTRATION_DEADLINE) is False
     assert election.is_before(TimetableEvent.SOPN_PUBLISH_DATE) is False
-    assert election.is_before(TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE) is False
+    assert (
+        election.is_before(TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE)
+        is False
+    )
     assert election.is_before(TimetableEvent.VAC_APPLICATION_DEADLINE) is False
 
 
@@ -141,7 +156,10 @@ def test_is_after():
     election = from_election_id("parl.2019-02-21", country=Country.ENGLAND)
     assert election.is_after(TimetableEvent.REGISTRATION_DEADLINE) is True
     assert election.is_after(TimetableEvent.SOPN_PUBLISH_DATE) is True
-    assert election.is_after(TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE) is True
+    assert (
+        election.is_after(TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE)
+        is True
+    )
     assert election.is_after(TimetableEvent.VAC_APPLICATION_DEADLINE) is True
 
 

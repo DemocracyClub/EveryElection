@@ -56,7 +56,8 @@ class BankHolidayCalendar:
         christmas_eve = DateMatcher(month=12, day=24)
 
         days_not_counted = [
-            BankHolidayCalendar.create_matcher_from_entry(entry) for entry in dates
+            BankHolidayCalendar.create_matcher_from_entry(entry)
+            for entry in dates
         ]
 
         self._bank_holidays = days_not_counted

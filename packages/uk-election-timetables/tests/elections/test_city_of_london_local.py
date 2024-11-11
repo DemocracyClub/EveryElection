@@ -77,7 +77,13 @@ def test_get_easter_break():
     current_year = datetime.now().year
     for year in range(beginning_of_time, current_year + 1):
         assert (
-            len([matcher for matcher in easter_break_matchers if matcher.year == year])
+            len(
+                [
+                    matcher
+                    for matcher in easter_break_matchers
+                    if matcher.year == year
+                ]
+            )
             == 6
         )
 
@@ -102,8 +108,12 @@ def test_get_christmas_break_2014():
     christmas_break_matchers = _get_christmas_break(
         UnitedKingdomBankHolidays().from_country(Country.ENGLAND)._bank_holidays
     )
-    assert _contains_matcher_for_date(christmas_break_matchers, date(2014, 12, 24))
-    assert _contains_matcher_for_date(christmas_break_matchers, date(2014, 12, 29))
+    assert _contains_matcher_for_date(
+        christmas_break_matchers, date(2014, 12, 24)
+    )
+    assert _contains_matcher_for_date(
+        christmas_break_matchers, date(2014, 12, 29)
+    )
 
 
 def test_get_christmas_break_2021():
@@ -112,8 +122,12 @@ def test_get_christmas_break_2021():
     christmas_break_matchers = _get_christmas_break(
         UnitedKingdomBankHolidays().from_country(Country.ENGLAND)._bank_holidays
     )
-    assert _contains_matcher_for_date(christmas_break_matchers, date(2021, 12, 24))
-    assert _contains_matcher_for_date(christmas_break_matchers, date(2021, 12, 29))
+    assert _contains_matcher_for_date(
+        christmas_break_matchers, date(2021, 12, 24)
+    )
+    assert _contains_matcher_for_date(
+        christmas_break_matchers, date(2021, 12, 29)
+    )
 
 
 def test_get_christmas_break_2022():
@@ -122,8 +136,12 @@ def test_get_christmas_break_2022():
     christmas_break_matchers = _get_christmas_break(
         UnitedKingdomBankHolidays().from_country(Country.ENGLAND)._bank_holidays
     )
-    assert _contains_matcher_for_date(christmas_break_matchers, date(2022, 12, 23))
-    assert _contains_matcher_for_date(christmas_break_matchers, date(2022, 12, 28))
+    assert _contains_matcher_for_date(
+        christmas_break_matchers, date(2022, 12, 23)
+    )
+    assert _contains_matcher_for_date(
+        christmas_break_matchers, date(2022, 12, 28)
+    )
 
 
 def test_get_christmas_break_2024():
@@ -131,5 +149,9 @@ def test_get_christmas_break_2024():
     christmas_break_matchers = _get_christmas_break(
         UnitedKingdomBankHolidays().from_country(Country.ENGLAND)._bank_holidays
     )
-    assert _contains_matcher_for_date(christmas_break_matchers, date(2024, 12, 24))
-    assert _contains_matcher_for_date(christmas_break_matchers, date(2024, 12, 27))
+    assert _contains_matcher_for_date(
+        christmas_break_matchers, date(2024, 12, 24)
+    )
+    assert _contains_matcher_for_date(
+        christmas_break_matchers, date(2024, 12, 27)
+    )

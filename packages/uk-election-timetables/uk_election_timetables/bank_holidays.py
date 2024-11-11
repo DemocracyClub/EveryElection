@@ -25,7 +25,9 @@ def get_additions_count(existing_dataset: Dict, new_dataset: Dict) -> int:
     return total_count
 
 
-def combine_bank_holiday_lists(existing_dataset: Dict, new_dataset: Dict) -> Dict:
+def combine_bank_holiday_lists(
+    existing_dataset: Dict, new_dataset: Dict
+) -> Dict:
     """
     Create dict containing all values from existing dataset and all new values from new dataset
     :param existing_dataset: Seeded dict of historical dates

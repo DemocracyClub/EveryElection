@@ -22,7 +22,10 @@ def test_publish_date_local_id():
     with raises(AmbiguousElectionIdError) as err:
         from_election_id("local.2019-02-21")
 
-    assert str(err.value) == "Cannot derive country from election id [local.2019-02-21]"
+    assert (
+        str(err.value)
+        == "Cannot derive country from election id [local.2019-02-21]"
+    )
 
 
 def test_publish_date_local_id_with_country():
@@ -61,7 +64,8 @@ def test_publish_date_invalid_id():
         from_election_id("not an election id")
 
     assert (
-        str(err.value) == "Parameter [not an election id] is not in election id format"
+        str(err.value)
+        == "Parameter [not an election id] is not in election id format"
     )
 
 
@@ -69,7 +73,10 @@ def test_publish_date_invalid_date():
     with raises(InvalidElectionIdError) as err:
         from_election_id("parl.not-a-date")
 
-    assert str(err.value) == "Parameter [parl.not-a-date] is not in election id format"
+    assert (
+        str(err.value)
+        == "Parameter [parl.not-a-date] is not in election id format"
+    )
 
 
 def test_publish_date_senedd_election_id():

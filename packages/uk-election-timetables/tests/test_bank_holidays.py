@@ -24,7 +24,11 @@ from uk_election_timetables.bank_holidays import (
             base_data,
             0,
         ),  # Historical events in our dataset aren't recognised as changes
-        (base_data, base_data, 0),  # Identical datasets not recognised as changes
+        (
+            base_data,
+            base_data,
+            0,
+        ),  # Identical datasets not recognised as changes
         ({}, {}, 0),  # Improperly formatted datasets
     ],
 )
@@ -38,7 +42,11 @@ def test_get_additions_count(
 @pytest.mark.parametrize(
     "existing_dataset, new_dataset, expected_result",
     [
-        (historical_data, gov_data, complete_data),  # All the old and new data combined
+        (
+            historical_data,
+            gov_data,
+            complete_data,
+        ),  # All the old and new data combined
         (historical_data, historical_data, historical_data),  # No changes
         (base_data, changed_name, changed_name),  # Change to event name only
         (
@@ -53,5 +61,7 @@ def test_combine_bank_holiday_lists(
 ):
     existing_dataset_copy: Dict = copy.deepcopy(existing_dataset)
     new_dataset_copy: Dict = copy.deepcopy(new_dataset)
-    new_dict: Dict = combine_bank_holiday_lists(existing_dataset_copy, new_dataset_copy)
+    new_dict: Dict = combine_bank_holiday_lists(
+        existing_dataset_copy, new_dataset_copy
+    )
     assert new_dict == expected_result

@@ -44,7 +44,12 @@ single_new_event_per_division = {
                 "notes": "",
                 "bunting": True,
             },
-            {"title": "Boxing Day", "date": "2022-12-26", "notes": "", "bunting": True},
+            {
+                "title": "Boxing Day",
+                "date": "2022-12-26",
+                "notes": "",
+                "bunting": True,
+            },
         ],
     },
     "scotland": {
@@ -226,7 +231,12 @@ complete_data = {
                 "notes": "",
                 "bunting": True,
             },
-            {"title": "Boxing Day", "date": "2022-12-26", "notes": "", "bunting": True},
+            {
+                "title": "Boxing Day",
+                "date": "2022-12-26",
+                "notes": "",
+                "bunting": True,
+            },
         ],
     },
     "scotland": {
