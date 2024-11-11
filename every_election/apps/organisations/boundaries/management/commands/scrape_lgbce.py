@@ -3,7 +3,7 @@ from organisations.boundaries.boundary_bot.scraper import LgbceScraper
 
 
 class Command(BaseCommand):
-    help = "Copy all of the division and geography objects from one DivisionSet to another"
+    help = "Scrape LGBCE website for boundary reviews"
 
     def add_arguments(self, parser):
         parser.add_argument(
