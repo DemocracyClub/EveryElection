@@ -108,6 +108,7 @@ class Election(metaclass=ABCMeta):
         for e in self.timetable:
             if e["event"] == event.name:
                 return e["date"]
+        raise KeyError("event not found")
 
     def is_before(self, event, date=None):
         if not date:

@@ -97,9 +97,6 @@ def from_election_id(election_id: str, country: Country = None) -> Election:
     def requires_country(el_type):
         return el_type in ["local"]
 
-    if not valid_election_type(election_type):
-        raise NoSuchElectionTypeError(election_type)
-
     if election_id.startswith("local.city-of-london"):
         # The City of London is special and different
         return CityOfLondonLocalElection(poll_date)
@@ -112,5 +109,7 @@ def from_election_id(election_id: str, country: Country = None) -> Election:
 
     if election_type == "local":
         return LocalElection(poll_date, country)
-    elif election_type == "parl":
+    if election_type == "parl":
         return UKParliamentElection(poll_date, country)
+
+    raise NoSuchElectionTypeError(election_type)

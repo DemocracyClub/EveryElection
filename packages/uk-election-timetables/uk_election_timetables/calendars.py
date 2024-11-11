@@ -85,7 +85,7 @@ class UnitedKingdomBankHolidays(object):
         with open(bank_holiday_json, "r", encoding="utf-8") as data:
             json_calendar = json.loads(data.read())
 
-            for country in json_calendar.keys():
+            for country in json_calendar:
                 self._calendar[country] = BankHolidayCalendar(
                     json_calendar[country]["events"]
                 )
@@ -117,10 +117,9 @@ class UnitedKingdomBankHolidays(object):
         """
         if country == Country.ENGLAND or country == Country.WALES:
             return self.england_and_wales()
-        elif country == Country.NORTHERN_IRELAND:
+        if country == Country.NORTHERN_IRELAND:
             return self.northern_ireland()
-        else:
-            return self.scotland()
+        return self.scotland()
 
 
 def working_days_before(
