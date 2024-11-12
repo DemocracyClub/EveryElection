@@ -23,7 +23,7 @@ jobs:
           node-version: '18'
 
       - restore_cache:
-          key: v3-dependencies-{{ checksum "uv.lock" }}
+          key: v4-dependencies-{{ checksum "uv.lock" }}
 
       - run:
           name: Install node node_modules
@@ -49,12 +49,16 @@ jobs:
           command: |
             . .venv/bin/activate
             safety check
+
+      - run:
+          name: Prune UV cache
+          command: uv cache prune --ci
       - save_cache:
           paths:
             - ./.venv
             - ./node_modules
             - $HOME/.cache/uv
-          key: v3-dependencies-{{ checksum "uv.lock" }}
+          key: v4-dependencies-{{ checksum "uv.lock" }}
 
       - run:
           name: Pre-test checks
@@ -102,7 +106,7 @@ jobs:
     steps:
     - checkout
     - restore_cache:
-        key: v3-machine-dependencies-{{ checksum "uv.lock" }}
+        key: v4-machine-dependencies-{{ checksum "uv.lock" }}
     - run:
         name: Install CDK Python dependencies
         command: |
@@ -111,12 +115,15 @@ jobs:
           . .venv/bin/activate
           uv sync --only-group cdk
 
+    - run:
+        name: Prune UV cache
+        command: uv cache prune --ci
     - save_cache:
         paths:
           - ./.venv
           - ./node_modules
           - $HOME/.cache/uv
-        key: v3-machine-dependencies-{{ checksum "uv.lock" }}
+        key: v4-machine-dependencies-{{ checksum "uv.lock" }}
 
     - run:
         name: CDK version
@@ -152,7 +159,7 @@ jobs:
     steps:
     - checkout
     - restore_cache:
-        key: v3-machine-dependencies-{{ checksum "uv.lock" }}
+        key: v4-machine-dependencies-{{ checksum "uv.lock" }}
     - run:
         name: CDK deploy
         command: |
@@ -161,7 +168,7 @@ jobs:
     - save_cache:
         paths:
         - .cdk.out
-        key: v3-machine-dependencies-{{ checksum "uv.lock" }}
+        key: v4-machine-dependencies-{{ checksum "uv.lock" }}
     - slack/notify:
           event: fail
           template: basic_fail_1
@@ -187,7 +194,7 @@ jobs:
     - node/install:
         node-version: '18'
     - restore_cache:
-        key: v3-dependencies-{{ checksum "uv.lock" }}
+        key: v4-dependencies-{{ checksum "uv.lock" }}
     - run:
         name: "Code Deploy: Create deployment group"
         command: |
