@@ -9,7 +9,7 @@ from django.contrib.gis.db.models.functions import Distance
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.files import File
 from django.db import models, transaction
-from django.db.models import JSONField
+from django.db.models import JSONField, Q
 from django.db.models.fields.related_descriptors import (
     create_reverse_many_to_one_manager,
 )
@@ -157,6 +157,12 @@ class Election(TimeStampedModel):
         ],
     )
 
+    def _get_manager_obj(self, manager):
+        for m in self._meta.managers:
+            if m.name == manager or m == manager:
+                return m
+        raise ValueError("Unknown manager {}".format(manager))
+
     def get_children(self, manager):
         """
         This method allows us to call with a manger instance or a string
@@ -165,15 +171,44 @@ class Election(TimeStampedModel):
         are supported.
 
         This will return a 'children' RelatedManager
-        with the relevant filters applied.
+        with the relevant private/public filters applied.
         """
-        for m in self._meta.managers:
-            if m.name == manager or m == manager:
-                child_manager_cls = create_reverse_many_to_one_manager(
-                    m.__class__, self._meta.get_field("_children_qs")
-                )
-                return child_manager_cls(self)
-        raise ValueError("Unknown manager {}".format(manager))
+        manager = self._get_manager_obj(manager)
+        child_manager_cls = create_reverse_many_to_one_manager(
+            manager.__class__, self._meta.get_field("_children_qs")
+        )
+        return child_manager_cls(self)
+
+    def get_descendents(self, manager, inclusive=False):
+        """
+        This method allows us to call with a manger instance or a string
+        i.e both: obj.get_children('private_objects') and
+        obj.get_children(Election.public_objects)
+        are supported.
+
+        This will return a Queryset of all descendents
+        (children, and children's children)
+
+        with the relevant private/public filters applied.
+
+        inclusive=True/False determines whether to include
+        the root node in the QuerySet.
+        """
+        manager = self._get_manager_obj(manager)
+
+        queryset = (
+            manager.all() if inclusive else manager.filter(~Q(pk=self.pk))
+        )
+
+        id_parts = self.election_id.split(".")
+        head = id_parts[:-1]
+        date_ = id_parts.pop(-1)
+
+        prefix = f"{'.'.join(head)}."
+
+        return queryset.filter(
+            Q(election_id__startswith=prefix) & Q(poll_open_date=date_)
+        )
 
     group_type = models.CharField(
         blank=True, max_length=100, null=True, db_index=True
