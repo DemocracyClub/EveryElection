@@ -66,8 +66,7 @@ class LgbceScraper:
         self.BOOTSTRAP_MODE = BOOTSTRAP_MODE
         self.SEND_NOTIFICATIONS = SEND_NOTIFICATIONS
         self.ignore = [
-            "east-hertfordshire",  # LGBCE site has 'Name of Order' in the div used to parse legislation title and link so the scraper thinks its a new review (https://www.lgbce.org.uk/all-reviews/east-hertfordshire)
-            "north-warwickshire",  # LGBCE site links to webarchive version of legislation rather than legislation.gov.uk (https://www.lgbce.org.uk/all-reviews/north-warwickshire)
+            # orgs that break our pipeline can be ignored here
         ]
 
     def scrape_index(self):
