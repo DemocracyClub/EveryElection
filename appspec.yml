@@ -85,6 +85,9 @@ hooks:
     - location: deployscripts/write_envfile.sh
       timeout: 300
       runas: root
+    - location: serverscripts/migrate.sh
+      timeout: 300
+      runas: every_election
     - location: deployscripts/install_crontab.sh
       timeout: 900
       runas: root
