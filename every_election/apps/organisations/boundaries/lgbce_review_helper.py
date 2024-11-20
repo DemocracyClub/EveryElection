@@ -196,7 +196,10 @@ class LGBCEReviewHelper:
 
         parts = ["schedule/1", "schedule", "schedules"]
         for part in parts:
-            xml_link = f"{eco_url}/{part}/made/data.xml"
+            xml_resource_path = (
+                "/made/data.xml" if "ukdsi" not in eco_url else "/data.xml"
+            )
+            xml_link = f"{eco_url}/{part}{xml_resource_path}"
             response = requests.head(xml_link, allow_redirects=True)
             if response.status_code == 200:
                 return xml_link

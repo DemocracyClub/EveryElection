@@ -337,6 +337,102 @@ class TestLGBCEReviewHelper(TestCase):
                 ),
             )
 
+    def test_get_xml_link_from_ukdsi_eco_url_a(self):
+        def get_responses(link, **kwargs):
+            """
+            The method being tested 'heads' the links generated to determine if they
+            return a 200. So we need to mock some respnses
+            """
+            mock = Mock()
+            tail = "/".join(link.split("/")[6:])
+            match tail:
+                case "schedule/1/data.xml":
+                    mock.status_code = 200
+                    return mock
+                case "schedule/data.xml":
+                    mock.status_code = 404
+                    return mock
+                case "schedules/made/data.xml":
+                    mock.status_code = 404
+                    return mock
+                case _:
+                    mock.status_code = 404
+                    return mock
+
+        with patch("requests.head", side_effect=get_responses) as mock_head:
+            mock_head.return_value = Mock(side_effect=get_responses)
+            lgbce_review_helper = LGBCEReviewHelper()
+            self.assertEqual(
+                "https://www.legislation.gov.uk/ukdsi/2024/9780348263176/schedule/1/data.xml",
+                lgbce_review_helper.get_xml_link_from_eco_url(
+                    "https://www.legislation.gov.uk/ukdsi/2024/9780348263176"
+                ),
+            )
+
+    def test_get_xml_link_from_ukdsi_eco_url_b(self):
+        def get_responses(link, **kwargs):
+            """
+            The method being tested 'heads' the links generated to determine if they
+            return a 200. So we need to mock some responses.
+            """
+            mock = Mock()
+            tail = "/".join(link.split("/")[6:])
+            match tail:
+                case "schedule/1/data.xml":
+                    mock.status_code = 404
+                    return mock
+                case "schedule/data.xml":
+                    mock.status_code = 200
+                    return mock
+                case "schedules/data.xml":
+                    mock.status_code = 404
+                    return mock
+                case _:
+                    mock.status_code = 404
+                    return mock
+
+        with patch("requests.head", side_effect=get_responses) as mock_head:
+            mock_head.return_value = Mock(side_effect=get_responses)
+            lgbce_review_helper = LGBCEReviewHelper()
+            self.assertEqual(
+                "https://www.legislation.gov.uk/ukdsi/2024/9780348263176/schedule/data.xml",
+                lgbce_review_helper.get_xml_link_from_eco_url(
+                    "https://www.legislation.gov.uk/ukdsi/2024/9780348263176"
+                ),
+            )
+
+    def test_get_xml_link_from_ukdsi_eco_url_c(self):
+        def get_responses(link, **kwargs):
+            """
+            The method being tested 'heads' the links generated to determine if they
+            return a 200. So we need to mock some responses.
+            """
+            mock = Mock()
+            tail = "/".join(link.split("/")[6:])
+            match tail:
+                case "schedule/1/data.xml":
+                    mock.status_code = 404
+                    return mock
+                case "schedule/data.xml":
+                    mock.status_code = 404
+                    return mock
+                case "schedules/data.xml":
+                    mock.status_code = 200
+                    return mock
+                case _:
+                    mock.status_code = 404
+                    return mock
+
+        with patch("requests.head", side_effect=get_responses) as mock_head:
+            mock_head.return_value = Mock(side_effect=get_responses)
+            lgbce_review_helper = LGBCEReviewHelper()
+            self.assertEqual(
+                "https://www.legislation.gov.uk/ukdsi/2024/9780348263176/schedules/data.xml",
+                lgbce_review_helper.get_xml_link_from_eco_url(
+                    "https://www.legislation.gov.uk/ukdsi/2024/9780348263176"
+                ),
+            )
+
     @patch("eco_parser.parser.EcoParser.get_data")
     def test_parse_eco_xml(self, get_data_mock):
         with open(
