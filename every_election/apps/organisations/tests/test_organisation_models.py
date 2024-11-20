@@ -326,6 +326,10 @@ class TestOrganisationDivisionBoundaryReview(TestCase):
                 "https://www.legislation.gov.uk/uksi/2021/1230/introduction/made",
                 "https://www.legislation.gov.uk/uksi/2021/1230",
             ),
+            (
+                "https://www.legislation.gov.uk/ukdsi/2024/9780348263176/contents",
+                "https://www.legislation.gov.uk/ukdsi/2024/9780348263176",
+            ),
         ]
         for raw_url, clean_url in cases:
             obr = CompletedOrganisationBoundaryReviewFactory(
