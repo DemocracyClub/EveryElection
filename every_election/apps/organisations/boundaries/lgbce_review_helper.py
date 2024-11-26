@@ -239,8 +239,8 @@ class LGBCEReviewHelper:
         1. '
         """
         numbers_as_words = "(one|two|three|four|five|six|seven|eight|nine)"
-        words_after_numbers = f"{numbers_as_words} councillors are to be elected for each (?:ward|electoral division)."
-        words_before_numbers = f"The number of councillors to be elected for each (?:ward|electoral division) is {numbers_as_words}"
+        words_after_numbers = f"{numbers_as_words} councillors are to be elected for each (?:ward|electoral division|division)."
+        words_before_numbers = f"The number of councillors to be elected for each (?:ward|electoral division|division) is {numbers_as_words}"
         elected_councillors_pattern = re.compile(
             f"({words_after_numbers})|({words_before_numbers})",
             re.IGNORECASE | re.UNICODE,
