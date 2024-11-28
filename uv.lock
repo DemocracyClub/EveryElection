@@ -719,7 +719,7 @@ requires-dist = [
     { name = "rapidfuzz", specifier = "==3.10.1" },
     { name = "requests", specifier = "==2.32.3" },
     { name = "retry2", specifier = "==0.9.5" },
-    { name = "scrapy", specifier = "==2.11.2" },
+    { name = "scrapy", specifier = "==2.12.0" },
     { name = "sqlparse", specifier = "==0.5.1" },
     { name = "uk-election-ids", specifier = "==0.9.1" },
     { name = "uk-election-timetables", specifier = "==4.1.0" },
@@ -1763,7 +1763,7 @@ wheels = [
 
 [[package]]
 name = "scrapy"
-version = "2.11.2"
+version = "2.12.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cryptography" },
@@ -1780,15 +1780,14 @@ dependencies = [
     { name = "pypydispatcher", marker = "platform_python_implementation == 'PyPy'" },
     { name = "queuelib" },
     { name = "service-identity" },
-    { name = "setuptools" },
     { name = "tldextract" },
     { name = "twisted" },
     { name = "w3lib" },
     { name = "zope-interface" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f2/1f/5524416a64c030fbe18caeba079e7176836b281bf9eb50b79efdf8015063/scrapy-2.11.2.tar.gz", hash = "sha256:dfbd565384fc3fffeba121f5a3a2d0899ac1f756d41432ca0879933fbfb3401d", size = 1187710 }
+sdist = { url = "https://files.pythonhosted.org/packages/f8/52/b0f4ded03c5966e7e90c607bb9aa7e3c5b228cb1d7051325fde017c46987/scrapy-2.12.0.tar.gz", hash = "sha256:d66d6e76009b12447604196875a463b61d10721140032a8084a0a52df7f4788f", size = 1210998 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0d/4e/6c06a4cfbb9a1e243c975da6a09982f085b1a14939fb195ea9e3e2f2b206/Scrapy-2.11.2-py2.py3-none-any.whl", hash = "sha256:4be353d6abbb942a9f7e7614ca8b5f3d9037381176ac8d8859c8cac676e74fa0", size = 290065 },
+    { url = "https://files.pythonhosted.org/packages/e8/43/2cc828e9b7a453d791afbe3ef36c951f4641fc1d886b6d39e9455c5468e0/Scrapy-2.12.0-py2.py3-none-any.whl", hash = "sha256:c33e2dc7da42e727390bacb32dd9938a54ac210fa71972b5c392754f478669cd", size = 311170 },
 ]
 
 [[package]]
