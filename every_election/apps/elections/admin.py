@@ -153,7 +153,6 @@ class ElectionAdmin(admin.ModelAdmin):
         "friendly_group_type",
         "group",
         "seats_total",
-        "requires_voter_id",
         "snooped_election",
         "organisation",
         "division",

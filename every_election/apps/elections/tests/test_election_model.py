@@ -164,6 +164,100 @@ class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
             f"/admin/elections/election/{election.pk}/change/",
         )
 
+    def test_get_children(self):
+        for election in [
+            self.election_group,
+            self.testshire_org_group,
+            self.testshire_ballot,
+            self.org_group,
+            self.ballot,
+        ]:
+            election.save(status=ModerationStatuses.approved.value)
+        self.testshire_ballot.save(status=ModerationStatuses.deleted.value)
+
+        self.assertEqual(
+            len(self.org_group.get_children("public_objects").all()),
+            1,
+        )
+        self.assertEqual(
+            len(self.election_group.get_children("public_objects").all()), 2
+        )
+
+        self.assertEqual(
+            len(self.testshire_org_group.get_children("private_objects").all()),
+            1,
+        )
+        self.assertEqual(
+            len(self.testshire_org_group.get_children("public_objects").all()),
+            0,
+        )
+
+    def test_get_descendents_exclusive(self):
+        for election in [
+            self.election_group,
+            self.testshire_org_group,
+            self.testshire_ballot,
+            self.org_group,
+            self.ballot,
+        ]:
+            election.save(status=ModerationStatuses.approved.value)
+        self.testshire_ballot.save(status=ModerationStatuses.deleted.value)
+
+        with self.assertNumQueries(1):
+            self.assertEqual(
+                len(self.org_group.get_descendents("public_objects")),
+                1,
+            )
+        with self.assertNumQueries(1):
+            self.assertEqual(
+                len(self.election_group.get_descendents("private_objects")), 4
+            )
+        with self.assertNumQueries(1):
+            self.assertEqual(
+                len(self.election_group.get_descendents("public_objects")), 3
+            )
+
+    def test_get_descendents_inclusive(self):
+        for election in [
+            self.election_group,
+            self.testshire_org_group,
+            self.testshire_ballot,
+            self.org_group,
+            self.ballot,
+        ]:
+            election.save(status=ModerationStatuses.approved.value)
+        self.testshire_ballot.save(status=ModerationStatuses.deleted.value)
+
+        with self.assertNumQueries(1):
+            self.assertEqual(
+                len(
+                    self.org_group.get_descendents(
+                        "public_objects", inclusive=True
+                    )
+                ),
+                2,
+            )
+
+        with self.assertNumQueries(1):
+            self.assertEqual(
+                len(
+                    self.election_group.get_descendents(
+                        "private_objects", inclusive=True
+                    )
+                ),
+                5,
+            )
+
+        with self.assertNumQueries(1):
+            self.assertEqual(
+                len(
+                    self.election_group.get_descendents(
+                        "public_objects", inclusive=True
+                    )
+                ),
+                4,
+            )
+
 
 class TestModified(TestCase):
     def test_update_changes_modified(self):
