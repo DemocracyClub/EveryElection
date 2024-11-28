@@ -152,8 +152,10 @@ class Election(TimeStampedModel):
     requires_voter_id = models.CharField(
         max_length=100,
         null=True,
+        blank=True,
         choices=[
-            (req, ID_REQUIREMENTS[req]["name"]) for req in ID_REQUIREMENTS
+            *[(None, "No ID Required")],
+            *[(req, ID_REQUIREMENTS[req]["name"]) for req in ID_REQUIREMENTS],
         ],
     )
 
