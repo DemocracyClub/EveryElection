@@ -1,7 +1,5 @@
-from typing import List
-
 from django.core.management.base import BaseCommand
-from organisations.models import Organisation, OrganisationDivision
+from organisations.models import OrganisationDivision
 
 GSS_TO_NATION = {
     "W": "WLS",
@@ -10,144 +8,114 @@ GSS_TO_NATION = {
     "S": "SCT",
 }
 
+ORG_TYPE_TO_NATION = {
+    "gla": "ENG",
+    "nia": "NIR",
+    "sp": "SCT",
+    "naw": "WLS",
+    "senedd": "WLS",
+}
+
 
 class Command(BaseCommand):
-    help = """
-    
-    Sets the `territory_code` value for any division that doesn't have one.
-    
-    Uses UK parliamentary constituencies as the "parent" and looks for any division 
-    (from any divisionset) that is fully covered by the parent.
-    
-    This is chosen over `overlaps` to catch two cases:
-    
-    1. Where a division actually does span two UK nations. This is currently thought 
-       never to happen, but if it ever did this script would create a race condition 
-       that would confuse everyone
-       
-    2. More likely, when a boundary has minor errors that cause it to cross the boarder.
-       This could also create race conditions where we wrongly assign a division to a 
-       nation depending on the order we loop over the constituencies.  
-    """
+    help = "Sets the `territory_code` value for any division that doesn't have one."
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--dry-run",
+            action="store_true",
+            dest="dry-run",
+            help="Don't commit changes",
+        )
+        super().add_arguments(parser)
 
     def handle(self, *args, **options):
-        # Step 1: Set all CEDs to ENG, as CEDs are only ever in England
-        self.stdout.write("Updating from CEDs")
-        OrganisationDivision.objects.filter(division_type="CED").filter(
-            territory_code=""
-        ).update(territory_code="ENG")
-
-        # Step 2: Guess from GSS codes
-        self.stdout.write("Guessing from GSS codes")
-        self.guess_from_gss()
-
-        # Step 3: Use constituencies as parents. This catches a load of divisions
-        # without using too much CPU to find them
-        self.stdout.write("Assigning form parl constituencies")
-        parl = Organisation.objects.get(slug="parl")
-        constituencies: List[OrganisationDivision] = (
-            parl.divisionset.get(start_date="2010-05-06")
-            .divisions.all()
-            .select_related("geography")
-        )
-        for constituency in constituencies:
-            self.assign_territory_code(constituency)
-
-        # Step 4: Loop over all remaining divisions and find a parent with a known code
-        self.stdout.write("Assigning from parents")
-        self.assign_from_parents()
-
-        # Step 5: Loop over all remaining divisions and find a parent by the centre
-        # of the geography
-        self.stdout.write("Assigning from parents by centres")
-        self.assign_by_centre()
-
-        divisions_missing_territory_code = OrganisationDivision.objects.filter(
-            territory_code=""
-        )
-        if divisions_missing_territory_code.exists():
-            missing_count = divisions_missing_territory_code.count()
-            self.stdout.write(
-                f"WARNING: {missing_count} are STILL missing a territory_code "
-            )
-        else:
-            self.stdout.write("GOOD NEWS! All divisions have a territory code.")
-
-    def guess_from_gss(self):
         divisions = OrganisationDivision.objects.filter(
-            territory_code__in=["", None]
-        ).filter(official_identifier__startswith="gss:")
-
-        for division in divisions:
-            gss_prefix = division.official_identifier.split(":")[1][0]
-            division.territory_code = GSS_TO_NATION[gss_prefix]
-            division.save()
-
-    def assign_territory_code(self, parent: OrganisationDivision):
-        if not parent.territory_code:
-            raise ValueError(f"{parent} doesn't have a territory_code!")
-
-        return (
-            OrganisationDivision.objects.filter(
-                geography__geography__coveredby=parent.geography.geography
-            )
-            .filter(territory_code="")
-            .update(territory_code=parent.territory_code)
+            territory_code=""
+        ).order_by("official_identifier")
+        self.stdout.write(
+            f"Found {divisions.count()} divisions with missing territory_code"
         )
 
-    def assign_from_parents(self):
-        divisions_missing_territory_code = OrganisationDivision.objects.filter(
-            territory_code__in=["", None]
-        ).select_related("geography")
+        messages = {
+            "ced": [],
+            "org_type": [],
+            "gss": [],
+            "parent_gss": [],
+            "fail": [],
+        }
 
-        for division in divisions_missing_territory_code:
-            parents = (
-                OrganisationDivision.objects.exclude(
-                    territory_code__in=["", None]
+        for div in divisions:
+            if div.division_type == "CED":
+                div.territory_code = "ENG"
+                messages["ced"].append(
+                    f"Division {div.official_identifier}: Setting territory_code='ENG'. Reason: CEDs are always in England."
                 )
-                .filter(
-                    geography__geography__intersects=division.geography.geography
+
+            elif div.organisation.organisation_type in ORG_TYPE_TO_NATION:
+                territory_code = ORG_TYPE_TO_NATION[
+                    div.organisation.organisation_type
+                ]
+                div.territory_code = territory_code
+                messages["org_type"].append(
+                    f"Division {div.official_identifier}: Setting territory_code='{territory_code}'. Reason: Org type '{div.organisation.organisation_type}' implies territory '{territory_code}'"
                 )
-                .filter(
-                    divisionset__organisation__slug__in=["parl", "europarl"]
+
+            elif div.official_identifier.startswith("gss:"):
+                gss_code = div.official_identifier[4:]
+                gss_head = gss_code[0]
+                territory_code = GSS_TO_NATION[gss_head]
+                div.territory_code = territory_code
+                messages["gss"].append(
+                    f"Division {div.official_identifier}: Setting territory_code='{territory_code}'. Reason: GSS code '{gss_code}' starts with '{gss_head}'"
                 )
+
+            elif div.organisation.geographies.count() > 0:
+                # Note: This shortcut would not be right if an organisation moved
+                # from one country to another, but lets ignore that edge case.
+                org_geo = div.organisation.geographies.latest()
+                gss_head = org_geo.gss[0]
+                territory_code = GSS_TO_NATION[gss_head]
+                div.territory_code = territory_code
+                messages["gss"].append(
+                    f"Division {div.official_identifier}: Setting territory_code='{territory_code}'. Reason: Division is a child of {div.organisation.official_name}. Parent GSS code '{org_geo.gss}' starts with '{gss_head}'"
+                )
+            else:
+                messages["fail"].append(
+                    f"Division {div.official_identifier}: Not setting a Territory code."
+                )
+
+        self.write_logs(messages, divisions)
+
+        if not options["dry-run"]:
+            self.stdout.write("Saving records..")
+            for div in divisions:
+                div.save()
+            self.stdout.write("..Done")
+        else:
+            self.stdout.write("NOT saving anything!")
+
+        divisions = OrganisationDivision.objects.filter(
+            territory_code=""
+        ).order_by("official_identifier")
+        self.stdout.write(
+            f"{divisions.count()} divisions still have missing territory_code"
+        )
+
+    def write_logs(self, messages, divisions):
+        found = len([div for div in divisions if div.territory_code != ""])
+        not_found = divisions.count() - found
+
+        self.stdout.write(f"Setting division code for {found} divisions")
+        for key, lines in messages.items():
+            if key != "fail":
+                for line in lines:
+                    self.stdout.write(line)
+                self.stdout.write("\n")
+
+        if not_found:
+            self.stdout.write(
+                f"Could not find division code for {not_found} divisions"
             )
-            if not parents.exists():
-                self.stdout.write(f"WARNING: No parents for {division}")
-                print(
-                    OrganisationDivision.objects.exclude(
-                        territory_code__in=["", None]
-                    ).filter(
-                        geography__geography__covers=division.geography.geography
-                    )
-                )
-
-                continue
-
-            division.territory_code = parents.first().territory_code
-            division.save()
-
-    def assign_by_centre(self):
-        divisions_missing_territory_code = OrganisationDivision.objects.filter(
-            territory_code__in=["", None]
-        ).select_related("geography")
-
-        for division in divisions_missing_territory_code:
-            centre = division.geography.geography.centroid
-            parents = (
-                OrganisationDivision.objects.exclude(
-                    territory_code__in=["", None]
-                )
-                .filter(geography__geography__contains=centre)
-                .filter(
-                    divisionset__organisation__slug__in=["parl", "europarl"]
-                )
-            )
-            codes = {parent.territory_code for parent in parents}
-            if len(codes) > 1:
-                self.stdout.write(
-                    f"WARNING: {division} has more than one territory: {parents} / {codes}"
-                )
-                continue
-            division.territory_code = parents.first().territory_code
-            division.save()
+        for line in messages["fail"]:
+            self.stdout.write(line)
