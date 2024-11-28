@@ -9,7 +9,7 @@ class TestGetVoterIdRequirements:
 
     @pytest.mark.parametrize(
         "territory_code,expected_result",
-        [("ENG", "EA-2022"), ("NIR", "EFA-2002"), ("", None), (None, None)],
+        [("ENG", "EA-2022"), ("NIR", "EFA-2002")],
     )
     def test_get_voter_id_requirement_expected_territory_codes(
         self, territory_code, expected_result
@@ -27,6 +27,12 @@ class TestGetVoterIdRequirements:
         election = ElectionFactory(election_id=self.default_election_id)
         with pytest.raises(ValueError):
             election.division.territory_code = "BBQ"
+            get_voter_id_requirement(election)
+
+    def test_get_voter_id_requirement_missing_territory(self):
+        election = ElectionFactory(election_id=self.default_election_id)
+        with pytest.raises(ValueError):
+            election.division.territory_code = ""
             get_voter_id_requirement(election)
 
     def test_no_divs_type_can_have_requirements(self):
