@@ -13,21 +13,20 @@ GSS_TO_NATION = {
 
 class Command(BaseCommand):
     help = """
-    
     Sets the `territory_code` value for any division that doesn't have one.
-    
+
     Uses UK parliamentary constituencies as the "parent" and looks for any division 
     (from any divisionset) that is fully covered by the parent.
-    
+
     This is chosen over `overlaps` to catch two cases:
-    
+
     1. Where a division actually does span two UK nations. This is currently thought 
        never to happen, but if it ever did this script would create a race condition 
        that would confuse everyone
-       
+
     2. More likely, when a boundary has minor errors that cause it to cross the boarder.
        This could also create race conditions where we wrongly assign a division to a 
-       nation depending on the order we loop over the constituencies.  
+       nation depending on the order we loop over the constituencies.
     """
 
     def handle(self, *args, **options):
@@ -43,7 +42,7 @@ class Command(BaseCommand):
 
         # Step 3: Use constituencies as parents. This catches a load of divisions
         # without using too much CPU to find them
-        self.stdout.write("Assigning form parl constituencies")
+        self.stdout.write("Assigning from parl constituencies")
         parl = Organisation.objects.get(slug="parl")
         constituencies: List[OrganisationDivision] = (
             parl.divisionset.get(start_date="2010-05-06")
@@ -75,7 +74,7 @@ class Command(BaseCommand):
 
     def guess_from_gss(self):
         divisions = OrganisationDivision.objects.filter(
-            territory_code__in=["", None]
+            territory_code=""
         ).filter(official_identifier__startswith="gss:")
 
         for division in divisions:
@@ -97,14 +96,12 @@ class Command(BaseCommand):
 
     def assign_from_parents(self):
         divisions_missing_territory_code = OrganisationDivision.objects.filter(
-            territory_code__in=["", None]
+            territory_code=""
         ).select_related("geography")
 
         for division in divisions_missing_territory_code:
             parents = (
-                OrganisationDivision.objects.exclude(
-                    territory_code__in=["", None]
-                )
+                OrganisationDivision.objects.exclude(territory_code="")
                 .filter(
                     geography__geography__intersects=division.geography.geography
                 )
@@ -116,7 +113,7 @@ class Command(BaseCommand):
                 self.stdout.write(f"WARNING: No parents for {division}")
                 print(
                     OrganisationDivision.objects.exclude(
-                        territory_code__in=["", None]
+                        territory_code=""
                     ).filter(
                         geography__geography__covers=division.geography.geography
                     )
@@ -129,15 +126,13 @@ class Command(BaseCommand):
 
     def assign_by_centre(self):
         divisions_missing_territory_code = OrganisationDivision.objects.filter(
-            territory_code__in=["", None]
+            territory_code=""
         ).select_related("geography")
 
         for division in divisions_missing_territory_code:
             centre = division.geography.geography.centroid
             parents = (
-                OrganisationDivision.objects.exclude(
-                    territory_code__in=["", None]
-                )
+                OrganisationDivision.objects.exclude(territory_code="")
                 .filter(geography__geography__contains=centre)
                 .filter(
                     divisionset__organisation__slug__in=["parl", "europarl"]
