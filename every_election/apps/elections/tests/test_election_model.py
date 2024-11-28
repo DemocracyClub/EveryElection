@@ -258,6 +258,11 @@ class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
                 4,
             )
 
+    def test_requires_voter_id_empty(self):
+        self.ballot.requires_voter_id = ""
+        self.ballot.save()
+        assert self.ballot.requires_voter_id is None
+
 
 class TestModified(TestCase):
     def test_update_changes_modified(self):

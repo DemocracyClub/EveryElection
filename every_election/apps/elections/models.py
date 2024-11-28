@@ -532,6 +532,9 @@ class Election(TimeStampedModel):
 
     @transaction.atomic
     def save(self, *args, **kwargs):
+        if self.requires_voter_id == "":
+            self.requires_voter_id = None
+
         # used later to determine if we should look for ballots
         created = not self.pk
 
