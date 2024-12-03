@@ -273,14 +273,14 @@ wheels = [
 
 [[package]]
 name = "commitment"
-version = "3.0.1"
+version = "4.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/42/ec/fe9f1a252d03926de1f496018003caa4d1d58882f69adfc7f8e54954aec0/commitment-3.0.1.tar.gz", hash = "sha256:1fe73698d550dc0acc4884587481ebb561fdb76fa2f79d91228f5b4506b250d8", size = 3698 }
+sdist = { url = "https://files.pythonhosted.org/packages/ac/05/5c2e2c086ba18d5e5e357566c07739358abbd53d54a85f77449ed81a1a20/commitment-4.0.0.tar.gz", hash = "sha256:1bca8df779474016e562a76acef488ab7a956239c8fa7e3227e2875d9bf39ba1", size = 3728 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/1a/3b/62d3e5b57e91316085d1daaefcf3b4fb0980e9cf3105da88c536cdbad756/commitment-3.0.1-py3-none-any.whl", hash = "sha256:08577d6caef8b8bed6375f0c97343073eeac500f2568b66419f626a94a9be5e8", size = 4362 },
+    { url = "https://files.pythonhosted.org/packages/5a/b7/9e8cd90e4a279b6703b06a0c00a31838c7e7db40881b89eca567b5228df4/commitment-4.0.0-py3-none-any.whl", hash = "sha256:239d4c1399678a0d8b5d79783e6a1cbc391f7f7a7976a890b3b9456ba985f7eb", size = 4420 },
 ]
 
 [[package]]
@@ -694,7 +694,7 @@ requires-dist = [
     { name = "beautifulsoup4", specifier = "==4.12.3" },
     { name = "boto3", specifier = "==1.35.54" },
     { name = "botocore", specifier = "==1.35.54" },
-    { name = "commitment", specifier = "==3.0.1" },
+    { name = "commitment", specifier = "==4.0.0" },
     { name = "dc-design-system", url = "https://github.com/DemocracyClub/design-system/archive/refs/tags/0.5.0.zip" },
     { name = "dc-django-utils", git = "https://github.com/DemocracyClub/dc_django_utils.git?rev=7.0.1" },
     { name = "django", specifier = "==4.2.16" },
