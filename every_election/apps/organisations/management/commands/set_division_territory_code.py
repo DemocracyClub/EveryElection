@@ -77,7 +77,7 @@ class Command(BaseCommand):
                 gss_head = org_geo.gss[0]
                 territory_code = GSS_TO_NATION[gss_head]
                 div.territory_code = territory_code
-                messages["gss"].append(
+                messages["parent_gss"].append(
                     f"Division {div.official_identifier}: Setting territory_code='{territory_code}'. Reason: Division is a child of {div.organisation.official_name}. Parent GSS code '{org_geo.gss}' starts with '{gss_head}'"
                 )
             else:
