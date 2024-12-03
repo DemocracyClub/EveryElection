@@ -225,6 +225,10 @@ class DivsFormset(forms.BaseFormSet):
                 )
 
                 for div in divisions_qs:
+                    if not div.territory_code:
+                        raise ValueError(
+                            f"Division {div} is missing territory code"
+                        )
                     kwargs["initial"].append(
                         {"division_name": div.name, "group": div.group}
                     )

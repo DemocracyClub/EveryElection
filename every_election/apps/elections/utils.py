@@ -56,7 +56,9 @@ def get_voter_id_requirement(election: Election) -> Optional[str]:
     if can_have_divs:
         nation = election.division.territory_code
         if not nation:
-            return None
+            raise ValueError(
+                f"Division {election.division} is missing territory code"
+            )
 
     matcher = IDRequirementsMatcher(election.election_id, nation)
 
