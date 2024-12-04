@@ -721,7 +721,7 @@ requires-dist = [
     { name = "scrapy", specifier = "==2.12.0" },
     { name = "uk-election-ids", specifier = "==0.9.1" },
     { name = "uk-election-timetables", specifier = "==4.2.0" },
-    { name = "uk-geo-utils", specifier = "==0.16.0" },
+    { name = "uk-geo-utils", specifier = "==0.17.0" },
 ]
 
 [package.metadata.requires-dev]
@@ -1971,16 +1971,16 @@ wheels = [
 
 [[package]]
 name = "uk-geo-utils"
-version = "0.16.0"
+version = "0.17.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
     { name = "psutil" },
     { name = "psycopg2-binary" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/52/bb/a0219595b10c9c50c77f5b7b0b3e13602ff1a1537b2fcff95bac5ea5dfb2/uk_geo_utils-0.16.0.tar.gz", hash = "sha256:28518eb8b43089a5a01d4ea493910c4a8890d63cf7acd29f28e60788caf5082f", size = 17864 }
+sdist = { url = "https://files.pythonhosted.org/packages/94/70/4c24ebf92793b5919f9ce55e7d838b1afbbcfa5499bba195fa096f5326e8/uk_geo_utils-0.17.0.tar.gz", hash = "sha256:40b36dc152de7860009ce5b7b6da90d804717c596ac9b0451303e7ca081d5253", size = 18658 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e1/2e/6ae0ed1c04299a78b5c495f65332af2e5c0a6195a9248c286b896e90b355/uk_geo_utils-0.16.0-py3-none-any.whl", hash = "sha256:83098013844906d9415178db5c935285d7b25a08ca911b0a3848a9ecb3289402", size = 38580 },
+    { url = "https://files.pythonhosted.org/packages/fa/43/d616e73b746d00f411b51438966c49812e36d6d71f92b8f05333b2c4b287/uk_geo_utils-0.17.0-py3-none-any.whl", hash = "sha256:09d8f3683288400acf599c99bf4681a2b9b2e96bb8504e23458cb6612c9072fb", size = 39364 },
 ]
 
 [[package]]
