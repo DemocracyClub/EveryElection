@@ -28,8 +28,8 @@ class Command(BaseCommand):
     Assumes it will be English.
     Example:
     python manage.py create_combined_authority \
-      --official-name 'The York and North Yorkshire Combined Authority' \
-      --common-name 'The York and North Yorkshire Combined Authority' \
+      --official-name 'York and North Yorkshire Combined Authority' \
+      --common-name 'York and North Yorkshire Combined Authority' \
       --identifier YNYC \
       --constituent-councils E06000014 E06000065 \
       --slug york-and-north-yorkshire-ca \
