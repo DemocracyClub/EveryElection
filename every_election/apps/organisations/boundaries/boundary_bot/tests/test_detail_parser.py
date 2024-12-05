@@ -30,15 +30,12 @@ class DetailParserTest(TestCase):
         self.assertIsNone(result[0]["legislation_title"])
         self.assertIsNone(result[0]["legislation_url"])
         self.assertEqual(0, result[0]["legislation_made"])
-        self.assertEqual(
-            "/sites/default/files/2023-10/calderdale_draftrecs.zip",
-            result[0]["boundaries_url"],
-        )
+        self.assertIsNone(result[0]["boundaries_url"])
 
-    def test_with_eco_and_shapefiles(self):
+    def test_eco_with_final_shapefiles(self):
         spider = LgbceSpider()
         fixture = mock_response(
-            "fixtures/detail/with_eco_and_shapefiles.html",
+            "fixtures/detail/eco_with_final_shapefiles.html",
             "https://www.lgbce.org.uk/all-reviews/fareham",
         )
         result = list(spider.parse(fixture))
@@ -59,6 +56,33 @@ class DetailParserTest(TestCase):
         self.assertEqual(1, result[0]["legislation_made"])
         self.assertEqual(
             "/sites/default/files/2023-02/onedrive_1_06-02-2023.zip",
+            result[0]["boundaries_url"],
+        )
+
+    def test_eco_with_draft_and_final_shapefiles(self):
+        spider = LgbceSpider()
+        fixture = mock_response(
+            "fixtures/detail/eco_with_draft_and_final_shapefiles.html",
+            "https://www.lgbce.org.uk/all-reviews/worcestershire",
+        )
+        result = list(spider.parse(fixture))
+        self.assertEqual(1, len(result))
+        self.assertEqual("worcestershire", result[0]["slug"])
+        self.assertEqual(
+            "Making our recommendation into law",
+            result[0]["latest_event"],
+        )
+        self.assertEqual(
+            "The Worcestershire (Electoral Changes) Order 2024",
+            result[0]["legislation_title"],
+        )
+        self.assertEqual(
+            "https://www.legislation.gov.uk/uksi/2024/1176/contents/made",
+            result[0]["legislation_url"],
+        )
+        self.assertEqual(1, result[0]["legislation_made"])
+        self.assertEqual(
+            "/sites/default/files/2024-07/worcestershire_f_eds_polygons.zip",
             result[0]["boundaries_url"],
         )
 
