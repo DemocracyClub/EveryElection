@@ -56,22 +56,14 @@ class LgbceSpider(scrapy.Spider):
     start_urls = [START_PAGE]
 
     def get_shapefiles(self, response):
-        # find any links to zip files in the page
+        # find any zipfile links in divs that also have a header element containing the text 'Final'
         zipfiles = response.xpath(
-            "/html/body//a[contains(@href,'.zip')]/@href"
+            "/html/body//div[h4[contains(text(), 'Final')]]//a[contains(@href,'.zip')]/@href"
         ).extract()
 
-        zipfiles = list(set(zipfiles))
         if len(zipfiles) == 1:
             # if we found exactly one link to a zipfile,
             # assume that's what we're looking for
-            return zipfiles[0]
-
-        # Try being more specific
-        zipfiles = get_link_from_container_label(
-            "mapping files", response, "download-file-title"
-        )
-        if len(zipfiles) == 1:
             return zipfiles[0]
 
         return None
