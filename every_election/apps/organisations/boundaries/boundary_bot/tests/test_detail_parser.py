@@ -30,10 +30,7 @@ class DetailParserTest(TestCase):
         self.assertIsNone(result[0]["legislation_title"])
         self.assertIsNone(result[0]["legislation_url"])
         self.assertEqual(0, result[0]["legislation_made"])
-        self.assertEqual(
-            "/sites/default/files/2023-10/calderdale_draftrecs.zip",
-            result[0]["boundaries_url"],
-        )
+        self.assertIsNone(result[0]["boundaries_url"])
 
     def test_with_eco_and_shapefiles(self):
         spider = LgbceSpider()
