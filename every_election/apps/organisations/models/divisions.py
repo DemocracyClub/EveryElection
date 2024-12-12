@@ -2,6 +2,7 @@ import re
 
 from core.mixins import UpdateElectionsTimestampedModel
 from django.contrib.gis.db import models
+from django.db import connection, transaction
 from django.db.models import Q
 from django_extensions.db.models import TimeStampedModel
 
@@ -158,6 +159,19 @@ class DivisionGeography(models.Model):
     )
     geography = models.MultiPolygonField()
     source = models.CharField(blank=True, max_length=255)
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.subdivided.all().delete()
+        sql = """
+            INSERT INTO organisations_divisiongeographysubdivided (geography, division_geography_id)
+            SELECT st_subdivide(geography) as geography, id as division_geography_id
+            FROM organisations_divisiongeography dg
+            WHERE dg.id=%s;
+        """
+        with connection.cursor() as cursor:
+            cursor.execute(sql, [self.id])
 
 
 class DivisionGeographySubdivided(models.Model):

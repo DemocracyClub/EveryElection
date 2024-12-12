@@ -3,9 +3,14 @@ from datetime import date
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from elections.tests.factories import ElectionFactory
-from organisations.models import Organisation
+from organisations.models import (
+    DivisionGeographySubdivided,
+    Organisation,
+    OrganisationGeographySubdivided,
+)
 from organisations.tests.factories import (
     CompletedOrganisationBoundaryReviewFactory,
+    DivisionGeographyFactory,
     IncompleteOrganisationBoundaryReviewFactory,
     OrganisationDivisionFactory,
     OrganisationDivisionSetFactory,
@@ -134,6 +139,35 @@ class TestOrganisationGeographies(TestCase):
         with self.assertRaises(ValueError):
             org.get_geography(date(1900, 1, 1))  # before the org start date
 
+    def test_create_subdivided(self):
+        # no subdivided geographies exist before we start
+        self.assertEqual(
+            OrganisationGeographySubdivided.objects.all().count(), 0
+        )
+
+        org = OrganisationFactory()
+        geo = OrganisationGeographyFactory(organisation=org, gss="")
+
+        # creating an OrganisationGeography object should create one or more
+        # related OrganisationGeographySubdivided objects
+        self.assertTrue(
+            OrganisationGeographySubdivided.objects.filter(
+                organisation_geography=geo
+            ).count()
+            >= 1
+        )
+
+    def test_update_subdivided(self):
+        org = OrganisationFactory()
+        geo = OrganisationGeographyFactory(organisation=org, gss="")
+
+        orig_id = geo.subdivided.all()[0].id
+        geo.save()
+
+        # We should have deleted and re-created the related
+        # OrganisationGeographySubdivided objects
+        self.assertNotEqual(orig_id, geo.subdivided.all()[0].id)
+
 
 class TestOrganisationDivision(TestCase):
     def test_format_geography_invalid(self):
@@ -179,6 +213,35 @@ class TestOrganisationDivision(TestCase):
             .distinct()
         )
         self.assertEqual([self.division.modified], list(modified_dates))
+
+
+class TestOrganisationDivisionGeography(TestCase):
+    def test_create_subdivided(self):
+        # no subdivided geographies exist before we start
+        self.assertEqual(DivisionGeographySubdivided.objects.all().count(), 0)
+
+        div = OrganisationDivisionFactory()
+        geo = DivisionGeographyFactory(division=div)
+
+        # creating an DivisionGeography object should create one or more
+        # related DivisionGeographySubdivided objects
+        self.assertTrue(
+            DivisionGeographySubdivided.objects.filter(
+                division_geography=geo
+            ).count()
+            >= 1
+        )
+
+    def test_update_subdivided(self):
+        div = OrganisationDivisionFactory()
+        geo = DivisionGeographyFactory(division=div)
+
+        orig_id = geo.subdivided.all()[0].id
+        geo.save()
+
+        # We should have deleted and re-created the related
+        # DivisionGeographySubdivided objects
+        self.assertNotEqual(orig_id, geo.subdivided.all()[0].id)
 
 
 class TestDateConstraints(TestCase):
