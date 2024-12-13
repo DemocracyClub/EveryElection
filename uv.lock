@@ -616,13 +616,16 @@ wheels = [
 
 [[package]]
 name = "eco-parser"
-version = "0.2.0"
+version = "0.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "lxml" },
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/01/96/31eb66479f0c0602d4dac3add722f15af37d2b8c6548eb331547044439b0/eco_parser-0.2.0.tar.gz", hash = "sha256:d1b6c73b4817e27710111da2b495012e08ef9c7d67707c6793c9e344936750be", size = 5089 }
+sdist = { url = "https://files.pythonhosted.org/packages/d1/bc/fa33b10086f256d0aed3121c722f1813f525c911095ccd8edbd831c1212b/eco_parser-0.3.0.tar.gz", hash = "sha256:a307e34876c8e2ee60b679d5f18cb4d75b7af6e6cbf1740c1377ecd073fa0c05", size = 6052 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b1/a3/5d7d2f4d930dbe80806a571689b5522c0cadb9a622b0edc3d317bb9ea6ca/eco_parser-0.3.0-py3-none-any.whl", hash = "sha256:690a1116ef8a234b6abb9faeb45557f8af7dba4990d41995dce14d0a6477c632", size = 7150 },
+]
 
 [[package]]
 name = "everyelection"
@@ -715,7 +718,7 @@ requires-dist = [
     { name = "djangorestframework", specifier = "==3.15.2" },
     { name = "djangorestframework-gis", specifier = "==1.1" },
     { name = "djangorestframework-jsonp", specifier = "==1.0.2" },
-    { name = "eco-parser", specifier = "==0.2.0" },
+    { name = "eco-parser", specifier = "==0.3.0" },
     { name = "geojson", specifier = "==3.1.0" },
     { name = "psutil", specifier = "==6.0.0" },
     { name = "psycopg-binary", specifier = "==3.2.3" },
