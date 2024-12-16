@@ -301,6 +301,7 @@ class LGBCEReviewHelper:
             "Mapit Generation URI": "",
             "Organisation ID": review.organisation.official_identifier,
             "Organisation ID type": "local-authority-eng",
+            "Territory Code": "ENG",
         }
 
     def get_eco_csv_rows(self, review: OrganisationBoundaryReview):

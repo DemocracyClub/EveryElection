@@ -10,6 +10,7 @@ from organisations.models import (
     OrganisationDivisionSet,
     OrganisationGeography,
     OrganisationGeographySubdivided,
+    TerritoryCode,
 )
 from organisations.models.divisions import ReviewStatus
 
@@ -58,7 +59,7 @@ class OrganisationDivisionFactory(factory.django.DjangoModelFactory):
     slug = factory.Sequence(lambda n: "%d" % n)
     division_type = "test"
     seats_total = 1
-    # division_election_sub_type
+    territory_code = TerritoryCode.ENG
 
 
 class SubdividedDivisionGeographyFactory(factory.django.DjangoModelFactory):
