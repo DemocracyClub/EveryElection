@@ -256,7 +256,7 @@ class WriteCSVToS3Tests(TestCase):
 
         keys = (
             (self.completed_review.s3_boundaries_key, 15),
-            (self.completed_review.s3_eco_key, 9322),
+            (self.completed_review.s3_eco_key, 9533),
             (self.completed_review.s3_end_date_key, 50),
         )
         for key, length in keys:
@@ -303,8 +303,9 @@ class WriteCSVToS3Tests(TestCase):
                 ),
             )
         self.assertEqual(
-            "Start Date,End Date,Name,official_identifier,geography_curie,seats_total,Boundary Commission Consultation URL,Legislation URL,Short Title,Notes,Mapit Generation URI,Organisation ID,"
-            "Organisation ID type",
+            "Start Date,End Date,Name,official_identifier,geography_curie,seats_total,"
+            "Boundary Commission Consultation URL,Legislation URL,Short Title,Notes,"
+            "Mapit Generation URI,Organisation ID,Organisation ID type,Territory Code",
             self.s3.get_object(
                 Bucket=TEST_LGBCE_MIRROR_BUCKET,
                 Key=self.completed_review.s3_eco_key,
@@ -462,7 +463,7 @@ class WriteCSVToS3Tests(TestCase):
 
         keys = (
             (self.completed_review.s3_boundaries_key, 15),
-            (self.completed_review.s3_eco_key, 9322),
+            (self.completed_review.s3_eco_key, 9533),
             (self.completed_review.s3_end_date_key, 50),
         )
         for key, length in keys:

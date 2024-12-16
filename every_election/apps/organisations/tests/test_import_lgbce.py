@@ -12,6 +12,7 @@ from organisations.models import (
     Organisation,
     OrganisationDivision,
     OrganisationDivisionSet,
+    TerritoryCode,
 )
 
 
@@ -70,6 +71,7 @@ class ImportLgbceTests(TestCase):
                 slug=slugify(division_name),
                 division_type="DIW",
                 seats_total=1,
+                territory_code=TerritoryCode.ENG,
             )
 
     def run_import_with_test_data(self, org, name_map):

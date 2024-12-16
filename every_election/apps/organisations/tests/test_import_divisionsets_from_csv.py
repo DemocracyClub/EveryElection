@@ -36,6 +36,7 @@ class ImportDivisionSetsFromCsvTests(TestCase):
             "Mapit Generation URI": "",
             "Organisation ID": "",
             "Organisation ID type": "",
+            "Territory Code": "ENG",
         }
 
         self.org3 = Organisation.objects.create(

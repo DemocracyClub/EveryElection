@@ -97,6 +97,13 @@ class DivisionManager(models.QuerySet):
         )
 
 
+class TerritoryCode(models.TextChoices):
+    ENG = ("ENG", "England")
+    NIR = ("NIR", "Northern Ireland")
+    SCT = ("SCT", "Scotland")
+    WLS = ("WLS", "Wales")
+
+
 class OrganisationDivision(UpdateElectionsTimestampedModel):
     """
     Sub parts of an organisation that people can be elected to.
@@ -120,7 +127,12 @@ class OrganisationDivision(UpdateElectionsTimestampedModel):
     division_subtype = models.CharField(blank=True, max_length=255)
     division_election_sub_type = models.CharField(blank=True, max_length=2)
     seats_total = models.IntegerField(blank=True, null=True)
-    territory_code = models.CharField(blank=True, max_length=10)
+    territory_code = models.CharField(
+        blank=False,
+        max_length=10,
+        choices=TerritoryCode.choices,
+        verbose_name="Territory",
+    )
     ValidationError = ValueError
     objects = DivisionManager().as_manager()
 

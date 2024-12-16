@@ -31,9 +31,9 @@ from organisations.models import (
 
 class Command(ReadFromCSVMixin, BaseCommand):
     help = """Import from CSV at URL with the headers:
-        Start Date, End Date, Name, official_identifier,
-        seats_total, Boundary Commission Consultation URL, Legislation URL,
-        Short Title, Notes, Mapit Generation URI, Organisation ID"""
+        Start Date, End Date, Name, official_identifier, seats_total,
+        Boundary Commission Consultation URL, Legislation URL, Short Title,
+        Notes, Mapit Generation URI, Organisation ID, Territory Code"""
 
     # dict of DivisionSet objects keyed by organisation
     # (because we can't have >1 active DivisionSets for an organisation)
@@ -158,6 +158,7 @@ class Command(ReadFromCSVMixin, BaseCommand):
             division_type=self.get_division_type_from_registers(line),
             seats_total=seats_total,
             divisionset=div_set,
+            territory_code=line["Territory Code"],
         )
 
     def create_divisions(self, csv_data):

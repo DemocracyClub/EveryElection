@@ -10,6 +10,7 @@ from organisations.models.divisions import (
     OrganisationDivision,
     OrganisationDivisionSet,
     ReviewStatus,
+    TerritoryCode,
 )
 from organisations.models.organisations import (
     Organisation,
@@ -30,4 +31,5 @@ __all__ = [
     "DivisionGeographySubdivided",
     "OrganisationBoundaryReview",
     "ReviewStatus",
+    "TerritoryCode",
 ]

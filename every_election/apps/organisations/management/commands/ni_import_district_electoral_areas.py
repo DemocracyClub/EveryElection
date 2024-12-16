@@ -8,6 +8,7 @@ from organisations.models import (
     Organisation,
     OrganisationDivision,
     OrganisationDivisionSet,
+    TerritoryCode,
 )
 
 
@@ -72,6 +73,7 @@ class Command(ReadFromCSVMixin, BaseCommand):
                 slug=slugify(line["District Electoral Area"]),
                 division_type="LGE",
                 seats_total=line["Number of councillors"],
+                territory_code=TerritoryCode.NIR,
             )
 
             self.divisions.append(div)
