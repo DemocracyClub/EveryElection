@@ -1,0 +1,55 @@
+{
+  "extends": [
+    "config:recommended",
+    ":pinAllExceptPeerDependencies",
+  ],
+
+  "timezone": "Europe/London",
+
+  "dependencyDashboardApproval": false,
+  "prHourlyLimit": 0,
+  "branchConcurrentLimit": 0,
+  "automerge": false,
+  "rangeStrategy": "pin",
+
+  "enabledManagers": [
+    "pep621",
+    "npm",
+  ],
+
+  "packageRules": [
+    {
+      "groupName": "boto",
+      "matchManagers": ["pep621"],
+      "matchPackageNames": ["/^boto.*$/"],
+      "schedule": ["* 0-3 1 * *"], // monthly
+    },
+    {
+      "groupName": "cdk",
+      "matchManagers": ["pep621"],
+      "matchPackageNames": ["/^aws-cdk.*$/"],
+      "schedule": ["* 0-3 1 * *"], // monthly
+    },
+    {
+      "matchManagers": ["pep621"],
+      "matchDepTypes": ["project.dependencies"],
+      "schedule": ["before 4am on monday"], // weekly
+    },
+    {
+      "matchManagers": ["npm"],
+      "schedule": ["before 4am on monday"], // weekly
+    },
+    {
+      "matchManagers": ["pep621"],
+      "matchDepTypes": ["dependency-groups"],
+      "schedule": ["* 0-3 1 * *"], // monthly
+    },
+    {
+      // We don't want notifications about Django 5
+      // until 5.2 LTS is released in 2025
+      "matchManagers": ["pep621"],
+      "matchPackageNames": ["django"],
+      "allowedVersions": "<5.0",
+    }
+  ]
+}
