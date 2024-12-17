@@ -1,5 +1,6 @@
 from core.mixins import UpdateElectionsTimestampedModel
 from django.contrib.gis.db import models
+from django.db import connection, transaction
 from django.urls import reverse
 from model_utils import Choices
 
@@ -151,10 +152,22 @@ class OrganisationGeography(
             name=self.organisation.name, dates=self.active_period_text
         )
 
+    @transaction.atomic
     def save(self, *args, **kwargs):
         self.check_start_date()
         self.check_end_date()
-        return super().save(*args, **kwargs)
+
+        super().save(*args, **kwargs)
+
+        self.subdivided.all().delete()
+        sql = """
+            INSERT INTO organisations_organisationgeographysubdivided (geography, organisation_geography_id)
+            SELECT st_subdivide(geography) as geography, id as division_geography_id
+            FROM organisations_organisationgeography og
+            WHERE og.id=%s;
+        """
+        with connection.cursor() as cursor:
+            cursor.execute(sql, [self.id])
 
     class Meta:
         verbose_name_plural = "Organisation Geographies"
