@@ -12,6 +12,8 @@
   "automerge": false,
   "rangeStrategy": "pin",
 
+  "labels": ["dependencies"],
+
   "enabledManagers": [
     "pep621",
     "npm",
