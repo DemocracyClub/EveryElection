@@ -9,9 +9,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from elections.models import Election
 
-TOPOJSON_BIN = os.path.join(
-    settings.BASE_DIR, "..", "node_modules", ".bin"
-)
+TOPOJSON_BIN = os.path.join(settings.BASE_DIR, "..", "node_modules", ".bin")
 
 
 def set_precision(coords, precision):
