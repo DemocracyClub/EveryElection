@@ -10,7 +10,7 @@ from django.core.management.base import BaseCommand
 from elections.models import Election
 
 TOPOJSON_BIN = os.path.join(
-    settings.BASE_DIR, "..", "node_modules", "topojson", "node_modules", ".bin"
+    settings.BASE_DIR, "..", "node_modules", ".bin"
 )
 
 
