@@ -33,9 +33,11 @@
     {
       "matchManagers": ["pep621"],
       "matchDepTypes": ["project.dependencies"],
+      "schedule": ["before 4am on monday"], // weekly
     },
     {
       "matchManagers": ["npm"],
+      "schedule": ["before 4am on monday"], // weekly
     },
     {
       "matchManagers": ["pep621"],
