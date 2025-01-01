@@ -1,5 +1,9 @@
 version = 1
 requires-python = "==3.12.*"
+resolution-markers = [
+    "platform_python_implementation != 'PyPy'",
+    "platform_python_implementation == 'PyPy'",
+]
 
 [options]
 prerelease-mode = "allow"
@@ -255,7 +259,7 @@ name = "click"
 version = "8.1.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "platform_system == 'Windows'" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/96/d3/f04c7bfcf5c1862a2a5b845c6b2b360488cf47af55dfa79c98f6a6bf98b5/click-8.1.7.tar.gz", hash = "sha256:ca9853ad459e787e2192211578cc907e7594e294c7ccc834310722b41b9ca6de", size = 336121 }
 wheels = [
@@ -365,7 +369,7 @@ wheels = [
 name = "dc-design-system"
 version = "0.5.0"
 source = { url = "https://github.com/DemocracyClub/design-system/archive/refs/tags/0.5.0.zip" }
-sdist = { url = "https://github.com/DemocracyClub/design-system/archive/refs/tags/0.5.0.zip", hash = "sha256:6db8a477b72402e07da5b6f0a300ff76a82baf7375266e839350282da7690c0e" }
+sdist = { hash = "sha256:6db8a477b72402e07da5b6f0a300ff76a82baf7375266e839350282da7690c0e" }
 
 [[package]]
 name = "dc-django-utils"
@@ -754,7 +758,7 @@ dev = [
     { name = "pytest-xdist", specifier = "==3.6.1" },
     { name = "ruff", specifier = "==0.2.2" },
     { name = "safety", specifier = "==3.2.7" },
-    { name = "vcrpy", specifier = "==6.0.1" },
+    { name = "vcrpy", specifier = "==7.0.0" },
 ]
 production = [
     { name = "gevent", specifier = "==24.10.3" },
@@ -2001,17 +2005,17 @@ wheels = [
 
 [[package]]
 name = "vcrpy"
-version = "6.0.1"
+version = "7.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pyyaml" },
-    { name = "urllib3", marker = "platform_python_implementation == 'PyPy'" },
+    { name = "urllib3" },
     { name = "wrapt" },
     { name = "yarl" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/bf/59/9fe85bf7af469bdb0ab8416c76cde630cdff6d1790ecb87e5a58f259c89c/vcrpy-6.0.1.tar.gz", hash = "sha256:9e023fee7f892baa0bbda2f7da7c8ac51165c1c6e38ff8688683a12a4bde9278", size = 84836 }
+sdist = { url = "https://files.pythonhosted.org/packages/25/d3/856e06184d4572aada1dd559ddec3bedc46df1f2edc5ab2c91121a2cccdb/vcrpy-7.0.0.tar.gz", hash = "sha256:176391ad0425edde1680c5b20738ea3dc7fb942520a48d2993448050986b3a50", size = 85502 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/dd/eb/922cfd27d6593363c3e50b7808bcc234ec996128813fd34341685bb307b7/vcrpy-6.0.1-py2.py3-none-any.whl", hash = "sha256:621c3fb2d6bd8aa9f87532c688e4575bcbbde0c0afeb5ebdb7e14cac409edfdd", size = 41880 },
+    { url = "https://files.pythonhosted.org/packages/13/5d/1f15b252890c968d42b348d1e9b0aa12d5bf3e776704178ec37cceccdb63/vcrpy-7.0.0-py2.py3-none-any.whl", hash = "sha256:55791e26c18daa363435054d8b35bd41a4ac441b6676167635d1b37a71dbe124", size = 42321 },
 ]
 
 [[package]]
