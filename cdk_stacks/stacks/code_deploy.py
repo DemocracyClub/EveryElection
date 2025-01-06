@@ -323,6 +323,7 @@ class EECodeDeployment(Stack):
                         "x-csrfmiddlewaretoken",
                         "Accept",
                         "Accept-Language",
+                        "Authorization",
                         "Cache-Control",
                         "Referer",
                     ),
@@ -343,6 +344,9 @@ class EECodeDeployment(Stack):
                         max_ttl=Duration.days(2000),
                         enable_accept_encoding_brotli=True,
                         enable_accept_encoding_gzip=True,
+                        header_behavior=cloudfront.CacheHeaderBehavior.allow_list(
+                            "Authorization",
+                        ),
                     ),
                 ),
                 "/api/*": cloudfront.BehaviorOptions(
