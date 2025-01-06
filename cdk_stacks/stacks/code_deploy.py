@@ -365,21 +365,7 @@ class EECodeDeployment(Stack):
                 "/id_creator/*": cloudfront.BehaviorOptions(
                     origin=app_origin,
                     allowed_methods=cloudfront.AllowedMethods.ALLOW_ALL,
-                    origin_request_policy=cloudfront.OriginRequestPolicy(
-                        self,
-                        "origin_request_policy_id_creator",
-                        cookie_behavior=cloudfront.OriginRequestCookieBehavior.all(),
-                        header_behavior=cloudfront.OriginRequestHeaderBehavior.allow_list(
-                            "x-csrfmiddlewaretoken",
-                            "Accept",
-                            "Accept-Language",
-                            "Cache-Control",
-                            "Referer",
-                        ),
-                        query_string_behavior=cloudfront.OriginRequestQueryStringBehavior.allow_list(
-                            "reset"
-                        ),
-                    ),
+                    origin_request_policy=cloudfront.OriginRequestPolicy.ALL_VIEWER,
                     cache_policy=cloudfront.CachePolicy(
                         self,
                         "disable_cache_id_creator",
