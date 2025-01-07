@@ -33,6 +33,18 @@
       "schedule": ["* 0-3 1 * *"], // monthly
     },
     {
+      "groupName": "ruff",
+      "matchManagers": ["pep621"],
+      "matchPackageNames": ["ruff", "pytest-ruff"],
+      "schedule": ["* 0-3 1 * *"], // monthly
+    },
+    {
+      "groupName": "playwright",
+      "matchManagers": ["pep621"],
+      "matchPackageNames": ["playwright", "pytest-playwright"],
+      "schedule": ["* 0-3 1 * *"], // monthly
+    },
+    {
       "matchManagers": ["pep621"],
       "matchDepTypes": ["project.dependencies"],
       "schedule": ["before 4am on monday"], // weekly
