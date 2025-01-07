@@ -25,7 +25,7 @@ dependencies = [
     "geojson==3.2.0",
     "psutil==6.0.0",
     "psycopg-binary==3.2.3",
-    "rapidfuzz==3.10.1",
+    "rapidfuzz==3.11.0",
     "requests==2.32.3",
     "retry2==0.9.5",
     "scrapy==2.12.0",
