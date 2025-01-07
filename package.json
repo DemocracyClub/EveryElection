@@ -22,7 +22,7 @@
     "topojson-server": "3.0.1",
     "topojson-simplify": "3.0.3",
     "aws-cdk": "2.174.1",
-    "leaflet": "1.9.3"
+    "leaflet": "1.9.4"
   },
   "engines": {
     "node": ">=18"
