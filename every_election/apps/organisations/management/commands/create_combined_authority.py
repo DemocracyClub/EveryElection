@@ -131,6 +131,7 @@ class Command(BaseCommand):
                 legislation_url=org_legislation,
                 geography=ca_geom,
                 organisation=ca_organisation,
+                source="custom",
             )
 
         # Create the ElectedRole
