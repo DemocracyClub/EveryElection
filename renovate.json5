@@ -8,7 +8,7 @@
 
   "dependencyDashboardApproval": false,
   "prHourlyLimit": 0,
-  "branchConcurrentLimit": 0,
+  "prConcurrentLimit": 20,
   "automerge": false,
   "rangeStrategy": "pin",
 
