@@ -255,7 +255,7 @@ name = "click"
 version = "8.1.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "platform_system == 'Windows'" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/96/d3/f04c7bfcf5c1862a2a5b845c6b2b360488cf47af55dfa79c98f6a6bf98b5/click-8.1.7.tar.gz", hash = "sha256:ca9853ad459e787e2192211578cc907e7594e294c7ccc834310722b41b9ca6de", size = 336121 }
 wheels = [
@@ -365,7 +365,7 @@ wheels = [
 name = "dc-design-system"
 version = "0.5.0"
 source = { url = "https://github.com/DemocracyClub/design-system/archive/refs/tags/0.5.0.zip" }
-sdist = { url = "https://github.com/DemocracyClub/design-system/archive/refs/tags/0.5.0.zip", hash = "sha256:6db8a477b72402e07da5b6f0a300ff76a82baf7375266e839350282da7690c0e" }
+sdist = { hash = "sha256:6db8a477b72402e07da5b6f0a300ff76a82baf7375266e839350282da7690c0e" }
 
 [[package]]
 name = "dc-django-utils"
@@ -598,9 +598,9 @@ wheels = [
 
 [[package]]
 name = "djhtml"
-version = "3.0.6"
+version = "3.0.7"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/a0/03/aac9bfb7c9b03604a2c4b0d474af22731ef41cb662fad07f956ae7bf0f6b/djhtml-3.0.6.tar.gz", hash = "sha256:abfc4d7b4730432ca6a98322fbdf8ae9d6ba254ea57ba3759a10ecb293bc57de", size = 28131 }
+sdist = { url = "https://files.pythonhosted.org/packages/9f/e8/1919adec35e3a7e02ec874b7a95b811f03ad6dc9efcfe72d18e0a359f12a/djhtml-3.0.7.tar.gz", hash = "sha256:558c905b092a0c8afcbed27dea2f50aa6eb853a658b309e4e0f2bb378bdf6178", size = 27322 }
 
 [[package]]
 name = "dparse"
@@ -741,7 +741,7 @@ cdk = [
 ]
 dev = [
     { name = "django-debug-toolbar", specifier = "==4.4.6" },
-    { name = "djhtml", specifier = "==3.0.6" },
+    { name = "djhtml", specifier = "==3.0.7" },
     { name = "factory-boy", specifier = "==3.3.1" },
     { name = "moto", specifier = "==5.0.9" },
     { name = "playwright", specifier = "==1.48.0" },
