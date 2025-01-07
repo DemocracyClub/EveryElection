@@ -39,8 +39,7 @@ class ReadFromFileMixin:
         )
 
     def read_from_local(self, filename):
-        with open(filename, "rt"):
-            return filename
+        return open(filename, "rt")  # noqa: SIM115
 
     def read_from_url(self, url):
         tmp = tempfile.NamedTemporaryFile()
