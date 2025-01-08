@@ -407,16 +407,15 @@ wheels = [
 
 [[package]]
 name = "diagrams"
-version = "0.23.3"
+version = "0.24.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "graphviz" },
     { name = "jinja2" },
-    { name = "typed-ast" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1b/ee/3070e64c5e468d1f3a0a04c2863cff633b2263b33265a82df1f1e8c82a36/diagrams-0.23.3.tar.gz", hash = "sha256:543c707c36a2c896dfdf8f23e993a9c7ae48bb1a667f6baf19151eb98e57a134", size = 23651648 }
+sdist = { url = "https://files.pythonhosted.org/packages/05/1f/a72c52faf3d96a22289b887f6373f3feac07e7df0b6871962f7216dd6704/diagrams-0.24.1.tar.gz", hash = "sha256:47b77a0e4dac926a095ff2ae4dd4ec1a192be781799befc660a8f5ce6ea1052f", size = 24362844 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b3/4c/62c4646bd0101c24ee581b803955f340c2e35fa6f3c9704be08d74c6bbb9/diagrams-0.23.3-py3-none-any.whl", hash = "sha256:c497094f9d3600a94bdcfb62b6daf331d2eb7f9b355246e548dae7a4b5c97be0", size = 24370056 },
+    { url = "https://files.pythonhosted.org/packages/1b/15/7e7f886b49701156f6686d38881413b64b01d1ee9bde72faf71fdc84c113/diagrams-0.24.1-py3-none-any.whl", hash = "sha256:c1e3267b018bdb66886a09214c7a7884796a0c28456f8aefdf38916a232c2362", size = 25090168 },
 ]
 
 [[package]]
@@ -740,7 +739,7 @@ cdk = [
     { name = "aws-cdk-aws-lambda-python-alpha", specifier = "==2.160.0a0" },
     { name = "aws-cdk-lib", specifier = "==2.174.1" },
     { name = "constructs", specifier = "==10.0.0" },
-    { name = "diagrams", specifier = "==0.23.3" },
+    { name = "diagrams", specifier = "==0.24.1" },
     { name = "pyyaml", specifier = "==6.0.2" },
 ]
 dev = [
@@ -1913,12 +1912,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/8b/bf/f30eb89bcd14a21a3
 wheels = [
     { url = "https://files.pythonhosted.org/packages/49/d2/7b3e869b983fbf29d770fc2893f8df7c1739c6ff03a2b926b4fc43e4263e/twisted-24.7.0-py3-none-any.whl", hash = "sha256:734832ef98108136e222b5230075b1079dad8a3fc5637319615619a7725b0c81", size = 3181556 },
 ]
-
-[[package]]
-name = "typed-ast"
-version = "1.5.5"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/f9/7e/a424029f350aa8078b75fd0d360a787a273ca753a678d1104c5fa4f3072a/typed_ast-1.5.5.tar.gz", hash = "sha256:94282f7a354f36ef5dbce0ef3467ebf6a258e370ab33d5b40c249fa996e590dd", size = 252841 }
 
 [[package]]
 name = "typeguard"
