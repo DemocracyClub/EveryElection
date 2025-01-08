@@ -298,15 +298,16 @@ wheels = [
 
 [[package]]
 name = "constructs"
-version = "10.0.0"
+version = "10.4.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jsii" },
     { name = "publication" },
+    { name = "typeguard" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/8e/ab/8f3732dc94ac19919397f9b2e81572ea0f3d42c762f3e1e806ca1024c329/constructs-10.0.0.tar.gz", hash = "sha256:cd3c74eaafa9730f586e0f9b986030f3e05e4aa2fa7e400ad44d1b0c7988a2e0", size = 58055 }
+sdist = { url = "https://files.pythonhosted.org/packages/46/84/f608a0a71a05a476b2f1761ab8f3f776677d39f7996ecf1092a1ce741a7c/constructs-10.4.2.tar.gz", hash = "sha256:ce54724360fffe10bab27d8a081844eb81f5ace7d7c62c84b719c49f164d5307", size = 65434 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/61/8c/1446d03cf1c66643a5868ec184a122d9e6fac09d271b0ae5337ed7f98165/constructs-10.0.0-py3-none-any.whl", hash = "sha256:cfeeff31d855574d97a12fe72a3f023792adb857276666f4c8a35a6e19e3fd99", size = 61081 },
+    { url = "https://files.pythonhosted.org/packages/f2/d9/c5e7458f323bf063a9a54200742f2494e2ce3c7c6873e0ff80f88033c75f/constructs-10.4.2-py3-none-any.whl", hash = "sha256:1f0f59b004edebfde0f826340698b8c34611f57848139b7954904c61645f13c1", size = 63509 },
 ]
 
 [[package]]
@@ -738,7 +739,7 @@ requires-dist = [
 cdk = [
     { name = "aws-cdk-aws-lambda-python-alpha", specifier = "==2.160.0a0" },
     { name = "aws-cdk-lib", specifier = "==2.174.1" },
-    { name = "constructs", specifier = "==10.0.0" },
+    { name = "constructs", specifier = "==10.4.2" },
     { name = "diagrams", specifier = "==0.24.1" },
     { name = "pyyaml", specifier = "==6.0.2" },
 ]

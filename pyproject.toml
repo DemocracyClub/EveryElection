@@ -42,7 +42,7 @@ dependencies = [
 cdk = [
     "aws-cdk-lib==2.174.1",
     "aws-cdk.aws-lambda-python-alpha==2.160.0a0",
-    "constructs==10.0.0",
+    "constructs==10.4.2",
     "diagrams==0.24.1",
     "pyyaml==6.0.2",
 ]
