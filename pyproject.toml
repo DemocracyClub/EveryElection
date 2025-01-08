@@ -55,7 +55,7 @@ dev = [
     "django-debug-toolbar==4.4.6",
     "pytest==7.4.0",
     "pytest-django==4.9.0",
-    "pytest-cov==5.0.0",
+    "pytest-cov==6.0.0",
     "pytest-freezegun==0.4.2",
     "factory-boy==3.3.1",
     "vcrpy==6.0.2",
