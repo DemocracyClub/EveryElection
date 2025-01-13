@@ -34,8 +34,8 @@ dependencies = [
     "uk-geo-utils==0.17.0",
     "django-pipeline==4.0.0",
     "django-dotenv==1.4.2",
-    "dc_design_system @ https://github.com/DemocracyClub/design-system/archive/refs/tags/0.5.0.zip",
-    "dc_django_utils @ git+https://github.com/DemocracyClub/dc_django_utils.git@7.0.1",
+    "dc-django-utils",
+    "dc-design-system",
 ]
 
 [dependency-groups]
@@ -76,6 +76,10 @@ dev = [
 prerelease = "allow"
 
 package = false
+
+[tool.uv.sources]
+dc-django-utils = { git = "https://github.com/DemocracyClub/dc_django_utils.git", rev = "7.0.1" }
+dc-design-system = { git = "https://github.com/DemocracyClub/design-system.git", rev = "0.5.0" }
 
 [tool.ruff]
 line-length = 80
