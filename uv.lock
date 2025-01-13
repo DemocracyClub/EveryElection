@@ -373,8 +373,8 @@ source = { git = "https://github.com/DemocracyClub/design-system.git?rev=0.5.0#9
 
 [[package]]
 name = "dc-django-utils"
-version = "7.0.1"
-source = { git = "https://github.com/DemocracyClub/dc_django_utils.git?rev=7.0.1#78b20cf5e955c2994f49fd3d5db3fdad8ee5beba" }
+version = "8.0.1"
+source = { git = "https://github.com/DemocracyClub/dc_django_utils.git?rev=d140e554cd3f62541036464fb8d515fa212e4b46#d140e554cd3f62541036464fb8d515fa212e4b46" }
 dependencies = [
     { name = "django" },
     { name = "django-localflavor" },
@@ -706,7 +706,7 @@ requires-dist = [
     { name = "botocore", specifier = "==1.35.93" },
     { name = "commitment", specifier = "==4.0.0" },
     { name = "dc-design-system", git = "https://github.com/DemocracyClub/design-system.git?rev=0.5.0" },
-    { name = "dc-django-utils", git = "https://github.com/DemocracyClub/dc_django_utils.git?rev=7.0.1" },
+    { name = "dc-django-utils", git = "https://github.com/DemocracyClub/dc_django_utils.git?rev=d140e554cd3f62541036464fb8d515fa212e4b46" },
     { name = "django", specifier = "==4.2.17" },
     { name = "django-cors-headers", specifier = "==4.6.0" },
     { name = "django-dotenv", specifier = "==1.4.2" },
