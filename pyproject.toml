@@ -48,7 +48,7 @@ cdk = [
 ]
 production = [
     "gunicorn==23.0.0",
-    "sentry-sdk==2.19.2",
+    "sentry-sdk==2.20.0",
     "gevent==24.11.1",
 ]
 dev = [
