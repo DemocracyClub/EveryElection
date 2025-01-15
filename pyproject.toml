@@ -52,7 +52,7 @@ production = [
     "gevent==24.11.1",
 ]
 dev = [
-    "django-debug-toolbar==4.4.6",
+    "django-debug-toolbar==5.0.1",
     "pytest==7.4.4",
     "pytest-django==4.9.0",
     "pytest-cov==6.0.0",
