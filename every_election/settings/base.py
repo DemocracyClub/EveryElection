@@ -195,7 +195,6 @@ PIPELINE["STYLESHEETS"].update(
     {
         "map": {
             "source_filenames": [
-                "css/map.css",
                 "leaflet/dist/leaflet.css",
             ],
             "output_filename": "css/map.css",
