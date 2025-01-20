@@ -1,5 +1,6 @@
 // DC Design System
 // Main files
+@import 'partials/_switcher.scss';
 @import 'partials/_fonts.scss';
 @import 'partials/_variables.scss';
 @import 'partials/_type.scss';
@@ -31,6 +32,7 @@
 @import 'partials/_date-picker.scss';
 $scope: false;
 @mixin optional-styles {
+    @include switcher;
     @include description-lists;
     @include button;
     @include cta;
