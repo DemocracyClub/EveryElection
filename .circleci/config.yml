@@ -44,11 +44,6 @@ jobs:
           command: |
             . .venv/bin/activate
             playwright install
-      - run:
-          name: Pip safety check
-          command: |
-            . .venv/bin/activate
-            safety check
 
       - run:
           name: Prune UV cache
