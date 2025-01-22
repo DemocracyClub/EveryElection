@@ -1,5 +1,6 @@
 // DC Design System
 // Main files
+@import 'partials/_switcher.scss';
 @import 'partials/_fonts.scss';
 @import 'partials/_variables.scss';
 @import 'partials/_type.scss';
@@ -25,12 +26,14 @@
 @import 'partials/_codeblock.scss';
 @import 'partials/_dark.scss';
 @import 'partials/_page.scss';
+@import 'partials/_map-leaflet.scss';
 @import 'partials/_utilities.scss';
 @import 'partials/_status.scss';
 @import 'partials/_logo.scss';
 @import 'partials/_date-picker.scss';
 $scope: false;
 @mixin optional-styles {
+    @include switcher;
     @include description-lists;
     @include button;
     @include cta;
@@ -49,6 +52,7 @@ $scope: false;
     @include checkbox;
     @include filter;
     @include codeblock;
+    @include map-leaflet;
     @include status;
     @include logo;
     @include date-picker;

@@ -57,27 +57,42 @@
 {% endblock main_base %}
 {% block mailing_list %}{% endblock mailing_list %}
 {% block footer_menu %}
-    <div class="ds-cluster-center">
-        <ul>
-            <li><a href="{% url 'home' %}">Home</a></li>
-            <li><a href="https://democracyclub.org.uk/about/">About</a></li>
-            <li><a href="https://democracyclub.org.uk/privacy/">Privacy</a></li>
-            <li><a href="https://democracyclub.org.uk/blog/">Blog</a></li>
-            <li><a href="https://democracyclub.org.uk/contact/">Contact</a></li>
-            <li><a href="https://democracyclub.org.uk/donate/">Donate</a></li>
-            <li><a href="https://www.facebook.com/democracyclub/">Facebook</a></li>
-            <li><a href="https://twitter.com/democlub">Twitter</a></li>
-            <li><a href="https://github.com/DemocracyClub/EveryElection">GitHub</a></li>
-        </ul>
-    </div>
+    {% block footer_links %}
+        <div class="ds-footer-links">
+            <nav>
+                <h2 class="ds-h6">Every Election</h2>
+                <ul>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                </ul>
+            </nav>
+            <nav>
+                <h2 class="ds-h6">About Democracy Club</h2>
+                <ul>
+                    <li><a href="https://democracyclub.org.uk/about/">About Democracy Club</a></li>
+                    <li><a href="https://democracyclub.org.uk/privacy/">Privacy</a></li>
+                    <li><a href="https://democracyclub.org.uk/blog/">Blog</a></li>
+                    <li><a href="https://democracyclub.org.uk/contact/">Contact</a></li>
+                    <li><a href="https://democracyclub.org.uk/donate/">Donate</a></li>
+                </ul>
+            </nav>
+            <nav>
+                <h2 class="ds-h6">Connect with us</h2>
+                <ul>
+                    <li><a href="https://www.facebook.com/democracyclub/">Facebook</a></li>
+                    <li><a href="https://twitter.com/democlub">Twitter</a></li>
+                    <li><a href="https://github.com/DemocracyClub/EveryElection">GitHub</a></li>
+                </ul>
+            </nav>
+        </div>
+    {% endblock footer_links %}
 {% endblock footer_menu %}
-{% block extra_footer_text %}
+{% block extra_footer_copyright_text %}
     <div class="ds-copyright">
         <p>Contains OS data © Crown copyright and database right {% now 'Y' %}</p>
         <p>Contains Royal Mail data © Royal Mail copyright and database right {% now 'Y' %}</p>
         <p>Contains National Statistics data © Crown copyright and database right {% now 'Y' %}</p>
     </div>
-{% endblock extra_footer_text %}
+{% endblock extra_footer_copyright_text %}
 {% block extra_site_js %}
     {% javascript "scripts" %}
 {% endblock extra_site_js %}
