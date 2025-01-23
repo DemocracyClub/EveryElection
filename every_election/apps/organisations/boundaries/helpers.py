@@ -20,6 +20,8 @@ def normalize_name_for_matching(name):
         return slug[:-3]
     if slug.endswith("-ward"):
         return slug[:-5]
+    if slug.endswith("-county"):
+        return slug[:-7]
     return slug
 
 
