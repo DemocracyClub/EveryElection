@@ -35,6 +35,7 @@ dependencies = [
     "django-pipeline==4.0.0",
     "dc-django-utils",
     "dc-design-system",
+    "python-dotenv==1.0.1",
 ]
 
 [dependency-groups]
