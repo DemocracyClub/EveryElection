@@ -58,8 +58,6 @@ class BoundaryLine:
         return self.merge_features(matches)
 
     def get_code_from_feature(self, feature):
-        if feature.get("area_code") == "CED":
-            return "unit_id:" + str(feature.get("unit_id"))
         if feature.get("code") == "999999999":
             raise ValueError(
                 "Expected GSS code but found {code} for feature: ({type} - {name})".format(
