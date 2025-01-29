@@ -42,7 +42,7 @@ class Command(BaseBoundaryLineCommand):
         group.add_argument(
             "--code",
             action="store",
-            help="code in the form gss:X01000001 or unit_id:12345",
+            help="code in the form gss:X01000001",
         )
         group.add_argument(
             "--codes",
@@ -70,19 +70,16 @@ class Command(BaseBoundaryLineCommand):
         code_type, code = split_code(identifier)
 
         if code_type == "unit_id" and re.match(r"^\d+$", code):
-            # FIXME before 2021
             error = (
-                "Importing boundaries from BoundaryLine against CEDs is "
-                "not yet available because unit_id is not a stable identifier"
+                "Importing boundaries from BoundaryLine against unit_ids is "
+                "not available because unit_id is not a stable identifier"
             )
             raise ValueError(error)
 
         if code_type == "gss" and re.match(r"^[A-Z][0-9]{8}$", code):
             return True
 
-        raise ValueError(
-            "Unknown code type. Expected 'gss:X01000001' or 'unit_id:12345'"
-        )
+        raise ValueError("Unknown code type. Expected 'gss:X01000001'")
 
     def filter_records(self, identifier):
         # use code to find matching OrganisationGeography
@@ -161,11 +158,11 @@ class Command(BaseBoundaryLineCommand):
     def import_div_geography(self, div):
         area_type = div.division_type
         bl = self.open_boundaryline(area_type)
-        code_type, code = split_code(div.official_identifier)
-        fieldname = "code" if code_type == "gss" else code_type
-        geom = self.get_geography_from_feature(
-            bl.get_feature_by_field(fieldname, code)
-        )
+
+        if div.division_type == "CED":
+            geom = self.get_geom_for_ced(div, bl)
+        else:
+            geom = self.get_geom_by_gss(div, bl)
 
         try:
             div.geography.geography = geom.ewkb
@@ -177,6 +174,21 @@ class Command(BaseBoundaryLineCommand):
             )
             dg.save()
         self.stdout.write("..saved {}".format(str(div)))
+
+    def get_geom_by_gss(self, div, bl):
+        _, code = split_code(div.official_identifier)
+        return self.get_geography_from_feature(
+            bl.get_feature_by_field("code", code)
+        )
+
+    def get_geom_for_ced(self, ced, bl):
+        # BoundaryLine doesn't have GSS codes for CEDs yet
+        # so we have to match against division name and county instead
+        ced_slug = ced.slug
+        org_slug = ced.divisionset.organisation.slug
+        return self.get_geography_from_feature(
+            bl.get_feature_by_name_and_county(ced_slug, org_slug)
+        )
 
     def import_record(self, record):
         if type(record) == OrganisationDivision:

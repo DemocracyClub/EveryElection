@@ -19,6 +19,19 @@ class BoundaryLine:
         self.layer = ds[0]
 
     def merge_features(self, features):
+        """
+        When we have geographies with 'Detached parts', these are
+        represented in BoundaryLine as multiple records with the same code.
+
+        For example, an area like this
+        https://mapit.mysociety.org/area/12701.html
+
+        is represented as 2 Polygons.
+
+        We just want to represent this as a single MultiPolygon feature,
+        so if we've matched >1 records with the same code
+        merge them into a single MultiPolygon feature.
+        """
         polygons = []
         for feat in features:
             if isinstance(feat.geom.geos, MultiPolygon):
@@ -41,20 +54,27 @@ class BoundaryLine:
             )
         if len(matches) == 1:
             return matches[0].geom.geos
+        # handle 'Detached Parts'
+        return self.merge_features(matches)
 
-        """
-        When we have geographies with 'Detached parts', these are
-        represented in BoundaryLine as multiple records with the same code.
+    def get_feature_by_name_and_county(self, div_slug, org_slug):
+        matches = []
+        slug_tuple = (div_slug, org_slug)
+        for feat in self.layer:
+            feat_name = normalize_name_for_matching(feat.get("name"))
+            feat_county = normalize_name_for_matching(
+                feat.get("file_name").replace("_", "-")
+            )
+            if (feat_name, feat_county) == slug_tuple:
+                matches.append(feat)
 
-        For example, an area like this
-        https://mapit.mysociety.org/area/12701.html
-
-        is represented as 2 Polygons.
-
-        We just want to represent this as a single MultiPolygon feature,
-        so if we've matched >1 records with the same code
-        merge them into a single MultiPolygon feature.
-        """
+        if len(matches) == 0:
+            raise ObjectDoesNotExist(
+                f"Expected one match for {slug_tuple}, found 0"
+            )
+        if len(matches) == 1:
+            return matches[0].geom.geos
+        # handle 'Detached Parts'
         return self.merge_features(matches)
 
     def get_code_from_feature(self, feature):
