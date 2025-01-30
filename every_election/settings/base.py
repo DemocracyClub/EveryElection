@@ -1,4 +1,3 @@
-import contextlib
 import os
 import sys
 
@@ -302,22 +301,13 @@ BASIC_AUTH_ALLOWLIST = [
 CURRENT_PAST_DAYS = 20
 CURRENT_FUTURE_DAYS = 90
 
-# .local.py overrides all the common settings.
-
 DEBUG_TOOLBAR = False
-with contextlib.suppress(ImportError):
-    from .local import *  # noqa
 
 if not os.environ.get("DC_ENVIRONMENT") and DEBUG_TOOLBAR:
     INSTALLED_APPS += ("debug_toolbar",)
     MIDDLEWARE = [
         "debug_toolbar.middleware.DebugToolbarMiddleware",
     ] + MIDDLEWARE
-
-
-# importing test settings file if necessary
-if IN_TESTING:
-    from .testing import *  # noqa
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
@@ -337,3 +327,6 @@ if sentry_dsn := os.environ.get("SENTRY_DSN"):
         ],
         environment=os.environ.get("DC_ENVIRONMENT"),
     )
+
+print("---")
+print("loading BASE settings")

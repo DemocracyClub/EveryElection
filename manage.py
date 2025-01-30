@@ -5,8 +5,10 @@ import sys
 import dotenv
 
 if __name__ == "__main__":
-    dotenv.read_dotenv()
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "every_election.settings")
+    dotenv.load_dotenv()
+    os.environ.setdefault(
+        "DJANGO_SETTINGS_MODULE", "every_election.settings.deploy"
+    )
 
     from django.core.management import execute_from_command_line
 
