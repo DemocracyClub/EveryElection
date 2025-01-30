@@ -48,16 +48,16 @@ class Command(ReadFromCSVMixin, BaseCommand):
     def create_division_sets(self, csv_data):
         for line in csv_data:
             org = self.get_org_from_line(line)
-            self.division_sets[
-                org.official_identifier
-            ] = OrganisationDivisionSet(
-                organisation=org,
-                start_date=self.start_date,
-                end_date=None,
-                legislation_url="http://www.legislation.gov.uk/uksi/2014/270/made",
-                short_title="The District Electoral Areas (Northern Ireland) Order 2014",
-                notes="",
-                consultation_url="",
+            self.division_sets[org.official_identifier] = (
+                OrganisationDivisionSet(
+                    organisation=org,
+                    start_date=self.start_date,
+                    end_date=None,
+                    legislation_url="http://www.legislation.gov.uk/uksi/2014/270/made",
+                    short_title="The District Electoral Areas (Northern Ireland) Order 2014",
+                    notes="",
+                    consultation_url="",
+                )
             )
 
     def create_divisions(self, csv_data):

@@ -23,12 +23,10 @@ from organisations.models import (
 )
 
 
-class ParentDoesNotExist(ValueError):
-    ...
+class ParentDoesNotExist(ValueError): ...
 
 
-class ReplacementDoesNotExist(ValueError):
-    ...
+class ReplacementDoesNotExist(ValueError): ...
 
 
 class ElectionSyncer:
@@ -205,9 +203,9 @@ class ElectionSyncer:
             # Populate the entire cache if it's empty
             qs = ElectionType.objects.all()
             for election_type_model in qs:
-                self.ELECTION_TYPE_CACHE[
-                    election_type_model.election_type
-                ] = election_type_model
+                self.ELECTION_TYPE_CACHE[election_type_model.election_type] = (
+                    election_type_model
+                )
         return self.ELECTION_TYPE_CACHE[election_type]
 
     def get_elected_role(self, elected_role: str):
@@ -215,9 +213,9 @@ class ElectionSyncer:
             # Populate the entire cache if it's empty
             qs = ElectedRole.objects.all()
             for elected_role_model in qs:
-                self.ELECTED_ROLE_CACHE[
-                    elected_role_model.elected_title
-                ] = elected_role_model
+                self.ELECTED_ROLE_CACHE[elected_role_model.elected_title] = (
+                    elected_role_model
+                )
         return self.ELECTED_ROLE_CACHE[elected_role]
 
     def get_organisation(self, organisation_dict: dict):

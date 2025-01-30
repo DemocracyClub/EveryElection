@@ -169,9 +169,9 @@ class TestScraperSaves(TestCase):
                 slug="allerdale"
             ).legislation_title,
         )
-        self.scraper.data["allerdale"][
-            "latest_event"
-        ] = "Making our recommendation into law"
+        self.scraper.data["allerdale"]["latest_event"] = (
+            "Making our recommendation into law"
+        )
         self.scraper.data["allerdale"]["legislation_title"] = "test title"
         self.scraper.data["allerdale"]["status"] = ReviewStatus.CURRENT
 
@@ -211,9 +211,9 @@ class TestScraperSaves(TestCase):
                 slug="allerdale"
             ).legislation_title,
         )
-        self.scraper.data["allerdale"][
-            "latest_event"
-        ] = "Making our recommendation into law"
+        self.scraper.data["allerdale"]["latest_event"] = (
+            "Making our recommendation into law"
+        )
         self.scraper.data["allerdale"]["legislation_title"] = "test title"
         self.scraper.data["allerdale"]["status"] = ReviewStatus.CURRENT
 
