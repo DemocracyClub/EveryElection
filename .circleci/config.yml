@@ -9,6 +9,7 @@ jobs:
         environment:
           CIRCLECI: true
           PGHOST: 127.0.0.1
+          DJANGO_SETTINGS_MODULE: every_election.settings.deploy
       - image: cimg/postgres:16.3-postgis
         environment:
           POSTGRES_USER: every_election
