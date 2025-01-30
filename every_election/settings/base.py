@@ -30,7 +30,7 @@ SECRET_KEY = os.environ.get("EE_SECRET_KEY", "CHANGE THIS!!!")
 SLACK_WEBHOOK_URL = os.environ.get("SLACK_WEBHOOK_URL", None)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = str_bool_to_bool(os.environ.get("EE_DEBUG", False))
+DEBUG = False
 IN_TESTING = sys.argv[1:2] == "test" or sys.argv[0].endswith("pytest")
 
 ALLOWED_HOSTS = [
