@@ -47,12 +47,12 @@ sudo -u postgres psql -d every_election -c "CREATE EXTENSION postgis;"
 psql -d every_election -c "CREATE EXTENSION postgis;"
 ```
 
-Create your local.py settings file:
+Create your local settings file:
 ```
-cp every_election/settings/local.example.py every_election/settings/local.py
+cp .env.example .env
 ```
 
-In this file, add your database credentials to the `DATABASES` dict.
+In this file, add your database username and password.
 
 
 To populate the database from a dumpfile, run: 
