@@ -150,18 +150,17 @@ class ImportBoundariesTests(TestCase):
     def test_import_multiple_boundaries(self):
         # import 3 boundaries by passing a list of 3 codes
         # as a json file containing an array array
-        tmp = tempfile.NamedTemporaryFile(suffix=".json")
-        tmp.write(
-            b"""[
-            "gss:E05011462",
-            "gss:E05011463",
-            "gss:E05011464"
-        ]"""
-        )
-        tmp.seek(0)
-        self.opts["codes"] = tmp.name
-        output = self.run_command_with_test_data()
-        tmp.close()
+        with tempfile.NamedTemporaryFile(suffix=".json") as tmp:
+            tmp.write(
+                b"""[
+                "gss:E05011462",
+                "gss:E05011463",
+                "gss:E05011464"
+            ]"""
+            )
+            tmp.seek(0)
+            self.opts["codes"] = tmp.name
+            output = self.run_command_with_test_data()
 
         self.assertIn("Imported 3 boundaries", output)
         self.assertIn("0 Failures", output)

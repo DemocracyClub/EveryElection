@@ -191,10 +191,10 @@ class Command(BaseBoundaryLineCommand):
         )
 
     def import_record(self, record):
-        if type(record) == OrganisationDivision:
+        if isinstance(record, OrganisationDivision):
             self.import_div_geography(record)
 
-        if type(record) == OrganisationGeography:
+        if isinstance(record, OrganisationGeography):
             self.import_org_geography(record)
 
     def import_all(self, identifiers, allow_multiple):

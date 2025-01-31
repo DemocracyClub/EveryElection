@@ -17,13 +17,11 @@ def has_approved_parents(election):
         and election.group.current_status != ModerationStatuses.approved.value
     ):
         return False
-    if (
+    return not (
         election.group.group
         and election.group.group.current_status
         != ModerationStatuses.approved.value
-    ):
-        return False
-    return True
+    )
 
 
 def has_related_status(election: Election):

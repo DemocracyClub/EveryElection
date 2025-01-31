@@ -1,5 +1,4 @@
 import json
-import os
 import tempfile
 
 import scrapy
@@ -186,19 +185,14 @@ class SpiderWrapper:
         # The 'proper' way to do this is probably to write a custom Exporter
         # but this will do for now
 
-        tmpfile = tempfile.NamedTemporaryFile().name
+        with tempfile.NamedTemporaryFile() as tmpfile:
+            process = CrawlerProcess(
+                {
+                    "FEED_URI": tmpfile.name,
+                }
+            )
+            process.crawl(self.spider)
+            process.start()
 
-        process = CrawlerProcess(
-            {
-                "FEED_URI": tmpfile,
-            }
-        )
-        process.crawl(self.spider)
-        process.start()
-
-        with open(tmpfile) as f:
-            results = json.load(f)
-
-        os.remove(tmpfile)
-
-        return results
+            tmpfile.seek(0)
+            return json.load(tmpfile)

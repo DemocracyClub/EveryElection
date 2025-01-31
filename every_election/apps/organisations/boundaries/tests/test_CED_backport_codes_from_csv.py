@@ -88,12 +88,11 @@ class CEDBackportGSSCodesTests(TestCase):
         divset_ids = list(
             OrganisationDivisionSet.objects.values_list("id", flat=True)
         )
-        tmp = tempfile.NamedTemporaryFile(suffix=".json")
-        tmp.write(json.dumps(divset_ids).encode())
-        tmp.seek(0)
-        self.opts["divset-ids"] = tmp.name
-        output = self.run_command_with_test_data()
-        tmp.close()
+        with tempfile.NamedTemporaryFile(suffix=".json") as tmp:
+            tmp.write(json.dumps(divset_ids).encode())
+            tmp.seek(0)
+            self.opts["divset-ids"] = tmp.name
+            output = self.run_command_with_test_data()
 
         # 1 should not be found in the sample CSV
         self.assertEqual(

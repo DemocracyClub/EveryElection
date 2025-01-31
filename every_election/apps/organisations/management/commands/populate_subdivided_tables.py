@@ -17,7 +17,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        if options.get("where_missing", None):
+        if options.get("where_missing"):
             org_sql = OrganisationGeographySubdivided.POPULATE_WHERE_MISSING_SQL
             div_sql = DivisionGeographySubdivided.POPULATE_WHERE_MISSING_SQL
         else:

@@ -44,10 +44,10 @@ class BaseOsniCommand(BaseCommand):
         super().__init__(*args, **options)
 
     def import_boundary(self, record, feature):
-        if type(record) == OrganisationDivision:
+        if isinstance(record, OrganisationDivision):
             self.import_div_geography(record, feature)
 
-        if type(record) == OrganisationGeography:
+        if isinstance(record, OrganisationGeography):
             self.import_org_geography(record, feature)
 
     def import_org_geography(self, org_geo, feature):
