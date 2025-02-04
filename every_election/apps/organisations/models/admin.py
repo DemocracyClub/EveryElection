@@ -117,7 +117,7 @@ class OrganisationProblemManager(Manager):
                 # one related ElectedRole record
                 Q(electedrole=None)
             )
-        )
+        ).distinct()
 
 
 class OrganisationProblem(Organisation):
