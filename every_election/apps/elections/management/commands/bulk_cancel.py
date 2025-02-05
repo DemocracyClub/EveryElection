@@ -1,4 +1,5 @@
 from django.core.management import BaseCommand
+from django.db import transaction
 from elections.models import Election, MetaData
 
 
@@ -35,11 +36,15 @@ class Command(BaseCommand):
         )
         self.stdout.write(f"updating {elections.count()} elections..")
         for election in elections:
-            self.stdout.write(f"updating {election.election_id}..")
             election.cancelled = True
             if options.get("metadata_id"):
                 election.metadata = MetaData.objects.get(
                     pk=options["metadata_id"]
                 )
-            election.save()
+
+        with transaction.atomic():
+            for election in elections:
+                self.stdout.write(f"updating {election.election_id}..")
+                election.save()
+
         self.stdout.write("..done!")
