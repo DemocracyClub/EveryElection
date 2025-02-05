@@ -67,6 +67,7 @@ class LgbceScraper:
         self.SEND_NOTIFICATIONS = SEND_NOTIFICATIONS
         self.ignore = [
             # orgs that break our pipeline can be ignored here
+            "plymouth",  # https://www.lgbce.org.uk/all-reviews/plymouth is a breaking edge case that because of devolution atm so we'll ignore it for now
         ]
 
     def scrape_index(self):
