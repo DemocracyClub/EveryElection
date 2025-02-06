@@ -196,9 +196,9 @@ class TestElectionSyncerCancelsElection(TestCase):
         self.assertFalse(created_election.cancelled)
 
         ballot["cancelled"] = True
-        ballot[
-            "cancellation_reason"
-        ] = ElectionCancellationReason.CANDIDATE_DEATH
+        ballot["cancellation_reason"] = (
+            ElectionCancellationReason.CANDIDATE_DEATH
+        )
         helper.add_single_election(ballot)
         created_election.refresh_from_db()
         self.assertTrue(created_election.cancelled)
@@ -213,9 +213,9 @@ class TestElectionSyncerCreatesElection(TestCase):
 
         # Change the id
         ballot = get_local_ballot()
-        ballot[
-            "election_id"
-        ] = "local.reigate-and-banstead.banstead-village.2023-05-04"
+        ballot["election_id"] = (
+            "local.reigate-and-banstead.banstead-village.2023-05-04"
+        )
         ballot["poll_open_date"] = "2023-05-04"
 
         # Check it doesn't exist
@@ -237,9 +237,9 @@ class TestElectionSyncerCreatesElection(TestCase):
 
         # Change the id
         ballot = get_local_ballot()
-        ballot[
-            "election_id"
-        ] = "local.reigate-and-banstead.banstead-village.2023-05-04"
+        ballot["election_id"] = (
+            "local.reigate-and-banstead.banstead-village.2023-05-04"
+        )
         ballot["poll_open_date"] = "2023-05-04"
 
         # Check it doesn't exist

@@ -20,8 +20,7 @@ class DiffException(Exception):
         self.diff = diff
 
 
-class MapCreationNeededException(Exception):
-    ...
+class MapCreationNeededException(Exception): ...
 
 
 class DivisionSetGeographyImporter:

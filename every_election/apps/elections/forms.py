@@ -198,9 +198,9 @@ class DivsFormset(forms.BaseFormSet):
                     div_set_filter_args[
                         "divisions__division_election_sub_type__in"
                     ] = self.subtype_list
-                    division_filter_args[
-                        "division_election_sub_type__in"
-                    ] = self.subtype_list
+                    division_filter_args["division_election_sub_type__in"] = (
+                        self.subtype_list
+                    )
                     group_field = "division_subtype"
 
                 div_set: OrganisationDivisionSet = (

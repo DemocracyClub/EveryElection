@@ -99,9 +99,9 @@ class ImportDivisionSetsFromCsvTests(TestCase):
     def test_org_not_found_bad_code(self):
         # Organisation doesn't exist
         cmd = Command()
-        self.base_record[
-            "Organisation ID"
-        ] = "XXXX"  # this Org ID doesn't exist
+        self.base_record["Organisation ID"] = (
+            "XXXX"  # this Org ID doesn't exist
+        )
         cmd.read_from_url = lambda x: [self.base_record]
         with self.assertRaises(Organisation.DoesNotExist):
             cmd.handle(**self.opts)
@@ -110,9 +110,9 @@ class ImportDivisionSetsFromCsvTests(TestCase):
         # Organisation code exists, but not valid for this date
         cmd = Command()
         self.base_record["Organisation ID"] = "TEST1"
-        self.base_record[
-            "Start Date"
-        ] = "2016-09-01"  # before TEST1 org start date
+        self.base_record["Start Date"] = (
+            "2016-09-01"  # before TEST1 org start date
+        )
         cmd.read_from_url = lambda x: [self.base_record]
         with self.assertRaises(Organisation.DoesNotExist):
             cmd.handle(**self.opts)

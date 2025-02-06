@@ -104,16 +104,18 @@ class Command(ReadFromCSVMixin, BaseCommand):
                 # the end date of the previous DivisionSet
                 start_date = self.get_start_date(org)
 
-            self.division_sets[
-                org.official_identifier
-            ] = OrganisationDivisionSet(
-                organisation=org,
-                start_date=start_date,
-                end_date=line["End Date"] or None,
-                legislation_url=line["Legislation URL"],
-                short_title=line["Short Title"],
-                notes=line["Notes"],
-                consultation_url=line["Boundary Commission Consultation URL"],
+            self.division_sets[org.official_identifier] = (
+                OrganisationDivisionSet(
+                    organisation=org,
+                    start_date=start_date,
+                    end_date=line["End Date"] or None,
+                    legislation_url=line["Legislation URL"],
+                    short_title=line["Short Title"],
+                    notes=line["Notes"],
+                    consultation_url=line[
+                        "Boundary Commission Consultation URL"
+                    ],
+                )
             )
 
     def name_to_id(self, name):
