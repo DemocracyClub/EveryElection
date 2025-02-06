@@ -11,6 +11,6 @@ class S3Wrapper:
         self.bucket = resource.Bucket(bucket_name)
 
     def get_file(self, filepath):
-        tmp = tempfile.NamedTemporaryFile()
+        tmp = tempfile.NamedTemporaryFile()  # noqa: SIM115
         self.bucket.download_file(filepath, tmp.name)
         return tmp
