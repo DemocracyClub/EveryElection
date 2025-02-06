@@ -4,11 +4,15 @@
     <div class="ds-card-body">
         <h1>
             {% firstof object.election_title object.election_id %}
-
-            {% if object.cancelled %}
-                <span class="ds-status-message">cancelled</span>
-            {% endif %}
         </h1>
+
+        <aside class="ds-status" aria-label="Status">
+            <ul class="ds-stack">
+                {% if object.cancelled %}
+                    <li class="ds-status-message">Cancelled</li>
+                {% endif %}
+            </ul>
+        </aside>
 
         {% if object.election_subtype %}
             <h3>{{ object.election_subtype }}</h3>
