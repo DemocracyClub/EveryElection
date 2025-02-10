@@ -64,9 +64,9 @@ class NotificationTests(TestCase):
             "allerdale": base_data["allerdale"].copy(),
         }
         scraper.data["allerdale"]["register_code"] = "ALL"
-        scraper.data["allerdale"][
-            "latest_event"
-        ] = "The Allerdale Electoral Changes order"
+        scraper.data["allerdale"]["latest_event"] = (
+            "The Allerdale Electoral Changes order"
+        )
         scraper.data["allerdale"]["status"] = ReviewStatus.CURRENT
         scraper.save()
         scraper.data["allerdale"]["status"] = ReviewStatus.COMPLETED

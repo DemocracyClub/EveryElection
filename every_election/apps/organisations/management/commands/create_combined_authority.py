@@ -97,7 +97,7 @@ class Command(BaseCommand):
         org_identifier = params["identifier"]
         org_official_name = params["official_name"]
         org_common_name = params["common_name"]
-        if params.get("slug", None):
+        if params.get("slug"):
             org_slug = params["slug"]
         else:
             org_slug = slugify(org_common_name)
@@ -118,13 +118,13 @@ class Command(BaseCommand):
         )
 
         # Create the OrganisationGeography
-        if params.get("constituent_councils", None):
+        if params.get("constituent_councils"):
             constituent_geoms = OrganisationGeography.objects.filter(
                 gss__in=params["constituent_councils"]
             ).values_list("geography", flat=True)
 
             ca_geom = union_list(constituent_geoms)
-            if params.get("exterior_ring", None):
+            if params.get("exterior_ring"):
                 ca_geom = extract_exterior_ring(ca_geom)
             OrganisationGeography.objects.create(
                 start_date=org_start_date,

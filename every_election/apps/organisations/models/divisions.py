@@ -325,34 +325,28 @@ class OrganisationBoundaryReview(TimeStampedModel):
 
     @property
     def can_upload_boundaries(self):
-        if self.boundaries_url:
-            return True
-        return False
+        return bool(self.boundaries_url)
 
     @property
     def can_make_end_date_csv(self):
-        if self.effective_date and self.organisation and not self.divisionset:
-            return True
-        return False
+        return bool(
+            self.effective_date and self.organisation and not self.divisionset
+        )
 
     @property
     def can_make_eco_csv(self):
-        if (
+        return bool(
             self.consultation_url
             and self.cleaned_legislation_url
             and self.legislation_title
             and self.organisation
             and not self.divisionset
-        ):
-            return True
-        return False
+        )
 
     @property
     def can_write_csv_to_s3(self):
-        if (
+        return bool(
             self.can_make_eco_csv
             and self.can_make_end_date_csv
             and not self.divisionset
-        ):
-            return True
-        return False
+        )

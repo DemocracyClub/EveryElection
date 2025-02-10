@@ -52,9 +52,9 @@ class ValidationTests(TestCase):
             "allerdale": base_data["allerdale"].copy(),
         }
         scraper.data["allerdale"]["register_code"] = "ALL"
-        scraper.data["allerdale"][
-            "legislation_title"
-        ] = "The Allerdale Electoral Change order"
+        scraper.data["allerdale"]["legislation_title"] = (
+            "The Allerdale Electoral Change order"
+        )
         scraper.data["allerdale"]["latest_event"] = "Effective date"
         scraper.data["allerdale"]["status"] = ReviewStatus.COMPLETED
         scraper.data["allerdale"]["eco_made"] = 1
@@ -75,13 +75,13 @@ class ValidationTests(TestCase):
             "allerdale": base_data["allerdale"].copy(),
         }
         scraper.data["allerdale"]["register_code"] = "ALL"
-        scraper.data["allerdale"][
-            "legislation_title"
-        ] = "The Allerdale Electoral Change order"
+        scraper.data["allerdale"]["legislation_title"] = (
+            "The Allerdale Electoral Change order"
+        )
         scraper.data["allerdale"]["latest_event"] = "Effective date"
-        scraper.data["allerdale"][
-            "legislation_url"
-        ] = "https://www.legislation.gov.uk/uksi/2017/1067/contents/made"
+        scraper.data["allerdale"]["legislation_url"] = (
+            "https://www.legislation.gov.uk/uksi/2017/1067/contents/made"
+        )
         scraper.data["allerdale"]["legislation_made"] = 1
         scraper.data["allerdale"]["status"] = ReviewStatus.COMPLETED
         scraper.save()
@@ -105,9 +105,9 @@ class ValidationTests(TestCase):
             "allerdale": base_data["allerdale"].copy(),
         }
         scraper.data["allerdale"]["register_code"] = "ALL"
-        scraper.data["allerdale"][
-            "legislation_title"
-        ] = "The Allerdale Electoral Change order"
+        scraper.data["allerdale"]["legislation_title"] = (
+            "The Allerdale Electoral Change order"
+        )
         scraper.data["allerdale"]["latest_event"] = "Effective date"
         scraper.data["allerdale"]["legislation_made"] = 1
         scraper.data["allerdale"]["status"] = ReviewStatus.CURRENT

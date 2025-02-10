@@ -58,12 +58,9 @@ def show_source_step(wizard):
         return True
 
     # if a source is already set, we want to show the source form
-    data = wizard.get_cleaned_data_for_step("source")
-    if isinstance(data, dict) and "source" in data:
-        return True
-
     # otherwise, hide it
-    return False
+    data = wizard.get_cleaned_data_for_step("source")
+    return bool(isinstance(data, dict) and "source" in data)
 
 
 def date_known(wizard):
@@ -101,7 +98,7 @@ def select_organisation_division(wizard):
     if wizard.get_election_type.election_type in ["mayor", "pcc"]:
         return False
     # special case gla.a as it doesn't have divisions
-    if (
+    return not (
         election_type.election_type == "gla"
         and wizard.get_election_subtypes
         and list(
@@ -110,10 +107,7 @@ def select_organisation_division(wizard):
             )
         )
         == ["a"]
-    ):
-        return False
-
-    return True
+    )
 
 
 CONDITION_DICT = {

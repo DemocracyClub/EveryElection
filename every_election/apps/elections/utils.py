@@ -73,17 +73,17 @@ def get_cached_election_type(election_type):
 
 def get_cached_election_subtype(election_type):
     if election_type not in CACHE["election_sub_types"]:
-        CACHE["election_sub_types"][
-            election_type
-        ] = ElectionSubType.objects.filter(election_type=election_type)
+        CACHE["election_sub_types"][election_type] = (
+            ElectionSubType.objects.filter(election_type=election_type)
+        )
     return CACHE["election_sub_types"][election_type]
 
 
 def get_cached_valid_election_types(organisation):
     if organisation not in CACHE["valid_election_types"]:
-        CACHE["valid_election_types"][
-            organisation
-        ] = organisation.election_types.all()
+        CACHE["valid_election_types"][organisation] = (
+            organisation.election_types.all()
+        )
     return CACHE["valid_election_types"][organisation]
 
 
@@ -100,10 +100,10 @@ def get_cached_elected_role(organisation, election_type):
 
     if organisation not in CACHE["elected_roles"][election_type]:
         try:
-            CACHE["elected_roles"][election_type][
-                organisation
-            ] = ElectedRole.objects.get(
-                organisation=organisation, election_type=election_type
+            CACHE["elected_roles"][election_type][organisation] = (
+                ElectedRole.objects.get(
+                    organisation=organisation, election_type=election_type
+                )
             )
         except ElectedRole.DoesNotExist:
             CACHE["elected_roles"][election_type][organisation] = None

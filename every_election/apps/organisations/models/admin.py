@@ -42,7 +42,12 @@ class DivisionProblemManager(Manager):
                 # it should have a GSS code
                 # ... mostly
                 ~Q(official_identifier__startswith="gss:")
-                & ~Q(division_type="CED")
+                # We decided to only backport GSS codes to divisionsets with an end_date of 2025-04-30 or later.
+                # We're excluding the older ones here so admin isn't telling us about problems we've decided to ignore.
+                & ~Q(
+                    division_type="CED",
+                    divisionset__end_date__lt=datetime(2025, 4, 30),
+                )
                 & ~Q(division_type="NIE")
             )
         )
@@ -112,7 +117,7 @@ class OrganisationProblemManager(Manager):
                 # one related ElectedRole record
                 Q(electedrole=None)
             )
-        )
+        ).distinct()
 
 
 class OrganisationProblem(Organisation):

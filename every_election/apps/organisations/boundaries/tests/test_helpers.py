@@ -17,6 +17,10 @@ class NormalizeNamesTest(TestCase):
             normalize_name_for_matching("St. Helen's"),
         )
         self.assertEqual(
+            normalize_name_for_matching("CAMBRIDGESHIRE-COUNTY"),
+            normalize_name_for_matching("CAMBRIDGESHIRE"),
+        )
+        self.assertEqual(
             normalize_name_for_matching("St. Helens"),
             normalize_name_for_matching("St Helen's"),
         )

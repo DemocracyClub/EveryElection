@@ -580,3 +580,18 @@ class TestElectionAPIQueries(APITestCase):
             {"overlaps", "same", "contains", "within"},
             {e["election_title"] for e in data["results"]},
         )
+
+    def test_max_limit(self):
+        """
+        We want to prevent users adding e.g limit=100000 to API calls.
+
+        Test that marge values are capped in MaxSizeLimitOffsetPagination
+        """
+
+        # Making elections is expensive, so let's only make what we need to
+        # test that everything is working
+        ElectionWithStatusFactory.create_batch(102)
+        resp = self.client.get("/api/elections/?limit=100000")
+        resp_json = resp.json()
+        self.assertEqual(len(resp_json["results"]), 100)
+        self.assertEqual(resp_json["count"], 102)
