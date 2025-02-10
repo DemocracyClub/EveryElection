@@ -5,9 +5,6 @@ import os
 
 from .base import *  # noqa
 
-print("loading TESTING settings")
-print("---")
-
 IN_TESTING = True
 
 # override these settings to safe values if they are set from the env

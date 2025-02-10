@@ -5,7 +5,4 @@
 
 from .base import *  # noqa
 
-print("loading DEPLOY settings")
-print("---")
-
 DEBUG = False

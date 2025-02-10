@@ -5,8 +5,6 @@
 from .base import *  # noqa
 import contextlib
 
-print("loading DEV settings")
-
 DEBUG = True
 DEBUG_TOOLBAR = True
 
@@ -18,7 +16,4 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 AWS_STORAGE_BUCKET_NAME = "notice-of-election-dev"
 
 with contextlib.suppress(ImportError):
-    print("loading LOCAL settings")
     from .local import *  # noqa
-
-print("---")

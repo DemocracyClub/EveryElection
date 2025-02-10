@@ -327,6 +327,3 @@ if sentry_dsn := os.environ.get("SENTRY_DSN"):
         ],
         environment=os.environ.get("DC_ENVIRONMENT"),
     )
-
-print("---")
-print("loading BASE settings")
