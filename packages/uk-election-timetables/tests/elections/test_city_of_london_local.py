@@ -103,7 +103,7 @@ def _contains_matcher_for_date(matchers, date):
 
 
 def test_get_christmas_break_2014():
-    # In 2014, Christmas and Boxing day are Friday and Sturday
+    # In 2014, Christmas and Boxing day are Friday and Saturday
     # The next available weekday is Monday 29th
     christmas_break_matchers = _get_christmas_break(
         UnitedKingdomBankHolidays().from_country(Country.ENGLAND)._bank_holidays
