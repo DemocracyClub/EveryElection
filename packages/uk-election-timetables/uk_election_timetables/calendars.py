@@ -75,9 +75,9 @@ class UnitedKingdomBankHolidays(object):
     This class exposes a function for each unique calendar: England & Wales, Northern Ireland, and Scotland.
     """
 
-    _calendar = {}
-
     def __init__(self):
+        self._calendar = {}
+
         bank_holiday_json = os.path.join(
             os.path.dirname(__file__), "bank-holidays.json"
         )
