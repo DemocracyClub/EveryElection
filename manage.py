@@ -3,10 +3,14 @@ import os
 import sys
 
 import dotenv
+from django.core.exceptions import ImproperlyConfigured
 
 if __name__ == "__main__":
-    dotenv.read_dotenv()
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "every_election.settings")
+    dotenv.load_dotenv()
+    if not os.environ.get("DJANGO_SETTINGS_MODULE"):
+        raise ImproperlyConfigured(
+            "You must explicitly set DJANGO_SETTINGS_MODULE"
+        )
 
     from django.core.management import execute_from_command_line
 

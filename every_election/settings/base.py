@@ -1,4 +1,3 @@
-import contextlib
 import os
 import sys
 
@@ -31,7 +30,7 @@ SECRET_KEY = os.environ.get("EE_SECRET_KEY", "CHANGE THIS!!!")
 SLACK_WEBHOOK_URL = os.environ.get("SLACK_WEBHOOK_URL", None)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = str_bool_to_bool(os.environ.get("EE_DEBUG", False))
+DEBUG = False
 IN_TESTING = sys.argv[1:2] == "test" or sys.argv[0].endswith("pytest")
 
 ALLOWED_HOSTS = [
@@ -303,21 +302,13 @@ BASIC_AUTH_ALLOWLIST = [
 CURRENT_PAST_DAYS = 20
 CURRENT_FUTURE_DAYS = 90
 
-# .local.py overrides all the common settings.
-
 DEBUG_TOOLBAR = False
-with contextlib.suppress(ImportError):
-    from .local import *  # noqa
 
 if not os.environ.get("DC_ENVIRONMENT") and DEBUG_TOOLBAR:
     INSTALLED_APPS += ("debug_toolbar",)
     MIDDLEWARE = [
         "debug_toolbar.middleware.DebugToolbarMiddleware",
     ] + MIDDLEWARE
-
-# importing test settings file if necessary
-if IN_TESTING:
-    from .testing import *  # noqa
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
