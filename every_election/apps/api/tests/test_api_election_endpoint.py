@@ -76,7 +76,7 @@ class TestElectionAPIQueries(APITestCase):
         ElectionWithStatusFactory(group=None, division_geography=None)
 
         # we should monitor this and be aware if this number increases
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(5):
             resp = self.client.get("/api/elections/?postcode=SW1A1AA")
 
         data = resp.json()
@@ -211,6 +211,11 @@ class TestElectionAPIQueries(APITestCase):
     def test_detail_invalid_id(self):
         resp = self.client.get("/api/elections/foo/")
         self.assertEqual(400, resp.status_code)
+
+    def test_detail_num_queries(self):
+        id_ = ElectionWithStatusFactory(group=None).election_id
+        with self.assertNumQueries(2):
+            self.client.get(f"/api/elections/{id_}/")
 
     def test_identifier_type_filter(self):
         group = ElectionWithStatusFactory(
