@@ -16,7 +16,9 @@ class MayoralElection(Election):
         """
         Calculate the publish date for an election to the position of Mayor in England and Wales
 
-        This is set out in `The Local Authorities (Mayoral Elections) (England and Wales) (Amendment) Regulations 2014 <https://www.legislation.gov.uk/uksi/2014/370/made>`_
+        This is set out in
+        - `The Local Authorities (Mayoral Elections) (England and Wales) (Amendment) Regulations 2014 <https://www.legislation.gov.uk/uksi/2014/370/made>`_
+        - `The Combined Authorities (Mayoral Elections) Order 2017 <https://www.legislation.gov.uk/uksi/2017/67/made>`_
 
         :return: a datetime representing the expected publish date
         """
