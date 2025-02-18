@@ -51,7 +51,7 @@ def test_timetable_sort_order():
     assert election.timetable == [
         {
             "label": "List of candidates published",
-            "date": datetime.date(2021, 4, 9),
+            "date": datetime.date(2021, 4, 8),
             "event": "SOPN_PUBLISH_DATE",
         },
         {

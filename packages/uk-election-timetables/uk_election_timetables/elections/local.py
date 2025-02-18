@@ -20,10 +20,10 @@ class LocalElection(Election):
         """
 
         country_specific_duration = {
-            Country.ENGLAND: 18,
+            Country.ENGLAND: 19,
             Country.NORTHERN_IRELAND: 16,
             Country.SCOTLAND: 23,
-            Country.WALES: 18,
+            Country.WALES: 19,
         }
 
         days_prior = country_specific_duration[self.country]

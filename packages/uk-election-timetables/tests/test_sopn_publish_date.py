@@ -31,7 +31,7 @@ def test_publish_date_local_id():
 def test_publish_date_local_id_with_country():
     election = from_election_id("local.2019-02-21", country=Country.ENGLAND)
 
-    assert election.sopn_publish_date == date(2019, 1, 28)
+    assert election.sopn_publish_date == date(2019, 1, 25)
 
 
 def test_publish_date_parl_id_with_country():
