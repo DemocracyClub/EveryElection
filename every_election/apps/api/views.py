@@ -89,7 +89,7 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
             identifier_type = self.request.query_params.get(
                 "identifier_type", None
             )
-            if identifier_type != "ballot":
+            if identifier_type and identifier_type != "ballot":
                 queryset = queryset.prefetch_related(
                     Prefetch("_children_qs", Election.public_objects.all())
                 )
