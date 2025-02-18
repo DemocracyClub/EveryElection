@@ -97,6 +97,10 @@ def from_election_id(election_id: str, country: Country = None) -> Election:
     def requires_country(el_type):
         return el_type in ["local"]
 
+    if election_id.startswith("mayor.london"):
+        # Mayor of London uses the GLA timetable
+        return GreaterLondonAssemblyElection(poll_date)
+
     if election_id.startswith("local.city-of-london"):
         # The City of London is special and different
         return CityOfLondonLocalElection(poll_date)

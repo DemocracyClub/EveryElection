@@ -190,9 +190,14 @@ election_types = [
         "expected_type": elections.PoliceAndCrimeCommissionerElection,
     },
     {
-        "election_id": "mayor.2019-02-21",
+        "election_id": "mayor.doncaster.2019-02-21",
         "country": None,
         "expected_type": elections.MayoralElection,
+    },
+    {
+        "election_id": "mayor.london.2019-02-21",
+        "country": None,
+        "expected_type": elections.GreaterLondonAssemblyElection,
     },
     # City of London
     {
