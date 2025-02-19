@@ -30,7 +30,7 @@ dependencies = [
     "retry2==0.9.5",
     "scrapy==2.12.0",
     "uk-election-ids==0.9.1",
-    "uk-election-timetables==4.2.2",
+    "uk-election-timetables==4.2.3",
     "uk-geo-utils==0.17.1",
     "django-pipeline==4.0.0",
     "dc-django-utils",
