@@ -24,7 +24,7 @@ dependencies = [
     "eco-parser==0.3.0",
     "geojson==3.2.0",
     "psycopg-binary==3.2.4",
-    "rapidfuzz==3.11.0",
+    "rapidfuzz==3.12.1",
     "requests==2.32.3",
     "retry2==0.9.5",
     "scrapy==2.12.0",
