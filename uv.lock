@@ -1,5 +1,4 @@
 version = 1
-revision = 1
 requires-python = "==3.12.*"
 resolution-markers = [
     "platform_python_implementation != 'PyPy'",
@@ -603,7 +602,6 @@ dependencies = [
     { name = "djangorestframework-jsonp" },
     { name = "eco-parser" },
     { name = "geojson" },
-    { name = "psutil" },
     { name = "psycopg-binary" },
     { name = "python-dotenv" },
     { name = "rapidfuzz" },
@@ -669,7 +667,6 @@ requires-dist = [
     { name = "djangorestframework-jsonp", specifier = "==1.0.2" },
     { name = "eco-parser", specifier = "==0.3.0" },
     { name = "geojson", specifier = "==3.2.0" },
-    { name = "psutil", specifier = "==6.1.1" },
     { name = "psycopg-binary", specifier = "==3.2.4" },
     { name = "python-dotenv", specifier = "==1.0.1" },
     { name = "rapidfuzz", specifier = "==3.11.0" },
