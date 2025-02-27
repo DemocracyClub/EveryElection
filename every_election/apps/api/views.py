@@ -1,10 +1,14 @@
-import logging
 from collections import OrderedDict
-from datetime import datetime
+from datetime import datetime, timedelta
+from pprint import pp
 
 from api import filters
 from django.db.models import Prefetch
 from django.http import Http404
+from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.utils.http import parse_http_date
+from django.views.decorators.http import condition
 from elections.models import (
     Election,
     ElectionSubType,
@@ -29,8 +33,6 @@ from .serializers import (
     OrganisationSerializer,
 )
 
-logger = logging.getLogger(__name__)
-
 
 class APIPostcodeException(APIException):
     status_code = 400
@@ -48,6 +50,40 @@ class APIInvalidElectionIdException(APIException):
     status_code = 400
     default_detail = "Invalid Election ID"
     default_code = "invalid_election_id"
+
+
+def single_ballot_cache(request, **kwargs):
+    try:
+        election = Election.private_objects.get(
+            election_id=kwargs["election_id"]
+        )
+        actual_modified = election.modified
+    except Election.DoesNotExist:
+        # TODO: Maybe not this?
+        # How do we want to cache errors?
+        return None
+
+    # This is a way of setting a longer TTL than the max-age
+    # while at the same time allowing for errors in cache invalidation
+    # to "fix themselves" if we've somehow missed something.
+    if "HTTP_IF_MODIFIED_SINCE" in request.META:
+        client_timestamp = parse_http_date(
+            request.META["HTTP_IF_MODIFIED_SINCE"]
+        )
+        if client_timestamp is None:
+            return actual_modified
+
+        client_dt = datetime.fromtimestamp(client_timestamp, tz=timezone.utc)
+
+        if actual_modified > client_dt:
+            return actual_modified
+
+        # TODO: embiggen
+        # TODO: get this from a setting
+        if timezone.now() - client_dt > timedelta(minutes=2):
+            return timezone.now()
+
+    return actual_modified
 
 
 class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -130,15 +166,18 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
                 queryset = queryset.filter(group_type=identifier_type)
         return queryset.order_by_group_type()
 
+    @method_decorator(condition(last_modified_func=single_ballot_cache))
     def retrieve(self, request, *args, **kwargs):
-        print("print")
-        logger.debug("debug")
-        logger.info("info")
-        logger.warning("warning")
-        logger.error("error")
+        pp(dict(request.headers))
         if not validate(kwargs["election_id"]):
             raise APIInvalidElectionIdException()
-        return super().retrieve(request, *args, **kwargs)
+        resp = super().retrieve(request, *args, **kwargs)
+        # set quite a short cache on this for now
+        # TODO: embiggen
+        # TODO: Remember you also want to set cache-control headers on any other
+        # responses behind this same CloudFront behaviour
+        resp["Cache-Control"] = "s-maxage=30"
+        return resp
 
     def list(self, request, *args, **kwargs):
         """
