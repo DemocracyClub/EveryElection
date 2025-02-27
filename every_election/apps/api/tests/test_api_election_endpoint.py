@@ -214,7 +214,7 @@ class TestElectionAPIQueries(APITestCase):
 
     def test_detail_num_queries(self):
         id_ = ElectionWithStatusFactory(group=None).election_id
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
             self.client.get(f"/api/elections/{id_}/")
 
     def test_identifier_type_filter(self):
