@@ -1,9 +1,14 @@
 from collections import OrderedDict
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from api import filters
+from django.conf import settings
 from django.db.models import Prefetch
 from django.http import Http404
+from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.utils.http import parse_http_date
+from django.views.decorators.http import condition
 from elections.models import (
     Election,
     ElectionSubType,
@@ -45,6 +50,42 @@ class APIInvalidElectionIdException(APIException):
     status_code = 400
     default_detail = "Invalid Election ID"
     default_code = "invalid_election_id"
+
+
+def single_ballot_cache(request, **kwargs):
+    if settings.DEBUG:
+        return None
+
+    if request.query_params.get("deleted", None) is not None:
+        qs = Election.private_objects.all()
+    else:
+        qs = Election.public_objects.all()
+
+    try:
+        election = qs.only("modified").get(election_id=kwargs["election_id"])
+        actual_modified = election.modified.replace(microsecond=0)
+    except Election.DoesNotExist:
+        return None
+
+    # This is a way of setting a longer TTL than the max-age
+    # while at the same time allowing for errors in cache invalidation
+    # to "fix themselves" if we've somehow missed something.
+    if "HTTP_IF_MODIFIED_SINCE" in request.META:
+        client_timestamp = parse_http_date(
+            request.META["HTTP_IF_MODIFIED_SINCE"]
+        )
+        if client_timestamp is None:
+            return actual_modified
+
+        client_dt = datetime.fromtimestamp(client_timestamp, tz=timezone.utc)
+
+        if actual_modified > client_dt:
+            return actual_modified
+
+        if timezone.now() - client_dt > timedelta(hours=4):
+            return timezone.now()
+
+    return actual_modified
 
 
 class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -127,6 +168,7 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
                 queryset = queryset.filter(group_type=identifier_type)
         return queryset.order_by_group_type()
 
+    @method_decorator(condition(last_modified_func=single_ballot_cache))
     def retrieve(self, request, *args, **kwargs):
         if not validate(kwargs["election_id"]):
             raise APIInvalidElectionIdException()
