@@ -53,6 +53,9 @@ class APIInvalidElectionIdException(APIException):
 
 
 def single_ballot_cache(request, **kwargs):
+    print("function: single_ballot_cache")
+    pp(dict(request.headers))
+    print("")
     try:
         election = Election.private_objects.get(
             election_id=kwargs["election_id"]
@@ -168,7 +171,9 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
 
     @method_decorator(condition(last_modified_func=single_ballot_cache))
     def retrieve(self, request, *args, **kwargs):
+        print("function: retrieve")
         pp(dict(request.headers))
+        print("")
         if not validate(kwargs["election_id"]):
             raise APIInvalidElectionIdException()
         resp = super().retrieve(request, *args, **kwargs)
