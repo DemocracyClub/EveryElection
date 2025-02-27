@@ -60,7 +60,7 @@ def single_ballot_cache(request, **kwargs):
         election = Election.private_objects.get(
             election_id=kwargs["election_id"]
         )
-        actual_modified = election.modified
+        actual_modified = election.modified.replace(microsecond=0)
     except Election.DoesNotExist:
         # TODO: Maybe not this?
         # How do we want to cache errors?
