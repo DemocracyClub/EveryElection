@@ -1,3 +1,4 @@
+import logging
 from collections import OrderedDict
 from datetime import datetime
 
@@ -27,6 +28,8 @@ from .serializers import (
     OrganisationGeoSerializer,
     OrganisationSerializer,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class APIPostcodeException(APIException):
@@ -128,6 +131,11 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset.order_by_group_type()
 
     def retrieve(self, request, *args, **kwargs):
+        print("print")
+        logger.debug("debug")
+        logger.info("info")
+        logger.warning("warning")
+        logger.error("error")
         if not validate(kwargs["election_id"]):
             raise APIInvalidElectionIdException()
         return super().retrieve(request, *args, **kwargs)
