@@ -692,13 +692,13 @@ dev = [
     { name = "djhtml", specifier = "==3.0.7" },
     { name = "factory-boy", specifier = "==3.3.1" },
     { name = "moto", specifier = "==5.0.26" },
-    { name = "playwright", specifier = "==1.49.1" },
+    { name = "playwright", specifier = "==1.50.0" },
     { name = "pytest", specifier = "==8.3.4" },
     { name = "pytest-cov", specifier = "==6.0.0" },
     { name = "pytest-django", specifier = "==4.9.0" },
     { name = "pytest-dotenv", specifier = "==0.5.2" },
     { name = "pytest-freezegun", specifier = "==0.4.2" },
-    { name = "pytest-playwright", specifier = "==0.6.2" },
+    { name = "pytest-playwright", specifier = "==0.7.0" },
     { name = "pytest-ruff", specifier = "==0.4.1" },
     { name = "pytest-xdist", specifier = "==3.6.1" },
     { name = "ruff", specifier = "==0.9.4" },
@@ -1089,20 +1089,20 @@ wheels = [
 
 [[package]]
 name = "playwright"
-version = "1.49.1"
+version = "1.50.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "greenlet" },
     { name = "pyee" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ab/be/01025581052e43eb698092c4328d7497ca62bcb5c83f15a611d4a71b4b92/playwright-1.49.1-py3-none-macosx_10_13_x86_64.whl", hash = "sha256:1041ffb45a0d0bc44d698d3a5aa3ac4b67c9bd03540da43a0b70616ad52592b8", size = 39559859 },
-    { url = "https://files.pythonhosted.org/packages/79/25/ef1010a42cc7d576282015d983c5451d73e369b198b6eb32a177fae281f8/playwright-1.49.1-py3-none-macosx_11_0_arm64.whl", hash = "sha256:9f38ed3d0c1f4e0a6d1c92e73dd9a61f8855133249d6f0cec28648d38a7137be", size = 38808973 },
-    { url = "https://files.pythonhosted.org/packages/70/4b/3930cf10f303a10d493a382e4448aaff898b4065698b3b8d92f902e53e08/playwright-1.49.1-py3-none-macosx_11_0_universal2.whl", hash = "sha256:3be48c6d26dc819ca0a26567c1ae36a980a0303dcd4249feb6f59e115aaddfb8", size = 39559863 },
-    { url = "https://files.pythonhosted.org/packages/9a/c1/ea765e72a746dc7ec2ce155ffea29d454e7171db78f3c09185e888387246/playwright-1.49.1-py3-none-manylinux1_x86_64.whl", hash = "sha256:753ca90ee31b4b03d165cfd36e477309ebf2b4381953f2a982ff612d85b147d2", size = 44163300 },
-    { url = "https://files.pythonhosted.org/packages/5a/52/95efac704bf36b770a2522d88a6dee298042845d10bfb35f7ca0fcc36d91/playwright-1.49.1-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:cd9bc8dab37aa25198a01f555f0a2e2c3813fe200fef018ac34dfe86b34994b9", size = 43744353 },
-    { url = "https://files.pythonhosted.org/packages/f9/97/a3fccc9aaa6da83890772e9980703b0ea6b1e1ad42042fb50df3aef6c641/playwright-1.49.1-py3-none-win32.whl", hash = "sha256:43b304be67f096058e587dac453ece550eff87b8fbed28de30f4f022cc1745bb", size = 34060663 },
-    { url = "https://files.pythonhosted.org/packages/71/a9/bd88ac0bd498c91aab3aba2e393d1fa59f72a7243e9265ccbf4861ca4f64/playwright-1.49.1-py3-none-win_amd64.whl", hash = "sha256:47b23cb346283278f5b4d1e1990bcb6d6302f80c0aa0ca93dd0601a1400191df", size = 34060667 },
+    { url = "https://files.pythonhosted.org/packages/0d/5e/068dea3c96e9c09929b45c92cf7e573403b52a89aa463f89b9da9b87b7a4/playwright-1.50.0-py3-none-macosx_10_13_x86_64.whl", hash = "sha256:f36d754a6c5bd9bf7f14e8f57a2aea6fd08f39ca4c8476481b9c83e299531148", size = 40277564 },
+    { url = "https://files.pythonhosted.org/packages/78/85/b3deb3d2add00d2a6ee74bf6f57ccefb30efc400fd1b7b330ba9a3626330/playwright-1.50.0-py3-none-macosx_11_0_arm64.whl", hash = "sha256:40f274384591dfd27f2b014596250b2250c843ed1f7f4ef5d2960ecb91b4961e", size = 39521844 },
+    { url = "https://files.pythonhosted.org/packages/f3/f6/002b3d98df9c84296fea84f070dc0d87c2270b37f423cf076a913370d162/playwright-1.50.0-py3-none-macosx_11_0_universal2.whl", hash = "sha256:9922ef9bcd316995f01e220acffd2d37a463b4ad10fd73e388add03841dfa230", size = 40277563 },
+    { url = "https://files.pythonhosted.org/packages/b9/63/c9a73736e434df894e484278dddc0bf154312ff8d0f16d516edb790a7d42/playwright-1.50.0-py3-none-manylinux1_x86_64.whl", hash = "sha256:8fc628c492d12b13d1f347137b2ac6c04f98197ff0985ef0403a9a9ee0d39131", size = 45076712 },
+    { url = "https://files.pythonhosted.org/packages/bd/2c/a54b5a64cc7d1a62f2d944c5977fb3c88e74d76f5cdc7966e717426bce66/playwright-1.50.0-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ffcff35f72db2689a79007aee78f1b0621a22e6e3d6c1f58aaa9ac805bf4497c", size = 44493111 },
+    { url = "https://files.pythonhosted.org/packages/2b/4a/047cbb2ffe1249bd7a56441fc3366fb4a8a1f44bc36a9061d10edfda2c86/playwright-1.50.0-py3-none-win32.whl", hash = "sha256:3b906f4d351260016a8c5cc1e003bb341651ae682f62213b50168ed581c7558a", size = 34784543 },
+    { url = "https://files.pythonhosted.org/packages/bc/2b/e944e10c9b18e77e43d3bb4d6faa323f6cc27597db37b75bc3fd796adfd5/playwright-1.50.0-py3-none-win_amd64.whl", hash = "sha256:1859423da82de631704d5e3d88602d755462b0906824c1debe140979397d2e8d", size = 34784546 },
 ]
 
 [[package]]
@@ -1348,7 +1348,7 @@ wheels = [
 
 [[package]]
 name = "pytest-playwright"
-version = "0.6.2"
+version = "0.7.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "playwright" },
@@ -1356,9 +1356,9 @@ dependencies = [
     { name = "pytest-base-url" },
     { name = "python-slugify" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a7/19/ae0252d2c36f518733cca294bfcd41c18dad32c2d8aff424d6d1531f1827/pytest_playwright-0.6.2.tar.gz", hash = "sha256:ff4054b19aa05df096ac6f74f0572591566aaf0f6d97f6cb9674db8a4d4ed06c", size = 16293 }
+sdist = { url = "https://files.pythonhosted.org/packages/e3/47/38e292ad92134a00ea05e6fc4fc44577baaa38b0922ab7ea56312b7a6663/pytest_playwright-0.7.0.tar.gz", hash = "sha256:b3f2ea514bbead96d26376fac182f68dcd6571e7cb41680a89ff1673c05d60b6", size = 16666 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/72/38/e95090d0a26114a650f7d8847425f21757fc740de965df94de47b439fe67/pytest_playwright-0.6.2-py3-none-any.whl", hash = "sha256:0eff73bebe497b0158befed91e2f5fe94cfa17181f8b3acf575beed84e7e9043", size = 16436 },
+    { url = "https://files.pythonhosted.org/packages/d8/96/5f8a4545d783674f3de33f0ebc4db16cc76ce77a4c404d284f43f09125e3/pytest_playwright-0.7.0-py3-none-any.whl", hash = "sha256:2516d0871fa606634bfe32afbcc0342d68da2dbff97fe3459849e9c428486da2", size = 16618 },
 ]
 
 [[package]]
