@@ -356,7 +356,7 @@ class EECodeDeployment(Stack):
                         "short_cache_api",
                         default_ttl=Duration.seconds(60),
                         min_ttl=Duration.seconds(0),
-                        max_ttl=Duration.seconds(60),
+                        max_ttl=Duration.seconds(86400),
                         enable_accept_encoding_brotli=True,
                         enable_accept_encoding_gzip=True,
                         query_string_behavior=cloudfront.CacheQueryStringBehavior.all(),
