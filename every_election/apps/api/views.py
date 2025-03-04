@@ -2,6 +2,7 @@ from collections import OrderedDict
 from datetime import datetime
 
 from api import filters
+from django.conf import settings
 from django.db.models import Prefetch
 from django.http import Http404
 from elections.models import (
@@ -130,7 +131,10 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         if not validate(kwargs["election_id"]):
             raise APIInvalidElectionIdException()
-        return super().retrieve(request, *args, **kwargs)
+        resp = super().retrieve(request, *args, **kwargs)
+        if not settings.DEBUG:
+            resp["Cache-Control"] = "s-maxage=7200 stale-if-error=86400"
+        return resp
 
     def list(self, request, *args, **kwargs):
         """
