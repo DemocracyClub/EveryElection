@@ -21,7 +21,7 @@
   "dependencies": {
     "topojson-server": "3.0.1",
     "topojson-simplify": "3.0.3",
-    "aws-cdk": "2.175.1",
+    "aws-cdk": "2.178.2",
     "leaflet": "1.9.4"
   },
   "engines": {
