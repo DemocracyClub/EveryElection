@@ -140,6 +140,7 @@ class ElectionAdmin(admin.ModelAdmin):
                     "election_type",
                     "modified",
                     "created",
+                    "current_status_display",
                 ),
             },
         ),
@@ -163,13 +164,14 @@ class ElectionAdmin(admin.ModelAdmin):
         "election_type",
         "modified",
         "created",
+        "current_status_display",
     )
     list_filter = ["current", "cancelled", GroupTypeListFilter]
     list_display = [
         "election_id",
         "poll_open_date",
         "current",
-        "current_status",
+        "current_status_display",
     ]
     actions = [mark_current, mark_not_current, unset_current, soft_delete]
     date_hierarchy = "poll_open_date"
@@ -209,6 +211,11 @@ class ElectionAdmin(admin.ModelAdmin):
         delete action should be used.
         """
         return False
+
+    def current_status_display(self, obj):
+        return obj.current_status
+
+    current_status_display.short_description = "Current Status"
 
 
 class JSONEditor(Textarea):
