@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
@@ -37,9 +37,13 @@ class TestAdminActions(TestCase):
         user = get_user_model().objects.create(is_superuser=True)
         request = MagicMock(user=user)
 
-        admin.soft_delete(
-            modeladmin=MagicMock(), queryset=queryset, request=request
-        )
+        with (
+            patch("elections.admin.push_event_to_queue") as admin_push_mock,
+            patch("elections.models.push_event_to_queue") as model_push_mock,
+        ):
+            admin.soft_delete(
+                modeladmin=MagicMock(), queryset=queryset, request=request
+            )
 
         assert (
             len(
@@ -50,3 +54,6 @@ class TestAdminActions(TestCase):
             )
             == 2
         )
+
+        assert admin_push_mock.call_count == 1
+        assert model_push_mock.call_count == 0
