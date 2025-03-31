@@ -26,6 +26,7 @@ from uk_election_timetables.election_ids import (
 )
 from uk_geo_utils.models import Onspd
 
+from .baker import push_event_to_queue
 from .managers import PrivateElectionsManager, PublicElectionsManager
 
 
@@ -531,7 +532,7 @@ class Election(TimeStampedModel):
             )
 
     @transaction.atomic
-    def save(self, *args, **kwargs):
+    def save(self, *, push_event=True, **kwargs):
         if self.requires_voter_id == "":
             self.requires_voter_id = None
 
@@ -551,10 +552,10 @@ class Election(TimeStampedModel):
                     election_id=self.group.election_id
                 )
             except Election.DoesNotExist:
-                group_model = self.group.save(*args, **kwargs)
+                group_model = self.group.save(**kwargs)
             self.group = group_model
 
-        super().save(*args, **kwargs)
+        super().save(**kwargs)
         if (
             status
             and status != DEFAULT_STATUS
@@ -563,7 +564,13 @@ class Election(TimeStampedModel):
             event = ModerationHistory(
                 election=self, status_id=status, user=user, notes=notes
             )
-            event.save()
+            if (
+                status == ModerationStatuses.approved.value
+                or status == ModerationStatuses.deleted.value
+            ) and self.identifier_type == "ballot":
+                event.save(push_event=push_event)
+            else:
+                event.save(push_event=False)
 
         # if the object was created return here to save on unnecessary
         # db queries
@@ -582,7 +589,7 @@ class Election(TimeStampedModel):
 def init_status_history(sender, instance, **kwargs):
     if not ModerationHistory.objects.all().filter(election=instance).exists():
         event = ModerationHistory(election=instance, status_id=DEFAULT_STATUS)
-        event.save(initial_status=True)
+        event.save(push_event=False, initial_status=True)
 
 
 class ModerationHistory(TimeStampedModel):
@@ -593,20 +600,33 @@ class ModerationHistory(TimeStampedModel):
     )
     notes = models.CharField(blank=True, max_length=255)
 
-    def save(self, **kwargs):
-        # if this is the initial status no need to update the related election
-        # so return early. This is because the default status is identical on
-        # both this model and the Election model
-        if kwargs.pop("initial_status", False):
-            return super().save(**kwargs)
+    def save(self, *, push_event=True, initial_status=False, **kwargs):
+        obj = super().save(**kwargs)
 
-        # save the related election to update the modified timestamp so that it
-        # is found by the importer looking for recent changes
-        if self.election.current_status != self.status.short_label:
+        # If this is the initial status no need to update the related election
+        # This is because the default status is identical on
+        # both this model and the Election model.
+        # We can also skip this if they're already the same.
+        if (
+            not initial_status
+            and self.election.current_status != self.status.short_label
+        ):
+            # save the related election to update the modified timestamp so that it
+            # is found by the importer looking for recent changes
             self.election.current_status = self.status.short_label
             self.election.save()
-        super().save(**kwargs)
-        return None
+
+        if (
+            push_event
+            and (
+                self.status_id == ModerationStatuses.approved.value
+                or self.status_id == ModerationStatuses.deleted.value
+            )
+            and self.election.identifier_type == "ballot"
+        ):
+            push_event_to_queue()
+
+        return obj
 
     class Meta:
         verbose_name_plural = "Moderation History"
