@@ -1,9 +1,10 @@
-from unittest import mock
 from unittest.mock import MagicMock
 
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from elections import admin
-from elections.models import ModerationHistory
+from elections.models import ModerationHistory, ModerationStatuses
+from elections.tests.factories import ElectionFactory
 
 
 class TestAdminActions(TestCase):
@@ -30,27 +31,22 @@ class TestAdminActions(TestCase):
                 queryset.update.assert_called_once_with(current=is_current)
 
     def test_soft_delete(self):
-        election_1 = MagicMock()
-        election_2 = MagicMock()
+        election_1 = ElectionFactory()
+        election_2 = ElectionFactory()
         queryset = [election_1, election_2]
-        request = MagicMock(user="michael")
+        user = get_user_model().objects.create(is_superuser=True)
+        request = MagicMock(user=user)
 
-        with mock.patch.object(ModerationHistory.objects, "create"):
-            admin.soft_delete(
-                modeladmin=MagicMock(), queryset=queryset, request=request
+        admin.soft_delete(
+            modeladmin=MagicMock(), queryset=queryset, request=request
+        )
+
+        assert (
+            len(
+                ModerationHistory.objects.filter(
+                    election_id__in=[election_1.pk, election_2.pk],
+                    status_id=ModerationStatuses.deleted.value,
+                )
             )
-            calls = [
-                mock.call(
-                    status_id="Deleted",
-                    election=election_1,
-                    user="michael",
-                    notes="Bulk deleted via admin action",
-                ),
-                mock.call(
-                    status_id="Deleted",
-                    election=election_2,
-                    user="michael",
-                    notes="Bulk deleted via admin action",
-                ),
-            ]
-            ModerationHistory.objects.create.assert_has_calls(calls)
+            == 2
+        )
