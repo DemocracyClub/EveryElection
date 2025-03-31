@@ -1,6 +1,9 @@
 from datetime import date, timedelta
+from unittest.mock import patch
 
 import pytest
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from elections.models import (
     ElectedRole,
     Election,
@@ -102,36 +105,44 @@ def test_date_warning_shown(page, live_server, settings):
     )
 
 
-def test_full_id_creation(page, live_server, id_creator_data, settings):
+def test_full_id_creation_not_logged_in(
+    page, live_server, id_creator_data, settings
+):
     settings.DEBUG = True
     # We shouldn't have any elections
     assert Election.private_objects.count() == 0
 
-    # Open the home page, click to add a new election
-    page.goto(live_server.url)
-    page.get_by_role("link", name="Add a new election").click()
+    with (
+        patch(
+            "elections.views.id_creator.push_event_to_queue"
+        ) as creator_push_mock,
+        patch("elections.models.push_event_to_queue") as model_push_mock,
+    ):
+        # Open the home page, click to add a new election
+        page.goto(live_server.url)
+        page.get_by_role("link", name="Add a new election").click()
 
-    # Enter a date
-    page.locator("#id_date-date_0").fill("5")
-    page.locator("#id_date-date_1").fill("1")
-    page.locator("#id_date-date_2").fill("2023")
-    page.locator("#id_date-date_2").blur()
-    page.get_by_role("button", name="Submit").click()
+        # Enter a date
+        page.locator("#id_date-date_0").fill("5")
+        page.locator("#id_date-date_1").fill("1")
+        page.locator("#id_date-date_2").fill("2023")
+        page.locator("#id_date-date_2").blur()
+        page.get_by_role("button", name="Submit").click()
 
-    # Select the election type
-    page.get_by_text("Local elections").click()
-    page.get_by_role("button", name="Submit").click()
+        # Select the election type
+        page.get_by_text("Local elections").click()
+        page.get_by_role("button", name="Submit").click()
 
-    # Select the council
-    page.get_by_text("Test 2 Council").click()
-    page.get_by_role("button", name="Submit").click()
+        # Select the council
+        page.get_by_text("Test 2 Council").click()
+        page.get_by_role("button", name="Submit").click()
 
-    # Mark all seats as contested
-    page.get_by_role("button", name="All Up").click()
-    page.get_by_role("button", name="Submit").click()
+        # Mark all seats as contested
+        page.get_by_role("button", name="All Up").click()
+        page.get_by_role("button", name="Submit").click()
 
-    # Create the IDs
-    page.get_by_role("button", name="Create IDs").click()
+        # Create the IDs
+        page.get_by_role("button", name="Create IDs").click()
 
     # We should have 4 elections
     assert Election.private_objects.count() == 4
@@ -143,6 +154,86 @@ def test_full_id_creation(page, live_server, id_creator_data, settings):
         "local.test2.test-div.2023-01-05",
         "local.test2.test-div-2.2023-01-05",
     ]
+
+    # even though we created election objects
+    # we shouldn't push an event if the user is logged out
+    # because the status is Suggested
+    assert creator_push_mock.call_count == 0
+    assert model_push_mock.call_count == 0
+
+
+def test_full_id_creation_logged_in(
+    page, live_server, id_creator_data, settings
+):
+    settings.DEBUG = True
+    # We shouldn't have any elections
+    assert Election.private_objects.count() == 0
+
+    # Create test user
+    user = get_user_model().objects.create(
+        username="fred", is_superuser=True, is_staff=True
+    )
+    user.set_password("password")
+    group = Group.objects.get(name="moderators")
+    user.groups.add(group)
+    user.save()
+
+    # Log in
+    page.goto(f"{live_server.url}/admin/")
+    page.locator("#id_username").fill("fred")
+    page.locator("#id_password").fill("password")
+    page.locator("input[type=submit]").click()
+    # Ensure login worked correctly
+    expect(page).to_have_title("Site administration | Django site admin")
+
+    with (
+        patch(
+            "elections.views.id_creator.push_event_to_queue"
+        ) as creator_push_mock,
+        patch("elections.models.push_event_to_queue") as model_push_mock,
+    ):
+        # Open the home page, click to add a new election
+        page.goto(live_server.url)
+        page.get_by_role("link", name="Add a new election").click()
+
+        # Enter a date
+        page.locator("#id_date-date_0").fill("5")
+        page.locator("#id_date-date_1").fill("1")
+        page.locator("#id_date-date_2").fill("2023")
+        page.locator("#id_date-date_2").blur()
+        page.get_by_role("button", name="Submit").click()
+
+        # Select the election type
+        page.get_by_text("Local elections").click()
+        page.get_by_role("button", name="Submit").click()
+
+        # Select the council
+        page.get_by_text("Test 2 Council").click()
+        page.get_by_role("button", name="Submit").click()
+
+        # Mark all seats as contested
+        page.get_by_role("button", name="All Up").click()
+        page.get_by_role("button", name="Submit").click()
+
+        # Create the IDs
+        page.get_by_role("button", name="Create IDs").click()
+
+    # We should have 4 elections
+    assert Election.private_objects.count() == 4
+    assert list(
+        Election.private_objects.values_list("election_id", flat=True)
+    ) == [
+        "local.2023-01-05",
+        "local.test2.2023-01-05",
+        "local.test2.test-div.2023-01-05",
+        "local.test2.test-div-2.2023-01-05",
+    ]
+
+    # we should push an event if the user is a moderator
+    # because the status is Approved
+    # but we should only push once, even though we created 4 election objects
+    assert creator_push_mock.call_count == 1
+    assert model_push_mock.call_count == 0
 
 
 def test_subtype_creation(page, live_server, id_creator_data, settings):
