@@ -237,7 +237,7 @@ def test_subtype_creation(page, live_server, id_creator_data, settings):
     # Create IDs
     page.get_by_role("button", name="Create IDs").click()
 
-    # We should have 4 elections
+    # We should have 6 elections
     assert Election.private_objects.count() == 6
     assert list(
         Election.private_objects.values_list("election_id", flat=True)
@@ -290,7 +290,7 @@ def test_multiple_local_elections(page, live_server, id_creator_data, settings):
     # Create IDs
     page.get_by_role("button", name="Create IDs").click()
 
-    # We should have 4 elections
+    # We should have 7 elections
     assert Election.private_objects.count() == 7
     assert list(
         Election.private_objects.values_list("election_id", flat=True)
