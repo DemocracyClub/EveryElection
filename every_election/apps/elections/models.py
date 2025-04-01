@@ -600,6 +600,7 @@ class ModerationHistory(TimeStampedModel):
     )
     notes = models.CharField(blank=True, max_length=255)
 
+    @transaction.atomic()
     def save(self, *, push_event=True, initial_status=False, **kwargs):
         obj = super().save(**kwargs)
 

@@ -62,7 +62,7 @@ class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
         # From a performance perspective, saving a ballot and 2 parent groups
         # is the worst-case scenario for database I/O
         # we should monitor this and be aware if this number increases
-        with self.assertNumQueries(19):
+        with self.assertNumQueries(25):
             self.ballot.save()
 
         # saving the child record should implicitly save the parent records too
