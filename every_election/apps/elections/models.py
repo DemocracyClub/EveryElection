@@ -532,16 +532,16 @@ class Election(TimeStampedModel):
             )
 
     @transaction.atomic
-    def save(self, *, push_event=True, **kwargs):
+    def save(
+        self, *, push_event=True, status=None, user=None, notes="", **kwargs
+    ):
         if self.requires_voter_id == "":
             self.requires_voter_id = None
 
         # used later to determine if we should look for ballots
         created = not self.pk
 
-        status = kwargs.pop("status", None)
-        user = kwargs.pop("user", None)
-        notes = kwargs.pop("notes", "")[:255]
+        notes = notes[:255]
 
         self.division_geography = self.get_division_geography()
         self.organisation_geography = self.get_organisation_geography()
