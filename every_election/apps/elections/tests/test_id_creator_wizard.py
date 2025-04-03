@@ -163,7 +163,7 @@ def test_full_id_creation_not_logged_in(
 
 
 def test_full_id_creation_logged_in(
-    page, live_server, id_creator_data, settings
+    page, live_server, id_creator_data, settings, browser
 ):
     settings.DEBUG = True
     # We shouldn't have any elections
@@ -184,7 +184,10 @@ def test_full_id_creation_logged_in(
     page.locator("#id_password").fill("password")
     page.locator("input[type=submit]").click()
     # Ensure login worked correctly
-    expect(page).to_have_title("Site administration | Django site admin")
+    assert any(
+        cookie["name"] == "sessionid"
+        for cookie in browser.contexts[0].cookies()
+    )
 
     with (
         patch(
