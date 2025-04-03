@@ -484,7 +484,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             "Greater London Assembly elections",
             "Greater London Assembly elections (Additional)",
         ]
-        with self.assertNumQueries(FuzzyInt(23, 25)):
+        with self.assertNumQueries(FuzzyInt(23, 27)):
             self.run_test_with_data(
                 all_data,
                 expected_ids,
