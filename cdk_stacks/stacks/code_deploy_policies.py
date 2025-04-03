@@ -106,6 +106,17 @@ EE_CODE_DEPLOY_EC2_POLICY = {
                 "arn:aws:s3:::dc-ee-production-database-backups",
             ],
         },
+        {
+            "Action": [
+                "sqs:ReceiveMessage",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes",
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:sqs:::CurrentElectionsEventQueue.fifo",
+            ],
+        },
     ],
 }
 
