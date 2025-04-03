@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models import Manager
 from django.forms.widgets import Textarea
 
+from .baker import push_event_to_queue
 from .models import (
     ElectedRole,
     Election,
@@ -74,12 +75,14 @@ def soft_delete(modeladmin, request, queryset):
     https://github.com/DemocracyClub/EveryElection/wiki/Cancelled-Elections-and-Soft-Deletes
     """
     for election in queryset:
-        ModerationHistory.objects.create(
+        mh = ModerationHistory(
             status_id=ModerationStatuses.deleted.value,
             election=election,
             user=request.user,
             notes="Bulk deleted via admin action",
         )
+        mh.save(push_event=False)
+    push_event_to_queue()
 
 
 soft_delete.short_description = "Soft delete"
