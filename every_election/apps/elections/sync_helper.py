@@ -196,7 +196,9 @@ class ElectionSyncer:
             setattr(election_model, key, value)
 
         election_model.modified = result["modified"]
-        election_model.save(update_modified=False, status="Approved")
+        election_model.save(
+            push_event=False, update_modified=False, status="Approved"
+        )
 
     def get_election_type(self, election_type: str):
         if not self.ELECTION_TYPE_CACHE:

@@ -1,4 +1,5 @@
 import contextlib
+from unittest.mock import patch
 
 from django.test import TestCase
 from django.utils import timezone
@@ -61,7 +62,7 @@ class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
         # From a performance perspective, saving a ballot and 2 parent groups
         # is the worst-case scenario for database I/O
         # we should monitor this and be aware if this number increases
-        with self.assertNumQueries(19):
+        with self.assertNumQueries(25):
             self.ballot.save()
 
         # saving the child record should implicitly save the parent records too
@@ -262,6 +263,34 @@ class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
         self.ballot.requires_voter_id = ""
         self.ballot.save()
         assert self.ballot.requires_voter_id is None
+
+    def test_ballot_push_event_true(self):
+        test_cases = [
+            [ModerationStatuses.approved.value, 1],
+            [ModerationStatuses.deleted.value, 1],
+            [ModerationStatuses.suggested.value, 0],
+            [ModerationStatuses.deleted.value, 0],
+        ]
+        for status, expected_calls in test_cases:
+            with (
+                patch("elections.models.push_event_to_queue") as push_mock,
+            ):
+                self.ballot.save(status=status)
+                assert push_mock.call_count == expected_calls
+
+    def test_ballot_push_event_false(self):
+        test_cases = [
+            ModerationStatuses.approved.value,
+            ModerationStatuses.deleted.value,
+            ModerationStatuses.suggested.value,
+            ModerationStatuses.deleted.value,
+        ]
+        for status in test_cases:
+            with (
+                patch("elections.models.push_event_to_queue") as push_mock,
+            ):
+                self.ballot.save(status=status, push_event=False)
+                assert push_mock.call_count == 0
 
 
 class TestModified(TestCase):
