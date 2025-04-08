@@ -625,7 +625,10 @@ class ModerationHistory(TimeStampedModel):
             )
             and self.election.identifier_type == "ballot"
         ):
-            send_event()
+            send_event(
+                detail={"description": "ModerationHistory object saved"},
+                detail_type="elections_set_changed",
+            )
 
         return obj
 
