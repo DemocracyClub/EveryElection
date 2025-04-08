@@ -26,7 +26,7 @@ from uk_election_timetables.election_ids import (
 )
 from uk_geo_utils.models import Onspd
 
-from .baker import push_event_to_queue
+from .baker import send_event
 from .managers import PrivateElectionsManager, PublicElectionsManager
 
 
@@ -625,7 +625,7 @@ class ModerationHistory(TimeStampedModel):
             )
             and self.election.identifier_type == "ballot"
         ):
-            push_event_to_queue()
+            send_event()
 
         return obj
 

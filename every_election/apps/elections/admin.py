@@ -7,7 +7,7 @@ from django.db import models
 from django.db.models import Manager
 from django.forms.widgets import Textarea
 
-from .baker import push_event_to_queue
+from .baker import send_event
 from .models import (
     ElectedRole,
     Election,
@@ -82,7 +82,7 @@ def soft_delete(modeladmin, request, queryset):
             notes="Bulk deleted via admin action",
         )
         mh.save(push_event=False)
-    push_event_to_queue()
+    send_event()
 
 
 soft_delete.short_description = "Soft delete"
