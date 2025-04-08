@@ -110,6 +110,7 @@ addopts = [
     "--ignore=.download-cache",
     "--ignore=every_election/settings/local.py",
     "--ignore=lib",
+    "--ignore=cdk.out",
     "--ruff",
     "--ruff-format",
     "--ds=every_election.settings.testing",
