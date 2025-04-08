@@ -273,10 +273,10 @@ class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
         ]
         for status, expected_calls in test_cases:
             with (
-                patch("elections.models.push_event_to_queue") as push_mock,
+                patch("elections.models.send_event") as send_event_mock,
             ):
                 self.ballot.save(status=status)
-                assert push_mock.call_count == expected_calls
+                assert send_event_mock.call_count == expected_calls
 
     def test_ballot_push_event_false(self):
         test_cases = [
@@ -287,10 +287,10 @@ class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
         ]
         for status in test_cases:
             with (
-                patch("elections.models.push_event_to_queue") as push_mock,
+                patch("elections.models.send_event") as send_event_mock,
             ):
                 self.ballot.save(status=status, push_event=False)
-                assert push_mock.call_count == 0
+                assert send_event_mock.call_count == 0
 
 
 class TestModified(TestCase):

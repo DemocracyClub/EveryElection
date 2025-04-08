@@ -114,9 +114,9 @@ def test_full_id_creation_not_logged_in(
 
     with (
         patch(
-            "elections.views.id_creator.push_event_to_queue"
-        ) as creator_push_mock,
-        patch("elections.models.push_event_to_queue") as model_push_mock,
+            "elections.views.id_creator.send_event"
+        ) as creator_send_event_mock,
+        patch("elections.models.send_event") as model_send_event_mock,
     ):
         # Open the home page, click to add a new election
         page.goto(live_server.url)
@@ -158,8 +158,8 @@ def test_full_id_creation_not_logged_in(
     # even though we created election objects
     # we shouldn't push an event if the user is logged out
     # because the status is Suggested
-    assert creator_push_mock.call_count == 0
-    assert model_push_mock.call_count == 0
+    assert creator_send_event_mock.call_count == 0
+    assert model_send_event_mock.call_count == 0
 
 
 def test_full_id_creation_logged_in(
@@ -191,9 +191,9 @@ def test_full_id_creation_logged_in(
 
     with (
         patch(
-            "elections.views.id_creator.push_event_to_queue"
-        ) as creator_push_mock,
-        patch("elections.models.push_event_to_queue") as model_push_mock,
+            "elections.views.id_creator.send_event"
+        ) as creator_send_event_mock,
+        patch("elections.models.send_event") as model_send_event_mock,
     ):
         # Open the home page, click to add a new election
         page.goto(live_server.url)
@@ -235,8 +235,8 @@ def test_full_id_creation_logged_in(
     # we should push an event if the user is a moderator
     # because the status is Approved
     # but we should only push once, even though we created 4 election objects
-    assert creator_push_mock.call_count == 1
-    assert model_push_mock.call_count == 0
+    assert creator_send_event_mock.call_count == 1
+    assert model_send_event_mock.call_count == 0
 
 
 def test_subtype_creation(page, live_server, id_creator_data, settings):

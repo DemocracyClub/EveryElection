@@ -1,2 +1,2 @@
-def push_event_to_queue():
+def send_event():
     print("trigger_rebuild")
