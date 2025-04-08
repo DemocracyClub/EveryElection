@@ -106,6 +106,17 @@ EE_CODE_DEPLOY_EC2_POLICY = {
                 "arn:aws:s3:::dc-ee-production-database-backups",
             ],
         },
+        {
+            "Action": [
+                "events:DescribeEventBus",
+                "events:PutEvents",
+                "events:ListEventBuses",
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:events:eu-west-2:*:event-bus/default",
+            ],
+        },
     ],
 }
 
