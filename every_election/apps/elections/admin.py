@@ -82,7 +82,10 @@ def soft_delete(modeladmin, request, queryset):
             notes="Bulk deleted via admin action",
         )
         mh.save(push_event=False)
-    send_event()
+    send_event(
+        detail={"description": "Admin soft delete"},
+        detail_type="elections_set_changed",
+    )
 
 
 soft_delete.short_description = "Soft delete"
