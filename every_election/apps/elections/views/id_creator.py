@@ -343,7 +343,10 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             )
 
         if status == ModerationStatuses.approved.value:
-            send_event()
+            send_event(
+                detail={"description": "Suggested elections approved"},
+                detail_type="elections_set_changed",
+            )
 
         if (
             not user_is_moderator(self.request.user)
