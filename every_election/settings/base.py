@@ -57,8 +57,11 @@ def get_ec2_ip():
     return ip_req.text
 
 
+EC2_IP = None
 if os.environ.get("DC_ENVIRONMENT"):
-    ALLOWED_HOSTS.append(get_ec2_ip())
+    EC2_IP = get_ec2_ip()
+    ALLOWED_HOSTS.append(EC2_IP)
+
 
 USE_X_FORWARDED_HOST = True
 
@@ -278,6 +281,14 @@ CORS_URLS_REGEX = r"^/api/.*$"
 CORS_ALLOW_METHODS = ("GET", "OPTIONS")
 
 UPSTREAM_SYNC_URL = "https://elections.democracyclub.org.uk/api/elections/"
+
+# DC Eventbus.
+SEND_EVENTS = False
+if os.environ.get("DC_ENVIRONMENT") in ("development", "staging", "production"):
+    # If we've set DC_ENVIRONMENT then we should raise a KeyError if queue url isn't set
+    DC_EVENTBUS_ARN = os.environ["DC_EVENTBUS_ARN"]
+    SEND_EVENTS = True
+
 GCS_API_KEY = os.environ.get("GCS_API_KEY", "")
 
 NOTICE_OF_ELECTION_BUCKET = "notice-of-election"
