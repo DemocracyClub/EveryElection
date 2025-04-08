@@ -38,8 +38,8 @@ class TestAdminActions(TestCase):
         request = MagicMock(user=user)
 
         with (
-            patch("elections.admin.push_event_to_queue") as admin_push_mock,
-            patch("elections.models.push_event_to_queue") as model_push_mock,
+            patch("elections.admin.send_event") as admin_send_event_mock,
+            patch("elections.models.send_event") as model_send_event_mock,
         ):
             admin.soft_delete(
                 modeladmin=MagicMock(), queryset=queryset, request=request
@@ -55,5 +55,5 @@ class TestAdminActions(TestCase):
             == 2
         )
 
-        assert admin_push_mock.call_count == 1
-        assert model_push_mock.call_count == 0
+        assert admin_send_event_mock.call_count == 1
+        assert model_send_event_mock.call_count == 0
