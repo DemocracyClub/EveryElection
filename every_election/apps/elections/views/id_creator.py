@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect
 from django.utils.functional import cached_property
 from election_snooper.helpers import post_to_slack
 from election_snooper.models import SnoopedElection
-from elections.baker import push_event_to_queue
+from elections.baker import send_event
 from elections.forms import (
     DivFormSet,
     ElectionDateForm,
@@ -343,7 +343,10 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             )
 
         if status == ModerationStatuses.approved.value:
-            push_event_to_queue()
+            send_event(
+                detail={"description": "Suggested elections approved"},
+                detail_type="elections_set_changed",
+            )
 
         if (
             not user_is_moderator(self.request.user)
