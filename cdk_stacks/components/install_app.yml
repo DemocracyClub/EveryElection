@@ -1,7 +1,7 @@
 name: InstallApp
 description: Installs the EE Django app
 schemaVersion: 1.0
-component_version: 0.0.28
+component_version: 0.0.30
 parameters:
   - git_branch:
       type: string
@@ -132,7 +132,18 @@ phases:
               #!/usr/bin/env bash
               cd /var/www/{{ username }}/repo/
               . .venv/bin/activate
-              DJANGO_SETTINGS_MODULE=every_election.settings.deploy python manage.py migrate
+              python manage.py migrate
+      # this makes a temp env file just for testing
+      # we will overwrite it on boot
+      - name: make_temp_env_file
+        action: CreateFile
+        inputs:
+          - path: /var/www/{{ username }}/repo/.env
+            permissions: 755
+            owner: "{{ username }}"
+            group: "{{ username }}"
+            content: |
+              DJANGO_SETTINGS_MODULE=every_election.settings.deploy
       - name: django_setup
         action: ExecuteBash
         inputs:
@@ -151,8 +162,8 @@ phases:
               #!/usr/bin/env bash
               cd /var/www/{{ username }}/repo/
               . .venv/bin/activate
-              DJANGO_SETTINGS_MODULE=every_election.settings.deploy python manage.py check
-              DJANGO_SETTINGS_MODULE=every_election.settings.deploy python manage.py makemigrations --check
+              python manage.py check
+              python manage.py makemigrations --check
 
       - name: django_check
         action: ExecuteBash
