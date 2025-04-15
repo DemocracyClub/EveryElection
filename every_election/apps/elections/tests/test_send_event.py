@@ -6,7 +6,7 @@ import boto3
 import pytest
 from botocore.exceptions import ClientError
 from django.test import override_settings
-from elections.baker import send_event
+from elections.baker import event_bus_exists, send_event
 from moto import mock_aws
 
 
@@ -173,7 +173,10 @@ def test_send_event_internal_exception(event_bus_arn):
         detail = {"message": "Test event with client exception"}
         detail_type = "elections_set_changed"
 
-        with patch("elections.baker.boto3.Session") as mock_session_class:
+        with (
+            patch("elections.baker.event_bus_exists", return_value=True),
+            patch("elections.baker.boto3.Session") as mock_session_class,
+        ):
             mock_put_events = MagicMock(
                 side_effect=ClientError(
                     error_response={
@@ -219,3 +222,9 @@ def test_send_event_internal_exception(event_bus_arn):
                 call_kwargs = mock_logger.error.call_args[1]
                 assert call_kwargs["exc_info"] is True
                 assert call_kwargs["stack_info"] is True
+
+
+@pytest.mark.django_db
+def test_event_bus_exists(events_client, event_bus_arn):
+    assert event_bus_exists(events_client, event_bus_arn) is True
+    assert event_bus_exists(events_client, "DoesNotExist") is False
