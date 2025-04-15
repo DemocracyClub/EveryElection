@@ -44,13 +44,13 @@ def send_event(detail: Dict, detail_type: str, source: Optional[str] = None):
 
     try:
         entries = [
-                {
-                    "Source": source,
-                    "DetailType": detail_type,
-                    "Detail": json.dumps(detail),
-                    "EventBusName": event_bus_arn,
-                }
-            ]
+            {
+                "Source": source,
+                "DetailType": detail_type,
+                "Detail": json.dumps(detail),
+                "EventBusName": event_bus_arn,
+            }
+        ]
         response = events_client.put_events(
             Entries=entries,
         )
