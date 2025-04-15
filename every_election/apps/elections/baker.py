@@ -9,6 +9,15 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 
+def event_bus_exists(events_client, event_bus_arn: str) -> bool:
+    """
+    Check if the specified event bus ARN exists.
+    """
+    response = events_client.list_event_buses()
+    event_buses = response.get("EventBuses", [])
+    return any(bus.get("Arn") == event_bus_arn for bus in event_buses)
+
+
 def send_event(detail: Dict, detail_type: str, source: Optional[str] = None):
     if not settings.SEND_EVENTS:
         logger.info(f"Skipping {detail_type} because SEND_EVENTS is disabled.")
@@ -23,13 +32,23 @@ def send_event(detail: Dict, detail_type: str, source: Optional[str] = None):
     )
     events_client = session.client("events")
 
+    event_bus_arn = settings.DC_EVENTBUS_ARN
+
+    # Check if the event bus exists before sending events
+    if not event_bus_exists(events_client, event_bus_arn):
+        logger.error(
+            f"Event bus {event_bus_arn} does not exist. Event will be dropped.",
+            extra={"detail_type": detail_type, "source": source},
+        )
+        return
+
     try:
         entries = [
                 {
                     "Source": source,
                     "DetailType": detail_type,
                     "Detail": json.dumps(detail),
-                    "EventBusName": settings.DC_EVENTBUS_ARN,
+                    "EventBusName": event_bus_arn,
                 }
             ]
         response = events_client.put_events(
