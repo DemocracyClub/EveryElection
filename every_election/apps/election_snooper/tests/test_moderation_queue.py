@@ -56,7 +56,7 @@ class TestSingleElectionView(TestCase):
         self.assertContains(resp, suggested_child.election_id, html=True)
         self.assertNotContains(resp, suggested_parent.election_id, html=True)
 
-        with patch("elections.models.push_event_to_queue") as push_mock:
+        with patch("elections.models.send_event") as send_event_mock:
             self.client.post(
                 "/election_radar/moderation_queue/",
                 {
@@ -74,4 +74,4 @@ class TestSingleElectionView(TestCase):
 
         # we should have only pushed one event
         # even though we approved >1 elections
-        assert push_mock.call_count == 1
+        assert send_event_mock.call_count == 1
