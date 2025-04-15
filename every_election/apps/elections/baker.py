@@ -43,8 +43,7 @@ def send_event(detail: Dict, detail_type: str, source: Optional[str] = None):
         return
 
     try:
-        response = events_client.put_events(
-            Entries=[
+        entries = [
                 {
                     "Source": source,
                     "DetailType": detail_type,
@@ -52,10 +51,12 @@ def send_event(detail: Dict, detail_type: str, source: Optional[str] = None):
                     "EventBusName": event_bus_arn,
                 }
             ]
+        response = events_client.put_events(
+            Entries=entries,
         )
         if response["FailedEntryCount"] > 0:
             logger.error(
-                "Event was unsuccessfully ingested.",
+                f"send_event failed with {entries}",
                 extra={"response": response},
             )
     except (
