@@ -23,15 +23,17 @@ def send_event(detail: Dict, detail_type: str, source: Optional[str] = None):
     )
     events_client = session.client("events")
 
+    event_bus_arn = settings.DC_EVENTBUS_ARN
+
     try:
         entries = [
-                {
-                    "Source": source,
-                    "DetailType": detail_type,
-                    "Detail": json.dumps(detail),
-                    "EventBusName": settings.DC_EVENTBUS_ARN,
-                }
-            ]
+            {
+                "Source": source,
+                "DetailType": detail_type,
+                "Detail": json.dumps(detail),
+                "EventBusName": event_bus_arn,
+            }
+        ]
         response = events_client.put_events(
             Entries=entries,
         )
