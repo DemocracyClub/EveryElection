@@ -94,6 +94,15 @@ def create_default_asg():
     ]
     if "default" in existing_asgs:
         return None
+
+    min_size = 1
+    max_size = 1
+    desired_capacity = 1
+    if os.environ.get("DC_ENVIRONMENT") == "production":
+        min_size = 2
+        max_size = 8
+        desired_capacity = 2
+
     return client.create_auto_scaling_group(
         AutoScalingGroupName="default",
         AvailabilityZones=[
@@ -105,9 +114,9 @@ def create_default_asg():
             "LaunchTemplateName": "ee-launch-template",
             "Version": "$Latest",
         },
-        MinSize=1,
-        MaxSize=1,
-        DesiredCapacity=1,
+        MinSize=min_size,
+        MaxSize=max_size,
+        DesiredCapacity=desired_capacity,
         HealthCheckType="ELB",
         HealthCheckGracePeriod=300,
         TargetGroupARNs=[target_group_arn],
