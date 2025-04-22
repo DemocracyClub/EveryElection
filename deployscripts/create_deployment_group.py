@@ -103,6 +103,11 @@ def create_default_asg():
         max_size = 8
         desired_capacity = 2
 
+    print(os.environ.get("DC_ENVIRONMENT"))
+    print(min_size)
+    print(max_size)
+    print(desired_capacity)
+
     return client.create_auto_scaling_group(
         AutoScalingGroupName="default",
         AvailabilityZones=[
