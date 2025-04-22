@@ -74,10 +74,18 @@ class EECodeDeployment(Stack):
         security_group: ec2.SecurityGroup,
         role: iam.Role,
     ) -> ec2.LaunchTemplate:
+        instance_types_per_env = {
+            "development": "t3a.medium",
+            "staging": "t3a.medium",
+            # "production": "t3a.medium",
+            "production": "c6a.2xlarge",
+        }
         return ec2.LaunchTemplate(
             self,
             "ee-launch-template-id",
-            instance_type=ec2.InstanceType("t3a.medium"),
+            instance_type=ec2.InstanceType(
+                instance_types_per_env.get(self.dc_environment)
+            ),
             machine_image=ami,
             launch_template_name="ee-launch-template",
             role=role,
