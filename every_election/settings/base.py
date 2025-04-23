@@ -291,6 +291,7 @@ SEND_EVENTS = False
 if DC_ENVIRONMENT in ("development", "staging", "production"):
     # If we've set DC_ENVIRONMENT then we should raise a KeyError if queue url isn't set
     DC_EVENTBUS_ARN = os.environ["DC_EVENTBUS_ARN"]
+    DC_CHECK_EVENTBUS_ROLE = os.environ["DC_CHECK_EVENTBUS_ROLE"]
     SEND_EVENTS = True
 
 GCS_API_KEY = os.environ.get("GCS_API_KEY", "")

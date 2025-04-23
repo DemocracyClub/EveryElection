@@ -9,13 +9,30 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 
-def event_bus_exists(events_client, event_bus_arn: str) -> bool:
+def event_bus_exists(event_bus_arn: str) -> bool:
     """
     Check if the specified event bus ARN exists.
     """
-    response = events_client.list_event_buses()
-    event_buses = response.get("EventBuses", [])
-    return any(bus.get("Arn") == event_bus_arn for bus in event_buses)
+    sts_client = boto3.client("sts")
+    role_arn = settings.DC_CHECK_EVENTBUS_ROLE
+    assumed_role = sts_client.assume_role(
+        RoleArn=role_arn, RoleSessionName="EventBusCheck"
+    )
+
+    credentials = assumed_role["Credentials"]
+    event_bus_account_events_client = boto3.client(
+        "events",
+        region_name="eu-west-2",
+        aws_access_key_id=credentials["AccessKeyId"],
+        aws_secret_access_key=credentials["SecretAccessKey"],
+        aws_session_token=credentials["SessionToken"],
+    )
+
+    try:
+        event_bus_account_events_client.describe_event_bus(Name=event_bus_arn)
+        return True
+    except event_bus_account_events_client.exceptions.ResourceNotFoundException:
+        return False
 
 
 def send_event(detail: Dict, detail_type: str, source: Optional[str] = None):
@@ -35,7 +52,7 @@ def send_event(detail: Dict, detail_type: str, source: Optional[str] = None):
     event_bus_arn = settings.DC_EVENTBUS_ARN
 
     # Check if the event bus exists before sending events
-    if not event_bus_exists(events_client, event_bus_arn):
+    if not event_bus_exists(event_bus_arn):
         logger.error(
             f"Event bus {event_bus_arn} does not exist. Event will be dropped.",
             extra={"detail_type": detail_type, "source": source},

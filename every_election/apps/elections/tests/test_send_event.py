@@ -9,30 +9,44 @@ from django.test import override_settings
 from elections.baker import event_bus_exists, send_event
 from moto import mock_aws
 
+DEVS_DC_API_ACCOUNT_ID = "111111111111"
+EE_ACCOUNT_ID = "123456789012"  # This is the moto default
+
+
+@pytest.fixture
+def devs_dc_moto_account_env(monkeypatch):
+    monkeypatch.setenv("MOTO_ACCOUNT_ID", DEVS_DC_API_ACCOUNT_ID)
+
 
 @pytest.fixture()
-def boto_session():
+def devapi_boto_session(devs_dc_moto_account_env):
     with mock_aws():
         yield boto3.Session(
             region_name=os.environ.get("AWS_REGION", "eu-west-2")
         )
 
 
-@pytest.fixture()
-def sqs_client(boto_session):
+@pytest.fixture
+def devapi_iam_client(devs_dc_moto_account_env):
     with mock_aws():
-        yield boto_session.client("sqs")
+        yield boto3.client("iam")
 
 
 @pytest.fixture()
-def events_client(boto_session):
+def devapi_sqs_client(devs_dc_moto_account_env, devapi_boto_session):
     with mock_aws():
-        yield boto_session.client("events")
+        yield devapi_boto_session.client("sqs")
+
+
+@pytest.fixture()
+def devapi_events_client(devs_dc_moto_account_env, devapi_boto_session):
+    with mock_aws():
+        yield devapi_boto_session.client("events")
 
 
 @mock_aws
 @pytest.fixture
-def sqs_queue_details(sqs_client):
+def devapi_sqs_queue_details(devs_dc_moto_account_env, devapi_sqs_client):
     policy = {
         "Version": "2012-10-17",
         "Statement": [
@@ -44,7 +58,7 @@ def sqs_queue_details(sqs_client):
             }
         ],
     }
-    queue = sqs_client.create_queue(
+    queue = devapi_sqs_client.create_queue(
         QueueName="CurrentElectionsEventQueue.fifo",
         Attributes={
             "FifoQueue": "true",
@@ -53,7 +67,7 @@ def sqs_queue_details(sqs_client):
         },
     )
     queue_url = queue["QueueUrl"]
-    queue_attributes = sqs_client.get_queue_attributes(
+    queue_attributes = devapi_sqs_client.get_queue_attributes(
         QueueUrl=queue_url, AttributeNames=["All"]
     )
     queue_arn = queue_attributes["Attributes"]["QueueArn"]
@@ -62,14 +76,16 @@ def sqs_queue_details(sqs_client):
 
 @mock_aws
 @pytest.fixture(autouse=True)
-def eventbridge_rule(events_client, sqs_queue_details):
-    _, queue_arn = sqs_queue_details
+def devapi_eventbridge_rule(
+    devs_dc_moto_account_env, devapi_events_client, devapi_sqs_queue_details
+):
+    _, queue_arn = devapi_sqs_queue_details
     eventpattern = {"detail-type": ["elections_set_changed"]}
     rule_name = "RebuildCurrentElectionsParquetTrigger"
-    events_client.put_rule(
+    devapi_events_client.put_rule(
         Name=rule_name, State="ENABLED", EventPattern=json.dumps(eventpattern)
     )
-    events_client.put_targets(
+    devapi_events_client.put_targets(
         Rule=rule_name,
         Targets=[
             {
@@ -82,10 +98,59 @@ def eventbridge_rule(events_client, sqs_queue_details):
 
 
 @pytest.fixture()
-def event_bus_arn(events_client):
+def devapi_event_bus_arn(devs_dc_moto_account_env, devapi_events_client):
     with mock_aws():
-        r = events_client.list_event_buses()
+        r = devapi_events_client.list_event_buses()
         yield r["EventBuses"][0]["Arn"]
+
+
+@pytest.fixture()
+def org_wide_eventbus_role(devs_dc_moto_account_env, devapi_iam_client):
+    with mock_aws():
+        # Define the role name
+        role_name = "EventsRole"
+
+        policy_document = {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Action": [
+                        "events:DescribeEventBus",
+                        "events:ListEventBuses",
+                    ],
+                    "Resource": "arn:aws:events:eu-west-2:*:event-bus/default",
+                    "Effect": "Allow",
+                }
+            ],
+        }
+
+        trust_relationship = {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {"AWS": "*"},
+                    "Action": "sts:AssumeRole",
+                    "Condition": {
+                        "StringEquals": {"aws:PrincipalOrgID": "foo-org-id"}
+                    },
+                }
+            ],
+        }
+
+        response = devapi_iam_client.create_role(
+            RoleName=role_name,
+            AssumeRolePolicyDocument=json.dumps(trust_relationship),
+        )
+
+        devapi_iam_client.put_role_policy(
+            RoleName=role_name,
+            PolicyName="EventsAccess",
+            PolicyDocument=json.dumps(policy_document),
+        )
+
+        # Return the role arn
+        yield response["Role"]["Arn"]
 
 
 @pytest.mark.django_db
@@ -94,16 +159,24 @@ def event_bus_arn(events_client):
     DC_ENVIRONMENT="development",
     EC2_IP="127.0.0.1",
 )
-def test_send_event_happy_path(sqs_client, sqs_queue_details, event_bus_arn):
-    with override_settings(DC_EVENTBUS_ARN=event_bus_arn):
-        queue_url, _ = sqs_queue_details
+def test_send_event_happy_path(
+    devapi_sqs_client,
+    devapi_sqs_queue_details,
+    devapi_event_bus_arn,
+    org_wide_eventbus_role,
+):
+    with override_settings(
+        DC_EVENTBUS_ARN=devapi_event_bus_arn,
+        DC_CHECK_EVENTBUS_ROLE=org_wide_eventbus_role,
+    ):
+        queue_url, _ = devapi_sqs_queue_details
         detail = {"message": "Test event"}
         detail_type = "elections_set_changed"
 
         with patch("elections.baker.logger") as mock_logger:
             send_event(detail, detail_type)
 
-        sqs_response = sqs_client.receive_message(
+        sqs_response = devapi_sqs_client.receive_message(
             QueueUrl=queue_url, WaitTimeSeconds=5
         )
         assert "Messages" in sqs_response
@@ -121,9 +194,9 @@ def test_send_event_happy_path(sqs_client, sqs_queue_details, event_bus_arn):
     EC2_IP="127.0.0.1",
 )
 def test_send_event_no_eventbus_arn(
-    sqs_client, sqs_queue_details, event_bus_arn
+    devapi_sqs_client, devapi_sqs_queue_details, devapi_event_bus_arn
 ):
-    queue_url, _ = sqs_queue_details
+    queue_url, _ = devapi_sqs_queue_details
     detail = {"message": "Test event"}
     detail_type = "elections_set_changed"
 
@@ -137,17 +210,25 @@ def test_send_event_no_eventbus_arn(
     DC_ENVIRONMENT="development",
     EC2_IP="127.0.0.1",
 )
-def test_send_event_disabled(sqs_client, sqs_queue_details, event_bus_arn):
+def test_send_event_disabled(
+    devapi_sqs_client,
+    devapi_sqs_queue_details,
+    devapi_event_bus_arn,
+    org_wide_eventbus_role,
+):
     # Even with all other settings set, `SEND_EVENTS=False` should still stop events being sent.
-    with override_settings(DC_EVENTBUS_ARN=event_bus_arn):
-        queue_url, _ = sqs_queue_details
+    with override_settings(
+        DC_EVENTBUS_ARN=devapi_event_bus_arn,
+        DC_CHECK_EVENTBUS_ROLE=org_wide_eventbus_role,
+    ):
+        queue_url, _ = devapi_sqs_queue_details
         detail = {"message": "Test event"}
         detail_type = "elections_set_changed"
 
         with patch("elections.baker.logger") as mock_logger:
             send_event(detail, detail_type)
 
-        sqs_response = sqs_client.receive_message(
+        sqs_response = devapi_sqs_client.receive_message(
             QueueUrl=queue_url, WaitTimeSeconds=5
         )
         assert "Messages" not in sqs_response
@@ -167,9 +248,14 @@ def test_send_event_disabled(sqs_client, sqs_queue_details, event_bus_arn):
     DC_ENVIRONMENT="development",
     EC2_IP="127.0.0.1",
 )
-def test_send_event_internal_exception(event_bus_arn):
+def test_send_event_internal_exception(
+    devapi_event_bus_arn, org_wide_eventbus_role
+):
     """Test that the InternalException in send_event is properly caught and logged."""
-    with override_settings(DC_EVENTBUS_ARN=event_bus_arn):
+    with override_settings(
+        DC_EVENTBUS_ARN=devapi_event_bus_arn,
+        DC_CHECK_EVENTBUS_ROLE=org_wide_eventbus_role,
+    ):
         detail = {"message": "Test event with client exception"}
         detail_type = "elections_set_changed"
 
@@ -225,6 +311,10 @@ def test_send_event_internal_exception(event_bus_arn):
 
 
 @pytest.mark.django_db
-def test_event_bus_exists(events_client, event_bus_arn):
-    assert event_bus_exists(events_client, event_bus_arn) is True
-    assert event_bus_exists(events_client, "DoesNotExist") is False
+def test_event_bus_exists(devapi_event_bus_arn, org_wide_eventbus_role):
+    with override_settings(
+        DC_EVENTBUS_ARN=devapi_event_bus_arn,
+        DC_CHECK_EVENTBUS_ROLE=org_wide_eventbus_role,
+    ):
+        assert event_bus_exists(devapi_event_bus_arn) is True
+        assert event_bus_exists("DoesNotExist") is False

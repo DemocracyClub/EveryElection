@@ -690,7 +690,7 @@ dev = [
     { name = "django-debug-toolbar", specifier = "==5.0.1" },
     { name = "djhtml", specifier = "==3.0.7" },
     { name = "factory-boy", specifier = "==3.3.1" },
-    { name = "moto", extras = ["events", "sqs"], specifier = "==5.0.26" },
+    { name = "moto", extras = ["events", "iam", "sqs"], specifier = "==5.0.26" },
     { name = "playwright", specifier = "==1.49.1" },
     { name = "pytest", specifier = "==8.3.4" },
     { name = "pytest-cov", specifier = "==6.0.0" },
