@@ -25,6 +25,10 @@ def str_bool_to_bool(str_bool):
     return str_bool in ["1", "True", "true", "TRUE"]
 
 
+# Set DC_ENVIRONMENT
+DC_ENVIRONMENT = os.environ.get("DC_ENVIRONMENT", "local")
+
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("EE_SECRET_KEY", "CHANGE THIS!!!")
 SLACK_WEBHOOK_URL = os.environ.get("SLACK_WEBHOOK_URL", None)
@@ -57,8 +61,11 @@ def get_ec2_ip():
     return ip_req.text
 
 
-if os.environ.get("DC_ENVIRONMENT"):
-    ALLOWED_HOSTS.append(get_ec2_ip())
+EC2_IP = None
+if DC_ENVIRONMENT in ("development", "staging", "production"):
+    EC2_IP = get_ec2_ip()
+    ALLOWED_HOSTS.append(EC2_IP)
+
 
 USE_X_FORWARDED_HOST = True
 
@@ -278,6 +285,15 @@ CORS_URLS_REGEX = r"^/api/.*$"
 CORS_ALLOW_METHODS = ("GET", "OPTIONS")
 
 UPSTREAM_SYNC_URL = "https://elections.democracyclub.org.uk/api/elections/"
+
+# DC Eventbus.
+SEND_EVENTS = False
+if DC_ENVIRONMENT in ("development", "staging", "production"):
+    # If we've set DC_ENVIRONMENT then we should raise a KeyError if queue url isn't set
+    DC_EVENTBUS_ARN = os.environ["DC_EVENTBUS_ARN"]
+    DC_CHECK_EVENTBUS_ROLE = os.environ["DC_CHECK_EVENTBUS_ROLE"]
+    SEND_EVENTS = True
+
 GCS_API_KEY = os.environ.get("GCS_API_KEY", "")
 
 NOTICE_OF_ELECTION_BUCKET = "notice-of-election"
@@ -304,7 +320,7 @@ CURRENT_FUTURE_DAYS = 90
 
 DEBUG_TOOLBAR = False
 
-if not os.environ.get("DC_ENVIRONMENT") and DEBUG_TOOLBAR:
+if DC_ENVIRONMENT == "local" and DEBUG_TOOLBAR:
     INSTALLED_APPS += ("debug_toolbar",)
     MIDDLEWARE = [
         "debug_toolbar.middleware.DebugToolbarMiddleware",
@@ -326,5 +342,5 @@ if sentry_dsn := os.environ.get("SENTRY_DSN"):
         integrations=[
             django.DjangoIntegration(),
         ],
-        environment=os.environ.get("DC_ENVIRONMENT"),
+        environment=DC_ENVIRONMENT,
     )
