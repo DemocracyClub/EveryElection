@@ -162,7 +162,11 @@ class OrganisationDivision(UpdateElectionsTimestampedModel):
         if code_type.lower() != "gss":
             return None
 
-        return "https://mapit.mysociety.org/area/{}".format(code)
+        link = f"https://mapit.mysociety.org/area/{code}.html"
+        if self.divisionset.end_date:
+            link += "?min_generation=1"
+
+        return link
 
 
 class DivisionGeography(models.Model):

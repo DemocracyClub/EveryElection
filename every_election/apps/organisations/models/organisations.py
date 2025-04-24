@@ -103,7 +103,7 @@ class Organisation(UpdateElectionsTimestampedModel, DateDisplayMixin):
             return None
         if not self.geographies.latest().gss:
             return None
-        return "https://mapit.mysociety.org/area/{}".format(
+        return "https://mapit.mysociety.org/area/{}.html".format(
             self.geographies.latest().gss
         )
 

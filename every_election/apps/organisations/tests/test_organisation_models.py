@@ -100,7 +100,7 @@ class TestOrganisationGeographies(TestCase):
             geo, org.get_geography("doesn't even need to be a date")
         )
         self.assertEqual(
-            "https://mapit.mysociety.org/area/X01000001",
+            "https://mapit.mysociety.org/area/X01000001.html",
             org.format_geography_link(),
         )
         geo.gss = ""
@@ -193,7 +193,7 @@ class TestOrganisationDivision(TestCase):
 
     def test_format_geography_valid(self):
         self.assertEqual(
-            "https://mapit.mysociety.org/area/X01000001",
+            "https://mapit.mysociety.org/area/X01000001.html?min_generation=1",
             OrganisationDivisionFactory(
                 official_identifier="gss:X01000001"
             ).format_geography_link(),
