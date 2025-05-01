@@ -77,8 +77,8 @@ class EECodeDeployment(Stack):
         instance_types_per_env = {
             "development": "t3a.medium",
             "staging": "t3a.medium",
-            # "production": "t3a.medium",
-            "production": "c6a.2xlarge",
+            "production": "t3a.medium",
+            # "production": "c6a.2xlarge",
         }
         return ec2.LaunchTemplate(
             self,
