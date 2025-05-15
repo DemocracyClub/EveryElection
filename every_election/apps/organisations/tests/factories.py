@@ -38,7 +38,7 @@ class OrganisationDivisionSetFactory(factory.django.DjangoModelFactory):
 
     organisation = factory.SubFactory(OrganisationFactory)
     start_date = "2017-05-04"
-    end_date = "2025-05-03"
+    end_date = "2055-05-03"
     legislation_url = "https://example.com/the-law"
     consultation_url = "https://example.com/consultation"
     short_title = "Made up boundary changes"
