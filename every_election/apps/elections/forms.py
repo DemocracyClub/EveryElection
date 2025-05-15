@@ -3,7 +3,7 @@ from typing import Union
 from dc_utils import forms as dc_forms
 from django import forms
 from django.core.exceptions import ValidationError
-from django.db.models import F, Q, QuerySet
+from django.db.models import F, QuerySet
 from organisations.models import (
     Organisation,
     OrganisationDivision,
@@ -43,13 +43,18 @@ class ElectionTypeForm(forms.Form):
         super().__init__(*args, **kwargs)
         if date:
             qs = self.fields["election_type"].queryset
+            orgs_within_end_date = qs.filter(
+                organisation__start_date__lte=date,
+                organisation__end_date__gte=date,
+            )
+            orgs_with_null_end_date = qs.filter(
+                organisation__start_date__lte=date,
+                organisation__end_date__isnull=True,
+            )
             qs = (
-                qs.filter(organisation__start_date__lte=date)
-                .filter(
-                    Q(organisation__end_date__gte=date)
-                    | Q(organisation__end_date=None)
-                )
+                (orgs_within_end_date | orgs_with_null_end_date)
                 .distinct()
+                .order_by("id")
             )
             self.fields["election_type"].queryset = qs
 
