@@ -455,7 +455,7 @@ class TestElectionAPIQueries(APITestCase):
                     "legislation_url": "https://example.com/the-law",
                     "short_title": "Made up boundary changes",
                     "notes": "This is just for testing.",
-                    "end_date": "2025-05-03",
+                    "end_date": "2055-05-03",
                     "consultation_url": "https://example.com/consultation"
                 },
                 "seats_total": 1,
