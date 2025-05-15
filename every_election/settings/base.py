@@ -317,14 +317,6 @@ BASIC_AUTH_ALLOWLIST = [
 CURRENT_PAST_DAYS = 20
 CURRENT_FUTURE_DAYS = 90
 
-DEBUG_TOOLBAR = False
-
-if DC_ENVIRONMENT == "local" and DEBUG_TOOLBAR:
-    INSTALLED_APPS += ("debug_toolbar",)
-    MIDDLEWARE = [
-        "debug_toolbar.middleware.DebugToolbarMiddleware",
-    ] + MIDDLEWARE
-
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 if sentry_dsn := os.environ.get("SENTRY_DSN"):

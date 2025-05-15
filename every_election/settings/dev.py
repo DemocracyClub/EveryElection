@@ -6,7 +6,11 @@ from .base import *  # noqa
 import contextlib
 
 DEBUG = True
-DEBUG_TOOLBAR = True
+
+INSTALLED_APPS += ("debug_toolbar",)  # noqa: F405
+MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+] + MIDDLEWARE  # noqa: F405
 
 # using cache sessions instead of database sessions
 # in dev makes it easier to debug the wizard
