@@ -14,7 +14,6 @@ class OrganisationDivisionInlineAdmin(admin.TabularInline):
     extra = False
     readonly_fields = (
         "name",
-        "official_identifier",
         "division_type",
         "division_subtype",
         "slug",
