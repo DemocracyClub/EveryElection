@@ -3,6 +3,8 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView
 from election_snooper.forms import ModerationHistoryForm
 from elections.constraints import check_constraints, has_approved_parents
@@ -18,6 +20,10 @@ def set_election_status(election, status, user):
 
 class ModerationQueueView(UserPassesTestMixin, TemplateView):
     template_name = "election_snooper/moderation_queue.html"
+
+    @method_decorator(never_cache)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
     def test_func(self):
         return user_is_moderator(self.request.user)
