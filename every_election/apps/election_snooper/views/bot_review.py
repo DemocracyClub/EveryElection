@@ -5,6 +5,8 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView
 from election_snooper.forms import ReviewElectionForm
 from election_snooper.models import SnoopedElection
@@ -12,6 +14,10 @@ from election_snooper.models import SnoopedElection
 
 class SnoopedElectionView(UserPassesTestMixin, TemplateView):
     template_name = "election_snooper/snooped_election_list.html"
+
+    @method_decorator(never_cache)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
     def test_func(self):
         return user_is_moderator(self.request.user)
