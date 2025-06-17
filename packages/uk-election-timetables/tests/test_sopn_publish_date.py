@@ -85,6 +85,14 @@ def test_publish_date_senedd_election_id():
     assert election.sopn_publish_date == date(2016, 4, 7)
 
 
+def test_publish_date_referendum():
+    ref = from_election_id("ref.2019-02-21", country=Country.ENGLAND)
+    with raises(NotImplementedError) as err:
+        ref.sopn_publish_date
+
+    assert str(err.value) == "No SOPN date for referenda"
+
+
 def test_christmas_eve_not_counted():
     election_and_expected_sopn_date = {
         PoliceAndCrimeCommissionerElection: date(2018, 12, 11),

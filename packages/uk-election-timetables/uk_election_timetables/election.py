@@ -1,3 +1,4 @@
+import contextlib
 from abc import ABCMeta, abstractmethod
 from datetime import date, datetime, timezone
 from enum import Enum
@@ -75,31 +76,34 @@ class Election(metaclass=ABCMeta):
         :return: a list representing the entire timetable for this particular election.
         """
 
-        return sorted(
-            [
-                {
-                    "label": TimetableEvent.REGISTRATION_DEADLINE.value,
-                    "date": self.registration_deadline,
-                    "event": TimetableEvent.REGISTRATION_DEADLINE.name,
-                },
+        dates = [
+            {
+                "label": TimetableEvent.REGISTRATION_DEADLINE.value,
+                "date": self.registration_deadline,
+                "event": TimetableEvent.REGISTRATION_DEADLINE.name,
+            },
+            {
+                "label": TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE.value,
+                "date": self.postal_vote_application_deadline,
+                "event": TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE.name,
+            },
+            {
+                "label": TimetableEvent.VAC_APPLICATION_DEADLINE.value,
+                "date": self.vac_application_deadline,
+                "event": TimetableEvent.VAC_APPLICATION_DEADLINE.name,
+            },
+        ]
+
+        with contextlib.suppress(NotImplementedError):
+            dates.append(
                 {
                     "label": TimetableEvent.SOPN_PUBLISH_DATE.value,
                     "date": self.sopn_publish_date,
                     "event": TimetableEvent.SOPN_PUBLISH_DATE.name,
-                },
-                {
-                    "label": TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE.value,
-                    "date": self.postal_vote_application_deadline,
-                    "event": TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE.name,
-                },
-                {
-                    "label": TimetableEvent.VAC_APPLICATION_DEADLINE.value,
-                    "date": self.vac_application_deadline,
-                    "event": TimetableEvent.VAC_APPLICATION_DEADLINE.name,
-                },
-            ],
-            key=lambda r: r["date"],
-        )
+                }
+            )
+
+        return sorted(dates, key=lambda r: r["date"])
 
     def _calendar(self):
         return self.BANK_HOLIDAY_CALENDAR.from_country(self.country)

@@ -9,6 +9,7 @@ from uk_election_timetables.elections import (
     MayoralElection,
     NorthernIrelandAssemblyElection,
     PoliceAndCrimeCommissionerElection,
+    Referendum,
     ScottishParliamentElection,
     SeneddCymruElection,
     UKParliamentElection,
@@ -95,7 +96,7 @@ def from_election_id(election_id: str, country: Country = None) -> Election:
         ]
 
     def requires_country(el_type):
-        return el_type in ["local"]
+        return el_type in ["local", "ref"]
 
     if election_id.startswith("mayor.london"):
         # Mayor of London uses the GLA timetable
@@ -115,5 +116,7 @@ def from_election_id(election_id: str, country: Country = None) -> Election:
         return LocalElection(poll_date, country)
     if election_type == "parl":
         return UKParliamentElection(poll_date, country)
+    if election_type == "ref":
+        return Referendum(poll_date, country)
 
     raise NoSuchElectionTypeError(election_type)

@@ -12,6 +12,9 @@ from uk_election_timetables.elections.northern_ireland_assembly import (
 from uk_election_timetables.elections.police_and_crime_commissioner import (
     PoliceAndCrimeCommissionerElection,
 )
+from uk_election_timetables.elections.referendum import (
+    Referendum,
+)
 from uk_election_timetables.elections.scottish_parliament import (
     ScottishParliamentElection,
 )
@@ -19,13 +22,14 @@ from uk_election_timetables.elections.senedd_cymru import SeneddCymruElection
 from uk_election_timetables.elections.uk_parliament import UKParliamentElection
 
 __ALL__ = (
+    CityOfLondonLocalElection,
+    GreaterLondonAssemblyElection,
+    LocalElection,
+    MayoralElection,
+    NorthernIrelandAssemblyElection,
+    PoliceAndCrimeCommissionerElection,
+    Referendum,
     ScottishParliamentElection,
     SeneddCymruElection,
-    GreaterLondonAssemblyElection,
-    NorthernIrelandAssemblyElection,
-    LocalElection,
-    CityOfLondonLocalElection,
     UKParliamentElection,
-    PoliceAndCrimeCommissionerElection,
-    MayoralElection,
 )

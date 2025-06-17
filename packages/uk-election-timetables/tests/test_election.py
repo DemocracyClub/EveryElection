@@ -101,6 +101,30 @@ def test_timetable_sort_order_scottish_parliament_postal_vote():
     ]
 
 
+def test_timetable_referendum():
+    election = from_election_id("ref.2021-05-06", country=Country.ENGLAND)
+
+    assert len(election.timetable) == 3
+
+    assert election.timetable == [
+        {
+            "label": "Register to vote deadline",
+            "date": datetime.date(2021, 4, 19),
+            "event": "REGISTRATION_DEADLINE",
+        },
+        {
+            "label": "Postal vote application deadline",
+            "date": datetime.date(2021, 4, 20),
+            "event": "POSTAL_VOTE_APPLICATION_DEADLINE",
+        },
+        {
+            "label": "VAC application deadline",
+            "date": datetime.date(2021, 4, 27),
+            "event": "VAC_APPLICATION_DEADLINE",
+        },
+    ]
+
+
 def lookup(election: Election, label: str) -> Dict:
     return next(
         entry for entry in election.timetable if entry["label"] == label
@@ -231,6 +255,17 @@ election_types = [
         "election_id": "parl.somewhere.2019-02-21",
         "country": Country.WALES,
         "expected_type": elections.UKParliamentElection,
+    },
+    # ref
+    {
+        "election_id": "ref.somewhere.2019-02-21",
+        "country": Country.ENGLAND,
+        "expected_type": elections.Referendum,
+    },
+    {
+        "election_id": "ref.somewhere.2019-02-21",
+        "country": Country.WALES,
+        "expected_type": elections.Referendum,
     },
 ]
 
