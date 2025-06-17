@@ -52,6 +52,14 @@ elections.police\_and\_crime\_commissioner
    :undoc-members:
    :show-inheritance:
 
+elections.referendum
+-------------------------------------
+
+.. automodule:: uk_election_timetables.elections.referendum
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 elections.scottish\_parliament
 -------------------------------------
 
