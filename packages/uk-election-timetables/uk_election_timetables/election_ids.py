@@ -15,7 +15,7 @@ from uk_election_timetables.elections import (
 )
 
 
-class InvalidElectionIdError(BaseException):
+class InvalidElectionIdError(Exception):
     """
     An exception type to represent when an election id does not confirm to DemocracyClub's `uk-election-ids <https://elections.democracyclub.org.uk/reference_definition/>`_ format
     """
@@ -27,7 +27,7 @@ class InvalidElectionIdError(BaseException):
         return "Parameter [%s] is not in election id format" % self.election_id
 
 
-class NoSuchElectionTypeError(BaseException):
+class NoSuchElectionTypeError(Exception):
     """
     An exception type to represent when an election type doesn't actually represent a valid election.
     """
@@ -39,7 +39,7 @@ class NoSuchElectionTypeError(BaseException):
         return "Election type [%s] does not exist" % self.election_type
 
 
-class AmbiguousElectionIdError(BaseException):
+class AmbiguousElectionIdError(Exception):
     """
     An exception type to represent when an election id (usually a group such as `local.2019-05-02`) can correspond to elections in multiple countries with different legislation governing the publish date of Statements of Persons Nominated.
     """
