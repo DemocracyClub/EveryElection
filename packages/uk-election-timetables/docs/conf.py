@@ -10,9 +10,9 @@ copyright = "2020, Alex Wilson"
 author = "Alex Wilson"
 
 # The short X.Y version
-version = "4.2"
+version = "4.3"
 # The full version, including alpha/beta/rc tags
-release = "4.2.3"
+release = "4.3.0"
 
 
 # -- General configuration ---------------------------------------------------
