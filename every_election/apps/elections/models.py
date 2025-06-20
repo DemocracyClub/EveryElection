@@ -37,6 +37,46 @@ class ElectionCancellationReason(models.TextChoices):
     CANDIDATE_DEATH = "CANDIDATE_DEATH", "Death of a candidate"
 
 
+class ByElectionReason(models.TextChoices):
+    """
+    Reasons why a by-election may be triggered.
+
+    Not all of these can be applied to all election types.
+
+    e.g. a recall petition is only used in Westminster, and failure to attend meetings
+    applies to local government.
+
+    The choices here are in part based on:
+        UK Electoral Commission guidance on casual vacancies:
+        https://www.electoralcommission.org.uk/guidance-returning-officers-administering-local-government-elections-england/casual-vacancies-and-elections/how-casual-vacancies-occur
+    """
+
+    DEATH = "DEATH", "The elected member died"
+    RESIGNATION = "RESIGNATION", "The elected member resigned"
+    ELECTORAL_COURT = (
+        "ELECTORAL_COURT",
+        "The election of the elected member was declared void by an election court",
+    )
+    FAILURE_TO_ACCEPT = (
+        "FAILURE_TO_ACCEPT",
+        "The previous election winner did not sign a declaration of acceptance",
+    )
+    FAILURE_TO_ATTEND_MEETINGS = (
+        "FAILURE_TO_ATTEND_MEETINGS",
+        "The elected member failed to attend meetings for six months",
+    )
+    DISQUALIFICATION = "DISQUALIFICATION", "The elected member was disqualified"
+    LOSING_QUALIFICATION = (
+        "LOSING_QUALIFICATION",
+        "The elected member no longer qualified as a registered elector",
+    )
+    RECALL_PETITION = (
+        "RECALL_PETITION",
+        "The elected member was recalled by a successful recall petition",
+    )
+    OTHER = "OTHER", "Other"
+
+
 class ElectionType(models.Model):
     name = models.CharField(blank=True, max_length=100)
     election_type = models.CharField(blank=True, max_length=100, unique=True)
@@ -303,6 +343,13 @@ class Election(TimeStampedModel):
         null=True,
         blank=True,
         choices=ElectionCancellationReason.choices,
+        default=None,
+    )
+    by_election_reason = models.CharField(
+        max_length=30,
+        null=True,
+        blank=True,
+        choices=ByElectionReason.choices,
         default=None,
     )
     replaces = models.ForeignKey(
