@@ -165,6 +165,7 @@ election_fields = (
     "cancellation_reason",
     "replaces",
     "replaced_by",
+    "by_election_reason",
     "tags",
     "created",
     "modified",
