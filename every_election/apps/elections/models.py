@@ -577,6 +577,10 @@ class Election(TimeStampedModel):
             raise ValidationError(
                 "Only a cancelled election can have a cancellation reason"
             )
+        if ".by." not in self.election_id and self.by_election_reason:
+            raise ValidationError(
+                "Only a by election can have a by_election_reason"
+            )
 
     @transaction.atomic
     def save(
