@@ -198,6 +198,10 @@ class ElectionAdmin(admin.ModelAdmin):
             return tuple(
                 f for f in self.fieldsets if f[0] != "Ballot Information"
             )
+        if ".by." in obj.election_id:
+            for fieldset_name, fieldset in self.fieldsets:
+                if fieldset_name == "Ballot Information":
+                    fieldset["fields"] += ("by_election_reason",)
 
         return self.fieldsets
 
