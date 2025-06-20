@@ -500,6 +500,7 @@ class TestElectionAPIQueries(APITestCase):
             "cancellation_reason": null,
             "replaces": null,
             "replaced_by": null,
+            "by_election_reason": null,
             "requires_voter_id": null,
             "tags": {"FOO":{"bar":"baz"}},
             "created": "2017-01-23T00:00:00Z",
