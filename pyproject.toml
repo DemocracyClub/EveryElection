@@ -82,10 +82,10 @@ dc-design-system = { git = "https://github.com/DemocracyClub/design-system.git",
 
 [tool.ruff]
 line-length = 80
-ignore = ["E501"]
-
 extend-exclude = ["every_election/settings/local.py"]
 
+[tool.ruff.lint]
+ignore = ["E501"]
 extend-select = [
     "I",
     "C4",
