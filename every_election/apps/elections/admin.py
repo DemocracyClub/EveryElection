@@ -47,6 +47,26 @@ class GroupTypeListFilter(admin.SimpleListFilter):
         )
 
 
+class ByElectionFilter(admin.SimpleListFilter):
+    title = "contest type"
+    parameter_name = "contest_type"
+
+    def lookups(self, request, model_admin):
+        return [
+            ("by_election", "By Election"),
+            ("scheduled_election", "Scheduled Election"),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == "by_election":
+            return queryset.filter(election_id__contains=".by.")
+
+        if self.value() == "scheduled_election":
+            return queryset.exclude(election_id__contains=".by.")
+
+        return queryset
+
+
 def mark_current(modeladmin, request, queryset):
     queryset.update(current=True)
 
@@ -172,7 +192,13 @@ class ElectionAdmin(admin.ModelAdmin):
         "created",
         "current_status_display",
     )
-    list_filter = ["current", "cancelled", GroupTypeListFilter]
+    list_filter = [
+        "current",
+        "cancelled",
+        GroupTypeListFilter,
+        ByElectionFilter,
+        "by_election_reason",
+    ]
     list_display = [
         "election_id",
         "poll_open_date",
