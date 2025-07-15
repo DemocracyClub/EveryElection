@@ -38,11 +38,15 @@ class Command(ReadFromCSVMixin, BaseCommand):
                 record.seats_total = 1
                 records_to_update.append(record)
                 continue
-            # update the rest if we have a division seats_total
+
+            updated = False
             if line["division_seats_total"].isdigit():
                 record.seats_total = int(line["division_seats_total"])
-                if line["ynr_seats_contested"].isdigit():
-                    record.seats_contested = int(line["ynr_seats_contested"])
+                updated = True
+            if line["ynr_seats_contested"].isdigit():
+                record.seats_contested = int(line["ynr_seats_contested"])
+                updated = True
+            if updated:
                 records_to_update.append(record)
 
         if options["dry_run"]:
