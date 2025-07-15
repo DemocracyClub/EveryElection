@@ -1,9 +1,17 @@
 {% extends "base.html" %}
 {% load dc_forms %}
 {% block content %}
+    {% if not request.user.is_authenticated %}
+        <aside class="ds-status" aria-label="Status">
+            <ul class="ds-stack">
+                <li class="ds-status-message">New elections will require moderation by an administrator</li>
+            </ul>
+        </aside>
+    {% endif %}
 
     {# <p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p> #}
     {% block form_page_header %}{% endblock form_page_header %}
+
     <form action="" method="post" id="id_creator_{{ wizard.steps.current }}" {% block form_tag_extra %}{% endblock form_tag_extra %}>
         {% csrf_token %}
         {{ wizard.management_form }}
