@@ -345,14 +345,15 @@ def test_subtype_creation(page, live_server, id_creator_data, settings):
     ]
 
 
-def test_multiple_local_elections(page, live_server, id_creator_data, settings):
+def test_multiple_local_elections(playwright_with_admin, live_server, id_creator_data, settings):
+    page = playwright_with_admin
     settings.DEBUG = True
     # We shouldn't have any elections
     assert Election.private_objects.count() == 0
 
     # Open the home page, click to add a new election
     page.goto(live_server.url)
-    page.get_by_role("link", name="Suggest a new election").click()
+    page.get_by_role("link", name="Add a new election").click()
 
     # Enter a date
     page.locator("#id_date-date_0").fill("5")
@@ -382,7 +383,7 @@ def test_multiple_local_elections(page, live_server, id_creator_data, settings):
     page.get_by_role("button", name="Submit").click()
 
     # Create IDs
-    page.get_by_role("button", name="Suggest IDs").click()
+    page.get_by_role("button", name="Create IDs").click()
 
     # We should have 7 elections
     assert Election.private_objects.count() == 7

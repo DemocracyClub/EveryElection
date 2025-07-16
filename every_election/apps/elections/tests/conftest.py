@@ -47,3 +47,29 @@ def core_elections_data():
         ),
     ]
     ModerationStatus.objects.bulk_create(recs, ignore_conflicts=True)
+
+
+@pytest.fixture
+def playwright_with_admin(admin_client, page, live_server):
+    """
+    Logs Playwright into an admin session and returns a page object for
+    browsing when logged in
+
+    """
+    session_id = admin_client.cookies["sessionid"].value
+
+    page.context.add_cookies(
+        [
+            {
+                "name": "sessionid",
+                "value": session_id,
+                "domain": "localhost",
+                "path": "/",
+                "httpOnly": True,
+                "secure": False,
+                "sameSite": "Lax",
+            }
+        ]
+    )
+
+    return page
