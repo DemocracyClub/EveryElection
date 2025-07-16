@@ -366,17 +366,47 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         ):
             ballots = [e for e in context["all_ids"] if e.group_type is None]
             if len(ballots) == 1:
-                message = """
-                    New election {} suggested by anonymous user:\n
-                    <https://elections.democracyclub.org.uk/election_radar/moderation_queue/>
-                """.format(ballots[0].election_id)
+                message = "New election suggested by anonymous user"
             else:
-                message = """
-                    {} New elections suggested by anonymous user:\n
-                    <https://elections.democracyclub.org.uk/election_radar/moderation_queue/>
-                """.format(len(ballots))
+                message = (
+                    f"{len(ballots)} new elections suggested by anonymous user"
+                )
+
+            fields = [
+                {"type": "mrkdwn", "text": f"`{election_id}`"}
+                for election_id in ballots
+            ]
+
+            blocks = [
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": message,
+                    },
+                },
+                {"type": "section", "fields": fields},
+                {
+                    "type": "actions",
+                    "elements": [
+                        {
+                            "type": "button",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Review in moderation queue",
+                                "emoji": True,
+                            },
+                            "url": "https://elections.democracyclub.org.uk/election_radar/moderation_queue/",
+                            "style": "primary",
+                        }
+                    ],
+                },
+            ]
+
             post_to_slack(
-                message, username="Election Suggestion", icon_emoji=":bulb:"
+                username="Election Suggestion",
+                icon_emoji=":bulb:",
+                blocks=blocks,
             )
 
         # if this election was created from a radar entry set the status
