@@ -1,7 +1,8 @@
-from unittest import mock
+from unittest.mock import patch
 
 from data_provider import base_data
 from django.test import TestCase
+from organisations.boundaries.boundary_bot.code_matcher import CodeMatcher
 from organisations.boundaries.boundary_bot.scraper import (
     LgbceScraper,
     ScraperException,
@@ -18,8 +19,17 @@ from organisations.tests.factories import (
 )
 
 
-class TestScraper(TestCase):
+class MockedCodeMatcherMixin:
     def setUp(self):
+        self.patcher = patch.object(CodeMatcher, "get_data", return_value=[])
+        self.mock_get_data = self.patcher.start()
+        self.addCleanup(self.patcher.stop)
+        super().setUp()
+
+
+class TestScraper(MockedCodeMatcherMixin, TestCase):
+    def setUp(self):
+        super().setUp()
         self.scraper = LgbceScraper(False, False)
 
     def test_get_review_from_db_duplicate_link(self):
@@ -101,12 +111,10 @@ class TestScraper(TestCase):
         )
 
 
-@mock.patch(
-    "organisations.boundaries.boundary_bot.code_matcher.CodeMatcher.get_data",
-    lambda x: [],
-)
-class TestScraperSaves(TestCase):
+class TestScraperSaves(MockedCodeMatcherMixin, TestCase):
     def setUp(self):
+        super().setUp()
+
         self.scraper = LgbceScraper(False, False)
         self.allerdale_org = OrganisationFactory(
             official_identifier="ALL", slug="allerdale"
@@ -235,8 +243,10 @@ class TestScraperSaves(TestCase):
         )
 
 
-class TestGetLegislationYear(TestCase):
+class TestGetLegislationYear(MockedCodeMatcherMixin, TestCase):
     def setUp(self):
+        super().setUp()
+
         self.scraper = LgbceScraper(False, False)
 
     def test_get_legislation_year_uksi_url(self):
