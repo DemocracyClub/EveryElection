@@ -2,14 +2,21 @@ import json
 import os
 import textwrap
 import warnings
+from typing import Any, Dict, List, Optional
 
 import requests
 from django.conf import settings
 
 
 def post_to_slack(
-    message, username="Election Radar", icon_emoji=":satellite_antenna:"
+    message=None,
+    username="Election Radar",
+    icon_emoji=":satellite_antenna:",
+    blocks: Optional[List[Dict[str, Any]]] = None,
 ):
+    if all((message, blocks)):
+        raise ValueError("Can't use both message and blocks. Pick one.")
+
     if not getattr(settings, "SLACK_WEBHOOK_URL", None):
         if not settings.DEBUG:
             warnings.warn("settings.SLACK_WEBHOOK_URL is not set")
@@ -24,10 +31,14 @@ def post_to_slack(
 
     url = settings.SLACK_WEBHOOK_URL
 
-    payload = {
+    payload: Dict[str, Any] = {
         "icon_emoji": icon_emoji,
         "username": username,
-        "text": textwrap.dedent(message),
     }
+
+    if isinstance(blocks, list):
+        payload["blocks"] = blocks
+    else:
+        payload["text"] = textwrap.dedent(message)
 
     requests.post(url, json.dumps(payload), timeout=2)
