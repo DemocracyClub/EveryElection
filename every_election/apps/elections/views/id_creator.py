@@ -375,7 +375,9 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                     {} New elections suggested by anonymous user:\n
                     <https://elections.democracyclub.org.uk/election_radar/moderation_queue/>
                 """.format(len(ballots))
-            post_to_slack(message)
+            post_to_slack(
+                message, username="Election Suggestion", icon_emoji=":bulb:"
+            )
 
         # if this election was created from a radar entry set the status
         # of the radar entry to indicate we have made an id for it
