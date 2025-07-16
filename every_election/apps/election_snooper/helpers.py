@@ -7,7 +7,9 @@ import requests
 from django.conf import settings
 
 
-def post_to_slack(message):
+def post_to_slack(
+    message, username="Election Radar", icon_emoji=":satellite_antenna:"
+):
     if not getattr(settings, "SLACK_WEBHOOK_URL", None):
         if not settings.DEBUG:
             warnings.warn("settings.SLACK_WEBHOOK_URL is not set")
@@ -23,8 +25,8 @@ def post_to_slack(message):
     url = settings.SLACK_WEBHOOK_URL
 
     payload = {
-        "icon_emoji": ":satellite_antenna:",
-        "username": "Election Radar",
+        "icon_emoji": icon_emoji,
+        "username": username,
         "text": textwrap.dedent(message),
     }
 
