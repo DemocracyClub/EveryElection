@@ -284,13 +284,16 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         # if step != self.steps.current:
         #     return {}
         if step in ["election_organisation", "election_subtype"]:
+            ret = {}
             election_type = self.get_election_type
             if election_type:
-                return {
+                ret = {
                     "election_type": election_type.election_type,
                     "election_date": self.get_election_date(),
                 }
-            return {}
+            if step == "election_organisation":
+                ret["request"] = self.request
+            return ret
         if step == "election_organisation_division":
             organisations = self.get_organisations
             election_subtype = self.get_election_subtypes
