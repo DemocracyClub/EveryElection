@@ -27,13 +27,8 @@
 
             {% endfor %}
         </ul>
-        {% if all_ids.0.election_type.election_type in election_types_with_subtypes %}
-            {% include "id_creator/election_subtype_group.html" %}
-        {% elif all_ids.0.election_type.election_type == "local" %}
-            {% include "id_creator/local_elections.html" %}
-        {% else %}
-            {% include "id_creator/elections_group.html" %}
-        {% endif %}
+
+        {% include ballots_template %}
     </div>
 
 {% endblock form_page_header %}

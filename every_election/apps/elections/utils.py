@@ -249,9 +249,12 @@ class ElectionBuilder:
     def get_voting_system(self):
         if not self.organisation:
             return None
-        return VotingSystemMatcher(
-            self.id.ids[-1], nation=self.organisation.territory_code
-        ).get_voting_system()
+        try:
+            return VotingSystemMatcher(
+                self.id.ids[-1], nation=self.organisation.territory_code
+            ).get_voting_system()
+        except ValueError:
+            return None
 
     def get_seats_contested(self):
         if not self.seats_contested:
