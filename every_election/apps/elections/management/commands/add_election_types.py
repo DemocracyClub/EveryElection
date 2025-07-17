@@ -1,11 +1,11 @@
 from django.core.management.base import BaseCommand
-from elections import constants
 from elections.models import ElectionSubType, ElectionType
+from uk_election_ids.datapackage import ELECTION_TYPES
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        for type_name, info in constants.ELECTION_TYPES.items():
+        for type_name, info in ELECTION_TYPES.items():
             election_type, _ = ElectionType.objects.update_or_create(
                 election_type=type_name,
                 defaults={"name": info["name"]},
