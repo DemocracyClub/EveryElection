@@ -269,8 +269,15 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                 all_data, self.get_election_subtypes
             )
             context["all_ids"] = all_ids
+
+            ballots_template = "id_creator/elections_group.html"
+            if any(e.election_subtype_id is not None for e in all_ids):
+                ballots_template = "id_creator/election_subtype_group.html"
+            elif all_ids[0].election_type.election_type == "local":
+                ballots_template = "id_creator/local_elections.html"
+            context["ballots_template"] = ballots_template
+
         context["user_is_moderator"] = user_is_moderator(self.request.user)
-        context["election_types_with_subtypes"] = ["sp", "senedd", "gla"]
         return context
 
     def get_form_kwargs(self, step):
