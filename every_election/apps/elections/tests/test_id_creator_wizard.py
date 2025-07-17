@@ -345,7 +345,9 @@ def test_subtype_creation(page, live_server, id_creator_data, settings):
     ]
 
 
-def test_multiple_local_elections(playwright_with_admin, live_server, id_creator_data, settings):
+def test_multiple_local_elections(
+    playwright_with_admin, live_server, id_creator_data, settings
+):
     page = playwright_with_admin
     settings.DEBUG = True
     # We shouldn't have any elections
