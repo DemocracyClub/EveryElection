@@ -88,6 +88,11 @@ def select_subtype(wizard):
     election_type = wizard.get_election_type
     if not election_type:
         return False
+    if (
+        election_type.election_type == "senedd"
+        and wizard.get_election_date().date() >= datetime.date(2026, 5, 7)
+    ):
+        return False
     subtypes = ElectionSubType.objects.filter(election_type=election_type)
     return subtypes.count() > 1
 
