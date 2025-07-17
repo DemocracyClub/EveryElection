@@ -12,7 +12,6 @@ from elections.forms import (
     DivFormSet,
     ElectionDateForm,
     ElectionOrganisationForm,
-    ElectionSourceForm,
     ElectionSubTypeForm,
     ElectionTypeForm,
 )
@@ -32,7 +31,6 @@ from formtools.wizard.views import NamedUrlSessionWizardView
 from organisations.models import Organisation
 
 FORMS = [
-    ("source", ElectionSourceForm),
     ("date", ElectionDateForm),
     ("election_type", ElectionTypeForm),
     ("election_subtype", ElectionSubTypeForm),
@@ -42,7 +40,6 @@ FORMS = [
 ]
 
 TEMPLATES = {
-    "source": "id_creator/source.html",
     "date": "id_creator/date.html",
     "election_type": "id_creator/election_type.html",
     "election_subtype": "id_creator/election_subtype.html",
@@ -50,18 +47,6 @@ TEMPLATES = {
     "election_organisation_division": "id_creator/election_organisation_division.html",
     "review": "id_creator/review.html",
 }
-
-
-def show_source_step(wizard):
-    # if we've got a radar_id in the URL, we want to show the source form
-    radar_id = wizard.request.GET.get("radar_id", False)
-    if radar_id:
-        return True
-
-    # if a source is already set, we want to show the source form
-    # otherwise, hide it
-    data = wizard.get_cleaned_data_for_step("source")
-    return bool(isinstance(data, dict) and "source" in data)
 
 
 def date_known(wizard):
@@ -117,7 +102,6 @@ def select_organisation_division(wizard):
 
 
 CONDITION_DICT = {
-    "source": show_source_step,
     "date": date_known,
     "election_organisation": select_organisation,
     "election_organisation_division": select_organisation_division,
@@ -164,36 +148,6 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         return election_date.get("date", None)
 
     def get_form_initial(self, step):
-        if step == "source":
-            # init the 'source' form with details of a SnoopedElection record
-            radar_id = self.request.GET.get("radar_id", False)
-            if radar_id:
-                se = SnoopedElection.objects.get(pk=radar_id)
-                if se.snooper_name == "CustomSearch:NoticeOfElectionPDF":
-                    # put these in the session - they aren't user-modifiable
-                    self.storage.extra_data.update(
-                        {"radar_id": se.id, "radar_date": ""}
-                    )
-                    # auto-populate the form with these to allow editing
-                    return {"source": se.detail_url, "document": se.detail_url}
-                if (
-                    se.snooper_name == "ALDC"
-                    or se.snooper_name == "LibDemNewbies"
-                ):
-                    # put these in the session - they aren't user-modifiable
-                    self.storage.extra_data.update(
-                        {
-                            "radar_id": se.id,
-                            "radar_date": [
-                                se.date.day,
-                                se.date.month,
-                                se.date.year,
-                            ],
-                        }
-                    )
-                    # auto-populate the form with these to allow editing
-                    return {"source": se.source, "document": ""}
-                return {}
         # if we've got a date from a SnoopedElection
         # init the date form with that
         if step == "date":
