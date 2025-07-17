@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load dc_forms %}
 {% block content %}
+
+
     {% if not request.user.is_authenticated %}
         <aside class="ds-status" aria-label="Status">
             <ul class="ds-stack">
@@ -9,10 +11,21 @@
         </aside>
     {% endif %}
 
+    {% if request.user.is_authenticated and radar_obj %}
+        <div class="ds-card">
+            <div class="ds-card-body">
+                <p><strong>Creating election for "{{ radar_obj.title }}"</strong></p>
+                <blockquote>{{ radar_obj.detail }}</blockquote>
+                <p><a href="{{ radar_obj.detail_url }}">Link</a> via <code>{{ radar_obj.snooper_name }}</code></p>
+            </div>
+        </div>
+    {% endif %}
+
     {# <p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p> #}
     {% block form_page_header %}{% endblock form_page_header %}
 
-    <form action="" method="post" id="id_creator_{{ wizard.steps.current }}" {% block form_tag_extra %}{% endblock form_tag_extra %}>
+    <form action="" method="post" id="id_creator_{{ wizard.steps.current }}"
+            {% block form_tag_extra %}{% endblock form_tag_extra %}>
         {% csrf_token %}
         {{ wizard.management_form }}
 
