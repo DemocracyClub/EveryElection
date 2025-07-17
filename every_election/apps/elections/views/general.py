@@ -36,11 +36,17 @@ class ReferenceDefinitionView(TemplateView):
             et_record["slug"] = et_key
             et_record["subtype"] = None
 
+            if et_record["slug"] == "senedd":
+                table_rec = et_record.copy()
+                table_rec["name"] += " (2026-05-07 onwards)"
+                election_types_table.append(table_rec)
             if et_record["subtypes"]:
                 # if we've got subtypes, duplicate the
                 # election type data for each subtype
                 for s_record in et_record["subtypes"]:
                     table_rec = et_record.copy()
+                    if et_record["slug"] == "senedd":
+                        table_rec["name"] += " (before 2026-05-07)"
                     table_rec["subtype"] = s_record
                     # subtype data takes precedence if it exists
                     if "can_have_orgs" in s_record:
