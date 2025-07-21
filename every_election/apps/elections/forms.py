@@ -4,6 +4,7 @@ from dc_utils import forms as dc_forms
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import F, QuerySet
+from django.http import HttpRequest
 from organisations.models import (
     Organisation,
     OrganisationDivision,
@@ -18,19 +19,6 @@ from .models import ElectionSubType, ElectionType
 #   ElectionDateForm
 #   ElectionTypeForm
 #   ElectionOrganisationForm
-
-
-class ElectionSourceForm(forms.Form):
-    source = forms.CharField(
-        required=True,
-        max_length=1000,
-        label="Where did you find out about this election?",
-    )
-    document = forms.URLField(
-        required=False,
-        max_length=1000,
-        label="Link to 'Notice of Election' Document",
-    )
 
 
 class ElectionDateForm(forms.Form):
@@ -86,11 +74,17 @@ class ElectionOrganisationField(forms.ModelMultipleChoiceField):
     def label_from_instance(self, obj):
         return obj.name
 
+    def clean(self, value):
+        if not isinstance(value, list):
+            value = [value]
+        return super().clean(value)
+
 
 class ElectionOrganisationForm(forms.Form):
     def __init__(self, *args, **kwargs):
         election_type = kwargs.pop("election_type", None)
         election_date = kwargs.pop("election_date", None)
+        self.request: HttpRequest = kwargs.pop("request")
         super().__init__(*args, **kwargs)
         if election_type:
             qs = self.fields["election_organisation"].queryset
@@ -107,8 +101,14 @@ class ElectionOrganisationForm(forms.Form):
             else:
                 self.fields["election_organisation"].queryset = qs
 
+            if not self.request.user.is_authenticated:
+                self.fields["election_organisation"].widget = forms.RadioSelect(
+                    choices=self.fields["election_organisation"].widget.choices
+                )
+
     election_organisation = ElectionOrganisationField(
-        queryset=Organisation.objects.all(), widget=forms.CheckboxSelectMultiple
+        queryset=Organisation.objects.all(),
+        widget=forms.CheckboxSelectMultiple(),
     )
 
 
