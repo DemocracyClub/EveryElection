@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
-from elections.constants import ELECTION_TYPES
+from uk_election_ids.datapackage import ELECTION_TYPES
 
 
 def add_initial_election_types(apps, schema_editor):

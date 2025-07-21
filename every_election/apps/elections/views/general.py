@@ -4,9 +4,9 @@ from core.helpers import user_is_moderator
 from django.contrib.auth.mixins import AccessMixin
 from django.utils.html import mark_safe
 from django.views.generic import DetailView, ListView, TemplateView
-from elections.constants import ELECTION_TYPES
 from elections.forms import NoticeOfElectionForm
 from elections.models import Document, Election, ElectionType
+from uk_election_ids.datapackage import ELECTION_TYPES
 
 
 class ElectionTypesView(ListView):
@@ -28,19 +28,20 @@ class ReferenceDefinitionView(TemplateView):
         for et_key, et_record in OrderedDict(
             sorted(ELECTION_TYPES.items())
         ).items():
-            # for the moment leave 'ref' out of the docs
-            # because our spec for these is incomplete
-            if et_key == "ref":
-                continue
-
             et_record["slug"] = et_key
             et_record["subtype"] = None
 
+            if et_record["slug"] == "senedd":
+                table_rec = et_record.copy()
+                table_rec["name"] += " (2026-05-07 onwards)"
+                election_types_table.append(table_rec)
             if et_record["subtypes"]:
                 # if we've got subtypes, duplicate the
                 # election type data for each subtype
                 for s_record in et_record["subtypes"]:
                     table_rec = et_record.copy()
+                    if et_record["slug"] == "senedd":
+                        table_rec["name"] += " (before 2026-05-07)"
                     table_rec["subtype"] = s_record
                     # subtype data takes precedence if it exists
                     if "can_have_orgs" in s_record:
