@@ -64,7 +64,7 @@ hooks:
 # During the BeforeInstall deployment lifecycle event, run the commands
 #   in the script specified in "location".
   BeforeInstall:
-    - location: deployscripts/hooks/beforeinstall/initial_setup.sh
+    - location: deploy/hooks/beforeinstall/initial_setup.sh
       timeout: 300
       runas: root
   #   - location:
@@ -73,37 +73,37 @@ hooks:
 # During the AfterInstall deployment lifecycle event, run the commands
 #   in the script specified in "location".
   AfterInstall:
-    - location: deployscripts/hooks/afterinstall/install_uv.sh
+    - location: deploy/hooks/afterinstall/install_uv.sh
       timeout: 300
       runas: root
-    - location: deployscripts/hooks/afterinstall/install_python_deps.sh
+    - location: deploy/hooks/afterinstall/install_python_deps.sh
       timeout: 300
       runas: every_election
-    - location : deployscripts/hooks/afterinstall/install_frontend_deps.sh
+    - location : deploy/hooks/afterinstall/install_frontend_deps.sh
       timeout: 300
       runs: every_election
-    - location: deployscripts/hooks/afterinstall/write_env_file.py
+    - location: deploy/hooks/afterinstall/write_env_file.py
       timeout: 300
       runas: root
     - location: serverscripts/migrate.sh
       timeout: 300
       runas: every_election
-    - location: deployscripts/hooks/afterinstall/install_crontab.sh
+    - location: deploy/hooks/afterinstall/install_crontab.sh
       timeout: 900
       runas: root
-    - location: deployscripts/hooks/afterinstall/collectstatic.sh
+    - location: deploy/hooks/afterinstall/collectstatic.sh
       timeout: 300
       runas: every_election
 # During the ApplicationStart deployment lifecycle event, run the commands
 #   in the script specified in "location".
   ApplicationStart:
-    - location: deployscripts/hooks/start_application.sh
+    - location: deploy/hooks/start_application.sh
       timeout: 3600
       runas: root
 # During the ValidateService deployment lifecycle event, run the commands
 #   in the script specified in "location".
   ValidateService:
-    - location: deployscripts/hooks/validate_application.sh
+    - location: deploy/hooks/validate_application.sh
       timeout: 300
       runas: root
   #   - location:
