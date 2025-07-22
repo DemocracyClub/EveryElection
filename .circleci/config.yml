@@ -36,7 +36,7 @@ jobs:
           name: Install app dependencies
           command: |
             sudo apt update && sudo apt install -y gdal-bin python3-gdal python3-dev
-            deployscripts/install_uv.sh
+            deployscripts/hooks/afterinstall/install_uv.sh
             uv venv --verbose --no-python-downloads
             . .venv/bin/activate
             uv sync --group cdk --group production
@@ -106,7 +106,7 @@ jobs:
     - run:
         name: Install CDK Python dependencies
         command: |
-          deployscripts/install_uv.sh
+          deployscripts/hooks/afterinstall/install_uv.sh
           uv venv --verbose --no-python-downloads
           . .venv/bin/activate
           uv sync --only-group cdk
