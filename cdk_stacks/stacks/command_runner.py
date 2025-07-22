@@ -60,7 +60,7 @@ class EEOncePerTagCommandRunner(Stack):
             self.add_job(
                 "snoop",
                 "cron(30 * * * ? *)",
-                "output-on-error ee-manage-py-command snoop",
+                "output-on-error manage-py-command snoop",
             )
 
             # Generate map layers and sync to S3
@@ -81,14 +81,14 @@ class EEOncePerTagCommandRunner(Stack):
             self.add_job(
                 "scrape_lgbce",
                 "cron(16 7 * * ? *)",
-                "output-on-error ee-manage-py-command scrape_lgbce",
+                "output-on-error manage-py-command scrape_lgbce",
             )
 
             # Export WKT Ballots
             self.add_job(
                 "export_wkt_ballots",
                 "cron(30 2 * * ? *)",
-                f"output-on-error ee-manage-py-command export_ballots_as_wkt_csv --bucket 'ee.data-cache.{dc_environment}' --prefix 'ballots-with-wkt'",
+                f"output-on-error manage-py-command export_ballots_as_wkt_csv --bucket 'ee.data-cache.{dc_environment}' --prefix 'ballots-with-wkt'",
             )
 
     def add_job(
