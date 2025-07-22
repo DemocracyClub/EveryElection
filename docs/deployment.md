@@ -28,8 +28,8 @@ EC2 Instances are managed by a mix of CodeDeploy, a Launch Template and an Auto 
 
 The process for each deployment is:
 
-1. Call `deployscripts/create_deployment_group.py` to create the initial deployment group
-2. Call `COMMIT_SHA=[SHA] deployscripts/create_deployment.py`.
+1. Call `deploy/create_deployment_group.py` to create the initial deployment group
+2. Call `COMMIT_SHA=[SHA] deploy/create_deployment.py`.
 3. This will start a "Blue/Green" deployment with CodeDeploy
 4. New instances will spin up according to the Launch Template
 5. CodeDeploy will run the steps defined in `appspec.yaml`
