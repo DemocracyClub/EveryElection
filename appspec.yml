@@ -88,7 +88,7 @@ hooks:
     - location: deploy/hooks/afterinstall/system_files.sh
       timeout: 300
       runas: root
-    - location: serverscripts/migrate.sh
+    - location: deploy/hooks/afterinstall/migrate.sh
       timeout: 300
       runas: every_election
     - location: deploy/hooks/afterinstall/install_crontab.sh
