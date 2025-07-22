@@ -63,12 +63,8 @@ hooks:
 #   revision's file bundle.
 # During the BeforeInstall deployment lifecycle event, run the commands
 #   in the script specified in "location".
-  ApplicationStop:
-    - location: deployscripts/stop_application.sh
-      timeout: 300
-      runas: root
   BeforeInstall:
-    - location: deployscripts/before_install.sh
+    - location: deployscripts/hooks/beforeinstall/initial_setup.sh
       timeout: 300
       runas: root
   #   - location:
