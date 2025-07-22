@@ -43,7 +43,7 @@ phases:
             - git checkout {{ git_branch }}
             - git pull --rebase origin {{ git_branch }}
             - git branch
-            - ./deployscripts/install_uv.sh
+            - ./deploy/install_uv.sh
             - uv venv
             - sudo chown -R {{ username }} /var/www/{{ username }}
             - . .venv/bin/activate
