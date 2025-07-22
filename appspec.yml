@@ -82,7 +82,7 @@ hooks:
     - location : deployscripts/hooks/afterinstall/install_frontend_deps.sh
       timeout: 300
       runs: every_election
-    - location: deployscripts/hooks/afterinstall/write_envfile.sh
+    - location: deployscripts/hooks/afterinstall/write_env_file.py
       timeout: 300
       runas: root
     - location: serverscripts/migrate.sh
