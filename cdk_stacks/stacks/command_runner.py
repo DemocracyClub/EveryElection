@@ -53,7 +53,7 @@ class EEOncePerTagCommandRunner(Stack):
             self.add_job(
                 "backup_to_s3",
                 "cron(30 1 * * ? *)",
-                "output-on-error /var/www/every_election/repo/serverscripts/backup_db_to_s3.sh",
+                "output-on-error /var/www/every_election/code/serverscripts/backup_db_to_s3.sh",
             )
 
             # New elections
@@ -67,14 +67,14 @@ class EEOncePerTagCommandRunner(Stack):
             self.add_job(
                 "sync_map_layers_to_s3",
                 "cron(40 1 * * ? *)",
-                "output-on-error /var/www/every_election/repo/serverscripts/sync_map_layers_to_s3.sh",
+                "output-on-error /var/www/every_election/code/serverscripts/sync_map_layers_to_s3.sh",
             )
 
             # Add NUTS1 tags to any new elections
             self.add_job(
                 "add_nuts1_tags",
                 "cron(15 2 * * ? *)",
-                "output-on-error /var/www/every_election/repo/serverscripts/add_nuts1.sh",
+                "output-on-error /var/www/every_election/code/serverscripts/add_nuts1.sh",
             )
 
             # Scrape LGBCE

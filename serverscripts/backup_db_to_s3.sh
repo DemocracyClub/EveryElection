@@ -1,6 +1,6 @@
 #!/bin/bash
 set -x
-cd /var/www/every_election/repo
+cd /var/www/every_election/code
 #### BEGIN CONFIGURATION ####
 source .env
 
