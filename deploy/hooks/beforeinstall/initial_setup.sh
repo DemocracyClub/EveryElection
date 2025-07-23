@@ -41,7 +41,7 @@ echo "Apt finished, continuing"
 
 
 # Install apt packages
-apt-get install --yes postgresql-client postgresql-common python3-dev libpq-dev gdal-bin libproj-dev jq postgresql-16-postgis-3 nodejs npm
+apt-get install --yes postgresql-client postgresql-common python3-dev libpq-dev gdal-bin libproj-dev jq postgresql-16-postgis-3 nodejs npm gettext ec2-instance-connect
 
 # Reinstall unattended-upgrades
 apt-get install --yes unattended-upgrades
