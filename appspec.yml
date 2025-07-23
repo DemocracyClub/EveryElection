@@ -18,7 +18,7 @@ os: linux
 #   may cause associated deployments to fail.
 files:
   - source: /
-    destination: /var/www/every_election/repo/
+    destination: /var/www/every_election/code/
 # For deployments to Amazon Linux, Ubuntu Server, or RHEL instances,
 #   you can specify a "permissions"
 #   section here that describes special permissions to apply to the files
@@ -30,7 +30,7 @@ files:
 #   "permissions" section altogether. A blank or incomplete "permissions"
 #   section may cause associated deployments to fail.
 permissions:
-  - object: /var/www/every_election/repo/
+  - object: /var/www/every_election/code/
     pattern: "**"
     owner: every_election
     group: every_election
@@ -64,7 +64,7 @@ hooks:
 # During the BeforeInstall deployment lifecycle event, run the commands
 #   in the script specified in "location".
   BeforeInstall:
-    - location: deployscripts/stop_application.sh
+    - location: deploy/hooks/beforeinstall/initial_setup.sh
       timeout: 300
       runas: root
   #   - location:
@@ -73,37 +73,40 @@ hooks:
 # During the AfterInstall deployment lifecycle event, run the commands
 #   in the script specified in "location".
   AfterInstall:
-    - location: deployscripts/install_uv.sh
+    - location: deploy/hooks/afterinstall/install_uv.sh
       timeout: 300
       runas: root
-    - location: deployscripts/install_python_deps.sh
+    - location: deploy/hooks/afterinstall/install_python_deps.sh
       timeout: 300
       runas: every_election
-    - location : deployscripts/install_frontend_deps.sh
+    - location : deploy/hooks/afterinstall/install_frontend_deps.sh
       timeout: 300
       runs: every_election
-    - location: deployscripts/write_envfile.sh
+    - location: deploy/hooks/afterinstall/write_env_file.py
       timeout: 300
       runas: root
-    - location: serverscripts/migrate.sh
+    - location: deploy/hooks/afterinstall/system_files.sh
+      timeout: 300
+      runas: root
+    - location: deploy/hooks/afterinstall/migrate.sh
       timeout: 300
       runas: every_election
-    - location: deployscripts/install_crontab.sh
+    - location: deploy/hooks/afterinstall/install_crontab.sh
       timeout: 900
       runas: root
-    - location: deployscripts/collectstatic.sh
+    - location: deploy/hooks/afterinstall/collectstatic.sh
       timeout: 300
       runas: every_election
 # During the ApplicationStart deployment lifecycle event, run the commands
 #   in the script specified in "location".
   ApplicationStart:
-    - location: deployscripts/start_application.sh
+    - location: deploy/hooks/start_application.sh
       timeout: 3600
       runas: root
 # During the ValidateService deployment lifecycle event, run the commands
 #   in the script specified in "location".
   ValidateService:
-    - location: deployscripts/validate_application.sh
+    - location: deploy/hooks/validate_application.sh
       timeout: 300
       runas: root
   #   - location:

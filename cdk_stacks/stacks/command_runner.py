@@ -53,42 +53,42 @@ class EEOncePerTagCommandRunner(Stack):
             self.add_job(
                 "backup_to_s3",
                 "cron(30 1 * * ? *)",
-                "output-on-error /var/www/every_election/repo/serverscripts/backup_db_to_s3.sh",
+                "output-on-error /var/www/every_election/code/serverscripts/backup_db_to_s3.sh",
             )
 
             # New elections
             self.add_job(
                 "snoop",
                 "cron(30 * * * ? *)",
-                "output-on-error ee-manage-py-command snoop",
+                "output-on-error manage-py-command snoop",
             )
 
             # Generate map layers and sync to S3
             self.add_job(
                 "sync_map_layers_to_s3",
                 "cron(40 1 * * ? *)",
-                "output-on-error /var/www/every_election/repo/serverscripts/sync_map_layers_to_s3.sh",
+                "output-on-error /var/www/every_election/code/serverscripts/sync_map_layers_to_s3.sh",
             )
 
             # Add NUTS1 tags to any new elections
             self.add_job(
                 "add_nuts1_tags",
                 "cron(15 2 * * ? *)",
-                "output-on-error /var/www/every_election/repo/serverscripts/add_nuts1.sh",
+                "output-on-error /var/www/every_election/code/serverscripts/add_nuts1.sh",
             )
 
             # Scrape LGBCE
             self.add_job(
                 "scrape_lgbce",
                 "cron(16 7 * * ? *)",
-                "output-on-error ee-manage-py-command scrape_lgbce",
+                "output-on-error manage-py-command scrape_lgbce",
             )
 
             # Export WKT Ballots
             self.add_job(
                 "export_wkt_ballots",
                 "cron(30 2 * * ? *)",
-                f"output-on-error ee-manage-py-command export_ballots_as_wkt_csv --bucket 'ee.data-cache.{dc_environment}' --prefix 'ballots-with-wkt'",
+                f"output-on-error manage-py-command export_ballots_as_wkt_csv --bucket 'ee.data-cache.{dc_environment}' --prefix 'ballots-with-wkt'",
             )
 
     def add_job(
