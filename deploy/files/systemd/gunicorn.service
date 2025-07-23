@@ -4,8 +4,8 @@ Description=${PROJECT_NAME} gunicorn daemon
 [Service]
 User=${PROJECT_NAME}
 Group=${PROJECT_NAME}
-WorkingDirectory=/var/www/${PROJECT_NAME}/repo/
-ExecStart=/bin/bash -c 'PATH=/var/www/${PROJECT_NAME}/repo/.venv/bin/:$PATH exec /var/www/${PROJECT_NAME}/repo/.venv/bin/gunicorn \
+WorkingDirectory=/var/www/${PROJECT_NAME}/code/
+ExecStart=/bin/bash -c 'PATH=/var/www/${PROJECT_NAME}/code/.venv/bin/:$PATH exec /var/www/${PROJECT_NAME}/code/.venv/bin/gunicorn \
   --access-logfile - \
   --workers 2 \
   --bind 0.0.0.0:8001 \

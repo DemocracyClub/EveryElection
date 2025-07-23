@@ -34,7 +34,7 @@ done
 # ------
 # bashrc
 # ------
-echo 'cd && cd ../repo && source venv/bin/activate' > "$PROJECT_ROOT"/home/.bashrc
+echo 'cd && cd ../code && source venv/bin/activate' > "$PROJECT_ROOT"/home/.bashrc
 
 # --------------------
 # replication log file
