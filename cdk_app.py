@@ -5,7 +5,6 @@ from aws_cdk import App, Environment, Tags
 
 from cdk_stacks.stacks.code_deploy import EECodeDeployment
 from cdk_stacks.stacks.command_runner import EEOncePerTagCommandRunner
-from cdk_stacks.stacks.image_builder import EEImageUpdater
 from cdk_stacks.stacks.power_off_at_end_of_day import PowerOffAtEndOfDay
 
 valid_environments = (
@@ -29,11 +28,7 @@ assert dc_environment in valid_environments, (
     f"context `dc-environment` must be one of {valid_environments}"
 )
 
-EEImageUpdater(
-    app,
-    "EEImageUpdater",
-    env=env,
-)
+
 EECodeDeployment(app, "EECodeDeployment", env=env)
 
 EEOncePerTagCommandRunner(app, "EEOncePerTagCommandRunner", env=env)
