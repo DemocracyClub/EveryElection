@@ -59,7 +59,7 @@ systemctl daemon-reload
 id -u "$PROJECT_NAME" &>/dev/null || useradd --shell /bin/bash --create-home --home-dir "$PROJECT_ROOT"/home "$PROJECT_NAME"
 
 # Permissions
-mkdir -p $PROJECT_ROOT/repo
+mkdir -p $PROJECT_ROOT/code
 chmod -R 755 "$PROJECT_ROOT"
 chown -R "$PROJECT_NAME"  "$PROJECT_ROOT"
 

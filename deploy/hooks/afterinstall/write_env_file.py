@@ -1,4 +1,4 @@
-#!/var/www/every_election/repo/.venv/bin/python
+#!/var/www/every_election/code/.venv/bin/python
 
 import json
 import string
