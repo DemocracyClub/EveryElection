@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-MAP_DATA_PATH=/var/www/every_election/repo/every_election/data/maps
+MAP_DATA_PATH=/var/www/every_election/code/every_election/data/maps
 mkdir -p $MAP_DATA_PATH
 
 manage-py-command export_boundaries --output $MAP_DATA_PATH
