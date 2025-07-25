@@ -98,7 +98,7 @@ class Command(BaseBoundaryLineCommand):
             organisation=sp,
             start_date="2026-05-07",
             short_title="2026 Boundaries",
-            legislation_url="https://boundaries.scot/reviews/second-review-scottish-parliament-boundaries",
+            consultation_url="https://boundaries.scot/reviews/second-review-scottish-parliament-boundaries",
         )
 
         return div_set
