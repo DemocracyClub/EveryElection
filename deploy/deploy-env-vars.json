@@ -3,5 +3,5 @@
   "APP_NAME": "every_election",
   "PROJECT_ROOT": "/var/www/every_election",
   "ENV_FILE_PATH": "/var/www/every_election/code/.env",
-  "CRON_EMAIL": "developers@democracyclub.org.uk"
+  "CRON_EMAIL": "developers+every_election@democracyclub.org.uk"
 }
