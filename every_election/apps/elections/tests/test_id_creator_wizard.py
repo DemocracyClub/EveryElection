@@ -384,6 +384,10 @@ def test_multiple_local_elections(
     page.get_by_text("Scheduled").nth(4).click()
     page.get_by_role("button", name="Submit").click()
 
+    # Enter a source for the by-election
+    page.get_by_text("Source").nth(1).fill("https://example.com")
+    page.get_by_role("button", name="Submit").click()
+
     # Create IDs
     page.get_by_role("button", name="Create IDs").click()
 

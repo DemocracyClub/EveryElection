@@ -414,6 +414,8 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                     "seats_contested": form_data["seats_contested"],
                     "ballot_type": form_data["ballot_type"],
                 }
+        print("source")
+        print(all_data.get("source"))
 
         election_type = all_data["election_type"].election_type
         organisation_type = organisation.organisation_type
@@ -551,7 +553,8 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                 ballot_data = div_data[div_id]
                 contest_type = ballot_data["ballot_type"]
                 org_div = all_division_objects[str(div_id)]
-
+                print(all_data)
+                print(ballot_data)
                 builder = (
                     ElectionBuilder(all_data["election_type"], all_data["date"])
                     .with_organisation(organisation)
