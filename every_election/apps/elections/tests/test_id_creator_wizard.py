@@ -120,7 +120,7 @@ def test_full_id_creation_not_logged_in(
     ):
         # Open the home page, click to add a new election
         page.goto(live_server.url)
-        page.get_by_role("link", name="Add a new election").click()
+        page.get_by_role("link", name="Suggest a new election").click()
 
         # Enter a date
         page.locator("#id_date-date_0").fill("5")
@@ -142,7 +142,7 @@ def test_full_id_creation_not_logged_in(
         page.get_by_role("button", name="Submit").click()
 
         # Create the IDs
-        page.get_by_role("button", name="Create IDs").click()
+        page.get_by_role("button", name="Suggest IDs").click()
 
     # We should have 4 elections
     assert Election.private_objects.count() == 4
@@ -285,7 +285,7 @@ def test_subtype_creation(page, live_server, id_creator_data, settings):
 
     # Open the home page, click to add a new election
     page.goto(live_server.url)
-    page.get_by_role("link", name="Add a new election").click()
+    page.get_by_role("link", name="Suggest a new election").click()
 
     # Enter a date
     page.locator("#id_date-date_0").fill("5")
@@ -329,7 +329,7 @@ def test_subtype_creation(page, live_server, id_creator_data, settings):
     page.get_by_text("naw.r.2023-01-05").click()
 
     # Create IDs
-    page.get_by_role("button", name="Create IDs").click()
+    page.get_by_role("button", name="Suggest IDs").click()
 
     # We should have 6 elections
     assert Election.private_objects.count() == 6
@@ -345,7 +345,10 @@ def test_subtype_creation(page, live_server, id_creator_data, settings):
     ]
 
 
-def test_multiple_local_elections(page, live_server, id_creator_data, settings):
+def test_multiple_local_elections(
+    playwright_with_admin, live_server, id_creator_data, settings
+):
+    page = playwright_with_admin
     settings.DEBUG = True
     # We shouldn't have any elections
     assert Election.private_objects.count() == 0
@@ -379,6 +382,10 @@ def test_multiple_local_elections(page, live_server, id_creator_data, settings):
     page.get_by_text("Scheduled").nth(2).click()
     page.get_by_text("By-election").nth(2).click()
     page.get_by_text("Scheduled").nth(4).click()
+    page.get_by_role("button", name="Submit").click()
+
+    # Enter a source for the by-election
+    page.get_by_text("Source").nth(1).fill("https://example.com")
     page.get_by_role("button", name="Submit").click()
 
     # Create IDs
@@ -427,7 +434,7 @@ def test_gla_a_doesnt_show_division_picker(
 
     # Open the home page, click to add a new election
     page.goto(live_server.url)
-    page.get_by_role("link", name="Add a new election").click()
+    page.get_by_role("link", name="Suggest a new election").click()
 
     # Enter a date
     page.locator("#id_date-date_0").fill("5")
@@ -449,7 +456,7 @@ def test_gla_a_doesnt_show_division_picker(
     page.get_by_text("gla.a.2023-01-05").click()
 
     # Create IDs
-    page.get_by_role("button", name="Create IDs").click()
+    page.get_by_role("button", name="Suggest IDs").click()
 
     # We should have 2 elections
     assert Election.private_objects.count() == 2

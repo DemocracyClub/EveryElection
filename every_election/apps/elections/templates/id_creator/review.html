@@ -34,7 +34,13 @@
 {% endblock form_page_header %}
 
 {% block wizard_buttons %}
-    <button type="submit" class="ds-button" value="Create IDs">Create IDs</button>
+    <button type="submit" class="ds-button" value="Create IDs">
+        {% if request.user.is_authenticated %}
+            Create IDs
+        {% else %}
+            Suggest IDs
+        {% endif %}
+    </button>
     <a href="?reset=1" class="ds-cta ds-cta-blue">
         Start again
     </a>
