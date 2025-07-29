@@ -551,12 +551,15 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
                 ballot_data = div_data[div_id]
                 contest_type = ballot_data["ballot_type"]
                 org_div = all_division_objects[str(div_id)]
-
                 builder = (
                     ElectionBuilder(all_data["election_type"], all_data["date"])
                     .with_organisation(organisation)
                     .with_division(org_div)
-                    .with_source(all_data.get("source", ""))
+                    .with_source(
+                        all_data.get("get_by_election_source", {}).get(
+                            str(div_id), ""
+                        )
+                    )
                     .with_snooped_election(all_data.get("radar_id", None))
                     .with_seats_contested(ballot_data["seats_contested"])
                 )

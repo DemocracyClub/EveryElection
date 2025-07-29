@@ -1,0 +1,47 @@
+{% extends "id_creator/id_creator_base.html" %}
+{% block page_title %}By-election source{% endblock page_title %}
+
+{% block form_page_header %}
+    <h1>By-election source{{ wizard.form.forms|pluralize }}</h1>
+    {% if not request.user.is_authenticated %}
+        <p>Before we approve by-elections, we need a source that allows us to verify that they are taking place.</p>
+        <p>This should be a URL to the council's website if at all possible.</p>
+    {% endif %}
+
+{% endblock form_page_header %}
+{% block form_content %}
+    {{ wizard.form.management_form }}
+
+    {% for form in wizard.form.forms %}
+
+        {% for field in form %}
+            {% if field.is_hidden %}
+                {{ field }}
+            {% endif %}
+        {% endfor %}
+
+        {% ifchanged form.group.value %}
+            <h2>{{ form.group.value }}</h2>
+        {% endifchanged %}
+        <fieldset>
+            <legend>{{ form.division }}</legend>
+            {{ form.errors }}
+            {% if form.non_field_errors %}
+                {% for non_field_error in form.non_field_errors %}
+                    <div class="ds-error">
+                        {{ non_field_error }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <div class="ds-field">
+                <label for="{{ form.source.id_for_label }}">
+                    {{ form.source.label }}
+                    <small>{{ form.source.help_text }}</small>
+                </label>
+                {{ form.source }}
+
+            </div>
+        </fieldset>
+    {% endfor %}
+
+{% endblock %}

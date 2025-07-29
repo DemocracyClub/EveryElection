@@ -25,7 +25,7 @@
     {% block form_page_header %}{% endblock form_page_header %}
 
     <form action="" method="post" id="id_creator_{{ wizard.steps.current }}"
-            {% block form_tag_extra %}{% endblock form_tag_extra %}>
+          {% block form_tag_extra %}{% endblock form_tag_extra %}>
         {% csrf_token %}
         {{ wizard.management_form }}
 
