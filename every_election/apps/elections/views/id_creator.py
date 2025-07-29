@@ -9,6 +9,7 @@ from election_snooper.helpers import post_to_slack
 from election_snooper.models import SnoopedElection
 from elections.baker import send_event
 from elections.forms import (
+    ByElectionSourceFormSet,
     DivFormSet,
     ElectionDateForm,
     ElectionOrganisationForm,
@@ -36,6 +37,7 @@ FORMS = [
     ("election_subtype", ElectionSubTypeForm),
     ("election_organisation", ElectionOrganisationForm),
     ("election_organisation_division", DivFormSet),
+    ("by_elections_source", ByElectionSourceFormSet),
     ("review", forms.Form),
 ]
 
@@ -45,6 +47,7 @@ TEMPLATES = {
     "election_subtype": "id_creator/election_subtype.html",
     "election_organisation": "id_creator/election_organisation.html",
     "election_organisation_division": "id_creator/election_organisation_division.html",
+    "by_elections_source": "id_creator/by_election_source.html",
     "review": "id_creator/review.html",
 }
 
@@ -101,11 +104,20 @@ def select_organisation_division(wizard):
     )
 
 
+def should_show_by_elections_source(wizard):
+    return [
+        div
+        for div in wizard.get_divisions()
+        if div["ballot_type"] == "by_election"
+    ]
+
+
 CONDITION_DICT = {
     "date": date_known,
     "election_organisation": select_organisation,
     "election_organisation_division": select_organisation_division,
     "election_subtype": select_subtype,
+    "by_elections_source": should_show_by_elections_source,
 }
 
 
@@ -169,6 +181,14 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                 ]
             }
 
+        if (
+            radar_id := self.storage.extra_data.get("radar_id")
+            and step == "by_elections_source"
+        ):
+            return [
+                {"source": SnoopedElection.objects.get(pk=radar_id).detail_url}
+            ]
+
         return self.initial_dict.get(step, {})
 
     def process_step(self, form):
@@ -205,6 +225,16 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             )
         return []
 
+    def get_by_election_source(self):
+        if "by_elections_source" in self.storage.data["step_data"]:
+            return {
+                form["division_id"]: form["source"]
+                for form in self.get_cleaned_data_for_step(
+                    "by_elections_source"
+                )
+            }
+        return {}
+
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
         # all_data = self.get_all_cleaned_data()
@@ -226,6 +256,7 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
 
         context["all_data"] = all_data
         if self.kwargs["step"] in ["review", self.done_step_name]:
+            all_data["get_by_election_source"] = self.get_by_election_source()
             all_ids = create_ids_for_each_ballot_paper(
                 all_data, self.get_election_subtypes
             )
@@ -266,6 +297,16 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
 
         if step == "election_type":
             return {"date": self.get_election_date()}
+
+        if step == "by_elections_source":
+            kwargs = {}
+            kwargs["division_by_elections"] = [
+                div
+                for div in self.get_divisions()
+                if div["ballot_type"] == "by_election"
+            ]
+
+            return kwargs
 
         return {}
 

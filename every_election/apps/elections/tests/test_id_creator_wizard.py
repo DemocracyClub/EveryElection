@@ -389,21 +389,25 @@ def test_multiple_local_elections(
     page.get_by_text("Scheduled").nth(4).click()
     page.get_by_role("button", name="Submit").click()
 
+    # Enter a source for the by-election
+    page.get_by_text("Source").nth(1).fill("Found on https://example.com")
+    page.get_by_role("button", name="Submit").click()
+
     # Create IDs
     page.get_by_role("button", name="Create IDs").click()
 
     # We should have 7 elections
     assert Election.private_objects.count() == 7
     assert list(
-        Election.private_objects.values_list("election_id", flat=True)
+        Election.private_objects.values_list("election_id", "source")
     ) == [
-        "local.2023-01-05",
-        "local.test.2023-01-05",
-        "local.test2.2023-01-05",
-        "local.test2.test-div.2023-01-05",
-        "local.test2.test-div-2.2023-01-05",
-        "local.test.test-div-2.2023-01-05",
-        "local.test.test-div.by.2023-01-05",
+        ("local.2023-01-05", ""),
+        ("local.test.2023-01-05", ""),
+        ("local.test2.2023-01-05", ""),
+        ("local.test2.test-div.2023-01-05", ""),
+        ("local.test2.test-div-2.2023-01-05", ""),
+        ("local.test.test-div-2.2023-01-05", ""),
+        ("local.test.test-div.by.2023-01-05", "Found on https://example.com"),
     ]
 
 

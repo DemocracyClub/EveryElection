@@ -14,7 +14,9 @@
                     {% if election.identifier_type == "ballot" %}
 
                         <tr>
-                            <td>{{ election.division }}</td>
+                            <td>
+                                {{ election.division }}
+                            </td>
                             <td>{{ election.seats_contested }}</td>
                             <td><code>{{ election.election_id }}</code></td>
                         </tr>

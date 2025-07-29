@@ -231,7 +231,10 @@ class DivsFormset(forms.BaseFormSet):
 
                 for div in divisions_qs:
                     kwargs["initial"].append(
-                        {"division_name": div.name, "group": div.group}
+                        {
+                            "division_name": div.name,
+                            "group": div.group,
+                        }
                     )
                     self._form_kwargs.append(
                         {"division": div, "group": div.group}
@@ -248,6 +251,67 @@ DivFormSet = forms.formset_factory(
     ElectionOrganisationDivisionForm, formset=DivsFormset, extra=0
 )
 
+
+class ByElectionSourceForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.division: OrganisationDivision = kwargs.pop("division", None)
+        self.group: str = kwargs.pop("group", None)
+        super().__init__(*args, **kwargs)
+        if not self.division:
+            return
+
+        self.fields["group"] = forms.CharField(
+            initial=self.group,
+            required=False,
+        )
+        self.fields["division_id"] = forms.CharField(
+            initial=self.division.pk, required=True, widget=forms.HiddenInput()
+        )
+
+    source = forms.CharField(
+        help_text="Tell us how you know about this by-election. Please provide a URL if possible."
+    )
+
+
+class ByElectionsSourceFormSet(forms.BaseFormSet):
+    def __init__(self, *args, **kwargs):
+        division_by_elections = kwargs.pop("division_by_elections")
+
+        division_filter_args = {
+            "pk__in": [div["division_id"] for div in division_by_elections]
+        }
+        divisions_qs: Union[QuerySet[OrganisationDivision], DivisionManager] = (
+            OrganisationDivision.objects.select_related(
+                "divisionset__organisation"
+            )
+            .filter(**division_filter_args)
+            .order_by("divisionset__organisation", "name")
+        )
+
+        kwargs["initial"] = []
+        self._form_kwargs = []
+        for div in divisions_qs:
+            kwargs["initial"].append(
+                {
+                    "division": div,
+                    "group": div.organisation.name,
+                }
+            )
+            self._form_kwargs.append(
+                {"division": div, "group": div.organisation.name}
+            )
+
+        super().__init__(*args, **kwargs)
+
+    def get_form_kwargs(self, index):
+        if not self._form_kwargs:
+            return {}
+        return self._form_kwargs[index]
+
+
+ByElectionSourceFormSet = forms.formset_factory(
+    ByElectionSourceForm, formset=ByElectionsSourceFormSet, extra=0
+)
 
 # class ElectionOrganisationDivisionForm(forms.Form):
 #     def __init__(self, *args, **kwargs):
