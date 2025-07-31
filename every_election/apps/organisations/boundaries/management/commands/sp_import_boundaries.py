@@ -39,7 +39,7 @@ class Command(BaseBoundaryLineCommand):
             "--constituencies",
             action="store_true",
             dest="constituencies",
-            help="Import Scottish Parliament consitutencies",
+            help="Import Scottish Parliament constituencies",
         )
 
     @transaction.atomic()
@@ -73,7 +73,7 @@ class Command(BaseBoundaryLineCommand):
     def create_division(self, feature):
         name = feature.get("Name")
         slug = slugify(name)
-        identifier = f"tmp_id:{slug}"
+        identifier = f"sp:{slug}"
 
         return OrganisationDivision.objects.create(
             official_identifier=identifier,
