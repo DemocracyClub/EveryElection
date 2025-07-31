@@ -99,9 +99,7 @@ class SingleElection(AccessMixin, DetailView):
     def get_geography_html(self, election):
         if election.division and election.division.format_geography_link():
             division = election.division
-            geography_link = "<a href={}.html>{}</a>".format(
-                division.format_geography_link(), division.official_identifier
-            )
+            geography_link = f"<a href={division.format_geography_link()}>{division.official_identifier}</a>"
         else:
             geography_link = "<strong>Missing</strong>"
         return mark_safe(geography_link)
