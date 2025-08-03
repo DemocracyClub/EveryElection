@@ -163,9 +163,11 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         # if we've got a date from a SnoopedElection
         # init the date form with that
         if step == "date":
-            self.storage.extra_data["radar_id"] = self.request.GET.get(
-                "radar_id", None
-            )
+            if (
+                radar_id := self.request.GET.get("radar_id", None)
+                and not self.storage.extra_data["radar_id"]
+            ):
+                self.storage.extra_data["radar_id"] = radar_id
 
             if isinstance(self.storage.extra_data, dict):
                 if self.storage.extra_data.get("radar_date", False):
@@ -180,6 +182,13 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                     datetime.date.today().year,
                 ]
             }
+
+        if (
+            radar_id := self.storage.extra_data.get("radar_id")
+            and step == "by_elections_source"
+        ):
+            return [
+                {"source": SnoopedElection.objects.get(pk=radar_id).source}]
 
         return self.initial_dict.get(step, {})
 
@@ -239,6 +248,7 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
 
         if not all_data.get("election_organisation"):
             all_data.update(self.storage.extra_data)
+
 
         all_data["radar_id"] = self.storage.extra_data.get("radar_id", None)
         if all_data["radar_id"]:

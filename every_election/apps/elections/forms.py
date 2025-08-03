@@ -1,3 +1,4 @@
+import contextlib
 from typing import Union
 
 from dc_utils import forms as dc_forms
@@ -287,18 +288,25 @@ class ByElectionsSourceFormSet(forms.BaseFormSet):
             .filter(**division_filter_args)
             .order_by("divisionset__organisation", "name")
         )
-
+        initial_sources = [initial["source"] for initial in kwargs["initial"]]
         kwargs["initial"] = []
         self._form_kwargs = []
-        for div in divisions_qs:
+        for i, div in enumerate(divisions_qs):
+            source = ""
+            with contextlib.suppress(IndexError):
+                source = initial_sources[i]
             kwargs["initial"].append(
                 {
                     "division": div,
                     "group": div.organisation.name,
+                    "source": source,
                 }
             )
             self._form_kwargs.append(
-                {"division": div, "group": div.organisation.name}
+                {
+                    "division": div,
+                    "group": div.organisation.name,
+                }
             )
 
         super().__init__(*args, **kwargs)
