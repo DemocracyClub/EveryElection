@@ -15,12 +15,6 @@ from organisations.models.divisions import DivisionManager
 
 from .models import ElectionSubType, ElectionType
 
-#
-# Forms:
-#   ElectionDateForm
-#   ElectionTypeForm
-#   ElectionOrganisationForm
-
 
 class ElectionDateForm(forms.Form):
     date = dc_forms.DCDateField(help_text="The date that polls open")
@@ -320,95 +314,6 @@ class ByElectionsSourceFormSet(forms.BaseFormSet):
 ByElectionSourceFormSet = forms.formset_factory(
     ByElectionSourceForm, formset=ByElectionsSourceFormSet, extra=0
 )
-
-# class ElectionOrganisationDivisionForm(forms.Form):
-#     def __init__(self, *args, **kwargs):
-#         organisations = kwargs.pop("organisations", None)
-#         election_subtype = kwargs.pop("election_subtype", None)
-#         election_date = kwargs.pop("election_date", None)
-#         self.field_groups = []
-#
-#         super().__init__(*args, **kwargs)
-#
-#         self.choices = (
-#             ("no_seats", "No Election"),
-#             ("seats_contested", "Contested seats"),
-#             ("by_election", "By-election"),
-#         )
-#         if not organisations:
-#             return
-#         for organisation in organisations.all():
-#             self.fields[organisation.pk] = dc_forms.DCHeaderField(
-#                 label=organisation.common_name
-#             )
-#
-#             div_set = (
-#                 OrganisationDivisionSet.objects.filter(
-#                     organisation=organisation, start_date__lte=election_date
-#                 )
-#                 .filter(models.Q(end_date__gte=election_date) | models.Q(end_date=None))
-#                 .order_by("-start_date")
-#                 .first()
-#             )
-#             if not div_set:
-#                 # There is no active division set for this organisation
-#                 # on this date
-#                 no_divs_field = forms.CharField(
-#                     widget=forms.TextInput(attrs={"class": "ds-visually-hidden"}),
-#                     required=False,
-#                     label="""
-#                         There are no active divisions for this organisation.
-#                         This is normally because we know a boundary change
-#                         is about to happen but it's not final yet.
-#                         Please try again in future, or contact us if you think
-#                         it's a mistake.
-#                     """,
-#                 )
-#                 self.fields["{}_no_divs".format(organisation.pk)] = no_divs_field
-#                 continue
-#
-#             if election_subtype:
-#                 for subtype in election_subtype:
-#                     # TODO Get Div Set by election date
-#                     div_qs = div_set.divisions.filter(
-#                         division_election_sub_type=subtype.election_subtype
-#                     )
-#                     div_qs = div_qs.order_by("name")
-#                     if div_qs:
-#                         self.fields[subtype.pk] = dc_forms.DCHeaderField(
-#                             label=subtype.name
-#                         )
-#                     for div in div_qs:
-#                         self.add_single_field(
-#                             organisation, div, subtype=subtype.election_subtype
-#                         )
-#             else:
-#                 div_qs: QuerySet[OrganisationDivision] = div_set.divisions.all()
-#                 div_qs = div_qs.order_by("name")
-#                 for div in div_qs:
-#                     self.add_single_field(organisation, div)
-#
-#     def add_single_field(
-#         self, organisation: Organisation, div: OrganisationDivision, subtype=None
-#     ):
-#         field_id = "__".join([str(x) for x in [organisation.pk, div.pk, subtype] if x])
-#         ballot_type_field = forms.ChoiceField(
-#             choices=self.choices,
-#             widget=forms.RadioSelect,
-#             label=div.name,
-#             initial="no_seats",
-#             required=False,
-#         )
-#         ballot_type_field.group = field_id
-#         self.fields[field_id] = ballot_type_field
-#
-#         # Add seats contested
-#         seats_contested_field = forms.IntegerField(
-#             max_value=div.seats_total, min_value=0, label="Seats Contested", initial=0
-#         )
-#         seats_contested_field.group = field_id
-#         self.fields[f"{field_id}_seats"] = seats_contested_field
-#
 
 
 class NoticeOfElectionForm(forms.Form):
