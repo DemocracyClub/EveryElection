@@ -163,9 +163,11 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         # if we've got a date from a SnoopedElection
         # init the date form with that
         if step == "date":
-            self.storage.extra_data["radar_id"] = self.request.GET.get(
-                "radar_id", None
-            )
+            if (
+                radar_id := self.request.GET.get("radar_id", None)
+                and not self.storage.extra_data["radar_id"]
+            ):
+                self.storage.extra_data["radar_id"] = radar_id
 
             if isinstance(self.storage.extra_data, dict):
                 if self.storage.extra_data.get("radar_date", False):
