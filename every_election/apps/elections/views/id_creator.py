@@ -163,17 +163,17 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         # if we've got a date from a SnoopedElection
         # init the date form with that
         if step == "date":
-            if (
-                radar_id := self.request.GET.get("radar_id", None)
-                and not self.storage.extra_data["radar_id"]
-            ):
+            if radar_id := self.request.GET.get(
+                "radar_id", None
+            ) and not self.storage.extra_data.get("radar_id"):
                 self.storage.extra_data["radar_id"] = radar_id
 
-            if isinstance(self.storage.extra_data, dict):
-                if self.storage.extra_data.get("radar_date", False):
-                    radar_date = self.storage.extra_data["radar_date"]
-                    if isinstance(radar_date, list):
-                        return {"date": radar_date}
+            if isinstance(
+                self.storage.extra_data, dict
+            ) and self.storage.extra_data.get("radar_date", False):
+                radar_date = self.storage.extra_data["radar_date"]
+                if isinstance(radar_date, list):
+                    return {"date": radar_date}
 
             return {
                 "date": [
@@ -187,8 +187,7 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             radar_id := self.storage.extra_data.get("radar_id")
             and step == "by_elections_source"
         ):
-            return [
-                {"source": SnoopedElection.objects.get(pk=radar_id).source}]
+            return [{"source": SnoopedElection.objects.get(pk=radar_id).source}]
 
         return self.initial_dict.get(step, {})
 
@@ -249,7 +248,6 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         if not all_data.get("election_organisation"):
             all_data.update(self.storage.extra_data)
 
-
         all_data["radar_id"] = self.storage.extra_data.get("radar_id", None)
         if all_data["radar_id"]:
             context["radar_obj"] = SnoopedElection.objects.get(
@@ -287,6 +285,7 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                 }
             if step == "election_organisation":
                 ret["request"] = self.request
+                ret["radar_id"] = self.storage.extra_data.get("radar_id", None)
             return ret
         if step == "election_organisation_division":
             organisations = self.get_organisations

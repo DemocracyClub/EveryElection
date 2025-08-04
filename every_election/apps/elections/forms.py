@@ -1,5 +1,5 @@
 import contextlib
-from typing import Union
+from typing import Optional, Union
 
 from dc_utils import forms as dc_forms
 from django import forms
@@ -79,6 +79,7 @@ class ElectionOrganisationForm(forms.Form):
     def __init__(self, *args, **kwargs):
         election_type = kwargs.pop("election_type", None)
         election_date = kwargs.pop("election_date", None)
+        self.radar_id: Optional[str] = kwargs.pop("radar_id", None)
         self.request: HttpRequest = kwargs.pop("request")
         super().__init__(*args, **kwargs)
         if election_type:
@@ -95,8 +96,7 @@ class ElectionOrganisationForm(forms.Form):
                 )
             else:
                 self.fields["election_organisation"].queryset = qs
-
-            if not self.request.user.is_authenticated:
+            if not self.request.user.is_authenticated or self.radar_id:
                 self.fields["election_organisation"].widget = forms.RadioSelect(
                     choices=self.fields["election_organisation"].widget.choices
                 )
