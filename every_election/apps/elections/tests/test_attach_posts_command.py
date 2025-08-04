@@ -15,7 +15,9 @@ COMMAND_PATH = (
 class TestAttachPostsPerWard(TestCase):
     def setUp(self):
         # This will make one more election object as a parent
-        ElectionWithStatusFactory.create_batch(5, seats_contested=None)
+        ElectionWithStatusFactory.create_batch(
+            5, seats_contested=None, __sequence=0
+        )
 
         self.fake_csv_data = []
         for election in Election.public_objects.filter(group_type=None):
