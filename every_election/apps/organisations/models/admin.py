@@ -13,7 +13,7 @@ from django.db.models import Manager
 from .divisions import OrganisationDivision
 from .organisations import Organisation, OrganisationGeography
 
-INVALID_SOURCES = ("unknown", "lgbce", "")
+INVALID_SOURCES = ("unknown", "lgbce", "dbcc", "Boundaries Scotland", "")
 
 
 class DivisionProblemManager(Manager):
