@@ -163,17 +163,17 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         # if we've got a date from a SnoopedElection
         # init the date form with that
         if step == "date":
-            if (
-                radar_id := self.request.GET.get("radar_id", None)
-                and not self.storage.extra_data["radar_id"]
-            ):
+            if radar_id := self.request.GET.get(
+                "radar_id", None
+            ) and not self.storage.extra_data.get("radar_id"):
                 self.storage.extra_data["radar_id"] = radar_id
 
-            if isinstance(self.storage.extra_data, dict):
-                if self.storage.extra_data.get("radar_date", False):
-                    radar_date = self.storage.extra_data["radar_date"]
-                    if isinstance(radar_date, list):
-                        return {"date": radar_date}
+            if isinstance(
+                self.storage.extra_data, dict
+            ) and self.storage.extra_data.get("radar_date", False):
+                radar_date = self.storage.extra_data["radar_date"]
+                if isinstance(radar_date, list):
+                    return {"date": radar_date}
 
             return {
                 "date": [
@@ -287,6 +287,7 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                 }
             if step == "election_organisation":
                 ret["request"] = self.request
+                ret["radar_id"] = self.storage.extra_data.get("radar_id", None)
             return ret
         if step == "election_organisation_division":
             organisations = self.get_organisations
