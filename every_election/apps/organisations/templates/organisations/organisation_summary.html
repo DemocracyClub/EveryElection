@@ -1,4 +1,10 @@
 <h1><a href="{{ object.get_absolute_url }}">{{ object.name }}</a></h1>
+
+{% if object.geographies.exists %}
+    {% include "core/detail_map.html" with org_common_name=object.common_name dl_title=object.common_name%}
+{% endif %}
+
+
 <p>Also known as "{{ object.common_name }}".</p>
 <p>Active from {{ object.active_period_text }}.</p>
 <p>For election IDs, this should be referred to as <code>{{ object.slug }}</code></p>
