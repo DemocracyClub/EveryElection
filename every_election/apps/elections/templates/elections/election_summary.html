@@ -19,7 +19,7 @@
         {% endif %}
 
         {% if object.geography %}
-            {% include "./division_map.html" with org_common_name=object.organisation.common_name dl_title=object.election_title%}
+            {% include "core/detail_map.html" with org_common_name=object.organisation.common_name dl_title=object.election_title%}
         {% endif %}
 
         <dl class="ds-descriptions">
