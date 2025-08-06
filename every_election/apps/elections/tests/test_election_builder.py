@@ -68,7 +68,7 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
         builder = ElectionBuilder("local", "2017-06-08")
 
         # delete the relationship between org1 and local elections
-        self.elected_role1.delete()
+        self.org1.election_types.remove(self.elected_role1.election_type)
 
         with self.assertRaises(Organisation.ValidationError):
             reset_cache()
@@ -78,7 +78,7 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
         builder = ElectionBuilder("local", "2001-01-01")
 
         # delete the relationship between org1 and local elections
-        self.elected_role1.delete()
+        self.org1.election_types.remove(self.elected_role1.election_type)
 
         with self.assertRaises(Organisation.ValidationError):
             builder.with_organisation(self.org1)

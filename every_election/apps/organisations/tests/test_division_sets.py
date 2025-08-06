@@ -21,10 +21,10 @@ def test_division_set_by_date(db):
         org_div = OrganisationDivisionFactory(divisionset=ds)
 
     org = org_div.organisation
-    ElectedRoleFactory(organisation=org)
+    role = ElectedRoleFactory(organisation=org)
 
     def _make_ids_for_date(date):
-        x = ElectionBuilder("local", date)
+        x = ElectionBuilder(role.election_type, date)
         x.with_organisation(org)
         x.with_division(org_div)
         return x
