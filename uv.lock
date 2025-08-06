@@ -525,6 +525,15 @@ wheels = [
 ]
 
 [[package]]
+name = "djangorangemiddleware"
+version = "1.0.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/cc/a9/d54a6ebf9cf245c79cda71e28244139c402350cdbbca3aff3c028f913976/DjangoRangeMiddleware-1.0.1.tar.gz", hash = "sha256:6aa37d2601c38ae82575936a0fba974a10910b6074e3d85289b535c481f2fcc0", size = 3808 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a4/d0/b8e41ecc3a11d1cfae76a14a4a92e5d5c705ecbd2cbcd341b8c1dc94ca32/DjangoRangeMiddleware-1.0.1-py3-none-any.whl", hash = "sha256:8557adcc8295cbbe23c71ec9a9ffd49bfd6f6341eb6f1fbb6eb2048448fd0468", size = 4518 },
+]
+
+[[package]]
 name = "djangorestframework"
 version = "3.15.2"
 source = { registry = "https://pypi.org/simple" }
@@ -598,6 +607,7 @@ dependencies = [
     { name = "django-model-utils" },
     { name = "django-pipeline" },
     { name = "django-storages" },
+    { name = "djangorangemiddleware" },
     { name = "djangorestframework" },
     { name = "djangorestframework-gis" },
     { name = "djangorestframework-jsonp" },
@@ -663,6 +673,7 @@ requires-dist = [
     { name = "django-model-utils", specifier = "==5.0.0" },
     { name = "django-pipeline", specifier = "==4.0.0" },
     { name = "django-storages", specifier = "==1.14.5" },
+    { name = "djangorangemiddleware", specifier = "==1.0.1" },
     { name = "djangorestframework", specifier = "==3.15.2" },
     { name = "djangorestframework-gis", specifier = "==1.1" },
     { name = "djangorestframework-jsonp", specifier = "==1.0.2" },

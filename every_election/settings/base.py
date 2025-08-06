@@ -144,6 +144,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "dc_utils.middleware.BasicAuthMiddleware",
+    "DjangoRangeMiddleware.middleware.RangesMiddleware",
 ]
 
 ROOT_URLCONF = "every_election.urls"
