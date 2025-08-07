@@ -75,7 +75,8 @@ class ByElectionReason(models.TextChoices):
         "The elected member was recalled by a successful recall petition",
     )
     OTHER = "OTHER", "Other"
-    UNKNOWN = "", "Unknown/Not a by election"
+    UNKNOWN = "UNKNOWN", "Unknown"
+    NOT_APPLICABLE = "", "Neither a by-election nor a ballot"
 
 
 class ElectionType(models.Model):
@@ -350,7 +351,7 @@ class Election(TimeStampedModel):
         max_length=30,
         null=False,
         choices=ByElectionReason.choices,
-        default=ByElectionReason.UNKNOWN,
+        default=ByElectionReason.NOT_APPLICABLE,
     )
     replaces = models.ForeignKey(
         "Election",
