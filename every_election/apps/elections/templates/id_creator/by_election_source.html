@@ -25,7 +25,6 @@
         {% endifchanged %}
         <fieldset>
             <legend>{{ form.division }}</legend>
-            {{ form.errors }}
             {% if form.non_field_errors %}
                 {% for non_field_error in form.non_field_errors %}
                     <div class="ds-error">
@@ -33,12 +32,20 @@
                     </div>
                 {% endfor %}
             {% endif %}
+
             <div class="ds-field">
                 <label for="{{ form.source.id_for_label }}">
                     {{ form.source.label }}
                     <small>{{ form.source.help_text }}</small>
                 </label>
                 {{ form.source }}
+                {% if form.source.errors %}
+                    {% for error in form.source.errors %}
+                        <div class="ds-error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
 
             </div>
         </fieldset>
