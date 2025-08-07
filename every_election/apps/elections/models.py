@@ -350,6 +350,7 @@ class Election(TimeStampedModel):
     by_election_reason = models.CharField(
         max_length=30,
         null=False,
+        blank=True,
         choices=ByElectionReason.choices,
         default=ByElectionReason.NOT_APPLICABLE,
     )
