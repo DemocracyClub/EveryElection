@@ -37,13 +37,13 @@
                     if (feature.properties.division) {
                         popup = feature.properties.organisation["official_name"] + " - " + feature.properties.division["name"]
                     } else {
-                        popup = feature.properties.organisation["common_name"]
+                        popup = "{{ org_common_name }}"
                     }
                     layer.bindPopup(
-                        `<a href={% url 'api:election-geo' election_id=object.election_id format='json' %} download=\'{{object.election_title }}.geojson\'>${popup}</a>`)
+                        `<a href={{ api_detail_geo }} download=\'{{ dl_title }}.geojson\'>${popup}</a>`)
                 };
 
-                fetch("{% url 'api:election-geo' election_id=object.election_id format='json' %}").then((response) => {
+                fetch("{{ api_detail_geo }}").then((response) => {
                     response.json().then((json) => {
                         layer = L.geoJSON(json, {
                             style:  {color:'#007CAD'},

@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 from core.helpers import user_is_moderator
 from django.contrib.auth.mixins import AccessMixin
+from django.urls import reverse
 from django.utils.html import mark_safe
 from django.views.generic import DetailView, ListView, TemplateView
 from elections.forms import NoticeOfElectionForm
@@ -111,6 +112,13 @@ class SingleElection(AccessMixin, DetailView):
             form = NoticeOfElectionForm()
         context = super().get_context_data(**kwargs)
         context["geography_html"] = self.get_geography_html(context["object"])
+        context["api_detail_geo"] = reverse(
+            "api:election-geo",
+            kwargs={
+                "election_id": context["object"].election_id,
+                "format": "json",
+            },
+        )
         context["document"], context["document_type"] = self.get_document(
             context["object"]
         )
