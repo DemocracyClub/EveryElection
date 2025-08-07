@@ -20,8 +20,8 @@
             {% endif %}
         {% endfor %}
 
-        {% ifchanged form.group.value %}
-            <h2>{{ form.group.value }}</h2>
+        {% ifchanged form.group %}
+            <h2>{{ form.group.initial }}</h2>
         {% endifchanged %}
         <fieldset>
             <legend>{{ form.division }}</legend>

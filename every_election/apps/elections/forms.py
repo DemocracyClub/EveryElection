@@ -250,13 +250,11 @@ DivFormSet = forms.formset_factory(
 class ByElectionSourceForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.division: OrganisationDivision = kwargs.pop("division", None)
-        self.group: str = kwargs.pop("group", None)
         super().__init__(*args, **kwargs)
         if not self.division:
             return
-
         self.fields["group"] = forms.CharField(
-            initial=self.group,
+            initial=kwargs["initial"]["group"],
             required=False,
         )
         self.fields["division_id"] = forms.CharField(
@@ -299,7 +297,6 @@ class ByElectionsSourceFormSet(forms.BaseFormSet):
             self._form_kwargs.append(
                 {
                     "division": div,
-                    "group": div.organisation.name,
                 }
             )
 

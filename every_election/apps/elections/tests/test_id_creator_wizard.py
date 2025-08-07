@@ -411,6 +411,38 @@ def test_multiple_local_elections(
     ]
 
 
+def test_source_validation_error(page, live_server, id_creator_data, settings):
+    page.goto(live_server.url)
+    page.get_by_role("link", name="Suggest a new election").click()
+
+    # Enter a date
+    page.locator("#id_date-date_0").fill("5")
+    page.locator("#id_date-date_1").fill("1")
+    page.locator("#id_date-date_2").fill("2023")
+    page.locator("#id_date-date_2").blur()
+    page.get_by_role("button", name="Submit").click()
+
+    page.get_by_text("Local elections").click()
+    page.get_by_role("button", name="Submit").click()
+
+    # Select both councils
+    page.get_by_text("Test Council").click()
+    page.get_by_role("button", name="Submit").click()
+
+    # Ensure that all the headings exist
+    page.get_by_role("heading", name="Test Council").click()
+
+    # Select elections
+    page.get_by_text("By-election").nth(1).click()
+    page.get_by_role("button", name="Submit").click()
+
+    # Don't enter a source, submitting ends up with a form validation error
+    page.get_by_role("button", name="Submit").click()
+
+    # Check that the council heading is there
+    expect(page.locator("h2").nth(0)).to_contain_text("Test Council")
+
+
 def test_gla_a_doesnt_show_division_picker(
     page, live_server, id_creator_data, settings
 ):
