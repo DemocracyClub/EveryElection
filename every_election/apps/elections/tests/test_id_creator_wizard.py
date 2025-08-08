@@ -348,6 +348,11 @@ def test_subtype_creation(page, live_server, id_creator_data, settings):
 def test_multiple_local_elections(
     playwright_with_admin, live_server, id_creator_data, settings
 ):
+    """
+    Logs in as an admin users to make elections. This, in part, tests that
+    admin users don't see the 'suggestion' messages that anonymous users do
+
+    """
     page = playwright_with_admin
     settings.DEBUG = True
     # We shouldn't have any elections
