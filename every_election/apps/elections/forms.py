@@ -247,7 +247,7 @@ DivFormSet = forms.formset_factory(
 )
 
 
-class ByElectionSource(forms.Form):
+class ByElectionSourceForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.division: OrganisationDivision = kwargs.pop("division", None)
         super().__init__(*args, **kwargs)
@@ -311,7 +311,7 @@ class ByElectionsSourceFormSet(forms.BaseFormSet):
 
 
 ByElectionSourceFormSet = forms.formset_factory(
-    ByElectionSource, formset=ByElectionsSourceFormSet, extra=0
+    ByElectionSourceForm, formset=ByElectionsSourceFormSet, extra=0
 )
 
 
