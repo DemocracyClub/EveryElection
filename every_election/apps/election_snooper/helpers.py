@@ -39,6 +39,6 @@ def post_to_slack(
     if isinstance(blocks, list):
         payload["blocks"] = blocks
     else:
-        payload["text"] = (textwrap.dedent(message),)
+        payload["text"] = textwrap.dedent(message)
 
     requests.post(url, json.dumps(payload), timeout=2)
