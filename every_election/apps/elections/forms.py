@@ -307,8 +307,6 @@ class ByElectionsSourceFormSet(forms.BaseFormSet):
             return {}
         return self._form_kwargs[index]
 
-    ...
-
 
 ByElectionSourceFormSet = forms.formset_factory(
     ByElectionSourceForm, formset=ByElectionsSourceFormSet, extra=0
