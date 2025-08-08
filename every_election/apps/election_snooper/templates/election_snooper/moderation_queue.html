@@ -13,13 +13,37 @@
             <div class="ds-card">
                 <div class="ds-card-body">
                     <h3>{{ form.instance.election.election_id }}</h3>
-                    <div>
-                        <li><strong>election_type</strong>: {{ form.instance.election.election_type }}</li>
-                        <li><strong>election_subtype</strong>: {{ form.instance.election.election_subtype }}</li>
-                        <li><strong>poll_open_date</strong>: {{ form.instance.election.poll_open_date }}</li>
-                        <li><strong>organisation</strong>: {{ form.instance.election.organisation }}</li>
-                        <li><strong>division</strong>: {{ form.instance.election.division }}</li>
-                    </div>
+                    <dl class="ds-descriptions">
+                        <div>
+                            <dt>Source</dt>
+                            <dd>{{ form.instance.election.source }}</dd>
+                        </div>
+                        <div>
+                            <dt>Election Type</dt>
+                            <dd>{{ form.instance.election.election_type }}</dd>
+                        </div>
+                        {% if form.instance.election.election_subtype %}
+                            <div>
+                                <dt>Election Sub-type</dt>
+                                <dd>{{ form.instance.election.election_subtype }}</dd>
+                            </div>{% endif %}
+                        <div>
+                            <dt>Date</dt>
+                            <dd>{{ form.instance.election.poll_open_date }}</dd>
+                        </div>
+                        <div>
+                            <dt>Organisation</dt>
+                            <dd>{{ form.instance.election.organisation }}</dd>
+                        </div>
+                        <div>
+                            <dt>Division</dt>
+                            <dd>{{ form.instance.election.division }}</dd>
+                        </div>
+                        <div>
+                            <dt>Seats Contested</dt>
+                            <dd>{{ form.instance.election.seats_contested }}</dd>
+                        </div>
+                    </dl>
 
                     <div>
                         <form method=post>
