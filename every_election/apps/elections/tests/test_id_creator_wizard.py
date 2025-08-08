@@ -444,11 +444,7 @@ def test_source_validation_error(page, live_server, id_creator_data, settings):
     page.get_by_role("button", name="Submit").click()
 
     # Check that the council heading is there
-    expect(page.locator("h2").nth(0)).to_contain_text(
-        "Test Council"
-    )
-
-
+    expect(page.locator("h2").nth(0)).to_contain_text("Test Council")
 
 
 def test_gla_a_doesnt_show_division_picker(
