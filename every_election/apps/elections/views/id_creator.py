@@ -105,11 +105,11 @@ def select_organisation_division(wizard):
 
 
 def should_show_by_elections_source(wizard):
-    return [
-        div
-        for div in wizard.get_divisions()
-        if div["ballot_type"] == "by_election"
-    ]
+    """
+    We never ask for a source when creating elections for users that are
+    logged in
+    """
+    return not wizard.request.user.is_authenticated
 
 
 CONDITION_DICT = {
