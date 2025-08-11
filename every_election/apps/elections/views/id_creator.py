@@ -109,7 +109,7 @@ def should_show_by_elections_source(wizard):
     We never ask for a source when creating elections for users that are
     logged in
     """
-    return not wizard.request.user.is_authenticated
+    return not wizard.request.user.is_authenticated and wizard.get_divisions()
 
 
 CONDITION_DICT = {
@@ -303,11 +303,7 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
 
         if step == "by_elections_source":
             kwargs = {}
-            kwargs["division_by_elections"] = [
-                div
-                for div in self.get_divisions()
-                if div["ballot_type"] == "by_election"
-            ]
+            kwargs["division_by_elections"] = self.get_divisions()
 
             return kwargs
 

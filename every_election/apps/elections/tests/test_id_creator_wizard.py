@@ -141,6 +141,15 @@ def test_full_id_creation_not_logged_in(
         page.get_by_role("button", name="All Up").click()
         page.get_by_role("button", name="Submit").click()
 
+        # Enter a source for the elections
+        page.get_by_text("Source").nth(2).fill(
+            "Found on https://example.com/foo"
+        )
+        page.get_by_text("Source").nth(3).fill(
+            "Found on https://example.com/bar"
+        )
+        page.get_by_role("button", name="Submit").click()
+
         # Create the IDs
         page.get_by_role("button", name="Suggest IDs").click()
 
@@ -324,6 +333,12 @@ def test_subtype_creation(page, live_server, id_creator_data, settings):
     page.get_by_role("button", name="All up").click()
     page.get_by_role("button", name="Submit").click()
 
+    # Enter a source for the elections
+    page.get_by_text("Source").nth(2).fill("Found on https://example.com/foo")
+    page.get_by_text("Source").nth(3).fill("Found on https://example.com/bar")
+    page.get_by_text("Source").nth(4).fill("Found on https://example.com/baz")
+    page.get_by_role("button", name="Submit").click()
+
     # Assert the IDs are on the review screen
     page.get_by_text("naw.2023-01-05").click()
     page.get_by_text("naw.r.2023-01-05").click()
@@ -388,7 +403,6 @@ def test_multiple_local_elections(
     page.get_by_text("By-election").nth(2).click()
     page.get_by_text("Scheduled").nth(4).click()
     page.get_by_role("button", name="Submit").click()
-
 
     # Create IDs
     page.get_by_role("button", name="Create IDs").click()
