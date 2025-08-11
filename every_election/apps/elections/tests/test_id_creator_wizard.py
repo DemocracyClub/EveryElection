@@ -120,7 +120,7 @@ def test_full_id_creation_not_logged_in(
     ):
         # Open the home page, click to add a new election
         page.goto(live_server.url)
-        page.get_by_role("link", name="Add a new election").click()
+        page.get_by_role("link", name="Suggest a new election").click()
 
         # Enter a date
         page.locator("#id_date-date_0").fill("5")
@@ -141,8 +141,17 @@ def test_full_id_creation_not_logged_in(
         page.get_by_role("button", name="All Up").click()
         page.get_by_role("button", name="Submit").click()
 
+        # Enter a source for the elections
+        page.get_by_text("Source").nth(2).fill(
+            "Found on https://example.com/foo"
+        )
+        page.get_by_text("Source").nth(3).fill(
+            "Found on https://example.com/bar"
+        )
+        page.get_by_role("button", name="Submit").click()
+
         # Create the IDs
-        page.get_by_role("button", name="Create IDs").click()
+        page.get_by_role("button", name="Suggest IDs").click()
 
     # We should have 4 elections
     assert Election.private_objects.count() == 4
@@ -285,7 +294,7 @@ def test_subtype_creation(page, live_server, id_creator_data, settings):
 
     # Open the home page, click to add a new election
     page.goto(live_server.url)
-    page.get_by_role("link", name="Add a new election").click()
+    page.get_by_role("link", name="Suggest a new election").click()
 
     # Enter a date
     page.locator("#id_date-date_0").fill("5")
@@ -324,12 +333,18 @@ def test_subtype_creation(page, live_server, id_creator_data, settings):
     page.get_by_role("button", name="All up").click()
     page.get_by_role("button", name="Submit").click()
 
+    # Enter a source for the elections
+    page.get_by_text("Source").nth(2).fill("Found on https://example.com/foo")
+    page.get_by_text("Source").nth(3).fill("Found on https://example.com/bar")
+    page.get_by_text("Source").nth(4).fill("Found on https://example.com/baz")
+    page.get_by_role("button", name="Submit").click()
+
     # Assert the IDs are on the review screen
     page.get_by_text("naw.2023-01-05").click()
     page.get_by_text("naw.r.2023-01-05").click()
 
     # Create IDs
-    page.get_by_role("button", name="Create IDs").click()
+    page.get_by_role("button", name="Suggest IDs").click()
 
     # We should have 6 elections
     assert Election.private_objects.count() == 6
@@ -345,7 +360,15 @@ def test_subtype_creation(page, live_server, id_creator_data, settings):
     ]
 
 
-def test_multiple_local_elections(page, live_server, id_creator_data, settings):
+def test_multiple_local_elections(
+    playwright_with_admin, live_server, id_creator_data, settings
+):
+    """
+    Logs in as an admin users to make elections. This, in part, tests that
+    admin users don't see the 'suggestion' messages that anonymous users do
+
+    """
+    page = playwright_with_admin
     settings.DEBUG = True
     # We shouldn't have any elections
     assert Election.private_objects.count() == 0
@@ -384,19 +407,51 @@ def test_multiple_local_elections(page, live_server, id_creator_data, settings):
     # Create IDs
     page.get_by_role("button", name="Create IDs").click()
 
-    # We should have 7 elections
+    # We should have 7 elections, none with a source
     assert Election.private_objects.count() == 7
     assert list(
-        Election.private_objects.values_list("election_id", flat=True)
+        Election.private_objects.values_list("election_id", "source")
     ) == [
-        "local.2023-01-05",
-        "local.test.2023-01-05",
-        "local.test2.2023-01-05",
-        "local.test2.test-div.2023-01-05",
-        "local.test2.test-div-2.2023-01-05",
-        "local.test.test-div-2.2023-01-05",
-        "local.test.test-div.by.2023-01-05",
+        ("local.2023-01-05", ""),
+        ("local.test.2023-01-05", ""),
+        ("local.test2.2023-01-05", ""),
+        ("local.test2.test-div.2023-01-05", ""),
+        ("local.test2.test-div-2.2023-01-05", ""),
+        ("local.test.test-div-2.2023-01-05", ""),
+        ("local.test.test-div.by.2023-01-05", ""),
     ]
+
+
+def test_source_validation_error(page, live_server, id_creator_data, settings):
+    page.goto(live_server.url)
+    page.get_by_role("link", name="Suggest a new election").click()
+
+    # Enter a date
+    page.locator("#id_date-date_0").fill("5")
+    page.locator("#id_date-date_1").fill("1")
+    page.locator("#id_date-date_2").fill("2023")
+    page.locator("#id_date-date_2").blur()
+    page.get_by_role("button", name="Submit").click()
+
+    page.get_by_text("Local elections").click()
+    page.get_by_role("button", name="Submit").click()
+
+    # Select both councils
+    page.get_by_text("Test Council").click()
+    page.get_by_role("button", name="Submit").click()
+
+    # Ensure that all the headings exist
+    page.get_by_role("heading", name="Test Council").click()
+
+    # Select elections
+    page.get_by_text("By-election").nth(1).click()
+    page.get_by_role("button", name="Submit").click()
+
+    # Don't enter a source, submitting ends up with a form validation error
+    page.get_by_role("button", name="Submit").click()
+
+    # Check that the council heading is there
+    expect(page.locator("h2").nth(0)).to_contain_text("Test Council")
 
 
 def test_gla_a_doesnt_show_division_picker(
@@ -427,7 +482,7 @@ def test_gla_a_doesnt_show_division_picker(
 
     # Open the home page, click to add a new election
     page.goto(live_server.url)
-    page.get_by_role("link", name="Add a new election").click()
+    page.get_by_role("link", name="Suggest a new election").click()
 
     # Enter a date
     page.locator("#id_date-date_0").fill("5")
@@ -449,7 +504,7 @@ def test_gla_a_doesnt_show_division_picker(
     page.get_by_text("gla.a.2023-01-05").click()
 
     # Create IDs
-    page.get_by_role("button", name="Create IDs").click()
+    page.get_by_role("button", name="Suggest IDs").click()
 
     # We should have 2 elections
     assert Election.private_objects.count() == 2

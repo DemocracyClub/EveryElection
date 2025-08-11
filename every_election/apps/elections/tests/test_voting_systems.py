@@ -15,7 +15,7 @@ class TestElectoralSystems(BaseElectionCreatorMixIn, TestCase):
 
         # Elections without organisations don't have voting systems
         election_id = ElectionBuilder(
-            "local", "2017-05-04"
+            self.election_type1, "2017-05-04"
         ).build_election_group()
         assert election_id.voting_system is None
 
@@ -27,8 +27,9 @@ class TestElectoralSystems(BaseElectionCreatorMixIn, TestCase):
             elected_title="Councillor",
             elected_role_name="Councillor for Foo Town",
         )
+
         election_id = (
-            ElectionBuilder("local", "2017-05-04")
+            ElectionBuilder(self.election_type1, "2017-05-04")
             .with_organisation(eng_org)
             .build_election_group()
         )
@@ -46,7 +47,7 @@ class TestElectoralSystems(BaseElectionCreatorMixIn, TestCase):
 
         # Scottish local elections are STV
         scot_id = (
-            ElectionBuilder("local", "2017-05-04")
+            ElectionBuilder(self.election_type1, "2017-05-04")
             .with_organisation(scot_org)
             .build_organisation_group(None)
         )

@@ -1,9 +1,11 @@
-from typing import Union
+import contextlib
+from typing import Optional, Union
 
 from dc_utils import forms as dc_forms
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import F, QuerySet
+from django.http import HttpRequest
 from organisations.models import (
     Organisation,
     OrganisationDivision,
@@ -12,25 +14,6 @@ from organisations.models import (
 from organisations.models.divisions import DivisionManager
 
 from .models import ElectionSubType, ElectionType
-
-#
-# Forms:
-#   ElectionDateForm
-#   ElectionTypeForm
-#   ElectionOrganisationForm
-
-
-class ElectionSourceForm(forms.Form):
-    source = forms.CharField(
-        required=True,
-        max_length=1000,
-        label="Where did you find out about this election?",
-    )
-    document = forms.URLField(
-        required=False,
-        max_length=1000,
-        label="Link to 'Notice of Election' Document",
-    )
 
 
 class ElectionDateForm(forms.Form):
@@ -86,11 +69,18 @@ class ElectionOrganisationField(forms.ModelMultipleChoiceField):
     def label_from_instance(self, obj):
         return obj.name
 
+    def clean(self, value):
+        if not isinstance(value, list):
+            value = [value]
+        return super().clean(value)
+
 
 class ElectionOrganisationForm(forms.Form):
     def __init__(self, *args, **kwargs):
         election_type = kwargs.pop("election_type", None)
         election_date = kwargs.pop("election_date", None)
+        self.radar_id: Optional[str] = kwargs.pop("radar_id", None)
+        self.request: HttpRequest = kwargs.pop("request")
         super().__init__(*args, **kwargs)
         if election_type:
             qs = self.fields["election_organisation"].queryset
@@ -106,9 +96,14 @@ class ElectionOrganisationForm(forms.Form):
                 )
             else:
                 self.fields["election_organisation"].queryset = qs
+            if not self.request.user.is_authenticated or self.radar_id:
+                self.fields["election_organisation"].widget = forms.RadioSelect(
+                    choices=self.fields["election_organisation"].widget.choices
+                )
 
     election_organisation = ElectionOrganisationField(
-        queryset=Organisation.objects.all(), widget=forms.CheckboxSelectMultiple
+        queryset=Organisation.objects.all(),
+        widget=forms.CheckboxSelectMultiple(),
     )
 
 
@@ -231,7 +226,10 @@ class DivsFormset(forms.BaseFormSet):
 
                 for div in divisions_qs:
                     kwargs["initial"].append(
-                        {"division_name": div.name, "group": div.group}
+                        {
+                            "division_name": div.name,
+                            "group": div.group,
+                        }
                     )
                     self._form_kwargs.append(
                         {"division": div, "group": div.group}
@@ -249,94 +247,70 @@ DivFormSet = forms.formset_factory(
 )
 
 
-# class ElectionOrganisationDivisionForm(forms.Form):
-#     def __init__(self, *args, **kwargs):
-#         organisations = kwargs.pop("organisations", None)
-#         election_subtype = kwargs.pop("election_subtype", None)
-#         election_date = kwargs.pop("election_date", None)
-#         self.field_groups = []
-#
-#         super().__init__(*args, **kwargs)
-#
-#         self.choices = (
-#             ("no_seats", "No Election"),
-#             ("seats_contested", "Contested seats"),
-#             ("by_election", "By-election"),
-#         )
-#         if not organisations:
-#             return
-#         for organisation in organisations.all():
-#             self.fields[organisation.pk] = dc_forms.DCHeaderField(
-#                 label=organisation.common_name
-#             )
-#
-#             div_set = (
-#                 OrganisationDivisionSet.objects.filter(
-#                     organisation=organisation, start_date__lte=election_date
-#                 )
-#                 .filter(models.Q(end_date__gte=election_date) | models.Q(end_date=None))
-#                 .order_by("-start_date")
-#                 .first()
-#             )
-#             if not div_set:
-#                 # There is no active division set for this organisation
-#                 # on this date
-#                 no_divs_field = forms.CharField(
-#                     widget=forms.TextInput(attrs={"class": "ds-visually-hidden"}),
-#                     required=False,
-#                     label="""
-#                         There are no active divisions for this organisation.
-#                         This is normally because we know a boundary change
-#                         is about to happen but it's not final yet.
-#                         Please try again in future, or contact us if you think
-#                         it's a mistake.
-#                     """,
-#                 )
-#                 self.fields["{}_no_divs".format(organisation.pk)] = no_divs_field
-#                 continue
-#
-#             if election_subtype:
-#                 for subtype in election_subtype:
-#                     # TODO Get Div Set by election date
-#                     div_qs = div_set.divisions.filter(
-#                         division_election_sub_type=subtype.election_subtype
-#                     )
-#                     div_qs = div_qs.order_by("name")
-#                     if div_qs:
-#                         self.fields[subtype.pk] = dc_forms.DCHeaderField(
-#                             label=subtype.name
-#                         )
-#                     for div in div_qs:
-#                         self.add_single_field(
-#                             organisation, div, subtype=subtype.election_subtype
-#                         )
-#             else:
-#                 div_qs: QuerySet[OrganisationDivision] = div_set.divisions.all()
-#                 div_qs = div_qs.order_by("name")
-#                 for div in div_qs:
-#                     self.add_single_field(organisation, div)
-#
-#     def add_single_field(
-#         self, organisation: Organisation, div: OrganisationDivision, subtype=None
-#     ):
-#         field_id = "__".join([str(x) for x in [organisation.pk, div.pk, subtype] if x])
-#         ballot_type_field = forms.ChoiceField(
-#             choices=self.choices,
-#             widget=forms.RadioSelect,
-#             label=div.name,
-#             initial="no_seats",
-#             required=False,
-#         )
-#         ballot_type_field.group = field_id
-#         self.fields[field_id] = ballot_type_field
-#
-#         # Add seats contested
-#         seats_contested_field = forms.IntegerField(
-#             max_value=div.seats_total, min_value=0, label="Seats Contested", initial=0
-#         )
-#         seats_contested_field.group = field_id
-#         self.fields[f"{field_id}_seats"] = seats_contested_field
-#
+class ByElectionSourceForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.division: OrganisationDivision = kwargs.pop("division", None)
+        super().__init__(*args, **kwargs)
+        if not self.division:
+            return
+        self.fields["group"] = forms.CharField(
+            initial=kwargs["initial"]["group"],
+            required=False,
+        )
+        self.fields["division_id"] = forms.CharField(
+            initial=self.division.pk, required=True, widget=forms.HiddenInput()
+        )
+
+    source = forms.CharField(
+        help_text="Tell us how you know about this by-election. Please provide a URL if possible."
+    )
+
+
+class ByElectionsSourceFormSet(forms.BaseFormSet):
+    def __init__(self, *args, **kwargs):
+        division_by_elections = kwargs.pop("division_by_elections")
+
+        division_filter_args = {
+            "pk__in": [div["division_id"] for div in division_by_elections]
+        }
+        divisions_qs: Union[QuerySet[OrganisationDivision], DivisionManager] = (
+            OrganisationDivision.objects.select_related(
+                "divisionset__organisation"
+            )
+            .filter(**division_filter_args)
+            .order_by("divisionset__organisation", "name")
+        )
+        initial_sources = [initial["source"] for initial in kwargs["initial"]]
+        kwargs["initial"] = []
+        self._form_kwargs = []
+        for i, div in enumerate(divisions_qs):
+            source = ""
+            with contextlib.suppress(IndexError):
+                source = initial_sources[i]
+            kwargs["initial"].append(
+                {
+                    "division": div,
+                    "group": div.organisation.name,
+                    "source": source,
+                }
+            )
+            self._form_kwargs.append(
+                {
+                    "division": div,
+                }
+            )
+
+        super().__init__(*args, **kwargs)
+
+    def get_form_kwargs(self, index):
+        if not self._form_kwargs:
+            return {}
+        return self._form_kwargs[index]
+
+
+ByElectionSourceFormSet = forms.formset_factory(
+    ByElectionSourceForm, formset=ByElectionsSourceFormSet, extra=0
+)
 
 
 class NoticeOfElectionForm(forms.Form):

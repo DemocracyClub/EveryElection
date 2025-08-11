@@ -15,7 +15,7 @@
         <div class="ds-stack">
             <h3>Upcoming elections</h3>
             <ul>
-                {% for election in upcoming_elections  %}
+                {% for election in upcoming_elections %}
                     <li>
                         <a href="{{ election.get_absolute_url }}">{{ election }}</a>
                         ( {{ election.election_type }} {{ election.poll_open_date }} )
@@ -25,7 +25,14 @@
 
 
             <h3>Heard about a new election?</h3>
-            <a href="{% url "id_creator" %}" class="ds-cta">Add a new election</a>
+            <a href="{% url "id_creator" %}" class="ds-cta">
+                {% if request.user.is_authenticated %}
+                    Add a new election
+                {% else %}
+                    Suggest a new election
+                {% endif %}
+            </a>
+
         </div>
     </section>
 {% endblock content %}

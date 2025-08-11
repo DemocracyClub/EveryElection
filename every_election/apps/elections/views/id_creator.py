@@ -9,10 +9,10 @@ from election_snooper.helpers import post_to_slack
 from election_snooper.models import SnoopedElection
 from elections.baker import send_event
 from elections.forms import (
+    ByElectionSourceFormSet,
     DivFormSet,
     ElectionDateForm,
     ElectionOrganisationForm,
-    ElectionSourceForm,
     ElectionSubTypeForm,
     ElectionTypeForm,
 )
@@ -32,36 +32,24 @@ from formtools.wizard.views import NamedUrlSessionWizardView
 from organisations.models import Organisation
 
 FORMS = [
-    ("source", ElectionSourceForm),
     ("date", ElectionDateForm),
     ("election_type", ElectionTypeForm),
     ("election_subtype", ElectionSubTypeForm),
     ("election_organisation", ElectionOrganisationForm),
     ("election_organisation_division", DivFormSet),
+    ("by_elections_source", ByElectionSourceFormSet),
     ("review", forms.Form),
 ]
 
 TEMPLATES = {
-    "source": "id_creator/source.html",
     "date": "id_creator/date.html",
     "election_type": "id_creator/election_type.html",
     "election_subtype": "id_creator/election_subtype.html",
     "election_organisation": "id_creator/election_organisation.html",
     "election_organisation_division": "id_creator/election_organisation_division.html",
+    "by_elections_source": "id_creator/by_election_source.html",
     "review": "id_creator/review.html",
 }
-
-
-def show_source_step(wizard):
-    # if we've got a radar_id in the URL, we want to show the source form
-    radar_id = wizard.request.GET.get("radar_id", False)
-    if radar_id:
-        return True
-
-    # if a source is already set, we want to show the source form
-    # otherwise, hide it
-    data = wizard.get_cleaned_data_for_step("source")
-    return bool(isinstance(data, dict) and "source" in data)
 
 
 def date_known(wizard):
@@ -116,12 +104,20 @@ def select_organisation_division(wizard):
     )
 
 
+def should_show_by_elections_source(wizard):
+    """
+    We never ask for a source when creating elections for users that are
+    logged in
+    """
+    return not wizard.request.user.is_authenticated and wizard.get_divisions()
+
+
 CONDITION_DICT = {
-    "source": show_source_step,
     "date": date_known,
     "election_organisation": select_organisation,
     "election_organisation_division": select_organisation_division,
     "election_subtype": select_subtype,
+    "by_elections_source": should_show_by_elections_source,
 }
 
 
@@ -164,39 +160,14 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         return election_date.get("date", None)
 
     def get_form_initial(self, step):
-        if step == "source":
-            # init the 'source' form with details of a SnoopedElection record
-            radar_id = self.request.GET.get("radar_id", False)
-            if radar_id:
-                se = SnoopedElection.objects.get(pk=radar_id)
-                if se.snooper_name == "CustomSearch:NoticeOfElectionPDF":
-                    # put these in the session - they aren't user-modifiable
-                    self.storage.extra_data.update(
-                        {"radar_id": se.id, "radar_date": ""}
-                    )
-                    # auto-populate the form with these to allow editing
-                    return {"source": se.detail_url, "document": se.detail_url}
-                if (
-                    se.snooper_name == "ALDC"
-                    or se.snooper_name == "LibDemNewbies"
-                ):
-                    # put these in the session - they aren't user-modifiable
-                    self.storage.extra_data.update(
-                        {
-                            "radar_id": se.id,
-                            "radar_date": [
-                                se.date.day,
-                                se.date.month,
-                                se.date.year,
-                            ],
-                        }
-                    )
-                    # auto-populate the form with these to allow editing
-                    return {"source": se.source, "document": ""}
-                return {}
         # if we've got a date from a SnoopedElection
         # init the date form with that
         if step == "date":
+            if radar_id := self.request.GET.get(
+                "radar_id", None
+            ) and not self.storage.extra_data.get("radar_id"):
+                self.storage.extra_data["radar_id"] = radar_id
+
             if isinstance(
                 self.storage.extra_data, dict
             ) and self.storage.extra_data.get("radar_date", False):
@@ -211,6 +182,14 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                     datetime.date.today().year,
                 ]
             }
+
+        if (
+            radar_id := self.storage.extra_data.get("radar_id")
+            and step == "by_elections_source"
+        ):
+            return [
+                {"source": SnoopedElection.objects.get(pk=radar_id).detail_url}
+            ]
 
         return self.initial_dict.get(step, {})
 
@@ -248,6 +227,16 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             )
         return []
 
+    def get_by_election_source(self):
+        if "by_elections_source" in self.storage.data["step_data"]:
+            return {
+                form["division_id"]: form["source"]
+                for form in self.get_cleaned_data_for_step(
+                    "by_elections_source"
+                )
+            }
+        return {}
+
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
         # all_data = self.get_all_cleaned_data()
@@ -260,11 +249,16 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
 
         if not all_data.get("election_organisation"):
             all_data.update(self.storage.extra_data)
-        else:
-            all_data["radar_id"] = self.storage.extra_data.get("radar_id", None)
+
+        all_data["radar_id"] = self.storage.extra_data.get("radar_id", None)
+        if all_data["radar_id"]:
+            context["radar_obj"] = SnoopedElection.objects.get(
+                pk=all_data["radar_id"]
+            )
 
         context["all_data"] = all_data
         if self.kwargs["step"] in ["review", self.done_step_name]:
+            all_data["get_by_election_source"] = self.get_by_election_source()
             all_ids = create_ids_for_each_ballot_paper(
                 all_data, self.get_election_subtypes
             )
@@ -284,13 +278,17 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         # if step != self.steps.current:
         #     return {}
         if step in ["election_organisation", "election_subtype"]:
+            ret = {}
             election_type = self.get_election_type
             if election_type:
-                return {
+                ret = {
                     "election_type": election_type.election_type,
                     "election_date": self.get_election_date(),
                 }
-            return {}
+            if step == "election_organisation":
+                ret["request"] = self.request
+                ret["radar_id"] = self.storage.extra_data.get("radar_id", None)
+            return ret
         if step == "election_organisation_division":
             organisations = self.get_organisations
             election_subtype = self.get_election_subtypes
@@ -302,6 +300,12 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
 
         if step == "election_type":
             return {"date": self.get_election_date()}
+
+        if step == "by_elections_source":
+            kwargs = {}
+            kwargs["division_by_elections"] = self.get_divisions()
+
+            return kwargs
 
         return {}
 
@@ -365,17 +369,55 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             and len(context["all_ids"]) > 0
         ):
             ballots = [e for e in context["all_ids"] if e.group_type is None]
-            if len(ballots) == 1:
-                message = """
-                    New election {} suggested by anonymous user:\n
-                    <https://elections.democracyclub.org.uk/election_radar/moderation_queue/>
-                """.format(ballots[0].election_id)
+            num_ballots = len(ballots)
+            if num_ballots == 1:
+                message = "New election suggested by anonymous user"
+            elif num_ballots > 10:
+                # 10 is the limit of the number of block permitted by Slack
+                message = (
+                    f"{num_ballots} new elections suggested by anonymous user"
+                )
             else:
-                message = """
-                    {} New elections suggested by anonymous user:\n
-                    <https://elections.democracyclub.org.uk/election_radar/moderation_queue/>
-                """.format(len(ballots))
-            post_to_slack(message)
+                message = (
+                    f"{len(ballots)} new elections suggested by anonymous user"
+                )
+
+            fields = [
+                {"type": "mrkdwn", "text": f"`{election_id}`"}
+                for election_id in ballots
+            ]
+
+            blocks = [
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": message,
+                    },
+                },
+                {"type": "section", "fields": fields},
+                {
+                    "type": "actions",
+                    "elements": [
+                        {
+                            "type": "button",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Review in moderation queue",
+                                "emoji": True,
+                            },
+                            "url": "https://elections.democracyclub.org.uk/election_radar/moderation_queue/",
+                            "style": "primary",
+                        }
+                    ],
+                },
+            ]
+
+            post_to_slack(
+                username="Election Suggestion",
+                icon_emoji=":bulb:",
+                blocks=blocks,
+            )
 
         # if this election was created from a radar entry set the status
         # of the radar entry to indicate we have made an id for it
