@@ -373,8 +373,14 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             and len(context["all_ids"]) > 0
         ):
             ballots = [e for e in context["all_ids"] if e.group_type is None]
-            if len(ballots) == 1:
+            num_ballots = len(ballots)
+            if num_ballots == 1:
                 message = "New election suggested by anonymous user"
+            elif num_ballots > 10:
+                # 10 is the limit of the number of block permitted by Slack
+                message = (
+                    f"{num_ballots} new elections suggested by anonymous user"
+                )
             else:
                 message = (
                     f"{len(ballots)} new elections suggested by anonymous user"
