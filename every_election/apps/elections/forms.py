@@ -111,6 +111,7 @@ class ElectionOrganisationDivisionForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.division: OrganisationDivision = kwargs.pop("division", None)
         self.group: str = kwargs.pop("group", None)
+        self.request: HttpRequest = kwargs.pop("request")
         super().__init__(*args, **kwargs)
         if not self.division:
             return
@@ -179,6 +180,7 @@ class DivsFormset(forms.BaseFormSet):
     def __init__(self, *args, **kwargs):
         self.organisations = kwargs.pop("organisations", [])
         self.election_subtypes = kwargs.pop("election_subtype", None)
+        self.request = kwargs.pop("request")
         if not self.election_subtypes:
             self.election_subtypes = []
         self.subtype_list = [
@@ -232,7 +234,11 @@ class DivsFormset(forms.BaseFormSet):
                         }
                     )
                     self._form_kwargs.append(
-                        {"division": div, "group": div.group}
+                        {
+                            "division": div,
+                            "group": div.group,
+                            "request": self.request,
+                        }
                     )
         super().__init__(*args, **kwargs)
 

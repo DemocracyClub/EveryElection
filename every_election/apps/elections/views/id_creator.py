@@ -296,6 +296,7 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
                 "organisations": organisations,
                 "election_subtype": election_subtype,
                 "election_date": self.get_election_date(),
+                "request": self.request,
             }
 
         if step == "election_type":
