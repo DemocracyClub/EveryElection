@@ -247,6 +247,18 @@ class DivsFormset(forms.BaseFormSet):
             return {}
         return self._form_kwargs[index]
 
+    @property
+    def cleaned_data(self):
+        """
+        Filter out any divisions that aren't marked as contested
+        """
+
+        return [
+            division
+            for division in super().cleaned_data
+            if division["ballot_type"] not in ["", "no_seats"]
+        ]
+
 
 DivFormSet = forms.formset_factory(
     ElectionOrganisationDivisionForm, formset=DivsFormset, extra=0
