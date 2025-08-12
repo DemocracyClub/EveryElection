@@ -62,7 +62,7 @@ function add_action_button(label, actions) {
 }
 
 var division_picker = document.getElementById("id_creator_election_organisation_division");
-if (division_picker != undefined) {
+if (division_picker != undefined && document.querySelector("main.authenticated")) {
     // Create a cluster
     var button_div = document.createElement('div');
     button_div.classList.add("ds-cluster")
@@ -87,9 +87,6 @@ if (division_picker != undefined) {
         },
     ]);
     button_div.querySelector("div").insertAdjacentElement("beforeend", reset_button);
-
-    // All up button
-
 
     // Scheduled button
     var scheduled_button = add_action_button("Scheduled", [
@@ -127,20 +124,20 @@ if (division_picker != undefined) {
     division_picker.insertAdjacentElement("beforebegin", button_div);
 
 
-    // Set up radio button bindings
-    document.querySelectorAll("input[value=seats_contested], input[value=by_election]").forEach((el) => {
-        el.addEventListener("click", (el) => {
-            var seats = el.currentTarget.closest("fieldset").querySelector("input[name$='-seats_contested']");
-            if (seats.value < 1) {
-                seats.value = 1;
-            }
-        });
-    });
-    document.querySelectorAll("input[value=no_seats]").forEach((el) => {
-        el.addEventListener("click", (el) => {
-            var seats = el.currentTarget.closest("fieldset").querySelector("input[name$='-seats_contested']");
-                seats.value = "";
-        });
-    });
-
 }
+
+// Set up radio button bindings
+document.querySelectorAll("input[value=seats_contested], input[value=by_election]").forEach((el) => {
+    el.addEventListener("click", (el) => {
+        var seats = el.currentTarget.closest("fieldset").querySelector("input[name$='-seats_contested']");
+        if (seats.value < 1) {
+            seats.value = 1;
+        }
+    });
+});
+document.querySelectorAll("input[value=no_seats]").forEach((el) => {
+    el.addEventListener("click", (el) => {
+        var seats = el.currentTarget.closest("fieldset").querySelector("input[name$='-seats_contested']");
+        seats.value = "";
+    });
+});
