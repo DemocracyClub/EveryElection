@@ -137,8 +137,9 @@ def test_full_id_creation_not_logged_in(
         page.get_by_text("Test 2 Council").click()
         page.get_by_role("button", name="Submit").click()
 
-        # Mark all seats as contested
-        page.get_by_role("button", name="All Up").click()
+        # Mark a by-election
+        page.get_by_text("By-election").nth(0).click()
+        page.get_by_text("By-election").nth(1).click()
         page.get_by_role("button", name="Submit").click()
 
         # Enter a source for the elections
@@ -156,12 +157,14 @@ def test_full_id_creation_not_logged_in(
     # We should have 4 elections
     assert Election.private_objects.count() == 4
     assert list(
-        Election.private_objects.values_list("election_id", flat=True)
+        Election.private_objects.order_by("election_id").values_list(
+            "election_id", flat=True
+        )
     ) == [
         "local.2023-01-05",
         "local.test2.2023-01-05",
-        "local.test2.test-div.2023-01-05",
-        "local.test2.test-div-2.2023-01-05",
+        "local.test2.test-div-2.by.2023-01-05",
+        "local.test2.test-div.by.2023-01-05",
     ]
 
     # even though we created election objects
@@ -248,7 +251,10 @@ def test_full_id_creation_logged_in(
     assert model_send_event_mock.call_count == 0
 
 
-def test_subtype_creation(page, live_server, id_creator_data, settings):
+def test_subtype_creation(
+    playwright_with_admin, live_server, id_creator_data, settings
+):
+    page = playwright_with_admin
     naw_org = Organisation.objects.create(
         official_identifier="naw",
         organisation_type="naw",
@@ -294,7 +300,7 @@ def test_subtype_creation(page, live_server, id_creator_data, settings):
 
     # Open the home page, click to add a new election
     page.goto(live_server.url)
-    page.get_by_role("link", name="Suggest a new election").click()
+    page.get_by_role("link", name="Add a new election").click()
 
     # Enter a date
     page.locator("#id_date-date_0").fill("5")
@@ -333,18 +339,12 @@ def test_subtype_creation(page, live_server, id_creator_data, settings):
     page.get_by_role("button", name="All up").click()
     page.get_by_role("button", name="Submit").click()
 
-    # Enter a source for the elections
-    page.get_by_text("Source").nth(2).fill("Found on https://example.com/foo")
-    page.get_by_text("Source").nth(3).fill("Found on https://example.com/bar")
-    page.get_by_text("Source").nth(4).fill("Found on https://example.com/baz")
-    page.get_by_role("button", name="Submit").click()
-
     # Assert the IDs are on the review screen
     page.get_by_text("naw.2023-01-05").click()
     page.get_by_text("naw.r.2023-01-05").click()
 
     # Create IDs
-    page.get_by_role("button", name="Suggest IDs").click()
+    page.get_by_role("button", name="Create IDs").click()
 
     # We should have 6 elections
     assert Election.private_objects.count() == 6

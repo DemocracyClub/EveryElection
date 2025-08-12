@@ -155,6 +155,12 @@ class ElectionOrganisationDivisionForm(forms.Form):
                 required=False,
             )
 
+        if self.request.user.is_anonymous:
+            self.fields["ballot_type"].choices = (
+                ("no_seats", "No Election"),
+                ("by_election", "By-election"),
+            )
+
     division_name = forms.CharField()
     group = forms.CharField()
     seats_contested = forms.CharField()
