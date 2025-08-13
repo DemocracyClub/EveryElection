@@ -155,6 +155,10 @@ jobs:
     - restore_cache:
         key: v5-machine-dependencies-{{ checksum "uv.lock" }}
     - run:
+        name: Install UV
+        command: |
+          deploy/hooks/afterinstall/install_uv.sh
+    - run:
         name: CDK deploy
         command: |
           uv run npx cdk deploy --all --require-approval never --concurrency 3
@@ -188,6 +192,10 @@ jobs:
         node-version: '18'
     - restore_cache:
         key: v5-dependencies-{{ checksum "uv.lock" }}
+    - run:
+        name: Install UV
+        command: |
+          deploy/hooks/afterinstall/install_uv.sh
     - run:
         name: "Code Deploy: Create deployment group"
         command: |
