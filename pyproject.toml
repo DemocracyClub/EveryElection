@@ -76,6 +76,8 @@ prerelease = "allow"
 
 package = false
 
+required-version = "==0.8.*"
+
 [tool.uv.sources]
 dc-django-utils = { git = "https://github.com/DemocracyClub/dc_django_utils.git", tag = "8.0.2" }
 dc-design-system = { git = "https://github.com/DemocracyClub/design-system.git", tag = "0.7.0" }
