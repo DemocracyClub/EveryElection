@@ -120,7 +120,7 @@ def test_full_id_creation_not_logged_in(
     ):
         # Open the home page, click to add a new election
         page.goto(live_server.url)
-        page.get_by_role("link", name="Suggest a new election").click()
+        page.get_by_role("link", name="Suggest a new by-election").click()
 
         # Enter a date
         page.locator("#id_date-date_0").fill("5")
@@ -138,8 +138,9 @@ def test_full_id_creation_not_logged_in(
         page.get_by_role("button", name="Submit").click()
 
         # Mark a by-election
-        page.get_by_text("By-election").nth(0).click()
-        page.get_by_text("By-election").nth(1).click()
+        page.locator("form").locator("text=By-election").nth(0).click()
+        page.locator("form").locator("text=By-election").nth(1).click()
+
         page.get_by_role("button", name="Submit").click()
 
         # Enter a source for the elections
@@ -424,7 +425,7 @@ def test_multiple_local_elections(
 
 def test_source_validation_error(page, live_server, id_creator_data, settings):
     page.goto(live_server.url)
-    page.get_by_role("link", name="Suggest a new election").click()
+    page.get_by_role("link", name="Suggest a new by-election").click()
 
     # Enter a date
     page.locator("#id_date-date_0").fill("5")
@@ -482,7 +483,7 @@ def test_gla_a_doesnt_show_division_picker(
 
     # Open the home page, click to add a new election
     page.goto(live_server.url)
-    page.get_by_role("link", name="Suggest a new election").click()
+    page.get_by_role("link", name="Suggest a new by-election").click()
 
     # Enter a date
     page.locator("#id_date-date_0").fill("5")
