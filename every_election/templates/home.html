@@ -24,15 +24,18 @@
             </ul>
 
 
-            <h3>Heard about a new election?</h3>
-            <a href="{% url "id_creator" %}" class="ds-cta">
-                {% if request.user.is_authenticated %}
+            {% if request.user.is_authenticated %}
+                <a href="{% url "id_creator" %}" class="ds-cta">
                     Add a new election
-                {% else %}
-                    Suggest a new election
-                {% endif %}
-            </a>
-
+                </a>
+            {% else %}
+                <h3>Heard about a by-election</h3>
+                <p>If you know about a by-election, please tell us about it. We manually create scheduled elections,
+                    normally around 6 months before polls open.</p>
+                <a href="{% url "id_creator" %}" class="ds-cta">
+                    Suggest a new by-election
+                </a>
+            {% endif %}
         </div>
     </section>
 {% endblock content %}

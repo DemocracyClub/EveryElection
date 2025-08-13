@@ -20,7 +20,7 @@
             {% endif %}
         {% endfor %}
 
-        {% ifchanged form.group %}
+        {% ifchanged form.group.initial %}
             <h2>{{ form.group.initial }}</h2>
         {% endifchanged %}
         <fieldset>

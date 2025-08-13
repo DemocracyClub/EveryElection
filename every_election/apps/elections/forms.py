@@ -111,6 +111,7 @@ class ElectionOrganisationDivisionForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.division: OrganisationDivision = kwargs.pop("division", None)
         self.group: str = kwargs.pop("group", None)
+        self.request: HttpRequest = kwargs.pop("request")
         super().__init__(*args, **kwargs)
         if not self.division:
             return
@@ -154,6 +155,12 @@ class ElectionOrganisationDivisionForm(forms.Form):
                 required=False,
             )
 
+        if self.request.user.is_anonymous:
+            self.fields["ballot_type"].choices = (
+                ("no_seats", "No Election"),
+                ("by_election", "By-election"),
+            )
+
     division_name = forms.CharField()
     group = forms.CharField()
     seats_contested = forms.CharField()
@@ -179,6 +186,7 @@ class DivsFormset(forms.BaseFormSet):
     def __init__(self, *args, **kwargs):
         self.organisations = kwargs.pop("organisations", [])
         self.election_subtypes = kwargs.pop("election_subtype", None)
+        self.request = kwargs.pop("request")
         if not self.election_subtypes:
             self.election_subtypes = []
         self.subtype_list = [
@@ -232,7 +240,11 @@ class DivsFormset(forms.BaseFormSet):
                         }
                     )
                     self._form_kwargs.append(
-                        {"division": div, "group": div.group}
+                        {
+                            "division": div,
+                            "group": div.group,
+                            "request": self.request,
+                        }
                     )
         super().__init__(*args, **kwargs)
 
@@ -240,6 +252,18 @@ class DivsFormset(forms.BaseFormSet):
         if not self._form_kwargs:
             return {}
         return self._form_kwargs[index]
+
+    @property
+    def cleaned_data(self):
+        """
+        Filter out any divisions that aren't marked as contested
+        """
+
+        return [
+            division
+            for division in super().cleaned_data
+            if division["ballot_type"] not in ["", "no_seats"]
+        ]
 
 
 DivFormSet = forms.formset_factory(
