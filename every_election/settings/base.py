@@ -298,6 +298,7 @@ GCS_API_KEY = os.environ.get("GCS_API_KEY", "")
 
 NOTICE_OF_ELECTION_BUCKET = "notice-of-election"
 LGBCE_BUCKET = os.environ.get("BOUNDARY_REVIEW_BUCKET", None)
+PMTILES_BUCKET = os.environ.get("PMTILES_BUCKET", None)
 
 # django-storages expects AWS_STORAGE_BUCKET_NAME
 AWS_STORAGE_BUCKET_NAME = NOTICE_OF_ELECTION_BUCKET
