@@ -39,6 +39,14 @@ class OrganisationDivisionSet(
         )
 
     @property
+    def pmtiles_file_name(self):
+        return f"{self.organisation.slug}-{self.id}.pmtiles"
+
+    @property
+    def pmtiles_s3_key(self):
+        return f"pmtiles-store/{self.pmtiles_file_name}"
+
+    @property
     def has_related_geographies(self):
         found_geography = False
         for d in self.divisions.all():
