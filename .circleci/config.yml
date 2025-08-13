@@ -161,7 +161,7 @@ jobs:
     - run:
         name: CDK deploy
         command: |
-          uv run npx cdk deploy --all --require-approval never --concurrency 3
+          uv run --group cdk npx cdk deploy --all --require-approval never --concurrency 3
     - save_cache:
         paths:
         - .cdk.out
@@ -199,7 +199,7 @@ jobs:
     - run:
         name: "Code Deploy: Create deployment group"
         command: |
-          uv run python deploy/create_deployment_group.py
+          uv run --group cdk python deploy/create_deployment_group.py
     - run:
         name: "Code Deploy: Create deployment"
         command: |
