@@ -157,8 +157,7 @@ jobs:
     - run:
         name: CDK deploy
         command: |
-          . .venv/bin/activate
-          npx cdk deploy --all --require-approval never --concurrency 3
+          uv run npx cdk deploy --all --require-approval never --concurrency 3
     - save_cache:
         paths:
         - .cdk.out
@@ -192,13 +191,11 @@ jobs:
     - run:
         name: "Code Deploy: Create deployment group"
         command: |
-          . .venv/bin/activate
-          python deploy/create_deployment_group.py
+          uv run python deploy/create_deployment_group.py
     - run:
         name: "Code Deploy: Create deployment"
         command: |
-          . .venv/bin/activate
-          COMMIT_SHA=$CIRCLE_SHA1 python deploy/create_deployment.py
+          COMMIT_SHA=$CIRCLE_SHA1 uv run python deploy/create_deployment.py
     - slack/notify:
           event: fail
           template: basic_fail_1
