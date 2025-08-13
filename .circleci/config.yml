@@ -24,7 +24,7 @@ jobs:
           node-version: '18'
 
       - restore_cache:
-          key: v4-dependencies-{{ checksum "uv.lock" }}
+          key: v5-dependencies-{{ checksum "uv.lock" }}
 
       - run:
           name: Install node node_modules
@@ -51,10 +51,9 @@ jobs:
           command: uv cache prune --ci
       - save_cache:
           paths:
-            - ./.venv
             - ./node_modules
             - $HOME/.cache/uv
-          key: v4-dependencies-{{ checksum "uv.lock" }}
+          key: v5-dependencies-{{ checksum "uv.lock" }}
 
       - run:
           name: Pre-test checks
@@ -102,7 +101,7 @@ jobs:
     steps:
     - checkout
     - restore_cache:
-        key: v4-machine-dependencies-{{ checksum "uv.lock" }}
+        key: v5-machine-dependencies-{{ checksum "uv.lock" }}
     - run:
         name: Install CDK Python dependencies
         command: |
@@ -116,10 +115,9 @@ jobs:
         command: uv cache prune --ci
     - save_cache:
         paths:
-          - ./.venv
           - ./node_modules
           - $HOME/.cache/uv
-        key: v4-machine-dependencies-{{ checksum "uv.lock" }}
+        key: v5-machine-dependencies-{{ checksum "uv.lock" }}
 
     - run:
         name: CDK version
@@ -155,7 +153,7 @@ jobs:
     steps:
     - checkout
     - restore_cache:
-        key: v4-machine-dependencies-{{ checksum "uv.lock" }}
+        key: v5-machine-dependencies-{{ checksum "uv.lock" }}
     - run:
         name: CDK deploy
         command: |
@@ -164,7 +162,7 @@ jobs:
     - save_cache:
         paths:
         - .cdk.out
-        key: v4-machine-dependencies-{{ checksum "uv.lock" }}
+        key: v5-machine-dependencies-{{ checksum "uv.lock" }}
     - slack/notify:
           event: fail
           template: basic_fail_1
@@ -190,7 +188,7 @@ jobs:
     - node/install:
         node-version: '18'
     - restore_cache:
-        key: v4-dependencies-{{ checksum "uv.lock" }}
+        key: v5-dependencies-{{ checksum "uv.lock" }}
     - run:
         name: "Code Deploy: Create deployment group"
         command: |
