@@ -206,6 +206,12 @@ PIPELINE["STYLESHEETS"].update(
             ],
             "output_filename": "css/map.css",
         },
+        "maplibre-gl": {
+            "source_filenames": [
+                "maplibre-gl/dist/maplibre-gl.css",
+            ],
+            "output_filename": "css/maplibre.css",
+        },
     }
 )
 
@@ -216,7 +222,19 @@ PIPELINE["JAVASCRIPT"].update(
                 "leaflet/dist/leaflet.js",
             ],
             "output_filename": "js/map.js",
-        }
+        },
+        "maplibre-gl": {
+            "source_filenames": [
+                "maplibre-gl/dist/maplibre-gl.js",
+            ],
+            "output_filename": "js/maplibre.js",
+        },
+        "pmtiles": {
+            "source_filenames": [
+                "pmtiles/dist/pmtiles.js",
+            ],
+            "output_filename": "js/pmtiles.js",
+        },
     }
 )
 
