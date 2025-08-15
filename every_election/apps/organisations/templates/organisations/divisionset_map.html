@@ -1,0 +1,118 @@
+{% load pipeline %}
+{% load static %}
+
+{% block extra_site_css %}
+    {% stylesheet 'maplibre-gl' %}
+{% endblock extra_site_css %}
+
+{% block extra_site_javascript %}
+    {% javascript 'maplibre-gl' %}
+    {% javascript 'pmtiles' %}
+{% endblock extra_site_javascript %}
+
+<div >
+    <h3>Map</h3>
+    <div id="maplibre-gl" class="ds-map-leaflet"></div>
+</div>
+
+
+{% block in_page_javascript %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let protocol = new pmtiles.Protocol();
+            maplibregl.addProtocol('pmtiles', protocol.tile);
+            const PMTILES_URL = "/organisations/boundaries/pmtiles/{{ divisionset.id }}";
+            const p = new pmtiles.PMTiles(PMTILES_URL);
+            protocol.add(p);
+
+            var style = {
+                "version": 8,
+                "sources": {
+                    "os": {
+                        "type": "raster",
+                        "tiles": [
+                            "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        ],
+                        "tileSize": 256,
+                        "attribution": "© OpenStreetMap contributors"
+                    },
+                    "divset": {
+                        "type": "vector",
+                        "url": "pmtiles://" + p.source.url,
+                    }
+                },
+                layers: [
+                    {
+                        "id": "os-baselayer",
+                        "type": "raster",
+                        "source": "os",
+                        "minzoom": 0,
+                        "maxzoom": 19
+                    },
+                    {
+                        "id": "divset-fill",
+                        "type": "fill",
+                        "source": "divset",
+                        "source-layer": "{{ divisionset.id }}",
+                        "paint": {
+                            "fill-color": "#007CAD",
+                            "fill-opacity": 0.5
+                        }
+                    },
+                    {
+                        "id": "divset-line",
+                        "type": "line",
+                        "source": "divset",
+                        "source-layer": "{{ divisionset.id }}",
+                        "paint": {
+                            "line-color": "#9e155eff",
+                            "line-width": 2
+                        }
+                    }
+                ]
+            }
+
+
+            p.getMetadata().then(data => {
+                const map = new maplibregl.Map({
+                    container: 'maplibre-gl',
+                    zoom: data.vector_layers[0].maxzoom,
+                    style: style,
+                });
+
+                map.on('load', function () {
+                // set map bounds
+                    const boundsArray = data.antimeridian_adjusted_bounds.split(",").map(coord => parseFloat(coord));
+                    map.fitBounds([
+                        [boundsArray[0], boundsArray[1]],
+                        [boundsArray[2], boundsArray[3]]
+                    ], {linear: false, duration: 0, padding: 50})
+                });
+
+
+                map.on('click', 'divset-fill', (e) => {
+                    const coordinates = e.lngLat;
+                    const feat_name = e.features[0].properties.name;
+
+                    new maplibregl.Popup()
+                        .setLngLat(coordinates)
+                        .setHTML(feat_name)
+                        .addTo(map);
+                });
+
+                // Change the cursor to a pointer when the mouse is over the places layer.
+                map.on('mouseenter', 'divset-fill', () => {
+                    map.getCanvas().style.cursor = 'pointer';
+                });
+
+                // Reset the cursor to default when it leaves.
+                map.on('mouseleave', 'divset-fill', () => {
+                    map.getCanvas().style.cursor = '';
+                });
+
+                //navigation controls
+                map.addControl(new maplibregl.NavigationControl(), 'top-right');
+            });
+        });
+    </script>
+{% endblock in_page_javascript %}
