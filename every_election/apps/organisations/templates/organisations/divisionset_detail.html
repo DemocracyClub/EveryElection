@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block page_title %}Organisation Detail{% endblock page_title %}
+
+{% block content %}
+    <div class="ds-card">
+        <div class="ds-card-body">
+            <h1>{{ divisionset.short_title }}
+                {% if request.user.is_staff %}
+                    <a href="{% url "admin:organisations_organisationdivisionset_change" object_id=divisionset.pk %}">
+                        ({{divisionset.pk}})
+                    </a>
+                {%  endif %}
+            </h1>
+
+            <div>
+                <p>{{ divisionset.notes }}</p>
+            </div>
+
+            <dl class="ds-descriptions">
+                <div>
+                    <dt>Activity</dt>
+                    <dd>Active from {{ divisionset.active_period_text }}.</dd>
+                </div>
+                <div>
+                    <dt>Organisation</dt>
+                    {% with divisionset.organisation as org %}
+                    <dd><a href="{% url 'organisation_view' org.organisation_type org.official_identifier org.start_date %}">{{ org.name }}</a></dd>
+                    {% endwith %}
+                </div>
+                {% if divisionset.legislation_url %}
+                    <div>
+                        <dt>Legislation</dt>
+                        <dd>These sub-divisions were enacted in <a href="{{ divisionset.legislation_url }}">this legislation</a>.</dd>
+                    </div>
+                {% endif %}
+                {% if divisionset.consultation_url %}
+                    <div>
+                        <dt>Consultation</dt>
+                        <dd><a href="{{ divisionset.consultation_url }}"> Read the consultation that lead to these changes</a>.</dd>
+                    </div>
+                {% endif %}
+            </dl>
+            <h2>Sub-Divisions</h2>
+            <table class="ds-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Seats</th>
+                        <th>Type</th>
+                        <th>Geography Code</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for division_type, divisions in divisionset.divisions_by_type.items %}
+                        {% for division in divisions %}
+                            <tr>
+                                <td>{{ division }}</td>
+                                <td>{{ division.seats_total|default_if_none:"Unknown" }}</td>
+                                <td>{{ division.division_subtype }}</td>
+                                <td>
+                                    {% if division.format_geography_link %}
+                                        <a href="{{ division.format_geography_link }}">
+                                            {{ division.official_identifier }}
+                                        </a>
+                                    {% else %}
+                                        <strong>Missing</strong>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock content %}

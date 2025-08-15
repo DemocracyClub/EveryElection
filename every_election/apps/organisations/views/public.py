@@ -5,7 +5,11 @@ from django.db.models import Prefetch, Q
 from django.http import Http404
 from django.views.generic import DetailView, ListView, TemplateView
 from elections.models import Election
-from organisations.models import Organisation, OrganisationBoundaryReview
+from organisations.models import (
+    Organisation,
+    OrganisationBoundaryReview,
+    OrganisationDivisionSet,
+)
 
 
 class SupportedOrganisationsView(ListView):
@@ -100,3 +104,12 @@ class SingleBoundaryReviewView(DetailView):
     context_object_name = "boundary_review"
     slug_field = "id"
     slug_url_kwarg = "boundary_review_id"
+
+
+class DivisionsetDetailView(DetailView):
+    template_name = "organisations/divisionset_detail.html"
+
+    model = OrganisationDivisionSet
+    context_object_name = "divisionset"
+    slug_field = "id"
+    slug_url_kwarg = "divisionset_id"
