@@ -5,6 +5,7 @@ from .views import (
     DivisionsetDetailView,
     OrganisationDetailView,
     OrganisationsFilterView,
+    PMtilesView,
     SingleBoundaryReviewView,
     SupportedOrganisationsView,
 )
@@ -48,5 +49,11 @@ urlpatterns = [
         r"^(?P<organisation_type>[-\w]+)/$",
         OrganisationsFilterView.as_view(),
         name="organisations_filter_by_type",
+    ),
+    # serves a single divisionset pmtiles file
+    re_path(
+        r"^boundaries/pmtiles/(?P<divisionset_id>.+)/$",
+        PMtilesView.as_view(),
+        name="pmtiles_view",
     ),
 ]

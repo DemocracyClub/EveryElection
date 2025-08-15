@@ -1,9 +1,10 @@
 from datetime import datetime
 
+from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Prefetch, Q
-from django.http import Http404
-from django.views.generic import DetailView, ListView, TemplateView
+from django.http import FileResponse, Http404, HttpResponseRedirect
+from django.views.generic import DetailView, ListView, TemplateView, View
 from elections.models import Election
 from organisations.models import (
     Organisation,
@@ -113,3 +114,25 @@ class DivisionsetDetailView(DetailView):
     context_object_name = "divisionset"
     slug_field = "id"
     slug_url_kwarg = "divisionset_id"
+
+
+class PMtilesView(View):
+    """
+    View for serving DivisionSet PMTiles files.
+    """
+
+    def get(self, request, divisionset_id):
+        divset = OrganisationDivisionSet.objects.get(id=divisionset_id)
+
+        if settings.PMTILES_BUCKET:
+            return HttpResponseRedirect(
+                f"https://s3.eu-west-2.amazonaws.com/{settings.PMTILES_BUCKET}/{divset.pmtiles_s3_key}"
+            )
+        pmtiles_file = (
+            f"{settings.STATIC_ROOT}/pmtiles-store/{divset.pmtiles_file_name}"
+        )
+
+        try:
+            return FileResponse(open(pmtiles_file, "rb"))  # noqa SIM115
+        except FileNotFoundError:
+            raise Http404("PMTiles file not found")
