@@ -21,11 +21,11 @@ class DetailParserTest(TestCase):
         spider = LgbceSpider()
         fixture = mock_response(
             "fixtures/detail/no_eco.html",
-            "https://www.lgbce.org.uk/all-reviews/calderdale",
+            "https://www.lgbce.org.uk/all-reviews/bassetlaw",
         )
         result = list(spider.parse(fixture))
         self.assertEqual(1, len(result))
-        self.assertEqual("calderdale", result[0]["slug"])
+        self.assertEqual("bassetlaw", result[0]["slug"])
         self.assertEqual("Consultation on proposals", result[0]["latest_event"])
         self.assertIsNone(result[0]["legislation_title"])
         self.assertIsNone(result[0]["legislation_url"])
