@@ -9,5 +9,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for divset in OrganisationDivisionSet.objects.all():
             self.stdout.write(f"Processing DivisionSet: {divset.id}")
-            call_command("create_pmtile_for_divset", divset.id)
+            call_command("create_pmtiles_for_divset", divset.id)
         self.stdout.write(self.style.SUCCESS("All DivisionSets processed."))

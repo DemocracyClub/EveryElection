@@ -4,7 +4,7 @@ from django.db import connection
 from organisations.models import DivisionGeography
 
 
-class PMtileCreator:
+class PMtilesCreator:
     def __init__(self, divset):
         self.divset = divset
 
@@ -19,7 +19,7 @@ class PMtileCreator:
             return pmtiles_fp
         except subprocess.CalledProcessError as e:
             # TODO: handle this error better
-            print(f"Error creating pmtile: {e}")
+            print(f"Error creating pmtiles file: {e}")
 
     def extract_geojson(self, dest_dir):
         geojson_fp = f"{dest_dir}/{self.divset.id}.geojson"
