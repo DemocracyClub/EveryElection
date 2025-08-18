@@ -7,20 +7,21 @@
         <div class="ds-card-body">
 
             {% include "organisations/organisation_summary.html" %}
-
-            <h2>Sub-divisions</h2>
-            <ul>
-                {% for divisionset in object.divisionset.all %}
-                <li>
-                    <a href="{% url 'divset_detail_view' divisionset.id %}">{{ divisionset.short_title }}</a>
-                    {% if request.user.is_staff %}
-                    <a href="{% url "admin:organisations_organisationdivisionset_change" object_id=divisionset.pk %}">
-                        <strong> ({{divisionset.pk}}) </strong>
-                    </a>
-                </li>
-                {%  endif %}
-                <p>Active from {{ divisionset.active_period_text }}.</p>
-                {% endfor %}
+            {% if object.divisionset.exists %}
+                <h2>Sub-divisions</h2>
+                <ul>
+                    {% for divisionset in object.divisionset.all %}
+                    <li>
+                        <a href="{% url 'divset_detail_view' divisionset.id %}">{{ divisionset.short_title }}</a>
+                        {% if request.user.is_staff %}
+                        <a href="{% url "admin:organisations_organisationdivisionset_change" object_id=divisionset.pk %}">
+                            <strong> ({{divisionset.pk}}) </strong>
+                        </a>
+                    </li>
+                    {%  endif %}
+                    <p>Active from {{ divisionset.active_period_text }}.</p>
+                    {% endfor %}
+            {% endif %}
             </ul>
             <h2>Elections</h2>
             <ul>
