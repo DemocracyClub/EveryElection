@@ -24,7 +24,7 @@
                 <div>
                     <dt>Organisation</dt>
                     {% with divisionset.organisation as org %}
-                    <dd><a href="{% url 'organisation_view' org.organisation_type org.official_identifier org.start_date %}">{{ org.name }}</a></dd>
+                        <dd><a href="{% url 'organisation_view' org.organisation_type org.official_identifier org.start_date %}">{{ org.name }}</a></dd>
                     {% endwith %}
                 </div>
                 {% if divisionset.legislation_url %}
