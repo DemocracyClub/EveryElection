@@ -41,6 +41,15 @@ jobs:
             . .venv/bin/activate
             uv sync --group cdk --group production
       - run:
+          name: Install tippecanoe
+          command: |
+            git clone https://github.com/felt/tippecanoe.git
+            cd tippecanoe
+            sudo make
+            sudo make install
+            cd ..
+            rm -rf tippecanoe
+      - run:
           name: Install Playwright
           command: |
             . .venv/bin/activate
