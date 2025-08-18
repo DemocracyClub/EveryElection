@@ -6,20 +6,18 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from organisations.boundaries.lgbce_review_helper import check_s3_obj_exists
 from organisations.models import OrganisationDivisionSet
-from organisations.pmtile_creator import PMtileCreator
+from organisations.pmtiles_creator import PMtilesCreator
 
 
 # TODO: implement optional overwrite arg?
 class Command(BaseCommand):
-    help = (
-        "Create a pmtile for a given divisionset using ogr2ogr and tippecanoe"
-    )
+    help = "Create a pmtiles file for a given divisionset using ogr2ogr and tippecanoe"
 
     def add_arguments(self, parser):
         parser.add_argument(
             "divisionset_id",
             type=int,
-            help="The ID of the divisionset to generate the pmtile from",
+            help="The ID of the divisionset to generate the pmtiles file from",
         )
 
     def handle(self, *args, **options):
@@ -57,7 +55,7 @@ class Command(BaseCommand):
             ):
                 self.stdout.write(
                     self.style.WARNING(
-                        f"PMTile {divset.pmtiles_s3_key} already exists in S3. Skipping."
+                        f"{divset.pmtiles_s3_key} already exists in S3. Skipping."
                     )
                 )
                 return
@@ -65,12 +63,12 @@ class Command(BaseCommand):
             if os.path.exists(f"{static_path}/{divset.pmtiles_file_name}"):
                 self.stdout.write(
                     self.style.WARNING(
-                        f"PMTile {divset.pmtiles_file_name} already exists. Skipping."
+                        f"{divset.pmtiles_file_name} already exists. Skipping."
                     )
                 )
                 return
 
-        pmtile_creator = PMtileCreator(divset)
+        pmtile_creator = PMtilesCreator(divset)
         with tempfile.TemporaryDirectory() as temp_dir:
             pmtile_fp = pmtile_creator.create_pmtile(temp_dir)
 
@@ -83,7 +81,7 @@ class Command(BaseCommand):
                     self.style.SUCCESS(f"PMTile uploaded to S3 at {s3_key}.")
                 )
             else:
-                # Move the PMTile to the static directory
+                # Move the pmtiles file to the static directory
                 os.rename(
                     pmtile_fp, f"{static_path}/{divset.pmtiles_file_name}"
                 )

@@ -8,7 +8,7 @@ from factories import (
     OrganisationDivisionFactory,
     OrganisationDivisionSetFactory,
 )
-from organisations.pmtile_creator import PMtileCreator
+from organisations.pmtiles_creator import PMtilesCreator
 
 
 class TestPMtilesCreator(TransactionTestCase):
@@ -17,9 +17,9 @@ class TestPMtilesCreator(TransactionTestCase):
         for _ in range(5):  # Create five divisions for the divisionset
             div = OrganisationDivisionFactory(divisionset=self.divisionset)
             DivisionGeographyFactory(division=div)
-        self.pmtile_creator = PMtileCreator(self.divisionset)
+        self.pmtile_creator = PMtilesCreator(self.divisionset)
 
-    def test_create_pmtile(self):
+    def test_create_pmtiles_file(self):
         with TemporaryDirectory() as temp_dir:
             pm_tile_fp = self.pmtile_creator.create_pmtile(temp_dir)
             self.assertTrue(os.path.exists(pm_tile_fp))

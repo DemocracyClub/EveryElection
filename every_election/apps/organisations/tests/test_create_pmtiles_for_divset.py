@@ -17,7 +17,7 @@ from moto import mock_aws
 PMTILES_BUCKET = "test-pmtiles-store"
 
 
-class TestCreatePMtileForDivSet(TransactionTestCase):
+class TestCreatePMtilesForDivSet(TransactionTestCase):
     def setUp(self):
         self.divisionset = OrganisationDivisionSetFactory()
         for _ in range(5):
@@ -41,11 +41,11 @@ class TestCreatePMtileForDivSet(TransactionTestCase):
         # Ensure the PMTile file does not exist before running the command
         self.assertFalse(os.path.exists(pmtiles_fp))
         # Call the management command
-        call_command("create_pmtile_for_divset", divset_id)
-        # Check if the PMTile file was created
+        call_command("create_pmtiles_for_divset", divset_id)
+        # Check if the pmtiles file was created
         self.assertTrue(os.path.exists(pmtiles_fp))
 
-    def test_pmtile_already_exists_locally(self):
+    def test_pmtiles_already_exists_locally(self):
         divset_id = self.divisionset.id
         static_path = f"{settings.STATIC_ROOT}/pmtiles-store"
         pmtiles_fp = f"{static_path}/{self.divisionset.pmtiles_file_name}"
@@ -55,7 +55,7 @@ class TestCreatePMtileForDivSet(TransactionTestCase):
             f.write("dummy data")
 
         stdout = StringIO()
-        call_command("create_pmtile_for_divset", divset_id, stdout=stdout)
+        call_command("create_pmtiles_for_divset", divset_id, stdout=stdout)
         self.assertIn("already exists", stdout.getvalue().lower())
 
     @mock_aws
@@ -66,8 +66,8 @@ class TestCreatePMtileForDivSet(TransactionTestCase):
 
         divset_id = self.divisionset.id
         # Call the management command
-        call_command("create_pmtile_for_divset", divset_id)
-        # Check if the PMTile file was created
+        call_command("create_pmtiles_for_divset", divset_id)
+        # Check if the pmtiles file was created
         pmtiles_file = conn.Object(
             PMTILES_BUCKET, self.divisionset.pmtiles_s3_key
         )
@@ -77,7 +77,7 @@ class TestCreatePMtileForDivSet(TransactionTestCase):
 
     @mock_aws
     @override_settings(PMTILES_BUCKET=PMTILES_BUCKET)
-    def test_pmtile_already_exists_on_s3(self):
+    def test_pmtiles_already_exists_on_s3(self):
         divset_id = self.divisionset.id
         conn = boto3.resource("s3", region_name="us-east-1")
         conn.create_bucket(Bucket=PMTILES_BUCKET)
@@ -87,7 +87,7 @@ class TestCreatePMtileForDivSet(TransactionTestCase):
         pmtiles_file.put(Body="dummy data")
 
         stdout = StringIO()
-        call_command("create_pmtile_for_divset", divset_id, stdout=stdout)
+        call_command("create_pmtiles_for_divset", divset_id, stdout=stdout)
         self.assertIn("already exists", stdout.getvalue().lower())
 
     def test_divset_not_found(self):

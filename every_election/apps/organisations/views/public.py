@@ -118,7 +118,7 @@ class DivisionsetDetailView(DetailView):
 
 class PMtilesView(View):
     """
-    View for serving DivisionSet PMTiles files.
+    View for serving DivisionSet pmtiles files.
     """
 
     def get(self, request, divisionset_id):
@@ -135,4 +135,4 @@ class PMtilesView(View):
         try:
             return FileResponse(open(pmtiles_file, "rb"))  # noqa SIM115
         except FileNotFoundError:
-            raise Http404("PMTiles file not found")
+            raise Http404("pmtiles file not found")

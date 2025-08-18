@@ -4,7 +4,7 @@ from django.db import connection
 from organisations.models import DivisionGeography
 
 
-class PMtileCreator:
+class PMtilesCreator:
     def __init__(self, divset):
         self.divset = divset
 
