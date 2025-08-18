@@ -68,14 +68,9 @@ class LgbceSpider(scrapy.Spider):
         return None
 
     def get_latest_event(self, response):
-        latest_stage = response.css("div.stage-latest")
-        if latest_stage:
-            return (
-                latest_stage.css("div > div > a > h3")
-                .xpath("text()")[0]
-                .extract()
-                .strip()
-            )
+        review_card_titles = response.css("h3.vits-review-card__title")
+        if review_card_titles:
+            return review_card_titles[-1].xpath("text()")[0].extract().strip()
         return None
 
     def get_eco_title_and_link(self, response, latest_event):
