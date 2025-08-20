@@ -24,9 +24,9 @@ class TestPMtilesCreator(TransactionTestCase):
             pm_tile_fp = self.pmtile_creator.create_pmtile(temp_dir)
             self.assertTrue(os.path.exists(pm_tile_fp))
 
-    def test_extract_geojson(self):
+    def test_create_geojson(self):
         with TemporaryDirectory() as temp_dir:
-            geojson_fp = self.pmtile_creator.extract_geojson(temp_dir)
+            geojson_fp = self.pmtile_creator.create_geojson(temp_dir)
             self.assertTrue(os.path.exists(geojson_fp))
             with open(geojson_fp) as f:
                 geojson = json.load(f)

@@ -12,7 +12,7 @@ class PMtilesCreator:
         pmtiles_fp = f"{dest_dir}/{self.divset.pmtiles_file_name}"
 
         try:
-            geojson_fp = self.extract_geojson(dest_dir)
+            geojson_fp = self.create_geojson(dest_dir)
             tippecanoe_command = f"tippecanoe -o {pmtiles_fp} -zg --drop-rate=2 --drop-densest-as-needed {geojson_fp} -l {self.divset.id}"
             subprocess.run(tippecanoe_command, shell=True, check=True)
 
@@ -21,7 +21,7 @@ class PMtilesCreator:
             # TODO: handle this error better
             print(f"Error creating pmtiles file: {e}")
 
-    def extract_geojson(self, dest_dir):
+    def create_geojson(self, dest_dir):
         geojson_fp = f"{dest_dir}/{self.divset.id}.geojson"
         ogr_command = self.construct_ogr_command(geojson_fp)
         subprocess.run(ogr_command, shell=True, check=True)
