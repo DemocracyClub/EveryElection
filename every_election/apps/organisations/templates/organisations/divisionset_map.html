@@ -21,7 +21,7 @@
         document.addEventListener("DOMContentLoaded", function() {
             let protocol = new pmtiles.Protocol();
             maplibregl.addProtocol('pmtiles', protocol.tile);
-            const PMTILES_URL = "/organisations/boundaries/pmtiles/{{ divisionset.id }}";
+            const PMTILES_URL = "{{ pmtiles_source_link }}";
             const p = new pmtiles.PMTiles(PMTILES_URL);
             protocol.add(p);
 

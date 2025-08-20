@@ -3,7 +3,8 @@ from datetime import datetime
 from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Prefetch, Q
-from django.http import FileResponse, Http404, HttpResponseRedirect
+from django.http import FileResponse, Http404
+from django.urls import reverse
 from django.views.generic import DetailView, ListView, TemplateView, View
 from elections.models import Election
 from organisations.models import (
@@ -115,6 +116,18 @@ class DivisionsetDetailView(DetailView):
     slug_field = "id"
     slug_url_kwarg = "divisionset_id"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if settings.PUBLIC_DATA_BUCKET:
+            context["pmtiles_source_link"] = (
+                f"https://s3.eu-west-2.amazonaws.com/{settings.PUBLIC_DATA_BUCKET}/{self.object.pmtiles_s3_key}"
+            )
+        else:
+            context["pmtiles_source_link"] = reverse(
+                "pmtiles_view", args=[self.object.id]
+            )
+        return context
+
 
 class PMtilesView(View):
     """
@@ -124,10 +137,6 @@ class PMtilesView(View):
     def get(self, request, divisionset_id):
         divset = OrganisationDivisionSet.objects.get(id=divisionset_id)
 
-        if settings.PUBLIC_DATA_BUCKET:
-            return HttpResponseRedirect(
-                f"https://s3.eu-west-2.amazonaws.com/{settings.PUBLIC_DATA_BUCKET}/{divset.pmtiles_s3_key}"
-            )
         pmtiles_file = (
             f"{settings.STATIC_ROOT}/pmtiles-store/{divset.pmtiles_file_name}"
         )

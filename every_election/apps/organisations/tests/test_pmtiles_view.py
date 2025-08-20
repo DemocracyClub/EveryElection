@@ -26,12 +26,12 @@ class TestPMTilesView(TestCase):
         self.override_static_root.disable()
         shutil.rmtree(self.tmp_static_root)
 
-    def test_pmtiles_file_not_found_locally(self):
+    def test_pmtiles_file_not_found(self):
         test_url = reverse("pmtiles_view", args=[self.divisionset.id])
         resp = self.client.get(test_url)
         self.assertEqual(resp.status_code, 404)
 
-    def test_serve_pmtiles_file_locally(self):
+    def test_serve_pmtiles_file(self):
         static_path = f"{settings.STATIC_ROOT}/pmtiles-store"
         pmtiles_fp = f"{static_path}/{self.divisionset.pmtiles_file_name}"
         os.makedirs(static_path, exist_ok=True)
@@ -41,12 +41,3 @@ class TestPMTilesView(TestCase):
         test_url = reverse("pmtiles_view", args=[self.divisionset.id])
         resp = self.client.get(test_url)
         self.assertEqual(resp.status_code, 200)
-
-    @override_settings(PUBLIC_DATA_BUCKET=PUBLIC_DATA_BUCKET)
-    def test_redirect_to_s3(self):
-        test_url = reverse("pmtiles_view", args=[self.divisionset.id])
-        resp = self.client.get(test_url)
-        redirect_url = f"https://s3.eu-west-2.amazonaws.com/{PUBLIC_DATA_BUCKET}/{self.divisionset.pmtiles_s3_key}"
-        self.assertRedirects(
-            resp, redirect_url, status_code=302, fetch_redirect_response=False
-        )
