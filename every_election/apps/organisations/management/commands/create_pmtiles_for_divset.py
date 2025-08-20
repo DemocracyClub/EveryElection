@@ -9,7 +9,6 @@ from organisations.models import OrganisationDivisionSet
 from organisations.pmtiles_creator import PMtilesCreator
 
 
-# TODO: implement optional overwrite arg?
 class Command(BaseCommand):
     help = "Create a pmtiles file for a given divisionset using ogr2ogr and tippecanoe"
 
@@ -18,6 +17,11 @@ class Command(BaseCommand):
             "divisionset_id",
             type=int,
             help="The ID of the divisionset to generate the pmtiles file from",
+        )
+        parser.add_argument(
+            "--overwrite",
+            action="store_true",
+            help="Overwrite existing pmtiles file if it exists",
         )
 
     def handle(self, *args, **options):
@@ -47,26 +51,32 @@ class Command(BaseCommand):
             )
 
         # Check for existing file
+        file_exists = False
+
         if using_s3:
             if check_s3_obj_exists(
                 s3_client,
                 settings.PUBLIC_DATA_BUCKET,
                 divset.pmtiles_s3_key,
             ):
-                self.stdout.write(
-                    self.style.WARNING(
-                        f"{divset.pmtiles_s3_key} already exists in S3. Skipping."
+                if options["overwrite"]:
+                    s3_client.delete_object(
+                        Bucket=settings.PUBLIC_DATA_BUCKET,
+                        Key=divset.pmtiles_s3_key,
                     )
-                )
-                return
+                else:
+                    file_exists = True
         else:
-            if os.path.exists(f"{static_path}/{divset.pmtiles_file_name}"):
-                self.stdout.write(
-                    self.style.WARNING(
-                        f"{divset.pmtiles_file_name} already exists. Skipping."
-                    )
-                )
-                return
+            if os.path.isfile(f"{static_path}/{divset.pmtiles_file_name}"):
+                if options["overwrite"]:
+                    os.remove(f"{static_path}/{divset.pmtiles_file_name}")
+                else:
+                    file_exists = True
+
+        if file_exists:
+            warning = f"{divset.pmtiles_file_name} already exists{' on S3' if using_s3 else ' locally'}. Skipping (use --overwrite to force)."
+            self.stdout.write(self.style.WARNING(warning))
+            return
 
         pmtile_creator = PMtilesCreator(divset)
         with tempfile.TemporaryDirectory() as temp_dir:
