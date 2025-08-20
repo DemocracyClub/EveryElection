@@ -14,7 +14,7 @@ from factories import (
 )
 from moto import mock_aws
 
-PMTILES_BUCKET = "test-pmtiles-store"
+PUBLIC_DATA_BUCKET = "test-pmtiles-store"
 
 
 class TestCreatePMtilesForDivSet(TransactionTestCase):
@@ -59,30 +59,30 @@ class TestCreatePMtilesForDivSet(TransactionTestCase):
         self.assertIn("already exists", stdout.getvalue().lower())
 
     @mock_aws
-    @override_settings(PMTILES_BUCKET=PMTILES_BUCKET)
+    @override_settings(PUBLIC_DATA_BUCKET=PUBLIC_DATA_BUCKET)
     def test_create_pmtiles_for_divset_on_s3(self):
         conn = boto3.resource("s3", region_name="us-east-1")
-        conn.create_bucket(Bucket=PMTILES_BUCKET)
+        conn.create_bucket(Bucket=PUBLIC_DATA_BUCKET)
 
         divset_id = self.divisionset.id
         # Call the management command
         call_command("create_pmtiles_for_divset", divset_id)
         # Check if the pmtiles file was created
         pmtiles_file = conn.Object(
-            PMTILES_BUCKET, self.divisionset.pmtiles_s3_key
+            PUBLIC_DATA_BUCKET, self.divisionset.pmtiles_s3_key
         )
 
         pmtiles_file.load()  # Should raise an error if the file does not exist
-        self.assertEqual(pmtiles_file.bucket_name, PMTILES_BUCKET)
+        self.assertEqual(pmtiles_file.bucket_name, PUBLIC_DATA_BUCKET)
 
     @mock_aws
-    @override_settings(PMTILES_BUCKET=PMTILES_BUCKET)
+    @override_settings(PUBLIC_DATA_BUCKET=PUBLIC_DATA_BUCKET)
     def test_pmtiles_already_exists_on_s3(self):
         divset_id = self.divisionset.id
         conn = boto3.resource("s3", region_name="us-east-1")
-        conn.create_bucket(Bucket=PMTILES_BUCKET)
+        conn.create_bucket(Bucket=PUBLIC_DATA_BUCKET)
         pmtiles_file = conn.Object(
-            PMTILES_BUCKET, self.divisionset.pmtiles_s3_key
+            PUBLIC_DATA_BUCKET, self.divisionset.pmtiles_s3_key
         )
         pmtiles_file.put(Body="dummy data")
 

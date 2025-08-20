@@ -31,8 +31,8 @@ class Command(BaseCommand):
                 f"OrganisationDivisionSet with id '{divset_id}' does not exist."
             )
 
-        # Use S3 if PMTILES_BUCKET is set
-        if getattr(settings, "PMTILES_BUCKET", None):
+        # Use S3 if PUBLIC_DATA_BUCKET is set
+        if getattr(settings, "PUBLIC_DATA_BUCKET", None):
             s3_client = boto3.client("s3")
             using_s3 = True
         else:
@@ -50,7 +50,7 @@ class Command(BaseCommand):
         if using_s3:
             if check_s3_obj_exists(
                 s3_client,
-                settings.PMTILES_BUCKET,
+                settings.PUBLIC_DATA_BUCKET,
                 divset.pmtiles_s3_key,
             ):
                 self.stdout.write(
@@ -75,7 +75,7 @@ class Command(BaseCommand):
             if using_s3:
                 s3_key = divset.pmtiles_s3_key
                 s3_client.upload_file(
-                    pmtile_fp, settings.PMTILES_BUCKET, s3_key
+                    pmtile_fp, settings.PUBLIC_DATA_BUCKET, s3_key
                 )
                 self.stdout.write(
                     self.style.SUCCESS(f"PMTile uploaded to S3 at {s3_key}.")

@@ -9,7 +9,7 @@ from factories import (
     OrganisationDivisionSetFactory,
 )
 
-PMTILES_BUCKET = "test-pmtiles-store"
+PUBLIC_DATA_BUCKET = "test-pmtiles-store"
 
 
 class TestPMTilesView(TestCase):
@@ -42,11 +42,11 @@ class TestPMTilesView(TestCase):
         resp = self.client.get(test_url)
         self.assertEqual(resp.status_code, 200)
 
-    @override_settings(PMTILES_BUCKET=PMTILES_BUCKET)
+    @override_settings(PUBLIC_DATA_BUCKET=PUBLIC_DATA_BUCKET)
     def test_redirect_to_s3(self):
         test_url = reverse("pmtiles_view", args=[self.divisionset.id])
         resp = self.client.get(test_url)
-        redirect_url = f"https://s3.eu-west-2.amazonaws.com/{PMTILES_BUCKET}/{self.divisionset.pmtiles_s3_key}"
+        redirect_url = f"https://s3.eu-west-2.amazonaws.com/{PUBLIC_DATA_BUCKET}/{self.divisionset.pmtiles_s3_key}"
         self.assertRedirects(
             resp, redirect_url, status_code=302, fetch_redirect_response=False
         )
