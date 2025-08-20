@@ -5,7 +5,7 @@ from io import StringIO
 
 import boto3
 from django.conf import settings
-from django.core.management import call_command
+from django.core.management import CommandError, call_command
 from django.test import TransactionTestCase, override_settings
 from factories import (
     DivisionGeographyFactory,
@@ -91,15 +91,11 @@ class TestCreatePMtilesForDivSet(TransactionTestCase):
         self.assertIn("already exists", stdout.getvalue().lower())
 
     def test_divset_not_found(self):
-        stderr = StringIO()
-        # Use a non-existent id
-        call_command("create_pmtiles_for_divset", 1000, stderr=stderr)
-        self.assertIn("does not exist", stderr.getvalue().lower())
+        with self.assertRaises(CommandError):
+            # Use a non-existent id
+            call_command("create_pmtiles_for_divset", 1000)
 
     def test_divset_has_no_divisions(self):
         self.divisionset.divisions.all().delete()
-        stderr = StringIO()
-        call_command(
-            "create_pmtiles_for_divset", self.divisionset.id, stderr=stderr
-        )
-        self.assertIn("has no divisions", stderr.getvalue().lower())
+        with self.assertRaises(CommandError):
+            call_command("create_pmtiles_for_divset", self.divisionset.id)

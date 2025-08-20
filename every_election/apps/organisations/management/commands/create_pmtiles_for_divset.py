@@ -3,7 +3,7 @@ import tempfile
 
 import boto3
 from django.conf import settings
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from organisations.boundaries.lgbce_review_helper import check_s3_obj_exists
 from organisations.models import OrganisationDivisionSet
 from organisations.pmtiles_creator import PMtilesCreator
@@ -27,12 +27,9 @@ class Command(BaseCommand):
         try:
             divset = OrganisationDivisionSet.objects.get(id=divset_id)
         except OrganisationDivisionSet.DoesNotExist:
-            self.stderr.write(
-                self.style.ERROR(
-                    f"OrganisationDivisionSet with id '{divset_id}' does not exist."
-                )
+            raise CommandError(
+                f"OrganisationDivisionSet with id '{divset_id}' does not exist."
             )
-            return
 
         # Use S3 if PUBLIC_DATA_BUCKET is set
         if getattr(settings, "PUBLIC_DATA_BUCKET", None):
@@ -45,12 +42,10 @@ class Command(BaseCommand):
 
         # Check divset has divisions
         if divset.divisions.count() == 0:
-            self.stderr.write(
-                self.style.ERROR(
-                    f"OrganisationDivisionSet with id '{divset_id}' has no divisions."
-                )
+            raise CommandError(
+                f"OrganisationDivisionSet with id '{divset_id}' has no divisions."
             )
-            return
+
         # Check for existing file
         if using_s3:
             if check_s3_obj_exists(
