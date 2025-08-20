@@ -58,6 +58,25 @@ class TestCreatePMtilesForDivSet(TransactionTestCase):
         call_command("create_pmtiles_for_divset", divset_id, stdout=stdout)
         self.assertIn("already exists", stdout.getvalue().lower())
 
+    def test_overwrite_flag_locally(self):
+        divset_id = self.divisionset.id
+        static_path = f"{settings.STATIC_ROOT}/pmtiles-store"
+        pmtiles_fp = f"{static_path}/{self.divisionset.pmtiles_file_name}"
+
+        os.makedirs(static_path, exist_ok=True)
+        with open(pmtiles_fp, "w") as f:
+            f.write("dummy data")
+
+        stdout = StringIO()
+        call_command(
+            "create_pmtiles_for_divset",
+            divset_id,
+            overwrite=True,
+            stdout=stdout,
+        )
+        self.assertIn("created at", stdout.getvalue().lower())
+        self.assertTrue(os.path.exists(pmtiles_fp))
+
     @mock_aws
     @override_settings(PUBLIC_DATA_BUCKET=PUBLIC_DATA_BUCKET)
     def test_create_pmtiles_for_divset_on_s3(self):
@@ -89,6 +108,27 @@ class TestCreatePMtilesForDivSet(TransactionTestCase):
         stdout = StringIO()
         call_command("create_pmtiles_for_divset", divset_id, stdout=stdout)
         self.assertIn("already exists", stdout.getvalue().lower())
+
+    @mock_aws
+    @override_settings(PUBLIC_DATA_BUCKET=PUBLIC_DATA_BUCKET)
+    def test_overwrite_flag_on_s3(self):
+        divset_id = self.divisionset.id
+        conn = boto3.resource("s3", region_name="us-east-1")
+        conn.create_bucket(Bucket=PUBLIC_DATA_BUCKET)
+        pmtiles_file = conn.Object(
+            PUBLIC_DATA_BUCKET, self.divisionset.pmtiles_s3_key
+        )
+        pmtiles_file.put(Body="dummy data")
+
+        stdout = StringIO()
+        call_command(
+            "create_pmtiles_for_divset",
+            divset_id,
+            overwrite=True,
+            stdout=stdout,
+        )
+        self.assertIn("uploaded to", stdout.getvalue().lower())
+        pmtiles_file.load()
 
     def test_divset_not_found(self):
         with self.assertRaises(CommandError):
