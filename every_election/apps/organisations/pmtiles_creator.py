@@ -11,15 +11,11 @@ class PMtilesCreator:
     def create_pmtile(self, dest_dir):
         pmtiles_fp = f"{dest_dir}/{self.divset.pmtiles_file_name}"
 
-        try:
-            geojson_fp = self.create_geojson(dest_dir)
-            tippecanoe_command = f"tippecanoe -o {pmtiles_fp} -zg --drop-rate=2 --drop-densest-as-needed {geojson_fp} -l {self.divset.id}"
-            subprocess.run(tippecanoe_command, shell=True, check=True)
+        geojson_fp = self.create_geojson(dest_dir)
+        tippecanoe_command = f"tippecanoe -o {pmtiles_fp} -zg --drop-rate=2 --drop-densest-as-needed {geojson_fp} -l {self.divset.id}"
+        subprocess.run(tippecanoe_command, shell=True, check=True)
 
-            return pmtiles_fp
-        except subprocess.CalledProcessError as e:
-            # TODO: handle this error better
-            print(f"Error creating pmtiles file: {e}")
+        return pmtiles_fp
 
     def create_geojson(self, dest_dir):
         geojson_fp = f"{dest_dir}/{self.divset.id}.geojson"
