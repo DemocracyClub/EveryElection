@@ -8,7 +8,7 @@
 
             {% include "organisations/organisation_summary.html" %}
             {% if object.divisionset.exists %}
-                <h2>Sub-divisions</h2>
+                <h2>Division Sets</h2>
                 <ul>
                     {% for divisionset in object.divisionset.all %}
                         <li>
