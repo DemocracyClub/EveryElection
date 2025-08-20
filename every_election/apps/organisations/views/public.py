@@ -124,9 +124,9 @@ class PMtilesView(View):
     def get(self, request, divisionset_id):
         divset = OrganisationDivisionSet.objects.get(id=divisionset_id)
 
-        if settings.PMTILES_BUCKET:
+        if settings.PUBLIC_DATA_BUCKET:
             return HttpResponseRedirect(
-                f"https://s3.eu-west-2.amazonaws.com/{settings.PMTILES_BUCKET}/{divset.pmtiles_s3_key}"
+                f"https://s3.eu-west-2.amazonaws.com/{settings.PUBLIC_DATA_BUCKET}/{divset.pmtiles_s3_key}"
             )
         pmtiles_file = (
             f"{settings.STATIC_ROOT}/pmtiles-store/{divset.pmtiles_file_name}"
