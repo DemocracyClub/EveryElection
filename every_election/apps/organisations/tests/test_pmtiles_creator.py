@@ -10,8 +10,6 @@ from factories import (
 )
 from organisations.pmtiles_creator import PMtilesCreator
 
-PRIVATE_DATA_PATH = "/tmp/private_data"
-
 
 class TestPMtilesCreator(TransactionTestCase):
     def setUp(self):
