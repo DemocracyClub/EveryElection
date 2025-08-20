@@ -17,11 +17,16 @@
 
 
 {% block in_page_javascript %}
+    {{ pmtiles_source_link|json_script:"pmtilesSourceLink" }}
+    {{ divisionset.id|json_script:"divsetID" }}
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            const pmtilesSourceLink = JSON.parse(document.getElementById('pmtilesSourceLink').textContent);
+            const divsetID = JSON.parse(document.getElementById('divsetID').textContent);
+
             let protocol = new pmtiles.Protocol();
             maplibregl.addProtocol('pmtiles', protocol.tile);
-            const PMTILES_URL = "{{ pmtiles_source_link }}";
+            const PMTILES_URL = pmtilesSourceLink;
             const p = new pmtiles.PMTiles(PMTILES_URL);
             protocol.add(p);
 
@@ -53,7 +58,7 @@
                         "id": "divset-fill",
                         "type": "fill",
                         "source": "divset",
-                        "source-layer": "{{ divisionset.id }}",
+                        "source-layer": divsetID.toString(),
                         "paint": {
                             "fill-color": "#007CAD",
                             "fill-opacity": 0.5
@@ -63,7 +68,7 @@
                         "id": "divset-line",
                         "type": "line",
                         "source": "divset",
-                        "source-layer": "{{ divisionset.id }}",
+                        "source-layer": divsetID.toString(),
                         "paint": {
                             "line-color": "#9e155eff",
                             "line-width": 2
