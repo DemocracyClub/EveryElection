@@ -4,7 +4,6 @@ import tempfile
 import boto3
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from organisations.boundaries.lgbce_review_helper import check_s3_obj_exists
 from organisations.models import OrganisationDivisionSet
 from organisations.pmtiles_creator import PMtilesCreator
 
