@@ -1,9 +1,13 @@
+import os
 import re
 
+import boto3
 from core.mixins import UpdateElectionsTimestampedModel
+from django.conf import settings
 from django.contrib.gis.db import models
 from django.db import connection, transaction
 from django.db.models import Q
+from django.utils.functional import cached_property
 from django_extensions.db.models import TimeStampedModel
 
 from .mixins import DateConstraintMixin, DateDisplayMixin
@@ -37,6 +41,28 @@ class OrganisationDivisionSet(
         return "{}:{} ({})".format(
             self.pk, self.short_title, self.active_period_text
         )
+
+    @cached_property
+    def has_pmtiles_file(self):
+        if settings.PUBLIC_DATA_BUCKET:
+            s3_client = boto3.client("s3")
+            # avoiding circular import
+            from organisations.boundaries.lgbce_review_helper import (
+                check_s3_obj_exists,
+            )
+
+            if check_s3_obj_exists(
+                s3_client,
+                settings.PUBLIC_DATA_BUCKET,
+                self.pmtiles_s3_key,
+            ):
+                return True
+        else:
+            if os.path.exists(
+                f"{settings.STATIC_ROOT}/pmtiles-store/{self.pmtiles_file_name}"
+            ):
+                return True
+        return False
 
     @property
     def pmtiles_file_name(self):

@@ -4,7 +4,6 @@ import tempfile
 import boto3
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from organisations.boundaries.lgbce_review_helper import check_s3_obj_exists
 from organisations.models import OrganisationDivisionSet
 from organisations.pmtiles_creator import PMtilesCreator
 
@@ -51,32 +50,18 @@ class Command(BaseCommand):
             )
 
         # Check for existing file
-        file_exists = False
-
-        if using_s3:
-            if check_s3_obj_exists(
-                s3_client,
-                settings.PUBLIC_DATA_BUCKET,
-                divset.pmtiles_s3_key,
-            ):
-                if options["overwrite"]:
-                    s3_client.delete_object(
-                        Bucket=settings.PUBLIC_DATA_BUCKET,
-                        Key=divset.pmtiles_s3_key,
-                    )
-                else:
-                    file_exists = True
-        else:
-            if os.path.isfile(f"{static_path}/{divset.pmtiles_file_name}"):
-                if options["overwrite"]:
-                    os.remove(f"{static_path}/{divset.pmtiles_file_name}")
-                else:
-                    file_exists = True
-
-        if file_exists:
-            warning = f"{divset.pmtiles_file_name} already exists{' on S3' if using_s3 else ' locally'}. Skipping (use --overwrite to force)."
-            self.stdout.write(self.style.WARNING(warning))
-            return
+        if divset.has_pmtiles_file:
+            if options["overwrite"] and using_s3:
+                s3_client.delete_object(
+                    Bucket=settings.PUBLIC_DATA_BUCKET,
+                    Key=divset.pmtiles_s3_key,
+                )
+            elif options["overwrite"] and not using_s3:
+                os.remove(f"{static_path}/{divset.pmtiles_file_name}")
+            else:
+                warning = f"{divset.pmtiles_file_name} already exists{' on S3' if using_s3 else ' locally'}. Skipping (use --overwrite to force)."
+                self.stdout.write(self.style.WARNING(warning))
+                return
 
         pmtile_creator = PMtilesCreator(divset)
         with tempfile.TemporaryDirectory() as temp_dir:
