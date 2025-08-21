@@ -40,9 +40,9 @@
                     </div>
                 {% endif %}
             </dl>
-
-            {% include "./divisionset_map.html" %}
-
+            {% if divisionset.has_pmtiles_file %}
+                {% include "./divisionset_map.html" %}
+            {% endif %}
             <h2>Sub-Divisions</h2>
             <table class="ds-table">
                 <thead>
