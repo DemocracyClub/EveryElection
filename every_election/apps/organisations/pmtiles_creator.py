@@ -6,6 +6,11 @@ from organisations.models import DivisionGeography
 
 class PMtilesCreator:
     def __init__(self, divset):
+        div_subtypes = divset.divisions.values("division_subtype").distinct()
+        if div_subtypes.count() > 1:
+            raise NotImplementedError(
+                "PMTiles creation is not implemented for multiple division subtypes."
+            )
         self.divset = divset
 
     def create_pmtile(self, dest_dir):
