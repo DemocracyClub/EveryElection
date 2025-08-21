@@ -78,13 +78,22 @@
             }
 
 
-            p.getHeader().then(h => {
+            p.getMetadata().then(data => {
                 const map = new maplibregl.Map({
                     container: 'maplibre-gl',
-                    zoom: h.maxZoom - 2,
-                    center: [h.centerLon, h.centerLat],
+                    zoom: data.vector_layers[0].maxzoom,
                     style: style,
                 });
+
+                map.on('load', function () {
+                // set map bounds
+                    const boundsArray = data.antimeridian_adjusted_bounds.split(",").map(coord => parseFloat(coord));
+                    map.fitBounds([
+                        [boundsArray[0], boundsArray[1]],
+                        [boundsArray[2], boundsArray[3]]
+                    ], {linear: false, duration: 0, padding: 50})
+                });
+
 
                 map.on('click', 'divset-fill', (e) => {
                     const coordinates = e.lngLat;
