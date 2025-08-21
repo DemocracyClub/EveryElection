@@ -58,6 +58,7 @@ class PMtilesCreator:
                 "source",
                 "division_id",
                 "division__name",
+                "division__official_identifier",
             )
             .query.sql_with_params()
         )
