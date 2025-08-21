@@ -33,11 +33,12 @@ class TestPMtilesCreator(TransactionTestCase):
             self.assertEqual(len(geojson.get("features", [])), 5)
 
     def test_construct_sql_query(self):
+        self.maxDiff = None
         divset_id = self.divisionset.id
         sql_query = self.pmtile_creator.construct_sql_query(divset_id)
 
         expected_query = (
-            f'SELECT "organisations_divisiongeography"."id", "organisations_divisiongeography"."geography", "organisations_divisiongeography"."source", "organisations_divisiongeography"."division_id", "organisations_organisationdivision"."name" '
+            f'SELECT "organisations_divisiongeography"."id", "organisations_divisiongeography"."geography", "organisations_divisiongeography"."source", "organisations_divisiongeography"."division_id", "organisations_organisationdivision"."name", "organisations_organisationdivision"."official_identifier" '
             f'FROM "organisations_divisiongeography" '
             f'INNER JOIN "organisations_organisationdivision" '
             f'ON ("organisations_divisiongeography"."division_id" = "organisations_organisationdivision"."id") '

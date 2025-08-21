@@ -97,11 +97,15 @@
 
                 map.on('click', 'divset-fill', (e) => {
                     const coordinates = e.lngLat;
-                    const feat_name = e.features[0].properties.name;
-
-                    new maplibregl.Popup()
+                    const feat_name = e.features[0].properties.name || "Name Missing";
+                    const official_identifier = e.features[0].properties.official_identifier || "";
+                    const description = `
+                            <strong>${feat_name}</strong><br>
+                            <span>${official_identifier}</span>
+                    `;
+                    new maplibregl.Popup({ closeButton: true, closeOnClick: true })
                         .setLngLat(coordinates)
-                        .setHTML(feat_name)
+                        .setHTML(description)
                         .addTo(map);
                 });
 
