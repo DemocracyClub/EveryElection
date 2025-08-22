@@ -5,12 +5,12 @@ import boto3
 
 class S3Wrapper:
     def __init__(self, bucket_name):
-        resource = boto3.resource(
+        self.client = boto3.client(
             "s3",
         )
-        self.bucket = resource.Bucket(bucket_name)
+        self.bucket_name = bucket_name
 
-    def get_file(self, filepath):
+    def get_file(self, filepath: str):
         tmp = tempfile.NamedTemporaryFile()  # noqa: SIM115
-        self.bucket.download_file(filepath, tmp.name)
+        self.client.download_file(self.bucket_name, filepath, tmp.name)
         return tmp
