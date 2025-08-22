@@ -6,10 +6,7 @@ import boto3
 from botocore.exceptions import ClientError
 from django.test import TestCase, override_settings
 from moto import mock_aws
-from organisations.boundaries.lgbce_review_helper import (
-    LGBCEReviewHelper,
-    check_s3_obj_exists,
-)
+from organisations.boundaries.lgbce_review_helper import LGBCEReviewHelper
 from organisations.tests.factories import (
     CompletedOrganisationBoundaryReviewFactory,
     IncompleteOrganisationBoundaryReviewFactory,
@@ -69,31 +66,6 @@ class TestLGBCEReviewHelper(TestCase):
                 encoding="utf-8",
             ),
         )
-
-    def test_check_s3_obj_exists_exists(self):
-        self.assertTrue(
-            check_s3_obj_exists(
-                self.s3,
-                TEST_LGBCE_MIRROR_BUCKET,
-                self.processed_review.s3_boundaries_key,
-            )
-        )
-
-    def test_check_s3_obj_exists_not_exists(self):
-        self.assertFalse(
-            check_s3_obj_exists(
-                self.s3,
-                TEST_LGBCE_MIRROR_BUCKET,
-                "foobar",
-            )
-        )
-
-    def test_check_s3_obj_exists_no_bucket(self):
-        with self.assertRaises(ClientError) as e:
-            check_s3_obj_exists(
-                self.s3, "this-bucket-doesnt-exist-450928236839", "foobar"
-            )
-        self.assertEqual(e.exception.response["Error"]["Code"], "NoSuchBucket")
 
     @override_settings(LGBCE_BUCKET=TEST_LGBCE_MIRROR_BUCKET)
     def test_upload_boundaries_to_s3_already_exists(self):
