@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.db import connection, transaction
 from django.db.models import Q
+from django.utils.functional import cached_property
 from django_extensions.db.models import TimeStampedModel
 
 from .mixins import DateConstraintMixin, DateDisplayMixin
@@ -41,7 +42,7 @@ class OrganisationDivisionSet(
             self.pk, self.short_title, self.active_period_text
         )
 
-    @property
+    @cached_property
     def has_pmtiles_file(self):
         if settings.PUBLIC_DATA_BUCKET:
             s3_client = boto3.client("s3")
