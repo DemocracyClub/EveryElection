@@ -59,3 +59,9 @@ class S3Wrapper:
 
     def upload_file_from_bytes(self, body: bytes, key: str):
         self.client.put_object(Bucket=self.bucket_name, Key=key, Body=body)
+
+    def upload_file_from_fp(self, fp: str, key: str):
+        self.client.upload_file(fp, Bucket=self.bucket_name, Key=key)
+
+    def delete_object(self, key: str):
+        self.client.delete_object(Bucket=self.bucket_name, Key=key)

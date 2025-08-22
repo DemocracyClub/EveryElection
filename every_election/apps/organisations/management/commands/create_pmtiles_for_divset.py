@@ -1,11 +1,11 @@
 import os
 import tempfile
 
-import boto3
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from organisations.models import OrganisationDivisionSet
 from organisations.pmtiles_creator import PMtilesCreator
+from storage.s3wrapper import S3Wrapper
 
 
 class Command(BaseCommand):
@@ -36,7 +36,7 @@ class Command(BaseCommand):
 
         # Use S3 if PUBLIC_DATA_BUCKET is set
         if getattr(settings, "PUBLIC_DATA_BUCKET", None):
-            s3_client = boto3.client("s3")
+            s3_wrapper = S3Wrapper(settings.PUBLIC_DATA_BUCKET)
             using_s3 = True
         else:
             # Make pmtiles storage directory in static
@@ -52,10 +52,7 @@ class Command(BaseCommand):
         # Check for existing file
         if divset.has_pmtiles_file:
             if options["overwrite"] and using_s3:
-                s3_client.delete_object(
-                    Bucket=settings.PUBLIC_DATA_BUCKET,
-                    Key=divset.pmtiles_s3_key,
-                )
+                s3_wrapper.delete_object(divset.pmtiles_s3_key)
             elif options["overwrite"] and not using_s3:
                 os.remove(f"{static_path}/{divset.pmtiles_file_name}")
             else:
@@ -69,9 +66,7 @@ class Command(BaseCommand):
 
             if using_s3:
                 s3_key = divset.pmtiles_s3_key
-                s3_client.upload_file(
-                    pmtile_fp, settings.PUBLIC_DATA_BUCKET, s3_key
-                )
+                s3_wrapper.upload_file_from_fp(pmtile_fp, s3_key)
                 self.stdout.write(
                     self.style.SUCCESS(f"PMTile uploaded to S3 at {s3_key}.")
                 )
