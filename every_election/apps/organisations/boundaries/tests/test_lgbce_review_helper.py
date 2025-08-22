@@ -24,6 +24,7 @@ def get_content_length(s3_client, bucket, key):
 
 
 @mock_aws
+@override_settings(LGBCE_BUCKET=TEST_LGBCE_MIRROR_BUCKET)
 class TestLGBCEReviewHelper(TestCase):
     def setUp(self):
         # Don't do anything unintended
@@ -67,7 +68,6 @@ class TestLGBCEReviewHelper(TestCase):
             ),
         )
 
-    @override_settings(LGBCE_BUCKET=TEST_LGBCE_MIRROR_BUCKET)
     def test_upload_boundaries_to_s3_already_exists(self):
         buffer = StringIO()
         lgbce_review_helper = LGBCEReviewHelper(stdout=buffer)
@@ -79,7 +79,6 @@ class TestLGBCEReviewHelper(TestCase):
             buffer.getvalue(),
         )
 
-    @override_settings(LGBCE_BUCKET=TEST_LGBCE_MIRROR_BUCKET)
     @patch("requests.get")
     def test_upload_boundaries_to_s3(self, mock_get):
         # This is mocking the boundaries that are downloaded from the lgbce site
@@ -114,7 +113,6 @@ class TestLGBCEReviewHelper(TestCase):
             ),
         )
 
-    @override_settings(LGBCE_BUCKET=TEST_LGBCE_MIRROR_BUCKET)
     @patch("requests.get")
     def test_upload_boundaries_to_s3_already_exists_overwrite(self, mock_get):
         # This is mocking the boundaries that are downloaded from the lgbce site
@@ -149,7 +147,6 @@ class TestLGBCEReviewHelper(TestCase):
             ),
         )
 
-    @override_settings(LGBCE_BUCKET=TEST_LGBCE_MIRROR_BUCKET)
     def test_upload_end_date_csv_to_s3_already_exists(self):
         buffer = StringIO()
         lgbce_review_helper = LGBCEReviewHelper(stdout=buffer)
@@ -182,7 +179,6 @@ class TestLGBCEReviewHelper(TestCase):
             rows[1],
         )
 
-    @override_settings(LGBCE_BUCKET=TEST_LGBCE_MIRROR_BUCKET)
     def test_upload_end_date_csv_to_s3(self):
         with self.assertRaises(ClientError) as e:
             get_content_length(
