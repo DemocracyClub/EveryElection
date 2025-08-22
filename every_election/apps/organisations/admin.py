@@ -77,7 +77,7 @@ class WriteCSVToS3(FormView):
         context["ward_rows"] = [row.values() for row in ward_rows]
         context["ward_header"] = ward_rows[0].keys()
         context["ward_count"] = len(ward_rows)
-        context["review_bucket"] = lgbce_helper.review_bucket
+        context["review_bucket"] = lgbce_helper.s3_wrapper.bucket_name
         return context
 
     def form_valid(self, form):

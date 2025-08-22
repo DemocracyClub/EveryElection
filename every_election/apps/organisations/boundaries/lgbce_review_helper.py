@@ -6,8 +6,6 @@ from datetime import datetime, timedelta
 from io import BytesIO, StringIO
 from typing import Optional
 
-import boto3
-import botocore
 import requests
 from django.conf import settings
 from eco_parser import EcoParser, ParseError
@@ -15,37 +13,7 @@ from organisations.models import (
     OrganisationBoundaryReview,
     OrganisationDivisionSet,
 )
-
-
-def check_s3_obj_exists(s3_client: boto3.client, bucket: str, key: str):
-    try:
-        s3_client.head_object(Bucket=bucket, Key=key)
-        return True
-    except botocore.exceptions.ClientError as e:
-        if e.response["Error"]["Code"] == "404":
-            # The key does not exist.
-            return False
-
-        if e.response["Error"]["Code"] == 403:
-            # Unauthorized
-            sys.stderr.write(
-                "Access denied. Do you have the correct permissions?"
-            )
-            raise
-
-        if e.response["Error"]["Code"] == "NoSuchBucket":
-            # Bucket doesn't exist
-            raise
-        # Something else has gone wrong.
-        raise
-
-
-def upload_obj_from_url(
-    s3_client: boto3.client, url: str, bucket: str, key: str
-):
-    response = requests.get(url)
-    response.raise_for_status()
-    s3_client.put_object(Bucket=bucket, Key=key, Body=BytesIO(response.content))
+from storage.s3wrapper import S3Wrapper
 
 
 class MissingLegislationTitleError(ValueError):
@@ -58,10 +26,9 @@ class LGBCEReviewHelper:
     """
 
     def __init__(self, overwrite: bool = False, stdout=sys.stdout):
-        self.s3_client = boto3.client("s3")
+        self.s3_wrapper = S3Wrapper(settings.LGBCE_BUCKET)
         self.overwrite = overwrite
         self.stdout = stdout
-        self.review_bucket = settings.LGBCE_BUCKET
 
     def get_legislation_title_from_review(
         self, review: OrganisationBoundaryReview
@@ -78,9 +45,7 @@ class LGBCEReviewHelper:
             self.stdout.write(f"No boundary_url found for {review}")
             return
         if (
-            check_s3_obj_exists(
-                self.s3_client, self.review_bucket, review.s3_boundaries_key
-            )
+            self.s3_wrapper.check_s3_obj_exists(review.s3_boundaries_key)
             and not self.overwrite
         ):
             self.stdout.write(
@@ -89,15 +54,13 @@ class LGBCEReviewHelper:
             return
 
         self.stdout.write(
-            f"Uploading {review.boundaries_url} to s3://{self.review_bucket}/{review.s3_boundaries_key}"
+            f"Uploading {review.boundaries_url} to s3://{self.s3_wrapper.bucket_name}/{review.s3_boundaries_key}"
         )
 
         boundaries_response = requests.get(review.lgbce_boundary_url)
         boundaries_response.raise_for_status()
-        self.s3_client.put_object(
-            Bucket=self.review_bucket,
-            Key=review.s3_boundaries_key,
-            Body=BytesIO(boundaries_response.content),
+        self.s3_wrapper.upload_file_from_bytes(
+            BytesIO(boundaries_response.content), review.s3_boundaries_key
         )
 
     def make_end_date_rows(
@@ -167,9 +130,7 @@ class LGBCEReviewHelper:
         end_date_s3_key = f"{review.s3_end_date_key}"
 
         if (
-            check_s3_obj_exists(
-                self.s3_client, self.review_bucket, end_date_s3_key
-            )
+            self.s3_wrapper.check_s3_obj_exists(end_date_s3_key)
             and not self.overwrite
         ):
             self.stdout.write(
@@ -181,13 +142,9 @@ class LGBCEReviewHelper:
             review, start_date, thursday_start_day=thursday_start_day
         )
         self.stdout.write(
-            f"Uploading end_date_csv to s3://{self.review_bucket}/{review.s3_end_date_key}"
+            f"Uploading end_date_csv to s3://{self.s3_wrapper.bucket_name}/{review.s3_end_date_key}"
         )
-        self.s3_client.put_object(
-            Bucket=self.review_bucket,
-            Key=end_date_s3_key,
-            Body=csv_bytes,
-        )
+        self.s3_wrapper.upload_file_from_bytes(csv_bytes, end_date_s3_key)
 
     def get_xml_link_from_eco_url(self, eco_url: str):
         """
@@ -342,18 +299,14 @@ class LGBCEReviewHelper:
         csv_bytes = self.make_eco_csv(review)
         s3_eco_key = f"{review.s3_eco_key}"
         if (
-            check_s3_obj_exists(self.s3_client, self.review_bucket, s3_eco_key)
+            self.s3_wrapper.check_s3_obj_exists(s3_eco_key)
             and not self.overwrite
         ):
             self.stdout.write(
-                f"s3://{self.review_bucket}/{s3_eco_key} already exists. "
+                f"s3://{self.s3_wrapper.bucket_name}/{s3_eco_key} already exists. "
                 f"Perhaps you meant to initialise with 'overwrite=True'?"
             )
             return
 
         self.stdout.write(f"Uploading end_date_csv to {s3_eco_key}")
-        self.s3_client.put_object(
-            Bucket=self.review_bucket,
-            Key=f"{review.s3_eco_key}",
-            Body=csv_bytes,
-        )
+        self.s3_wrapper.upload_file_from_bytes(csv_bytes, s3_eco_key)
