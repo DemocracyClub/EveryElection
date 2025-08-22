@@ -49,20 +49,12 @@ jobs:
           name: Add tippecanoe to PATH
           command: echo 'export PATH="$HOME/repo/tippecanoe/bin:$PATH"' >> $BASH_ENV
 
-        # TEMP for testing
-      - run:
-          name: echo $PATH
-          command: |
-            echo $PATH
-            echo "ls for ~/repo/tippecanoe "
-            ls ~/repo/tippecanoe
-            echo "ls for ~/repo/tippecanoe/bin "
-            ls ~/repo/tippecanoe/bin
-
       - run:
           name: Build and Install tippecanoe
           command: |
-            make -f deploy/Makefile INSTALL_DIR=~/repo/tippecanoe
+            cd deploy
+            make INSTALL_DIR=~/repo/tippecanoe
+            make clean
 
       - run:
           name: Install Playwright
