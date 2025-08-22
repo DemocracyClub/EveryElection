@@ -20,11 +20,15 @@ jobs:
     steps:
       - checkout
 
+
       - node/install:
           node-version: '18'
 
       - restore_cache:
           key: v5-dependencies-{{ checksum "uv.lock" }}
+
+      - restore_cache:
+          key: v1-tippecanoe-{{ checksum "deploy/Makefile" }}
 
       - run:
           name: Install node node_modules
@@ -40,15 +44,21 @@ jobs:
             uv venv --verbose --no-python-downloads
             . .venv/bin/activate
             uv sync --group cdk --group production
+
       - run:
-          name: Install tippecanoe
+          name: Add tippecanoe to PATH
+          command: echo 'export PATH="$HOME/repo/tippecanoe/bin:$PATH"' >> $BASH_ENV
+
+        # TEMP for testing
+      - run:
+          name: echo $PATH
+          command: echo $PATH
+
+      - run:
+          name: Build and Install tippecanoe
           command: |
-            git clone https://github.com/felt/tippecanoe.git
-            cd tippecanoe
-            sudo make
-            sudo make install
-            cd ..
-            rm -rf tippecanoe
+            make -f deploy/Makefile INSTALL_DIR=~/repo/tippecanoe
+
       - run:
           name: Install Playwright
           command: |
@@ -58,11 +68,17 @@ jobs:
       - run:
           name: Prune UV cache
           command: uv cache prune --ci
+
       - save_cache:
           paths:
             - ./node_modules
             - $HOME/.cache/uv
           key: v5-dependencies-{{ checksum "uv.lock" }}
+
+      - save_cache:
+          paths:
+            - ~/repo/tippecanoe
+          key: v1-tippecanoe-{{ checksum "deploy/Makefile" }}
 
       - run:
           name: Pre-test checks
