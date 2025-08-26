@@ -82,6 +82,9 @@ hooks:
     - location : deploy/hooks/afterinstall/install_frontend_deps.sh
       timeout: 300
       runs: every_election
+    - location: deploy/hooks/afterinstall/install_tippecanoe.sh
+      timeout: 300
+      runas: root
     - location: deploy/hooks/afterinstall/write_env_file.py
       timeout: 300
       runas: root
