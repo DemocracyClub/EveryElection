@@ -18,12 +18,11 @@ class Command(BaseCommand):
         for divset in OrganisationDivisionSet.objects.all():
             self.stdout.write(f"Processing DivisionSet: {divset.id}")
             try:
-                if options["overwrite"]:
-                    call_command(
-                        "create_pmtiles_for_divset", divset.id, overwrite=True
-                    )
-                else:
-                    call_command("create_pmtiles_for_divset", divset.id)
+                call_command(
+                    "create_pmtiles_for_divset",
+                    divset.id,
+                    overwrite=options["overwrite"],
+                )
             except Exception as e:
                 self.stdout.write(
                     self.style.ERROR(
