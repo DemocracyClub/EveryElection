@@ -223,12 +223,6 @@ PIPELINE["JAVASCRIPT"].update(
             ],
             "output_filename": "js/map.js",
         },
-        "maplibre-gl": {
-            "source_filenames": [
-                "maplibre-gl/dist/maplibre-gl.js",
-            ],
-            "output_filename": "js/maplibre.js",
-        },
         "pmtiles": {
             "source_filenames": [
                 "pmtiles/dist/pmtiles.js",
