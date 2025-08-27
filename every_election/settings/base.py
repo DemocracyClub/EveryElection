@@ -232,6 +232,7 @@ PIPELINE["JAVASCRIPT"].update(
         "pmtiles": {
             "source_filenames": [
                 "pmtiles/dist/pmtiles.js",
+                "js/custom.js",
             ],
             "output_filename": "js/pmtiles.js",
         },
