@@ -6,7 +6,7 @@
 {% endblock extra_site_css %}
 
 {% block extra_site_javascript %}
-    {% javascript 'maplibre-gl' %}
+    <script src="{% static 'maplibre-gl/dist/maplibre-gl.js' %}"></script>
     {% javascript 'pmtiles' %}
 {% endblock extra_site_javascript %}
 
