@@ -58,7 +58,7 @@ jobs:
           name: Install tippecanoe
           command: |
             mkdir -p ~/tippecanoe
-            cd deploy
+            cd deploy/tippecanoe
             make INSTALL_DIR=~/tippecanoe build_in_src_dir
 
       - run:
