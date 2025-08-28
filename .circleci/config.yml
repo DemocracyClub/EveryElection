@@ -30,7 +30,7 @@ jobs:
 
       - restore_cache:
           name: restore tippecanoe cache
-          key: v1-tippecanoe-{{ checksum "deploy/Makefile" }}
+          key: v1-tippecanoe-{{ checksum "deploy/tippecanoe/Makefile" }}
 
       - run:
           name: Install node node_modules
@@ -58,7 +58,7 @@ jobs:
           name: Install tippecanoe
           command: |
             mkdir -p ~/tippecanoe
-            cd deploy
+            cd deploy/tippecanoe
             make INSTALL_DIR=~/tippecanoe build_in_src_dir
 
       - run:
@@ -82,7 +82,7 @@ jobs:
           name: save tippecanoe cache
           paths:
             - ~/tippecanoe
-          key: v1-tippecanoe-{{ checksum "deploy/Makefile" }}
+          key: v1-tippecanoe-{{ checksum "deploy/tippecanoe/Makefile" }}
 
       - run:
           name: Pre-test checks
