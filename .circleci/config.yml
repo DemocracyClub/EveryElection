@@ -254,14 +254,14 @@ workflows:
         requires:
         - "CDK Synth"
         context: [deployment-development-ee, slack-secrets]
-        filters: { branches: { only: [ development ] } }
+        filters: { branches: { only: [ development, feat/divset-pmtiles-working-branch ] } }
         dc-environment: development
     - code_deploy:
         name: "Development: AWS CodeDeploy"
         requires:
         - "Development: CDK Deploy"
         context: [deployment-development-ee, slack-secrets]
-        filters: { branches: { only: [ development ] } }
+        filters: { branches: { only: [ development, feat/divset-pmtiles-working-branch ] } }
         dc-environment: development
     - cdk_deploy:
         name: "Staging: CDK Deploy"
