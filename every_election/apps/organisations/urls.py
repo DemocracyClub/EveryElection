@@ -2,8 +2,10 @@ from django.urls import re_path
 
 from .views import (
     AllBoundaryReviewsView,
+    DivisionsetDetailView,
     OrganisationDetailView,
     OrganisationsFilterView,
+    PMtilesView,
     SingleBoundaryReviewView,
     SupportedOrganisationsView,
 )
@@ -24,6 +26,12 @@ urlpatterns = [
         SingleBoundaryReviewView.as_view(),
         name="single_boundary_review_view",
     ),
+    # divisionset detail page
+    re_path(
+        r"^divisionsets/(?P<divisionset_id>.+)/$",
+        DivisionsetDetailView.as_view(),
+        name="divset_detail_view",
+    ),
     # canonical URL for a single organisation record
     re_path(
         r"^(?P<organisation_type>[-\w]+)/(?P<official_identifier>[-\w]+)/(?P<date>\d{4}-\d{2}-\d{2})/$",
@@ -41,5 +49,11 @@ urlpatterns = [
         r"^(?P<organisation_type>[-\w]+)/$",
         OrganisationsFilterView.as_view(),
         name="organisations_filter_by_type",
+    ),
+    # serves a single divisionset pmtiles file
+    re_path(
+        r"^boundaries/pmtiles/(?P<divisionset_id>.+)/$",
+        PMtilesView.as_view(),
+        name="pmtiles_view",
     ),
 ]

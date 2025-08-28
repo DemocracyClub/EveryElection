@@ -20,11 +20,17 @@ jobs:
     steps:
       - checkout
 
+
       - node/install:
           node-version: '18'
 
       - restore_cache:
+          name: restore dependencies cache
           key: v5-dependencies-{{ checksum "uv.lock" }}
+
+      - restore_cache:
+          name: restore tippecanoe cache
+          key: v1-tippecanoe-{{ checksum "deploy/tippecanoe/Makefile" }}
 
       - run:
           name: Install node node_modules
@@ -40,6 +46,21 @@ jobs:
             uv venv --verbose --no-python-downloads
             . .venv/bin/activate
             uv sync --group cdk --group production
+
+        # This craziness is so that CI can find the tippecanoe binary in the cache for testing
+        # without specifically knowing what version of tippecanoe is cached
+      - run:
+          name: Add tippecanoe to PATH
+          command: |
+            TIPPECANOE_SRC=$(find ~/tippecanoe -maxdepth 1 -type d -name "tippecanoe-*")
+            echo "export PATH=\"$TIPPECANOE_SRC:\$PATH\"" >> $BASH_ENV
+      - run:
+          name: Install tippecanoe
+          command: |
+            mkdir -p ~/tippecanoe
+            cd deploy/tippecanoe
+            make INSTALL_DIR=~/tippecanoe build_in_src_dir
+
       - run:
           name: Install Playwright
           command: |
@@ -49,11 +70,19 @@ jobs:
       - run:
           name: Prune UV cache
           command: uv cache prune --ci
+
       - save_cache:
+          name: save dependencies cache
           paths:
             - ./node_modules
             - $HOME/.cache/uv
           key: v5-dependencies-{{ checksum "uv.lock" }}
+
+      - save_cache:
+          name: save tippecanoe cache
+          paths:
+            - ~/tippecanoe
+          key: v1-tippecanoe-{{ checksum "deploy/tippecanoe/Makefile" }}
 
       - run:
           name: Pre-test checks

@@ -261,12 +261,3 @@ class ElectionGeoSerializer(GeoFeatureModelSerializer, BaseElectionSerializer):
 
         fields = election_fields
         depth = 1
-        model = Election
-        extra_kwargs = {
-            "url": {"view_name": "election-geo", "lookup_field": "pk"}
-        }
-
-        geo_field = "geography_model"
-
-        fields = election_fields
-        depth = 1
