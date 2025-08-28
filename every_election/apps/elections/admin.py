@@ -37,6 +37,9 @@ class GroupTypeListFilter(admin.SimpleListFilter):
         ]
 
     def queryset(self, request, queryset):
+        if self.value() is None:
+            return queryset
+
         if self.value() == "ballot":
             return queryset.filter(
                 group_type=None,
