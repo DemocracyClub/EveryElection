@@ -21,6 +21,16 @@ export LIBRARY_PATH=$LIBRARY_PATH:/opt/homebrew/opt/openssl/lib
 npm ci
 ```
 
+## Install Tippecanoe
+
+Every Election uses tippecanoe to generate pmtiles. Compiling tippecanoe requires the following dependencies:
+
+```
+sudo apt install gcc g++ make libsqlite3-dev zlib1g-dev
+```
+
+Once you've installed those dependencies, follow tippecanoe's install instructions [here](https://github.com/felt/tippecanoe).
+
 ## Set up database
 By default, EveryElection uses PostgreSQL with the PostGIS extension. 
 To set this up locally, first install the packages:
