@@ -35,32 +35,6 @@
             {% endfor %}
         </ul>
 
-        <h2>Sub-divisions</h2>
-        <ul>
-            {% for divisionset in object.divisionset.all %}
-                <li>
-                    <a href="{% url 'divset_detail_view' divisionset.id %}">{{ divisionset.short_title }}</a>
-                    {% if request.user.is_staff %}
-                        <a href="{% url "admin:organisations_organisationdivisionset_change" object_id=divisionset.pk %}">
-                            <strong> ({{divisionset.pk}}) </strong>
-                        </a>
-                        </li>
-                    {%  endif %}
-                    <p>Active from {{ divisionset.active_period_text }}.</p>
-            {% endfor %}
-        </ul>
-        <h2>Elections</h2>
-        <ul>
-            {% for election in object.election_set.all %}
-                <li>
-                    <a href="{{ election.get_absolute_url }}">
-                        {{ election.get_id }}</a>
-                </li>
-            {% empty %}
-                <li>No elections found for {{ object.name }}</li>
-            {% endfor %}
-        </ul>
-
         <h3>API</h3>
         <ul>
             <li><a href="{{ api_detail }}">
