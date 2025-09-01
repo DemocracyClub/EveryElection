@@ -7,86 +7,72 @@
         <div class="ds-card-body">
 
             {% include "organisations/organisation_summary.html" %}
+            {% if object.divisionset.exists %}
+                <h2>Division Sets</h2>
+                <ul>
+                    {% for divisionset in object.divisionset.all %}
+                        <li>
+                            <a href="{% url 'divset_detail_view' divisionset.id %}">{{ divisionset.short_title }}</a>
+                            {% if request.user.is_staff %}
+                                <a href="{% url "admin:organisations_organisationdivisionset_change" object_id=divisionset.pk %}">
+                                    <strong> ({{divisionset.pk}}) </strong>
+                                </a>
+                                </li>
+                            {%  endif %}
+                            <p>Active from {{ divisionset.active_period_text }}.</p>
+                    {% endfor %}
+            {% endif %}
+        </ul>
+        <h2>Elections</h2>
+        <ul>
+            {% for election in object.election_set.all %}
+                <li>
+                    <a href="{{ election.get_absolute_url }}">
+                        {{ election.get_id }}</a>
+                </li>
+            {% empty %}
+                <li>No elections found for {{ object.name }}</li>
+            {% endfor %}
+        </ul>
 
-            <h2>Sub-divisions</h2>
-            <ul>
-                {% for divisionset in object.divisionset.all %}
-                    <h3>{{ divisionset.short_title }}
-                        {% if request.user.is_staff %}
-                            <a href="{% url "admin:organisations_organisationdivisionset_change" object_id=divisionset.pk %}">
-                                ({{divisionset.pk}})
-                            </a>
-                        {%  endif %}
-                    </h3>
+        <h2>Sub-divisions</h2>
+        <ul>
+            {% for divisionset in object.divisionset.all %}
+                <li>
+                    <a href="{% url 'divset_detail_view' divisionset.id %}">{{ divisionset.short_title }}</a>
+                    {% if request.user.is_staff %}
+                        <a href="{% url "admin:organisations_organisationdivisionset_change" object_id=divisionset.pk %}">
+                            <strong> ({{divisionset.pk}}) </strong>
+                        </a>
+                        </li>
+                    {%  endif %}
                     <p>Active from {{ divisionset.active_period_text }}.</p>
-                    {% if divisionset.legislation_url %}
-                        <p>These sub-divisions were enacted in
-                            <a href="{{ divisionset.legislation_url }}">this legislation</a>.</p>
-                    {% endif %}
-                    {% if divisionset.consultation_url %}
-                        <p>
-                            <a href="{{ divisionset.consultation_url }}">
-                                Read the consultation that lead to these changes</a>.
-                        </p>
-                    {% endif %}
+            {% endfor %}
+        </ul>
+        <h2>Elections</h2>
+        <ul>
+            {% for election in object.election_set.all %}
+                <li>
+                    <a href="{{ election.get_absolute_url }}">
+                        {{ election.get_id }}</a>
+                </li>
+            {% empty %}
+                <li>No elections found for {{ object.name }}</li>
+            {% endfor %}
+        </ul>
 
-                    <p>{{ divisionset.notes }}</p>
-                    <table class="ds-table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Seats</th>
-                                <th>Type</th>
-                                <th>Geography Code</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for division_type, divisions in divisionset.divisions_by_type.items %}
-                                {% for division in divisions %}
-                                    <tr>
-                                        <td>{{ division }}</td>
-                                        <td>{{ division.seats_total|default_if_none:"Unknown" }}</td>
-                                        <td>{{ division.division_subtype }}</td>
-                                        <td>
-                                            {% if division.format_geography_link %}
-                                                <a href="{{ division.format_geography_link }}">
-                                                    {{ division.official_identifier }}
-                                                </a>
-                                            {% else %}
-                                                <strong>Missing</strong>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                {% endfor %}
-            </ul>
-            <h2>Elections</h2>
-            <ul>
-                {% for election in object.election_set.all %}
-                    <li>
-                        <a href="{{ election.get_absolute_url }}">
-                            {{ election.get_id }}</a>
-                    </li>
-                {% empty %}
-                    <li>No elections found for {{ object.name }}</li>
-                {% endfor %}
-            </ul>
-
-            <h3>API</h3>
-            <ul>
-                <li><a href="{{ api_detail }}">
-                    Organisation detail (JSON)
+        <h3>API</h3>
+        <ul>
+            <li><a href="{{ api_detail }}">
+                Organisation detail (JSON)
+            </a></li>
+            {% if api_detail_geo %}
+                <li><a href="{{ api_detail_geo }}" rel="nofollow">
+                    Organisation boundary (GeoJSON)
                 </a></li>
-                {% if api_detail_geo %}
-                    <li><a href="{{ api_detail_geo }}" rel="nofollow">
-                        Organisation boundary (GeoJSON)
-                    </a></li>
-                {% endif %}
-            </ul>
-        </div>
+            {% endif %}
+        </ul>
+    </div>
     </div>
 
 {% endblock content %}

@@ -1,11 +1,17 @@
 from datetime import datetime
 
+from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Prefetch, Q
-from django.http import Http404
-from django.views.generic import DetailView, ListView, TemplateView
+from django.http import FileResponse, Http404
+from django.urls import reverse
+from django.views.generic import DetailView, ListView, TemplateView, View
 from elections.models import Election
-from organisations.models import Organisation, OrganisationBoundaryReview
+from organisations.models import (
+    Organisation,
+    OrganisationBoundaryReview,
+    OrganisationDivisionSet,
+)
 
 
 class SupportedOrganisationsView(ListView):
@@ -100,3 +106,42 @@ class SingleBoundaryReviewView(DetailView):
     context_object_name = "boundary_review"
     slug_field = "id"
     slug_url_kwarg = "boundary_review_id"
+
+
+class DivisionsetDetailView(DetailView):
+    template_name = "organisations/divisionset_detail.html"
+
+    model = OrganisationDivisionSet
+    context_object_name = "divisionset"
+    slug_field = "id"
+    slug_url_kwarg = "divisionset_id"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if settings.PUBLIC_DATA_BUCKET:
+            context["pmtiles_source_link"] = (
+                f"https://s3.eu-west-2.amazonaws.com/{settings.PUBLIC_DATA_BUCKET}/{self.object.pmtiles_s3_key}"
+            )
+        else:
+            context["pmtiles_source_link"] = reverse(
+                "pmtiles_view", args=[self.object.id]
+            )
+        return context
+
+
+class PMtilesView(View):
+    """
+    View for serving DivisionSet pmtiles files.
+    """
+
+    def get(self, request, divisionset_id):
+        divset = OrganisationDivisionSet.objects.get(id=divisionset_id)
+
+        pmtiles_file = (
+            f"{settings.STATIC_ROOT}/pmtiles-store/{divset.pmtiles_file_name}"
+        )
+
+        try:
+            return FileResponse(open(pmtiles_file, "rb"))  # noqa SIM115
+        except FileNotFoundError:
+            raise Http404("pmtiles file not found")

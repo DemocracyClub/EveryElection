@@ -144,6 +144,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "dc_utils.middleware.BasicAuthMiddleware",
+    "DjangoRangeMiddleware.middleware.RangesMiddleware",
 ]
 
 ROOT_URLCONF = "every_election.urls"
@@ -205,6 +206,12 @@ PIPELINE["STYLESHEETS"].update(
             ],
             "output_filename": "css/map.css",
         },
+        "maplibre-gl": {
+            "source_filenames": [
+                "maplibre-gl/dist/maplibre-gl.css",
+            ],
+            "output_filename": "css/maplibre.css",
+        },
     }
 )
 
@@ -215,7 +222,14 @@ PIPELINE["JAVASCRIPT"].update(
                 "leaflet/dist/leaflet.js",
             ],
             "output_filename": "js/map.js",
-        }
+        },
+        "pmtiles": {
+            "source_filenames": [
+                "pmtiles/dist/pmtiles.js",
+                "js/custom.js",
+            ],
+            "output_filename": "js/pmtiles.js",
+        },
     }
 )
 
@@ -297,6 +311,7 @@ GCS_API_KEY = os.environ.get("GCS_API_KEY", "")
 
 NOTICE_OF_ELECTION_BUCKET = "notice-of-election"
 LGBCE_BUCKET = os.environ.get("BOUNDARY_REVIEW_BUCKET", None)
+PUBLIC_DATA_BUCKET = os.environ.get("PUBLIC_DATA_BUCKET", None)
 
 # django-storages expects AWS_STORAGE_BUCKET_NAME
 AWS_STORAGE_BUCKET_NAME = NOTICE_OF_ELECTION_BUCKET

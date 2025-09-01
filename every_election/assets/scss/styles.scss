@@ -114,3 +114,7 @@ $scope: false;
     padding-bottom: 2px;
     margin: 0;
 }
+
+.maplibregl-ctrl-attrib-button::before {
+    display: none;
+}
