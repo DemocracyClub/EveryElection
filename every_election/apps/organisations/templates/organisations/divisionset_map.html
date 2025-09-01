@@ -18,11 +18,10 @@
 
 {% block in_page_javascript %}
     {{ pmtiles_source_link|json_script:"pmtilesSourceLink" }}
-    {{ divisionset.id|json_script:"divsetID" }}
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const pmtilesSourceLink = JSON.parse(document.getElementById('pmtilesSourceLink').textContent);
-            const divsetID = JSON.parse(document.getElementById('divsetID').textContent);
 
             let protocol = new pmtiles.Protocol();
             maplibregl.addProtocol('pmtiles', protocol.tile);
@@ -94,7 +93,7 @@
                 });
 
                 map.on('load', function () {
-                // set map bounds
+
                     const boundsArray = data.antimeridian_adjusted_bounds.split(",").map(coord => parseFloat(coord));
                     map.fitBounds([
                         [boundsArray[0], boundsArray[1]],
@@ -117,19 +116,16 @@
                             .addTo(map);
                     });
 
-                    // Change the cursor to a pointer when the mouse is over the places layer.
                     map.on('mouseenter', `${layer.id}-fill`, () => {
                         map.getCanvas().style.cursor = 'pointer';
                     });
 
-                    // Reset the cursor to default when it leaves.
                     map.on('mouseleave', `${layer.id}-fill`, () => {
                         map.getCanvas().style.cursor = '';
                     });
                 });
 
 
-                //navigation controls
                 map.addControl(new maplibregl.NavigationControl(), 'top-right');
 
             });
