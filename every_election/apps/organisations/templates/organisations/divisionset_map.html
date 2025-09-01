@@ -30,55 +30,63 @@
             const p = new pmtiles.PMTiles(PMTILES_URL);
             protocol.add(p);
 
-            var style = {
-                "version": 8,
-                "sources": {
-                    "os": {
-                        "type": "raster",
-                        "tiles": [
-                            "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        ],
-                        "tileSize": 256,
-                        "attribution": "© OpenStreetMap contributors"
-                    },
-                    "divset": {
-                        "type": "vector",
-                        "url": "pmtiles://" + p.source.url,
-                    }
-                },
-                layers: [
-                    {
-                        "id": "os-baselayer",
-                        "type": "raster",
-                        "source": "os",
-                        "minzoom": 0,
-                        "maxzoom": 19
-                    },
-                    {
-                        "id": "divset-fill",
-                        "type": "fill",
-                        "source": "divset",
-                        "source-layer": divsetID.toString(),
-                        "paint": {
-                            "fill-color": "#007CAD",
-                            "fill-opacity": 0.5
-                        }
-                    },
-                    {
-                        "id": "divset-line",
-                        "type": "line",
-                        "source": "divset",
-                        "source-layer": divsetID.toString(),
-                        "paint": {
-                            "line-color": "#9e155eff",
-                            "line-width": 2
-                        }
-                    }
-                ]
-            }
+
 
 
             p.getMetadata().then(data => {
+                var style = {
+                    "version": 8,
+                    "sources": {
+                        "os": {
+                            "type": "raster",
+                            "tiles": [
+                                "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            ],
+                            "tileSize": 256,
+                            "attribution": "© OpenStreetMap contributors"
+                        },
+                        "divset": {
+                            "type": "vector",
+                            "url": "pmtiles://" + p.source.url,
+                        }
+                    },
+                    layers: [
+                        {
+                            "id": "os-baselayer",
+                            "type": "raster",
+                            "source": "os",
+                            "minzoom": 0,
+                            "maxzoom": 19
+                        }
+                    ]
+                }
+
+                data.vector_layers.forEach(layer => {
+                    style.layers.push(
+                        {
+                            "id": `${layer.id}-fill`,
+                            "type": "fill",
+                            "source": "divset",
+                            "source-layer": `${layer.id}`,
+                            "paint": {
+                                "fill-color": "#007CAD",
+                                "fill-opacity": 0.5
+                            }
+                        },
+                        {
+                            "id": `${layer.id}-line`,
+                            "type": "line",
+                            "source": "divset",
+                            "source-layer": `${layer.id}`,
+                            "paint": {
+                                "line-color": "#9e155eff",
+                                "line-width": 2
+                            }
+                        }
+                    )
+                });
+
+
                 const map = new maplibregl.Map({
                     container: 'maplibre-gl',
                     zoom: data.vector_layers[0].maxzoom,
@@ -94,30 +102,32 @@
                     ], {linear: false, duration: 0, padding: 50})
                 });
 
+                data.vector_layers.forEach(layer => {
+                    map.on('click', `${layer.id}-fill`, (e) => {
+                        const coordinates = e.lngLat;
+                        const feat_name = e.features[0].properties.name || "Name Missing";
+                        const official_identifier = e.features[0].properties.official_identifier || "";
+                        const description = `
+                                <strong>${feat_name}</strong><br>
+                                <span>${official_identifier}</span>
+                        `;
+                        new maplibregl.Popup({ closeButton: true, closeOnClick: true })
+                            .setLngLat(coordinates)
+                            .setHTML(description)
+                            .addTo(map);
+                    });
 
-                map.on('click', 'divset-fill', (e) => {
-                    const coordinates = e.lngLat;
-                    const feat_name = e.features[0].properties.name || "Name Missing";
-                    const official_identifier = e.features[0].properties.official_identifier || "";
-                    const description = `
-                            <strong>${feat_name}</strong><br>
-                            <span>${official_identifier}</span>
-                    `;
-                    new maplibregl.Popup({ closeButton: true, closeOnClick: true })
-                        .setLngLat(coordinates)
-                        .setHTML(description)
-                        .addTo(map);
+                    // Change the cursor to a pointer when the mouse is over the places layer.
+                    map.on('mouseenter', `${layer.id}-fill`, () => {
+                        map.getCanvas().style.cursor = 'pointer';
+                    });
+
+                    // Reset the cursor to default when it leaves.
+                    map.on('mouseleave', `${layer.id}-fill`, () => {
+                        map.getCanvas().style.cursor = '';
+                    });
                 });
 
-                // Change the cursor to a pointer when the mouse is over the places layer.
-                map.on('mouseenter', 'divset-fill', () => {
-                    map.getCanvas().style.cursor = 'pointer';
-                });
-
-                // Reset the cursor to default when it leaves.
-                map.on('mouseleave', 'divset-fill', () => {
-                    map.getCanvas().style.cursor = '';
-                });
 
                 //navigation controls
                 map.addControl(new maplibregl.NavigationControl(), 'top-right');
