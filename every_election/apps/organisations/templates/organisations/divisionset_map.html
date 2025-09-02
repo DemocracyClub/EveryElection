@@ -3,6 +3,47 @@
 
 {% block extra_site_css %}
     {% stylesheet 'maplibre-gl' %}
+    <style>
+        #map-toggle-menu {
+            background: #fff;
+            position: absolute;
+            z-index: 1;
+            top: 10px;
+            left: 10px;
+            border-radius: 3px;
+            width: 100px;
+            border: 1px solid rgba(0, 0, 0, 0.4);
+            display: none;
+        }
+
+        #map-toggle-menu a {
+            font-size: 13px;
+            color: #404040;
+            display: block;
+            padding: 5px;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+            text-align: center;
+        }
+
+        #map-toggle-menu a:last-child {
+            border: none;
+        }
+
+        #map-toggle-menu a:hover {
+            background-color: #f8f8f8;
+            color: #404040;
+        }
+
+        #map-toggle-menu a.active {
+            background-color: #3887be;
+            color: #ffffff;
+        }
+
+        #map-toggle-menu a.active:hover {
+            background: #3074a4;
+        }
+    </style>
 {% endblock extra_site_css %}
 
 {% block extra_site_javascript %}
@@ -12,16 +53,20 @@
 
 <div >
     <h3>Map</h3>
-    <div id="maplibre-gl" class="ds-map-leaflet"></div>
+    <div id="maplibre-gl" class="ds-map-leaflet">
+        <nav id="map-toggle-menu"></nav>
+    </div>
 </div>
 
 
 {% block in_page_javascript %}
     {{ pmtiles_source_link|json_script:"pmtilesSourceLink" }}
+    {{ map_layer_display_name_mapping|json_script:"mapLayerDisplayNameMapping" }}
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const pmtilesSourceLink = JSON.parse(document.getElementById('pmtilesSourceLink').textContent);
+            const mapLayerDisplayNameMapping = JSON.parse(document.getElementById('mapLayerDisplayNameMapping').textContent);
 
             let protocol = new pmtiles.Protocol();
             maplibregl.addProtocol('pmtiles', protocol.tile);
@@ -100,6 +145,78 @@
                         [boundsArray[2], boundsArray[3]]
                     ], {linear: false, duration: 0, padding: 50})
                 });
+
+                map.on('idle', () => {
+                    // return early if 1 or less layer
+                    if (data.vector_layers.length < 2) {
+                        return;
+                    }
+                    // Show the toggle menu
+                    document.getElementById('map-toggle-menu').style.display = 'block';
+
+                    const toggleableLayerIds = data.vector_layers.map(layer => layer.id);
+
+                    // Set up toggle button for each layer.
+                    toggleableLayerIds.forEach((layerID, layerIDx) => {
+                        // Skip layers that already have a button set up.
+                        if (document.getElementById(layerID)) {
+                            return;
+                        }
+
+                        function getLayerDisplayName(divisionType) {
+                            if (mapLayerDisplayNameMapping[divisionType]) {
+                                return mapLayerDisplayNameMapping[divisionType];
+                            }
+                            return divisionType;
+                        };
+
+                        const divisionType = layerID.slice(-3)
+                        const linkContent = getLayerDisplayName(divisionType)
+
+                        // Create a link.
+                        const link = document.createElement('a');
+                        link.id = layerID;
+                        link.href = '#';
+                        link.textContent = linkContent;
+                        link.className = layerIDx === 0 ? 'active' : '';
+
+                        // Set initial visibility: only first layer is visible
+                        const fillLayer = `${layerID}-fill`;
+                        const lineLayer = `${layerID}-line`;
+                        if (layerIDx === 0) {
+                            map.setLayoutProperty(fillLayer, 'visibility', 'visible');
+                            map.setLayoutProperty(lineLayer, 'visibility', 'visible');
+                        } else {
+                            map.setLayoutProperty(fillLayer, 'visibility', 'none');
+                            map.setLayoutProperty(lineLayer, 'visibility', 'none');
+                        }
+
+                        link.onclick = function (e) {
+                            const clickedIDFillLayer = `${this.id}-fill`;
+                            const clickedIDLineLayer = `${this.id}-line`;
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            const fillVisibility = map.getLayoutProperty(clickedIDFillLayer, 'visibility');
+                            const lineVisibility = map.getLayoutProperty(clickedIDLineLayer, 'visibility');
+
+                            // Toggle both fill and line layer visibility
+                            if (fillVisibility === 'visible' || lineVisibility === 'visible') {
+                                map.setLayoutProperty(clickedIDFillLayer, 'visibility', 'none');
+                                map.setLayoutProperty(clickedIDLineLayer, 'visibility', 'none');
+                                this.className = '';
+                            } else {
+                                map.setLayoutProperty(clickedIDFillLayer, 'visibility', 'visible');
+                                map.setLayoutProperty(clickedIDLineLayer, 'visibility', 'visible');
+                                this.className = 'active';
+                            }
+                        };
+
+                        const toggleMenu = document.getElementById('map-toggle-menu');
+                        toggleMenu.appendChild(link);
+                    });
+                });
+
 
                 data.vector_layers.forEach(layer => {
                     map.on('click', `${layer.id}-fill`, (e) => {

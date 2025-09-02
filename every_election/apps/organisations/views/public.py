@@ -126,6 +126,28 @@ class DivisionsetDetailView(DetailView):
             context["pmtiles_source_link"] = reverse(
                 "pmtiles_view", args=[self.object.id]
             )
+
+        div_type_and_subtype_pairs = set(
+            self.object.divisions.values_list(
+                "division_type", "division_subtype"
+            )
+        )
+        # Determine display names for map layer toggle menu
+        map_layer_display_name_mapping = {}
+
+        for div_type, div_subtype in div_type_and_subtype_pairs:
+            if "region" in div_subtype.lower():
+                display_name = "Regions"
+            elif "constituency" in div_subtype.lower():
+                display_name = "Constituencies"
+            else:
+                display_name = div_type
+
+            map_layer_display_name_mapping[div_type] = display_name
+
+        context["map_layer_display_name_mapping"] = (
+            map_layer_display_name_mapping
+        )
         return context
 
 
