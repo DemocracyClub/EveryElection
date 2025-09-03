@@ -5,7 +5,6 @@
     {% stylesheet 'maplibre-gl' %}
     <style>
         #map-toggle-menu {
-            background: #fff;
             position: absolute;
             z-index: 1;
             top: 10px;
@@ -17,32 +16,33 @@
         }
 
         #map-toggle-menu a {
-            font-size: 13px;
-            color: #404040;
+            color: #ffffff;
             display: block;
             padding: 5px;
             text-decoration: none;
             border-bottom: 1px solid rgba(0, 0, 0, 0.25);
             text-align: center;
+            opacity: 0.6;
+            font-weight: normal;
+            transition: all 0.2s;
         }
 
         #map-toggle-menu a:last-child {
             border: none;
         }
 
-        #map-toggle-menu a:hover {
-            background-color: #f8f8f8;
-            color: #404040;
-        }
-
         #map-toggle-menu a.active {
-            background-color: #3887be;
-            color: #ffffff;
+            opacity: 1;
+            font-weight: bold;
+            border: 1px solid #fff;
         }
 
-        #map-toggle-menu a.active:hover {
-            background: #3074a4;
+        #map-toggle-menu a:hover {
+            cursor: pointer;
+            filter: brightness(1.2);
+            text-decoration: underline;
         }
+
     </style>
 {% endblock extra_site_css %}
 
@@ -178,13 +178,14 @@
 
                         const divisionType = layerID.slice(-3)
                         const linkContent = getLayerDisplayName(divisionType)
-
+                        const layerColor = layerColors[layerIDx]
                         // Create a link.
                         const link = document.createElement('a');
                         link.id = layerID;
                         link.href = '#';
                         link.textContent = linkContent;
                         link.className = layerIDx === 0 ? 'active' : '';
+                        link.style.backgroundColor = layerColor;
 
                         // Set initial visibility: only first layer is visible
                         const fillLayer = `${layerID}-fill`;
