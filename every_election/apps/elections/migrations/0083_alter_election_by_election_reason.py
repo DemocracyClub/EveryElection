@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
                     ),
                     ("OTHER", "Other"),
                     ("UNKNOWN", "Unknown"),
-                    ("", "Not a by-election or a ballot"),
+                    ("", "Neither a by-election nor a ballot"),
                 ],
                 default="",
                 max_length=30,
