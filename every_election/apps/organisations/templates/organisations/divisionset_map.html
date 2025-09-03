@@ -105,7 +105,13 @@
                     ]
                 }
 
-                data.vector_layers.forEach(layer => {
+                const layerColors = {
+                    0: "#007CAD",
+                    1: "#E6007C",
+                }
+
+                data.vector_layers.forEach((layer, layerIdx) => {
+                    const layerColor = layerColors[layerIdx];
                     style.layers.push(
                         {
                             "id": `${layer.id}-fill`,
@@ -113,8 +119,8 @@
                             "source": "divset",
                             "source-layer": `${layer.id}`,
                             "paint": {
-                                "fill-color": "#007CAD",
-                                "fill-opacity": 0.5
+                                "fill-color": layerColor,
+                                "fill-opacity": 0.4
                             }
                         },
                         {
@@ -123,7 +129,7 @@
                             "source": "divset",
                             "source-layer": `${layer.id}`,
                             "paint": {
-                                "line-color": "#9e155eff",
+                                "line-color": layerColor,
                                 "line-width": 2
                             }
                         }
