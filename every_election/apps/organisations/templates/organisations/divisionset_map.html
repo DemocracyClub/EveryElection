@@ -43,6 +43,19 @@
             text-decoration: underline;
         }
 
+        .map-popup-details {
+            line-height: normal;
+            padding: 0.5rem;
+        }
+
+        .map-popup-details summary {
+            margin: 0;
+            font-size: 12px;
+        }
+        .map-popup-details[open] summary {
+            margin-bottom: 0;
+        }
+
     </style>
 {% endblock extra_site_css %}
 
@@ -152,6 +165,13 @@
                     ], {linear: false, duration: 0, padding: 50})
                 });
 
+                function getLayerDisplayName(divisionType) {
+                    if (mapLayerDisplayNameMapping[divisionType]) {
+                        return mapLayerDisplayNameMapping[divisionType];
+                    }
+                    return divisionType;
+                };
+
                 map.on('idle', () => {
                     // return early if 1 or less layer
                     if (data.vector_layers.length < 2) {
@@ -169,12 +189,6 @@
                             return;
                         }
 
-                        function getLayerDisplayName(divisionType) {
-                            if (mapLayerDisplayNameMapping[divisionType]) {
-                                return mapLayerDisplayNameMapping[divisionType];
-                            }
-                            return divisionType;
-                        };
 
                         const divisionType = layerID.slice(-3)
                         const linkContent = getLayerDisplayName(divisionType)
@@ -224,21 +238,59 @@
                     });
                 });
 
+                map.on('click', (e) => {
+                    const coordinates = e.lngLat;
+                    const features = map.queryRenderedFeatures(e.point);
+
+                    if (!features.length) {
+                        return;
+                    }
+
+                    let featuresData = [];
+                    let seen = new Set();
+
+                    for (const feat of features) {
+                        const divisionType = feat.layer["source-layer"].slice(-3)
+                        const featId = feat.properties.id
+                        if (seen.has(featId)) {
+                            continue;
+                        }
+                        featuresData.push({
+                            name: feat.properties.name || "Name Missing",
+                            officialIdentifier: feat.properties.official_identifier || "",
+                            layerColor: feat.layer.paint['fill-color'] || feat.layer.paint['line-color'],
+                            layerDisplayName: getLayerDisplayName(divisionType),
+                        });
+                        seen.add(featId);
+                    }
+
+                    let popUpHTML;
+
+                    if (featuresData.length > 1) {
+                        popUpHTML = featuresData.map(feat => `
+                            <details class="map-popup-details" >
+                                <summary style="color: ${feat.layerColor};">${feat.layerDisplayName}</summary><br />
+                                <strong>${feat.name}</strong><br />
+                                ${feat.officialIdentifier}<br />
+                            </details>
+                            `).join('');
+                    } else {
+                        const feat = featuresData[0]
+                        popUpHTML = `
+                            <div>
+                                <strong>${feat.name}</strong><br />
+                                ${feat.officialIdentifier}<br />
+                            </div>
+                        `
+                    }
+
+                    new maplibregl.Popup({ closeButton: true, closeOnClick: true })
+                        .setLngLat(coordinates)
+                        .setHTML(popUpHTML)
+                        .addTo(map);
+                });
 
                 data.vector_layers.forEach(layer => {
-                    map.on('click', `${layer.id}-fill`, (e) => {
-                        const coordinates = e.lngLat;
-                        const feat_name = e.features[0].properties.name || "Name Missing";
-                        const official_identifier = e.features[0].properties.official_identifier || "";
-                        const description = `
-                                <strong>${feat_name}</strong><br>
-                                <span>${official_identifier}</span>
-                        `;
-                        new maplibregl.Popup({ closeButton: true, closeOnClick: true })
-                            .setLngLat(coordinates)
-                            .setHTML(description)
-                            .addTo(map);
-                    });
 
                     map.on('mouseenter', `${layer.id}-fill`, () => {
                         map.getCanvas().style.cursor = 'pointer';
