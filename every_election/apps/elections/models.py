@@ -76,7 +76,7 @@ class ByElectionReason(models.TextChoices):
     )
     OTHER = "OTHER", "Other"
     UNKNOWN = "UNKNOWN", "Unknown"
-    NOT_APPLICABLE = "", "Not a by-election or a ballot"
+    NOT_APPLICABLE = "", "Neither a by-election nor a ballot"
 
 
 class ElectionType(models.Model):
