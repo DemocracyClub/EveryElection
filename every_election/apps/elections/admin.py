@@ -143,6 +143,7 @@ class ElectionAdmin(admin.ModelAdmin):
                     "requires_voter_id",
                     "voting_system",
                     "metadata",
+                    "by_election_reason",
                 ),
             },
         ),
@@ -227,10 +228,14 @@ class ElectionAdmin(admin.ModelAdmin):
             return tuple(
                 f for f in self.fieldsets if f[0] != "Ballot Information"
             )
-        if ".by." in obj.election_id:
+        if ".by." not in obj.election_id:
             for fieldset_name, fieldset in self.fieldsets:
                 if fieldset_name == "Ballot Information":
-                    fieldset["fields"] += ("by_election_reason",)
+                    fieldset["fields"] = tuple(
+                        f
+                        for f in fieldset["fields"]
+                        if f != "by_election_reason"
+                    )
 
         return self.fieldsets
 
