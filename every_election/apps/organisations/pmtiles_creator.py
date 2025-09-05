@@ -6,6 +6,26 @@ from organisations.models import DivisionGeography
 
 
 class PMtilesCreator:
+    """
+    PMtilesCreator is a utility class for generating a PMTiles file from a DivisionSet.
+
+    Args:
+        divset:  a DivisionSet model instance.
+
+    Methods:
+        create_pmtile(dest_dir):
+            Generates a PMTiles file in the specified destination directory by exporting division geographies
+            as GeoJSON and combining them using tippecanoe
+    """
+
+    FEATURE_ATTR_FIELDS = [
+        "id",
+        "source",
+        "division_id",
+        "division__name",
+        "division__official_identifier",
+    ]
+
     def __init__(self, divset):
         self.divset = divset
 
@@ -17,7 +37,7 @@ class PMtilesCreator:
         )
         geojson_files = []
         for div_type in div_types:
-            geojson_fp = self.create_geojson(dest_dir, div_type)
+            geojson_fp = self._create_geojson(dest_dir, div_type)
             geojson_files.append(geojson_fp)
 
         tippecanoe_command = f"tippecanoe -o {pmtiles_fp} -zg --drop-rate=2 --drop-densest-as-needed {' '.join(geojson_files)}"
@@ -25,15 +45,15 @@ class PMtilesCreator:
 
         return pmtiles_fp
 
-    def create_geojson(self, dest_dir, div_type):
+    def _create_geojson(self, dest_dir, div_type):
         geojson_fp = f"{dest_dir}/{self.divset.id}_{div_type}.geojson"
-        ogr_command = self.construct_ogr_command(geojson_fp, div_type)
+        ogr_command = self._construct_ogr_command(geojson_fp, div_type)
         subprocess.run(ogr_command, shell=True, check=True)
         return geojson_fp
 
-    def construct_ogr_command(self, geojson_fp, div_type):
+    def _construct_ogr_command(self, geojson_fp, div_type):
         db_settings = connection.settings_dict
-        sql_query = self.construct_sql_query(self.divset.id, div_type)
+        sql_query = self._construct_sql_query_string(self.divset.id, div_type)
 
         db_connection_string = (
             f"dbname={db_settings['NAME']} "
@@ -49,27 +69,15 @@ class PMtilesCreator:
             f'-sql "{sql_query}"'
         )
 
-    def construct_sql_query(self, divisionset_id, div_type):
-        sql, params = (
-            DivisionGeography.objects.filter(
-                division__divisionset_id=divisionset_id,
-                division__division_type=div_type,
-            )
-            .select_related("division")
-            .values(
-                "id",
-                "geography",
-                "source",
-                "division_id",
-                "division__name",
-                "division__official_identifier",
-            )
-            .query.sql_with_params()
+    def _construct_sql_query_string(self, divisionset_id, div_type):
+        qs = self._get_queryset(divisionset_id).filter(
+            division__division_type=div_type
         )
+        sql, params = qs.query.sql_with_params()
 
         sql = sql.replace("::bytea", "")  # Remove bytea typecast
 
-        # Format params for SQL
+        # Format params for SQL string substitution
         formatted_params = tuple(
             psycopg2.extensions.adapt(p).getquoted().decode()
             if isinstance(p, str)
@@ -77,3 +85,15 @@ class PMtilesCreator:
             for p in params
         )
         return sql % formatted_params  # Substitute params into the SQL query
+
+    def _get_queryset(self, divisionset_id):
+        return (
+            DivisionGeography.objects.filter(
+                division__divisionset_id=divisionset_id,
+            )
+            .select_related("division")
+            .values(
+                *self.FEATURE_ATTR_FIELDS,
+                "geography",
+            )
+        )
