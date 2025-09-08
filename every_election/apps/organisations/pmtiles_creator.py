@@ -2,6 +2,7 @@ import subprocess
 
 import psycopg2
 from django.db import connection
+from organisations.constants import PMTILES_FEATURE_ATTR_FIELDS
 from organisations.models import DivisionGeography
 
 
@@ -18,19 +19,14 @@ class PMtilesCreator:
             as GeoJSON and combining them using tippecanoe
     """
 
-    FEATURE_ATTR_FIELDS = [
-        "id",
-        "source",
-        "division_id",
-        "division__name",
-        "division__official_identifier",
-    ]
+    feature_fields = PMTILES_FEATURE_ATTR_FIELDS
 
     def __init__(self, divset):
         self.divset = divset
 
     def create_pmtile(self, dest_dir):
         pmtiles_fp = f"{dest_dir}/{self.divset.pmtiles_file_name}"
+
         # Create a geojson file for each division subtype
         div_types = set(
             self.divset.divisions.values_list("division_type", flat=True)
@@ -93,7 +89,7 @@ class PMtilesCreator:
             )
             .select_related("division")
             .values(
-                *self.FEATURE_ATTR_FIELDS,
+                *self.feature_fields,
                 "geography",
             )
         )
