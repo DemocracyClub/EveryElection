@@ -75,6 +75,6 @@ class TestPMtilesCreator(TransactionTestCase):
             f'FROM "organisations_divisiongeography" '
             f'INNER JOIN "organisations_organisationdivision" '
             f'ON ("organisations_divisiongeography"."division_id" = "organisations_organisationdivision"."id") '
-            f'WHERE ("organisations_organisationdivision"."division_type" = \'{div_type}\' AND "organisations_organisationdivision"."divisionset_id" = {divset_id})'
+            f'WHERE ("organisations_organisationdivision"."divisionset_id" = {divset_id} AND "organisations_organisationdivision"."division_type" = \'{div_type}\')'
         )
         self.assertEqual(sql_query, expected_query)
