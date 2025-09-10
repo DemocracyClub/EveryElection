@@ -1,11 +1,18 @@
 {% extends "base.html" %}
-{% block page_title %}Election Identifier Reference{% endblock page_title %}
+{% block page_title %}Reference Definitions{% endblock page_title %}
 
 
 {% block content %}
+    <nav class="ds-table-of-contents">
+        <h2>Reference Definitions</h2>
+        <ul>
+            <li><a href="#election-identifier-reference">Election Identifier Reference</a></li>
+            <li><a href="#by-election-reasons">By-Election Reason Definition Reference</a></li>
+        </ul>
+    </nav>
 
-    <h2>Election Identifier Reference</h2>
 
+    <h2 id="election-identifier-reference">Election Identifier Reference</h2>
     <p>An election code starts with an election type string. It may optionally
         contain descriptors for election subtype, organisation and division
         The identifier is terminated with the date that the polls open
@@ -138,6 +145,50 @@
         - A python package with includes a builder object, slugging algorithm and
         validation rules for creating identifiers that conform to this specification.
     </p>
+    <h2 id="by-election-reasons">By-Election Reason Definition Reference</h2>
+
+    <p>
+        There are various reasons why a by-election may be triggered.
+        Not all of these can be applied to all election types.
+        e.g. a recall petition is only used in Westminster, and failure to attend meetings applies to local government.
+        The choices here are in part based on:
+        UK Electoral Commission guidance on casual vacancies:
+        https://www.electoralcommission.org.uk/guidance-returning-officers-administering-local-government-elections-england/casual-vacancies-and-elections/how-casual-vacancies-occur
+    </p>
+    <div class="ds-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for code, description in by_election_reasons %}
+                    {% if code %}
+                        <tr>
+                            <td><code>{{ code }}</code></td>
+                            <td>{{ description }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                <tr>
+                    <td><code>NOT_APPLICABLE</code>*</td>
+                    <td>Neither a by-election nor a ballot</td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2">
+                        <small>*<code>NOT_APPLICABLE</code> <i>is represented as an empty string in the API.</i></small>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+
+
 
 
 {% endblock content %}

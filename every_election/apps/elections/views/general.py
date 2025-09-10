@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.utils.html import mark_safe
 from django.views.generic import DetailView, ListView, TemplateView
 from elections.forms import NoticeOfElectionForm
-from elections.models import Document, Election, ElectionType
+from elections.models import ByElectionReason, Document, Election, ElectionType
 from uk_election_ids.datapackage import ELECTION_TYPES
 
 
@@ -55,6 +55,7 @@ class ReferenceDefinitionView(TemplateView):
                 election_types_table.append(et_record)
 
         context["election_types"] = election_types_table
+        context["by_election_reasons"] = ByElectionReason.choices
         return context
 
 
