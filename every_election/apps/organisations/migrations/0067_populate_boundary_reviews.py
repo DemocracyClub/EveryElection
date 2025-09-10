@@ -3,11 +3,13 @@
 from django.db import migrations
 from organisations.models import (
     OrganisationBoundaryReview,
-    OrganisationDivisionSet,
 )
 
 
 def populate_boundary_reviews_model(apps, schema_editor):
+    OrganisationDivisionSet = apps.get_model(
+        "organisations", "OrganisationDivisionSet"
+    )
     divsets_with_reviews = OrganisationDivisionSet.objects.exclude(
         consultation_url__isnull=True, legislation_url__isnull=True
     ).select_related("organisation")
