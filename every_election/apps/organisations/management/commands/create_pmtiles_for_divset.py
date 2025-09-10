@@ -25,15 +25,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         using_s3 = False
-        divset_id = options["divisionset_id"]
-        # Check divset exists
-        try:
-            divset = OrganisationDivisionSet.objects.get(id=divset_id)
-        except OrganisationDivisionSet.DoesNotExist:
-            raise CommandError(
-                f"OrganisationDivisionSet with id '{divset_id}' does not exist."
-            )
-
         # Use S3 if PUBLIC_DATA_BUCKET is set
         if getattr(settings, "PUBLIC_DATA_BUCKET", None):
             s3_wrapper = S3Wrapper(settings.PUBLIC_DATA_BUCKET)
@@ -43,12 +34,19 @@ class Command(BaseCommand):
             static_path = f"{settings.STATIC_ROOT}/pmtiles-store"
             os.makedirs(static_path, exist_ok=True)
 
+        divset_id = options["divisionset_id"]
+        # Check divset exists
+        try:
+            divset = OrganisationDivisionSet.objects.get(id=divset_id)
+        except OrganisationDivisionSet.DoesNotExist:
+            raise CommandError(
+                f"OrganisationDivisionSet with id '{divset_id}' does not exist."
+            )
         # Check divset has division geographies
         if not divset.get_division_geographies().exists():
             raise CommandError(
                 f"OrganisationDivisionSet with id '{divset_id}' has no division geographies."
             )
-
         # Check for existing file
         if divset.has_pmtiles_file:
             if options["overwrite"] and using_s3:
