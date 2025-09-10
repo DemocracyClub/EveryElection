@@ -135,7 +135,7 @@ class TestCreatePMtilesForDivSet(TransactionTestCase):
             # Use a non-existent id
             call_command("create_pmtiles_for_divset", 1000)
 
-    def test_divset_has_no_divisions(self):
-        self.divisionset.divisions.all().delete()
+    def test_divset_has_no_division_geographies(self):
+        self.divisionset.get_division_geographies().delete()
         with self.assertRaises(CommandError):
             call_command("create_pmtiles_for_divset", self.divisionset.id)

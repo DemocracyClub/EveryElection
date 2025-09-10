@@ -43,10 +43,10 @@ class Command(BaseCommand):
             static_path = f"{settings.STATIC_ROOT}/pmtiles-store"
             os.makedirs(static_path, exist_ok=True)
 
-        # Check divset has divisions
-        if divset.divisions.count() == 0:
+        # Check divset has division geographies
+        if not divset.get_division_geographies().exists():
             raise CommandError(
-                f"OrganisationDivisionSet with id '{divset_id}' has no divisions."
+                f"OrganisationDivisionSet with id '{divset_id}' has no division geographies."
             )
 
         # Check for existing file

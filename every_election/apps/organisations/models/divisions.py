@@ -85,6 +85,9 @@ class OrganisationDivisionSet(
                 divisions_by_type[division.division_type].append(division)
         return divisions_by_type
 
+    def get_division_geographies(self):
+        return DivisionGeography.objects.filter(division__divisionset=self)
+
     def save(self, *args, **kwargs):
         self.check_end_date()
         return super().save(*args, **kwargs)
