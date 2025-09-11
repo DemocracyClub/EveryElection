@@ -110,6 +110,14 @@ class OrganisationDivisionSet(
 
     def save(self, *args, **kwargs):
         self.check_end_date()
+
+        # generate pmtiles md5 hash if missing
+        if (
+            self.get_division_geographies().exists()
+            and not self.pmtiles_md5_hash
+        ):
+            self.pmtiles_md5_hash = self.generate_pmtiles_md5_hash()
+
         return super().save(*args, **kwargs)
 
     class Meta:
