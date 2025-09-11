@@ -1,5 +1,7 @@
+import os
 import shutil
 import tempfile
+from unittest import mock
 
 import boto3
 from django.core.management import call_command
@@ -34,6 +36,10 @@ class TestUpdatePmtiles(TransactionTestCase):
         self.override_static_root = override_settings(
             STATIC_ROOT=self.tmp_static_root
         )
+        # Create mock pmtiles-store
+        self.static_path = f"{self.tmp_static_root}/pmtiles-store"
+        os.makedirs(self.static_path)
+
         self.override_static_root.enable()
 
     def tearDown(self):
@@ -62,3 +68,16 @@ class TestUpdatePmtiles(TransactionTestCase):
         has_files = [ds.has_pmtiles_file for ds in divsets]
         assert all(has_files)
         assert all(hashes)
+
+    def test_skips_divset_when_file_hash_matches(self):
+        divset = OrganisationDivisionSet.objects.first()
+        fake_fp = f"{self.static_path}/{divset.pmtiles_file_name}"
+        with open(fake_fp, "w") as f:
+            f.write("dummy data")
+
+        with mock.patch(
+            "organisations.management.commands.update_pmtiles.call_command"
+        ) as create_pmtiles_call:
+            call_command("update_pmtiles")
+
+            create_pmtiles_call.assert_called_once()

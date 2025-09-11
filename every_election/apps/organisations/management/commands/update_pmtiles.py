@@ -1,3 +1,6 @@
+import os
+
+from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from organisations.models import OrganisationDivisionSet
@@ -14,6 +17,8 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        existing_pmtiles = os.listdir(f"{settings.STATIC_ROOT}/pmtiles-store/")
+
         failures = 0
         for divset in OrganisationDivisionSet.objects.all():
             self.stdout.write(f"Processing DivisionSet: {divset.id}")
@@ -21,6 +26,21 @@ class Command(BaseCommand):
             if not divset.pmtiles_md5_hash:
                 divset.pmtiles_md5_hash = divset.generate_pmtiles_md5_hash()
                 divset.save()
+
+            pmtiles_fp_no_hash = f"{divset.organisation.slug}-{divset.id}"
+
+            divset_pmtiles = self.find_existing_pmtiles_for_divset(
+                existing_pmtiles, pmtiles_fp_no_hash
+            )
+
+            if divset_pmtiles:
+                file_hashes = self.get_file_hashes(divset_pmtiles)
+                computed_divset_hash = divset.generate_pmtiles_md5_hash()
+                match = self.find_matching_hash(
+                    computed_divset_hash, file_hashes
+                )
+                if match:
+                    continue
 
             try:
                 call_command(
@@ -41,3 +61,24 @@ class Command(BaseCommand):
             )
         else:
             raise CommandError(f"Failed to process {failures} DivisionSets")
+
+    def find_matching_hash(self, divset_hash, file_hashes):
+        return [hash for hash in file_hashes if hash == divset_hash]
+
+    def get_file_hashes(self, divset_pmtiles):
+        file_hashes = []
+        for file in divset_pmtiles:
+            file_name = divset_pmtiles[0]
+            file_hash = file_name.split("-")[-1].replace(".pmtiles", "")
+            file_hashes.append(file_hash)
+
+        return file_hashes
+
+    def find_existing_pmtiles_for_divset(
+        self, existing_pmtiles, pmtiles_fp_no_hash
+    ):
+        return [
+            file
+            for file in existing_pmtiles
+            if file.startswith(pmtiles_fp_no_hash)
+        ]
