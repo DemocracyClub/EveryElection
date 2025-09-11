@@ -6,7 +6,15 @@ from organisations.models import OrganisationDivision, OrganisationDivisionSet
 class OrganisationDivisionSetAdminForm(forms.ModelForm):
     class Meta:
         model = OrganisationDivisionSet
-        fields = "__all__"
+        fields = (
+            "organisation",
+            "start_date",
+            "end_date",
+            "legislation_url",
+            "consultation_url",
+            "short_title",
+            "notes",
+        )
 
 
 class OrganisationDivisionInlineAdmin(admin.TabularInline):
@@ -42,7 +50,14 @@ class OrganisationDivisionSetAdmin(admin.ModelAdmin):
         "organisation__official_identifier",
         "short_title",
     )
+
     form = OrganisationDivisionSetAdminForm
     inlines = [
         OrganisationDivisionInlineAdmin,
     ]
+
+    def get_readonly_fields(self, request, obj=None):
+        # Only show pmtiles_md5_hash as readonly on the change (detail) view
+        if obj:
+            return ("pmtiles_md5_hash",)
+        return ()
