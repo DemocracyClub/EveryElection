@@ -62,7 +62,7 @@ class OrganisationDivisionSet(
 
     @property
     def pmtiles_file_name(self):
-        return f"{self.organisation.slug}-{self.id}.pmtiles"
+        return f"{self.organisation.slug}-{self.id}-{self.pmtiles_md5_hash}.pmtiles"
 
     @property
     def pmtiles_s3_key(self):
