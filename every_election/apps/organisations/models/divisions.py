@@ -37,6 +37,7 @@ class OrganisationDivisionSet(
     consultation_url = models.CharField(blank=True, max_length=500, null=True)
     short_title = models.CharField(blank=True, max_length=200)
     notes = models.TextField(blank=True)
+    pmtiles_md5_hash = models.CharField(max_length=32, blank=True)
     ValidationError = ValueError
 
     objects = DivisionSetQuerySet.as_manager()
