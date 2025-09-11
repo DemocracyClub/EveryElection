@@ -17,6 +17,11 @@ class Command(BaseCommand):
         failures = 0
         for divset in OrganisationDivisionSet.objects.all():
             self.stdout.write(f"Processing DivisionSet: {divset.id}")
+            # Generate hash key if missing
+            if not divset.pmtiles_md5_hash:
+                divset.pmtiles_md5_hash = divset.generate_pmtiles_md5_hash()
+                divset.save()
+
             try:
                 call_command(
                     "create_pmtiles_for_divset",
