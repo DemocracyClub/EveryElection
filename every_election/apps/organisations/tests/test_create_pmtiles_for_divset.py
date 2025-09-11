@@ -23,6 +23,7 @@ class TestCreatePMtilesForDivSet(TransactionTestCase):
         for _ in range(5):
             div = OrganisationDivisionFactory(divisionset=self.divisionset)
             DivisionGeographyFactory(division=div)
+        self.divisionset.save()  # Ensure pmtiles_md5_hash is generated
         # Mock STATIC_ROOT with tmp dir
         self.tmp_static_root = tempfile.mkdtemp()
         self.override_static_root = override_settings(

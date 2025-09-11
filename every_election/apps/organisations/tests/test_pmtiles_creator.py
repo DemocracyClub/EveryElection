@@ -17,6 +17,7 @@ class TestPMtilesCreator(TransactionTestCase):
         for _ in range(5):  # Create five divisions for the divisionset
             div = OrganisationDivisionFactory(divisionset=self.divisionset)
             DivisionGeographyFactory(division=div)
+        self.divisionset.save()  # Ensure pmtiles_md5_hash is generated
         self.pmtile_creator = PMtilesCreator(self.divisionset)
 
     def test_create_pmtiles_file_single_div_type(self):
