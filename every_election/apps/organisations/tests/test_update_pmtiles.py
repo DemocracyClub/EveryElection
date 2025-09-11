@@ -81,3 +81,25 @@ class TestUpdatePmtiles(TransactionTestCase):
             call_command("update_pmtiles")
 
             create_pmtiles_call.assert_called_once()
+
+    def test_update_hash_and_overwrite_pmtiles_when_file_hash_mismatch(self):
+        # create the pmtiles
+        call_command("update_pmtiles")
+        divset = OrganisationDivisionSet.objects.first()
+        original_hash = divset.pmtiles_md5_hash
+        original_files = os.listdir(self.static_path)
+        # invalidate hash
+        div = divset.divisions.first()
+        div.name = "new name"
+        div.save()
+
+        call_command("update_pmtiles")
+
+        new_files = os.listdir(self.static_path)
+        divset.refresh_from_db()
+        new_hash = divset.pmtiles_md5_hash
+        assert original_hash != new_hash
+        # assert old file was removed
+        assert len(original_files) == len(new_files)
+        # assert files are different
+        assert sorted(original_files) != sorted(new_files)

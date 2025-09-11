@@ -41,6 +41,11 @@ class Command(BaseCommand):
                 )
                 if match:
                     continue
+                # update hash if no matching file hash found
+                divset.pmtiles_md5_hash = computed_divset_hash
+                divset.save()
+                # remove outdated pmtiles
+                self.remove_pmtiles(divset_pmtiles)
 
             try:
                 call_command(
@@ -61,6 +66,10 @@ class Command(BaseCommand):
             )
         else:
             raise CommandError(f"Failed to process {failures} DivisionSets")
+
+    def remove_pmtiles(self, divset_pmtiles):
+        for file in divset_pmtiles:
+            os.remove(f"{settings.STATIC_ROOT}/pmtiles-store/{file}")
 
     def find_matching_hash(self, divset_hash, file_hashes):
         return [hash for hash in file_hashes if hash == divset_hash]
