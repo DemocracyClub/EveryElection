@@ -35,18 +35,9 @@ class Command(BaseCommand):
             os.makedirs(static_path, exist_ok=True)
 
         divset_id = options["divisionset_id"]
-        # Check divset exists
-        try:
-            divset = OrganisationDivisionSet.objects.get(id=divset_id)
-        except OrganisationDivisionSet.DoesNotExist:
-            raise CommandError(
-                f"OrganisationDivisionSet with id '{divset_id}' does not exist."
-            )
-        # Check divset has division geographies
-        if not divset.get_division_geographies().exists():
-            raise CommandError(
-                f"OrganisationDivisionSet with id '{divset_id}' has no division geographies."
-            )
+
+        divset = self.validate_divset_id(divset_id)
+
         # Check for existing file
         if divset.has_pmtiles_file:
             if options["overwrite"] and using_s3:
@@ -78,3 +69,18 @@ class Command(BaseCommand):
                         f"PMTile created at {static_path}/{divset.pmtiles_file_name}."
                     )
                 )
+
+    def validate_divset_id(self, divset_id):
+        # Check divset exists
+        try:
+            divset = OrganisationDivisionSet.objects.get(id=divset_id)
+        except OrganisationDivisionSet.DoesNotExist:
+            raise CommandError(
+                f"OrganisationDivisionSet with id '{divset_id}' does not exist."
+            )
+        # Check divset has division geographies
+        if not divset.get_division_geographies().exists():
+            raise CommandError(
+                f"OrganisationDivisionSet with id '{divset.id}' has no division geographies."
+            )
+        return divset
