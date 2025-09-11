@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 from elections.tests.factories import ElectedRoleFactory
 from elections.utils import ElectionBuilder
@@ -85,3 +87,36 @@ def test_md5_hash_changes_on_div_or_geog_update(
 
     new_hash = ds.generate_pmtiles_md5_hash()
     assert original_hash != new_hash
+
+
+def test_generate_pmtiles_hash_if_absent_on_save(db):
+    ds = OrganisationDivisionSetFactory()
+    assert ds.pmtiles_md5_hash == ""
+    for i in range(10):
+        div = OrganisationDivisionFactory(divisionset=ds)
+        DivisionGeographyFactory(division=div)
+
+    ds.save()  # should generate hash
+
+    assert ds.pmtiles_md5_hash != ""
+    assert len(ds.pmtiles_md5_hash) == 32
+
+
+def test_pmtiles_hash_not_regenerated_if_already_exists(db):
+    with patch(
+        "organisations.models.OrganisationDivisionSet.generate_pmtiles_md5_hash",
+        return_value="mock_hash",
+    ) as mock_generate_hash:
+        ds = OrganisationDivisionSetFactory()
+        assert ds.pmtiles_md5_hash == ""
+
+        for i in range(10):
+            div = OrganisationDivisionFactory(divisionset=ds)
+            DivisionGeographyFactory(division=div)
+
+        ds.save()  # should generate hash
+
+        assert ds.pmtiles_md5_hash != ""
+
+        ds.save()  # should not not generate hash
+        assert mock_generate_hash.call_count == 1
