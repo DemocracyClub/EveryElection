@@ -39,7 +39,7 @@ class Command(BaseCommand):
                 match = self.find_matching_hash(
                     computed_divset_hash, file_hashes
                 )
-                if match:
+                if match and not options["overwrite"]:
                     continue
                 # update hash if no matching file hash found
                 divset.pmtiles_md5_hash = computed_divset_hash

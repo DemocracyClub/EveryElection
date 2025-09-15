@@ -103,3 +103,16 @@ class TestUpdatePmtiles(TransactionTestCase):
         assert len(original_files) == len(new_files)
         # assert files are different
         assert sorted(original_files) != sorted(new_files)
+
+    def test_overwrite(self):
+        call_command("update_pmtiles")
+
+        with mock.patch(
+            "organisations.management.commands.update_pmtiles.call_command"
+        ) as create_pmtiles_call:
+            call_command("update_pmtiles", overwrite=True)
+
+            assert create_pmtiles_call.call_count == 2
+            for call in create_pmtiles_call.call_args_list:
+                kwargs = call.kwargs
+                self.assertEqual(kwargs.get("overwrite"), True)
