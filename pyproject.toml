@@ -43,7 +43,7 @@ cdk = [
     "aws-cdk-lib==2.175.1",
     "aws-cdk.aws-lambda-python-alpha==2.160.0a0",
     "constructs==10.4.2",
-    "diagrams==0.24.1",
+    "diagrams==0.24.4",
     "pyyaml==6.0.2",
 ]
 production = [
