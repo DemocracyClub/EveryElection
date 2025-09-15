@@ -65,3 +65,9 @@ class S3Wrapper:
 
     def delete_object(self, key: str):
         self.client.delete_object(Bucket=self.bucket_name, Key=key)
+
+    def list_object_keys(self, prefix: str = ""):
+        objects = self.client.list_objects(
+            Bucket=self.bucket_name, Prefix=prefix
+        )
+        return [obj["Key"] for obj in objects.get("Contents", [])]
