@@ -105,7 +105,12 @@ class Command(BaseCommand):
             pmtiles_creator = PMtilesCreator(divset)
 
             with tempfile.TemporaryDirectory() as temp_dir:
-                pmtile_fp = pmtiles_creator.create_pmtile(temp_dir)
+                try:
+                    pmtile_fp = pmtiles_creator.create_pmtile(temp_dir)
+                except Exception as e:
+                    warning = f"Failed to create PMTiles for DivisionSet {divset.id}: {e}"
+                    self.stdout.write(self.style.WARNING(warning))
+                    continue
 
                 if self.using_s3:
                     s3_key = divset.pmtiles_s3_key

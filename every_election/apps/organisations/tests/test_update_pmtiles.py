@@ -221,3 +221,10 @@ class TestUpdatePmtiles(TransactionTestCase):
         stdout = StringIO()
         call_command("update_pmtiles", divset_ids=[1000], stdout=stdout)
         self.assertIn("do not exist", stdout.getvalue().lower())
+
+    def test_pmtiles_creation_fails(self):
+        error = "Tippecanoe failed"
+        self.mock_create_pmtile.side_effect = Exception(error)
+        stdout = StringIO()
+        call_command("update_pmtiles", all=True, stdout=stdout)
+        self.assertIn(error, stdout.getvalue())
