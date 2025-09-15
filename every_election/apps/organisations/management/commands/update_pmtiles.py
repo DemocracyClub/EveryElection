@@ -5,6 +5,8 @@ from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from organisations.models import OrganisationDivisionSet
 
+from every_election.apps.storage.s3wrapper import S3Wrapper
+
 
 class Command(BaseCommand):
     help = "Run create_pmtile_for_divset for every DivisionSet."
@@ -17,7 +19,20 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        existing_pmtiles = os.listdir(f"{settings.STATIC_ROOT}/pmtiles-store/")
+        self.using_s3 = False
+        # Use S3 if PUBLIC_DATA_BUCKET is set
+        if getattr(settings, "PUBLIC_DATA_BUCKET", None):
+            self.s3_wrapper = S3Wrapper(settings.PUBLIC_DATA_BUCKET)
+            self.using_s3 = True
+
+        if self.using_s3:
+            existing_pmtiles = self.s3_wrapper.list_object_keys(
+                prefix="pmtiles-store/"
+            )
+        else:
+            existing_pmtiles = os.listdir(
+                f"{settings.STATIC_ROOT}/pmtiles-store/"
+            )
 
         failures = 0
         for divset in OrganisationDivisionSet.objects.all():
@@ -27,7 +42,12 @@ class Command(BaseCommand):
                 divset.pmtiles_md5_hash = divset.generate_pmtiles_md5_hash()
                 divset.save()
 
-            pmtiles_fp_no_hash = f"{divset.organisation.slug}-{divset.id}"
+            if self.using_s3:
+                pmtiles_fp_no_hash = (
+                    f"pmtiles-store/{divset.organisation.slug}-{divset.id}"
+                )
+            else:
+                pmtiles_fp_no_hash = f"{divset.organisation.slug}-{divset.id}"
 
             divset_pmtiles = self.find_existing_pmtiles_for_divset(
                 existing_pmtiles, pmtiles_fp_no_hash
@@ -69,7 +89,10 @@ class Command(BaseCommand):
 
     def remove_pmtiles(self, divset_pmtiles):
         for file in divset_pmtiles:
-            os.remove(f"{settings.STATIC_ROOT}/pmtiles-store/{file}")
+            if self.using_s3:
+                self.s3_wrapper.delete_object(file)
+            else:
+                os.remove(f"{settings.STATIC_ROOT}/pmtiles-store/{file}")
 
     def find_matching_hash(self, divset_hash, file_hashes):
         return [hash for hash in file_hashes if hash == divset_hash]
