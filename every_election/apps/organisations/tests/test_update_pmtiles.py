@@ -18,9 +18,25 @@ from organisations.models import OrganisationDivisionSet
 MOCK_PUBLIC_DATA_BUCKET = "test-pmtiles-store"
 
 
+def mock_create_pmtile(self, temp_dir):
+    filepath = os.path.join(temp_dir, self.divset.pmtiles_file_name)
+    with open(filepath, "w") as f:
+        f.write("dummy pmtiles content")
+    return filepath
+
+
 @mock_aws
 class TestUpdatePmtiles(TransactionTestCase):
     def setUp(self):
+        # Patch create_pmtile to avoid actually running tippecanoe
+        self.patcher = mock.patch(
+            "organisations.pmtiles_creator.PMtilesCreator.create_pmtile",
+            side_effect=mock_create_pmtile,
+            autospec=True,
+        )
+
+        self.mock_create_pmtile = self.patcher.start()
+
         for _ in range(2):
             divisionset = OrganisationDivisionSetFactory()
             for _ in range(5):
@@ -44,6 +60,7 @@ class TestUpdatePmtiles(TransactionTestCase):
         self.override_static_root.enable()
 
     def tearDown(self):
+        self.patcher.stop()
         # Reset Mock STATIC_ROOT
         self.override_static_root.disable()
         shutil.rmtree(self.tmp_static_root)
@@ -100,12 +117,9 @@ class TestUpdatePmtiles(TransactionTestCase):
         with open(fake_fp, "w") as f:
             f.write("dummy data")
 
-        with mock.patch(
-            "organisations.management.commands.update_pmtiles.call_command"
-        ) as create_pmtiles_call:
-            call_command("update_pmtiles", all=True)
+        call_command("update_pmtiles", all=True)
 
-            create_pmtiles_call.assert_called_once()
+        self.mock_create_pmtile.assert_called_once()
 
     @override_settings(PUBLIC_DATA_BUCKET=MOCK_PUBLIC_DATA_BUCKET)
     def test_skips_divset_when_file_hash_matches_s3(self):
@@ -117,12 +131,9 @@ class TestUpdatePmtiles(TransactionTestCase):
         )
         fake_file.put(Body="dummy data")
 
-        with mock.patch(
-            "organisations.management.commands.update_pmtiles.call_command"
-        ) as create_pmtiles_call:
-            call_command("update_pmtiles", all=True)
+        call_command("update_pmtiles", all=True)
 
-            create_pmtiles_call.assert_called_once()
+        self.mock_create_pmtile.assert_called_once()
 
     def test_update_hash_and_overwrite_pmtiles_when_file_hash_mismatch(self):
         # create the pmtiles
@@ -170,18 +181,16 @@ class TestUpdatePmtiles(TransactionTestCase):
         # assert files are different
         assert sorted(original_files) != sorted(new_files)
 
-    def test_overwrite(self):
+    def test_overwrite_argument(self):
+        stdout = StringIO()
         call_command("update_pmtiles", all=True)
+        call_command("update_pmtiles", all=True, stdout=stdout)
 
-        with mock.patch(
-            "organisations.management.commands.update_pmtiles.call_command"
-        ) as create_pmtiles_call:
-            call_command("update_pmtiles", all=True, overwrite=True)
+        assert self.mock_create_pmtile.call_count == 2
+        self.assertIn("skipping", stdout.getvalue().lower())
 
-            assert create_pmtiles_call.call_count == 2
-            for call in create_pmtiles_call.call_args_list:
-                kwargs = call.kwargs
-                self.assertEqual(kwargs.get("overwrite"), True)
+        call_command("update_pmtiles", all=True, overwrite=True)
+        assert self.mock_create_pmtile.call_count == 4
 
     def test_divset_ids_argument(self):
         divset = OrganisationDivisionSet.objects.first()
