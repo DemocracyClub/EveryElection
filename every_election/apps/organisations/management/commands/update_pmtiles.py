@@ -1,9 +1,10 @@
 import os
+import tempfile
 
 from django.conf import settings
-from django.core.management import call_command
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from organisations.models import OrganisationDivisionSet
+from organisations.pmtiles_creator import PMtilesCreator
 
 from every_election.apps.storage.s3wrapper import S3Wrapper
 
@@ -36,6 +37,10 @@ class Command(BaseCommand):
         if getattr(settings, "PUBLIC_DATA_BUCKET", None):
             self.s3_wrapper = S3Wrapper(settings.PUBLIC_DATA_BUCKET)
             self.using_s3 = True
+        else:
+            # Make pmtiles storage directory in static
+            static_path = f"{settings.STATIC_ROOT}/pmtiles-store"
+            os.makedirs(static_path, exist_ok=True)
 
         if self.using_s3:
             existing_pmtiles = self.s3_wrapper.list_object_keys(
@@ -49,13 +54,22 @@ class Command(BaseCommand):
         if options["all"]:
             qs = OrganisationDivisionSet.objects.all()
         else:
-            qs = OrganisationDivisionSet.objects.filter(
-                id__in=options["divset_ids"]
-            )
+            divset_ids = set(options["divset_ids"])
+            qs = OrganisationDivisionSet.objects.filter(id__in=divset_ids)
+            found_ids = set(qs.values_list("id", flat=True))
+            missing_ids = divset_ids - found_ids
+            if missing_ids:
+                warning = f"Warning: The following DivisionSet IDs do not exist: {', '.join(str(i) for i in sorted(missing_ids))}"
+                self.stdout.write(self.style.WARNING(warning))
 
-        failures = 0
         for divset in qs:
             self.stdout.write(f"Processing DivisionSet: {divset.id}")
+            # Check divset has division geographies
+            if not divset.get_division_geographies().exists():
+                warning = f"OrganisationDivisionSet with id '{divset.id}' has no division geographies."
+                self.stdout.write(self.style.WARNING(warning))
+                continue
+
             # Generate hash key if missing
             if not divset.pmtiles_md5_hash:
                 divset.pmtiles_md5_hash = divset.generate_pmtiles_md5_hash()
@@ -79,6 +93,8 @@ class Command(BaseCommand):
                     computed_divset_hash, file_hashes
                 )
                 if match and not options["overwrite"]:
+                    warning = f"{divset.pmtiles_file_name} already exists{' on S3' if self.using_s3 else ' locally'}. Skipping (use --overwrite to force)."
+                    self.stdout.write(self.style.WARNING(warning))
                     continue
                 # update hash if no matching file hash found
                 divset.pmtiles_md5_hash = computed_divset_hash
@@ -86,25 +102,29 @@ class Command(BaseCommand):
                 # remove outdated pmtiles
                 self.remove_pmtiles(divset_pmtiles)
 
-            try:
-                call_command(
-                    "create_pmtiles_for_divset",
-                    divset.id,
-                    overwrite=options["overwrite"],
-                )
-            except Exception as e:
-                self.stdout.write(
-                    self.style.ERROR(
-                        f"Error processing DivisionSet ID {divset.id}: {str(e)}"
+            pmtiles_creator = PMtilesCreator(divset)
+
+            with tempfile.TemporaryDirectory() as temp_dir:
+                pmtile_fp = pmtiles_creator.create_pmtile(temp_dir)
+
+                if self.using_s3:
+                    s3_key = divset.pmtiles_s3_key
+                    self.s3_wrapper.upload_file_from_fp(pmtile_fp, s3_key)
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f"PMTile uploaded to S3 at {s3_key}."
+                        )
                     )
-                )
-                failures += 1
-        if failures == 0:
-            self.stdout.write(
-                self.style.SUCCESS("All DivisionSets processed successfully.")
-            )
-        else:
-            raise CommandError(f"Failed to process {failures} DivisionSets")
+                else:
+                    # Move the pmtiles file to the static directory
+                    os.rename(
+                        pmtile_fp, f"{static_path}/{divset.pmtiles_file_name}"
+                    )
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f"PMTile created at {static_path}/{divset.pmtiles_file_name}."
+                        )
+                    )
 
     def remove_pmtiles(self, divset_pmtiles):
         for file in divset_pmtiles:

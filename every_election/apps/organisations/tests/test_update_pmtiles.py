@@ -1,6 +1,7 @@
 import os
 import shutil
 import tempfile
+from io import StringIO
 from unittest import mock
 
 import boto3
@@ -198,3 +199,16 @@ class TestUpdatePmtiles(TransactionTestCase):
         # Get divset from database again to invalidate cached has_pmtiles_file property
         divset = OrganisationDivisionSet.objects.get(id=divset.id)
         assert divset.has_pmtiles_file is True
+
+    def test_divset_has_no_division_geographies(self):
+        divset = OrganisationDivisionSet.objects.first()
+        divset.get_division_geographies().delete()
+        stdout = StringIO()
+        call_command("update_pmtiles", divset_ids=[divset.id], stdout=stdout)
+        self.assertIn("has no division geographies", stdout.getvalue().lower())
+        self.assertFalse(divset.has_pmtiles_file)
+
+    def test_divset_does_not_exist(self):
+        stdout = StringIO()
+        call_command("update_pmtiles", divset_ids=[1000], stdout=stdout)
+        self.assertIn("do not exist", stdout.getvalue().lower())
