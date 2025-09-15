@@ -48,14 +48,14 @@ class TestUpdatePmtiles(TransactionTestCase):
         shutil.rmtree(self.tmp_static_root)
 
     def test_create_pmtiles_when_file_absent(self):
-        call_command("update_pmtiles")
+        call_command("update_pmtiles", all=True)
         divsets = OrganisationDivisionSet.objects.all()
         has_files = [ds.has_pmtiles_file for ds in divsets]
         assert all(has_files)
 
     @override_settings(PUBLIC_DATA_BUCKET=MOCK_PUBLIC_DATA_BUCKET)
     def test_create_pmtiles_when_file_absent_s3(self):
-        call_command("update_pmtiles")
+        call_command("update_pmtiles", all=True)
         divsets = OrganisationDivisionSet.objects.all()
         has_files = [ds.has_pmtiles_file for ds in divsets]
         assert all(has_files)
@@ -67,7 +67,7 @@ class TestUpdatePmtiles(TransactionTestCase):
             div = OrganisationDivisionFactory(divisionset=divisionset)
             DivisionGeographyFactory(division=div)
 
-        call_command("update_pmtiles")
+        call_command("update_pmtiles", all=True)
 
         divsets = OrganisationDivisionSet.objects.all()
 
@@ -84,7 +84,7 @@ class TestUpdatePmtiles(TransactionTestCase):
             div = OrganisationDivisionFactory(divisionset=divisionset)
             DivisionGeographyFactory(division=div)
 
-        call_command("update_pmtiles")
+        call_command("update_pmtiles", all=True)
 
         divsets = OrganisationDivisionSet.objects.all()
 
@@ -102,7 +102,7 @@ class TestUpdatePmtiles(TransactionTestCase):
         with mock.patch(
             "organisations.management.commands.update_pmtiles.call_command"
         ) as create_pmtiles_call:
-            call_command("update_pmtiles")
+            call_command("update_pmtiles", all=True)
 
             create_pmtiles_call.assert_called_once()
 
@@ -119,13 +119,13 @@ class TestUpdatePmtiles(TransactionTestCase):
         with mock.patch(
             "organisations.management.commands.update_pmtiles.call_command"
         ) as create_pmtiles_call:
-            call_command("update_pmtiles")
+            call_command("update_pmtiles", all=True)
 
             create_pmtiles_call.assert_called_once()
 
     def test_update_hash_and_overwrite_pmtiles_when_file_hash_mismatch(self):
         # create the pmtiles
-        call_command("update_pmtiles")
+        call_command("update_pmtiles", all=True)
         divset = OrganisationDivisionSet.objects.first()
         original_hash = divset.pmtiles_md5_hash
         original_files = os.listdir(self.static_path)
@@ -134,7 +134,7 @@ class TestUpdatePmtiles(TransactionTestCase):
         div.name = "new name"
         div.save()
 
-        call_command("update_pmtiles")
+        call_command("update_pmtiles", all=True)
 
         new_files = os.listdir(self.static_path)
         divset.refresh_from_db()
@@ -148,7 +148,7 @@ class TestUpdatePmtiles(TransactionTestCase):
     @override_settings(PUBLIC_DATA_BUCKET=MOCK_PUBLIC_DATA_BUCKET)
     def test_update_hash_and_overwrite_pmtiles_when_file_hash_mismatch_s3(self):
         # create the pmtiles
-        call_command("update_pmtiles")
+        call_command("update_pmtiles", all=True)
         divset = OrganisationDivisionSet.objects.first()
         bucket = self.s3.Bucket(MOCK_PUBLIC_DATA_BUCKET)
         original_hash = divset.pmtiles_md5_hash
@@ -158,7 +158,7 @@ class TestUpdatePmtiles(TransactionTestCase):
         div.name = "new name"
         div.save()
 
-        call_command("update_pmtiles")
+        call_command("update_pmtiles", all=True)
 
         new_files = [obj.key for obj in bucket.objects.all()]
         divset.refresh_from_db()
@@ -170,14 +170,31 @@ class TestUpdatePmtiles(TransactionTestCase):
         assert sorted(original_files) != sorted(new_files)
 
     def test_overwrite(self):
-        call_command("update_pmtiles")
+        call_command("update_pmtiles", all=True)
 
         with mock.patch(
             "organisations.management.commands.update_pmtiles.call_command"
         ) as create_pmtiles_call:
-            call_command("update_pmtiles", overwrite=True)
+            call_command("update_pmtiles", all=True, overwrite=True)
 
             assert create_pmtiles_call.call_count == 2
             for call in create_pmtiles_call.call_args_list:
                 kwargs = call.kwargs
                 self.assertEqual(kwargs.get("overwrite"), True)
+
+    def test_divset_ids_argument(self):
+        divset = OrganisationDivisionSet.objects.first()
+        assert divset.has_pmtiles_file is False
+        call_command("update_pmtiles", divset_ids=[divset.id])
+        # Get divset from database again to invalidate cached has_pmtiles_file property
+        divset = OrganisationDivisionSet.objects.get(id=divset.id)
+        assert divset.has_pmtiles_file is True
+
+    @override_settings(PUBLIC_DATA_BUCKET=MOCK_PUBLIC_DATA_BUCKET)
+    def test_divset_ids_argument_s3(self):
+        divset = OrganisationDivisionSet.objects.first()
+        assert divset.has_pmtiles_file is False
+        call_command("update_pmtiles", divset_ids=[divset.id])
+        # Get divset from database again to invalidate cached has_pmtiles_file property
+        divset = OrganisationDivisionSet.objects.get(id=divset.id)
+        assert divset.has_pmtiles_file is True

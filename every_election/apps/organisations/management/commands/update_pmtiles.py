@@ -17,6 +17,18 @@ class Command(BaseCommand):
             action="store_true",
             help="Overwrite existing PMTiles if they exist.",
         )
+        group = parser.add_mutually_exclusive_group(required=True)
+        group.add_argument(
+            "--all",
+            action="store_true",
+            help="Process all DivisionSets.",
+        )
+        group.add_argument(
+            "--divset-ids",
+            nargs="+",
+            type=int,
+            help="IDs of specific DivisionSets to process.",
+        )
 
     def handle(self, *args, **options):
         self.using_s3 = False
@@ -34,8 +46,15 @@ class Command(BaseCommand):
                 f"{settings.STATIC_ROOT}/pmtiles-store/"
             )
 
+        if options["all"]:
+            qs = OrganisationDivisionSet.objects.all()
+        else:
+            qs = OrganisationDivisionSet.objects.filter(
+                id__in=options["divset_ids"]
+            )
+
         failures = 0
-        for divset in OrganisationDivisionSet.objects.all():
+        for divset in qs:
             self.stdout.write(f"Processing DivisionSet: {divset.id}")
             # Generate hash key if missing
             if not divset.pmtiles_md5_hash:
