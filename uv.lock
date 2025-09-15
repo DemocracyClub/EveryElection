@@ -528,9 +528,9 @@ wheels = [
 name = "djangorangemiddleware"
 version = "1.0.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/cc/a9/d54a6ebf9cf245c79cda71e28244139c402350cdbbca3aff3c028f913976/DjangoRangeMiddleware-1.0.1.tar.gz", hash = "sha256:6aa37d2601c38ae82575936a0fba974a10910b6074e3d85289b535c481f2fcc0", size = 3808 }
+sdist = { url = "https://files.pythonhosted.org/packages/cc/a9/d54a6ebf9cf245c79cda71e28244139c402350cdbbca3aff3c028f913976/DjangoRangeMiddleware-1.0.1.tar.gz", hash = "sha256:6aa37d2601c38ae82575936a0fba974a10910b6074e3d85289b535c481f2fcc0", size = 3808, upload-time = "2022-08-30T18:03:24.585Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a4/d0/b8e41ecc3a11d1cfae76a14a4a92e5d5c705ecbd2cbcd341b8c1dc94ca32/DjangoRangeMiddleware-1.0.1-py3-none-any.whl", hash = "sha256:8557adcc8295cbbe23c71ec9a9ffd49bfd6f6341eb6f1fbb6eb2048448fd0468", size = 4518 },
+    { url = "https://files.pythonhosted.org/packages/a4/d0/b8e41ecc3a11d1cfae76a14a4a92e5d5c705ecbd2cbcd341b8c1dc94ca32/DjangoRangeMiddleware-1.0.1-py3-none-any.whl", hash = "sha256:8557adcc8295cbbe23c71ec9a9ffd49bfd6f6341eb6f1fbb6eb2048448fd0468", size = 4518, upload-time = "2022-08-30T18:03:22.856Z" },
 ]
 
 [[package]]
@@ -702,7 +702,7 @@ dev = [
     { name = "django-debug-toolbar", specifier = "==5.0.1" },
     { name = "djhtml", specifier = "==3.0.7" },
     { name = "factory-boy", specifier = "==3.3.1" },
-    { name = "moto", extras = ["events", "sqs"], specifier = "==5.0.26" },
+    { name = "moto", extras = ["events", "sqs"], specifier = "==5.1.12" },
     { name = "playwright", specifier = "==1.49.1" },
     { name = "pytest", specifier = "==8.3.4" },
     { name = "pytest-cov", specifier = "==6.0.0" },
@@ -1043,7 +1043,7 @@ wheels = [
 
 [[package]]
 name = "moto"
-version = "5.0.26"
+version = "5.1.12"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "boto3" },
@@ -1056,9 +1056,9 @@ dependencies = [
     { name = "werkzeug" },
     { name = "xmltodict" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/8b/a9/996e9d0c8c5d6f8b044d4facfe6eb6c42feb4ab5c2a24d78f780bd942f61/moto-5.0.26.tar.gz", hash = "sha256:6829f58a670a087e7c5b63f8183c6b72d64a1444e420c212250b7326b69a9183", size = 6442983, upload-time = "2025-01-05T21:06:36.53Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/fe/71/805c0a0b30e362cd759206d4723bad800bc8c6c83a7edd05e55747d03959/moto-5.1.12.tar.gz", hash = "sha256:6eca3a020cb89c188b763610c27c969c32b832205712d3bdcb1a6031a4005187", size = 7185928, upload-time = "2025-09-07T19:38:37.412Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0b/dd/40c20b3bcdf335f56776e1adea5edd1b1026f3f98816944a123393f64df3/moto-5.0.26-py3-none-any.whl", hash = "sha256:803831f427ca6c0452ae4fb898d731cfc19906466a33a88cbc1076abcbfcbba7", size = 4614956, upload-time = "2025-01-05T21:06:32.282Z" },
+    { url = "https://files.pythonhosted.org/packages/89/92/cfb9a8be3d6070bef53afb92e03a5a7eb6da0127b29a8438fe00b12f5ed2/moto-5.1.12-py3-none-any.whl", hash = "sha256:c9f1119ab57819ce4b88f793f51c6ca0361b6932a90c59865fd71022acfc5582", size = 5313196, upload-time = "2025-09-07T19:38:34.78Z" },
 ]
 
 [package.optional-dependencies]
