@@ -65,3 +65,13 @@ class S3Wrapper:
 
     def delete_object(self, key: str):
         self.client.delete_object(Bucket=self.bucket_name, Key=key)
+
+    def list_object_keys(self, prefix: str = ""):
+        paginator = self.client.get_paginator("list_objects_v2")
+        page_iterator = paginator.paginate(
+            Bucket=self.bucket_name, Prefix=prefix
+        )
+        keys = []
+        for page in page_iterator:
+            keys.extend([obj["Key"] for obj in page.get("Contents", [])])
+        return keys
