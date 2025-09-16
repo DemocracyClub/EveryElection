@@ -70,6 +70,13 @@ class EEOncePerTagCommandRunner(Stack):
                 "output-on-error /var/www/every_election/code/serverscripts/sync_map_layers_to_s3.sh",
             )
 
+            # Update PMTiles
+            self.add_job(
+                "update_pmtiles",
+                "cron(0 3 * * ? *)",
+                "output-on-error manage-py-command update_pmtiles --all",
+            )
+
             # Add NUTS1 tags to any new elections
             self.add_job(
                 "add_nuts1_tags",
