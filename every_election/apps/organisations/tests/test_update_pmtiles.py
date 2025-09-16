@@ -228,3 +228,18 @@ class TestUpdatePmtiles(TransactionTestCase):
         stdout = StringIO()
         call_command("update_pmtiles", all=True, stdout=stdout)
         self.assertIn(error, stdout.getvalue())
+
+    def test_invalid_hash_no_existing_files(self):
+        divset = OrganisationDivisionSet.objects.first()
+        original_hash = divset.pmtiles_md5_hash
+        # invalidate hash
+        div = divset.divisions.first()
+        div.name = "new name"
+        div.save()
+
+        call_command("update_pmtiles", all=True)
+
+        divset.refresh_from_db()
+        new_hash = divset.pmtiles_md5_hash
+        # assert hash was updated
+        assert original_hash != new_hash

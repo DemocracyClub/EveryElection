@@ -74,10 +74,11 @@ class Command(BaseCommand):
                 failures += 1
                 continue
 
-            # Generate hash key if missing
+            # Generate hash for current state of divset
+            computed_divset_hash = divset.generate_pmtiles_md5_hash()
+
             if not divset.pmtiles_md5_hash:
-                divset.pmtiles_md5_hash = divset.generate_pmtiles_md5_hash()
-                divset.save()
+                self.update_divset_hash(divset, computed_divset_hash)
 
             if self.using_s3:
                 pmtiles_fp_no_hash = (
@@ -92,7 +93,6 @@ class Command(BaseCommand):
 
             if divset_pmtiles:
                 file_hashes = self.get_file_hashes(divset_pmtiles)
-                computed_divset_hash = divset.generate_pmtiles_md5_hash()
                 match = self.find_matching_hash(
                     computed_divset_hash, file_hashes
                 )
@@ -101,10 +101,11 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.WARNING(warning))
                     continue
                 # update hash if no matching file hash found
-                divset.pmtiles_md5_hash = computed_divset_hash
-                divset.save()
+                self.update_divset_hash(divset, computed_divset_hash)
                 # remove outdated pmtiles
                 self.remove_pmtiles(divset_pmtiles)
+            else:
+                self.update_divset_hash(divset, computed_divset_hash)
 
             pmtiles_creator = PMtilesCreator(divset)
 
@@ -142,6 +143,10 @@ class Command(BaseCommand):
             )
         else:
             self.stdout.write(self.style.SUCCESS("Completed successfully."))
+
+    def update_divset_hash(self, divset, computed_divset_hash):
+        divset.pmtiles_md5_hash = computed_divset_hash
+        divset.save()
 
     def remove_pmtiles(self, divset_pmtiles):
         for file in divset_pmtiles:
