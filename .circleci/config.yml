@@ -46,7 +46,12 @@ jobs:
             uv venv --verbose --no-python-downloads
             . .venv/bin/activate
             uv sync --group cdk --group production
-
+      - run:
+          name: Install tippecanoe
+          command: |
+            mkdir -p ~/tippecanoe
+            cd deploy/tippecanoe
+            make INSTALL_DIR=~/tippecanoe build_in_src_dir
         # This craziness is so that CI can find the tippecanoe binary in the cache for testing
         # without specifically knowing what version of tippecanoe is cached
       - run:
@@ -54,13 +59,6 @@ jobs:
           command: |
             TIPPECANOE_SRC=$(find ~/tippecanoe -maxdepth 1 -type d -name "tippecanoe-*")
             echo "export PATH=\"$TIPPECANOE_SRC:\$PATH\"" >> $BASH_ENV
-      - run:
-          name: Install tippecanoe
-          command: |
-            mkdir -p ~/tippecanoe
-            cd deploy/tippecanoe
-            make INSTALL_DIR=~/tippecanoe build_in_src_dir
-
       - run:
           name: Install Playwright
           command: |
