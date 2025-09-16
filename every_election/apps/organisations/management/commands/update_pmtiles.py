@@ -51,6 +51,8 @@ class Command(BaseCommand):
                 f"{settings.STATIC_ROOT}/pmtiles-store/"
             )
 
+        failures = 0
+
         if options["all"]:
             qs = OrganisationDivisionSet.objects.all()
         else:
@@ -61,6 +63,7 @@ class Command(BaseCommand):
             if missing_ids:
                 warning = f"Warning: The following DivisionSet IDs do not exist: {', '.join(str(i) for i in sorted(missing_ids))}"
                 self.stdout.write(self.style.WARNING(warning))
+                failures += len(missing_ids)
 
         for divset in qs:
             self.stdout.write(f"Processing DivisionSet: {divset.id}")
@@ -68,6 +71,7 @@ class Command(BaseCommand):
             if not divset.get_division_geographies().exists():
                 warning = f"OrganisationDivisionSet with id '{divset.id}' has no division geographies."
                 self.stdout.write(self.style.WARNING(warning))
+                failures += 1
                 continue
 
             # Generate hash key if missing
@@ -110,6 +114,7 @@ class Command(BaseCommand):
                 except Exception as e:
                     warning = f"Failed to create PMTiles for DivisionSet {divset.id}: {e}"
                     self.stdout.write(self.style.WARNING(warning))
+                    failures += 1
                     continue
 
                 if self.using_s3:
@@ -130,6 +135,13 @@ class Command(BaseCommand):
                             f"PMTile created at {static_path}/{divset.pmtiles_file_name}."
                         )
                     )
+
+        if failures:
+            self.stdout.write(
+                self.style.ERROR(f"Completed with {failures} failures.")
+            )
+        else:
+            self.stdout.write(self.style.SUCCESS("Completed successfully."))
 
     def remove_pmtiles(self, divset_pmtiles):
         for file in divset_pmtiles:
