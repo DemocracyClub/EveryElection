@@ -6,7 +6,7 @@ from unittest import mock
 
 import boto3
 from django.core.management import call_command
-from django.test import TransactionTestCase, override_settings
+from django.test import TestCase, override_settings
 from factories import (
     DivisionGeographyFactory,
     OrganisationDivisionFactory,
@@ -26,7 +26,7 @@ def mock_create_pmtile(self, temp_dir):
 
 
 @mock_aws
-class TestUpdatePmtiles(TransactionTestCase):
+class TestUpdatePmtiles(TestCase):
     def setUp(self):
         # Patch create_pmtile to avoid actually running tippecanoe
         self.patcher = mock.patch(
