@@ -625,3 +625,11 @@ REGISTER_SUBTYPE_TO_BOUNDARYLINE_TYPE = {
     "SRA": "GLA",  # Greater London Authority
     "UA": "UTA",  # English or Welsh Unitary
 }
+
+PMTILES_FEATURE_ATTR_FIELDS = [
+    "id",
+    "source",
+    "division_id",
+    "division__name",
+    "division__official_identifier",
+]

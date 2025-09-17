@@ -14,7 +14,9 @@ PUBLIC_DATA_BUCKET = "test-pmtiles-store"
 
 class TestPMTilesView(TestCase):
     def setUp(self):
-        self.divisionset = OrganisationDivisionSetFactory()
+        self.divisionset = OrganisationDivisionSetFactory(
+            pmtiles_md5_hash="test_hash"
+        )
         # Mock STATIC_ROOT with tmp dir
         self.tmp_static_root = tempfile.mkdtemp()
         self.override_static_root = override_settings(
