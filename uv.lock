@@ -388,16 +388,16 @@ wheels = [
 
 [[package]]
 name = "django"
-version = "4.2.22"
+version = "4.2.24"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiref" },
     { name = "sqlparse" },
     { name = "tzdata", marker = "sys_platform == 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/56/9e/37b909fa1c5e46ddb42ec37ec600a575d25dc47a6de86a1fce782a4a44ad/django-4.2.22.tar.gz", hash = "sha256:e726764b094407c313adba5e2e866ab88f00436cad85c540a5bf76dc0a912c9e", size = 10427236, upload-time = "2025-06-04T13:53:41.332Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ca/1a/3b7d8722a4c605078808b9839a6cf207f7aa763655bcf165fa219bedb39e/django-4.2.24.tar.gz", hash = "sha256:40cd7d3f53bc6cd1902eadce23c337e97200888df41e4a73b42d682f23e71d80", size = 10452798, upload-time = "2025-09-03T13:14:05.643Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/dc/17/6afcbac3575992b22fda1ae7fffcdff15ff24d1aff69b3d36876bc0a47eb/django-4.2.22-py3-none-any.whl", hash = "sha256:0a32773b5b7f4e774a155ee253ab24a841fed7e9e9061db08bf2ce9711da404d", size = 7993908, upload-time = "2025-06-04T13:53:33.923Z" },
+    { url = "https://files.pythonhosted.org/packages/1a/71/1cfb7cdd51270cf7df26f4ee4df4294b06a110e04bec553301d2b2617f24/django-4.2.24-py3-none-any.whl", hash = "sha256:a6527112c58821a0dfc5ab73013f0bdd906539790a17196658e36e66af43c350", size = 7993901, upload-time = "2025-09-03T13:13:51.365Z" },
 ]
 
 [[package]]
@@ -528,9 +528,9 @@ wheels = [
 name = "djangorangemiddleware"
 version = "1.0.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/cc/a9/d54a6ebf9cf245c79cda71e28244139c402350cdbbca3aff3c028f913976/DjangoRangeMiddleware-1.0.1.tar.gz", hash = "sha256:6aa37d2601c38ae82575936a0fba974a10910b6074e3d85289b535c481f2fcc0", size = 3808 }
+sdist = { url = "https://files.pythonhosted.org/packages/cc/a9/d54a6ebf9cf245c79cda71e28244139c402350cdbbca3aff3c028f913976/DjangoRangeMiddleware-1.0.1.tar.gz", hash = "sha256:6aa37d2601c38ae82575936a0fba974a10910b6074e3d85289b535c481f2fcc0", size = 3808, upload-time = "2022-08-30T18:03:24.585Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a4/d0/b8e41ecc3a11d1cfae76a14a4a92e5d5c705ecbd2cbcd341b8c1dc94ca32/DjangoRangeMiddleware-1.0.1-py3-none-any.whl", hash = "sha256:8557adcc8295cbbe23c71ec9a9ffd49bfd6f6341eb6f1fbb6eb2048448fd0468", size = 4518 },
+    { url = "https://files.pythonhosted.org/packages/a4/d0/b8e41ecc3a11d1cfae76a14a4a92e5d5c705ecbd2cbcd341b8c1dc94ca32/DjangoRangeMiddleware-1.0.1-py3-none-any.whl", hash = "sha256:8557adcc8295cbbe23c71ec9a9ffd49bfd6f6341eb6f1fbb6eb2048448fd0468", size = 4518, upload-time = "2022-08-30T18:03:22.856Z" },
 ]
 
 [[package]]
@@ -663,7 +663,7 @@ requires-dist = [
     { name = "commitment", specifier = "==4.0.0" },
     { name = "dc-design-system", git = "https://github.com/DemocracyClub/design-system.git?tag=0.7.0" },
     { name = "dc-django-utils", git = "https://github.com/DemocracyClub/dc_django_utils.git?tag=8.0.4" },
-    { name = "django", specifier = "==4.2.22" },
+    { name = "django", specifier = "==4.2.24" },
     { name = "django-cors-headers", specifier = "==4.7.0" },
     { name = "django-extensions", specifier = "==3.2.3" },
     { name = "django-filter", specifier = "==24.3" },
