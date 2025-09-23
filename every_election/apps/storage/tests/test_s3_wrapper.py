@@ -35,3 +35,45 @@ class TestS3Wrapper(TestCase):
             str(e.exception),
             "S3 bucket 'this-bucket-doesnt-exist-450928236839' does not exist.",
         )
+
+    def test_list_object_keys_empty(self):
+        objects = self.s3_wrapper.list_object_keys()
+        self.assertEqual(objects, [])
+
+    def test_list_object_keys(self):
+        for i in range(3):
+            self.s3_client.put_object(
+                Bucket=TEST_S3_BUCKET,
+                Key=f"test-file-{i}.txt",
+                Body=b"hello world",
+            )
+        objects = self.s3_wrapper.list_object_keys()
+        self.assertEqual(
+            objects, ["test-file-0.txt", "test-file-1.txt", "test-file-2.txt"]
+        )
+
+    def test_list_object_keys_with_prefix(self):
+        self.s3_client.put_object(
+            Bucket=TEST_S3_BUCKET,
+            Key="test-file-2.txt",
+            Body=b"hello world",
+        )
+        self.s3_client.put_object(
+            Bucket=TEST_S3_BUCKET,
+            Key="path/test-file-2.txt",
+            Body=b"hello world",
+        )
+        objects = self.s3_wrapper.list_object_keys(prefix="path/")
+        self.assertEqual(objects, ["path/test-file-2.txt"])
+
+    def test_list_object_keys_pagination(self):
+        # list objects is paginated at 1000 objects
+        num_objects = 1010
+        for i in range(num_objects):
+            self.s3_client.put_object(
+                Bucket=TEST_S3_BUCKET,
+                Key=f"test-file-{i}.txt",
+                Body=b"hello world",
+            )
+        objects = self.s3_wrapper.list_object_keys()
+        self.assertEqual(len(objects), num_objects)

@@ -4,10 +4,14 @@ import re
 from core.mixins import UpdateElectionsTimestampedModel
 from django.conf import settings
 from django.contrib.gis.db import models
+from django.contrib.postgres.aggregates import StringAgg
 from django.db import connection, transaction
 from django.db.models import Q
+from django.db.models.fields import BinaryField, CharField
+from django.db.models.functions import MD5, Cast, Concat
 from django.utils.functional import cached_property
 from django_extensions.db.models import TimeStampedModel
+from organisations.constants import PMTILES_FEATURE_ATTR_FIELDS
 from storage.s3wrapper import S3Wrapper
 
 from .mixins import DateConstraintMixin, DateDisplayMixin
@@ -33,6 +37,7 @@ class OrganisationDivisionSet(
     consultation_url = models.CharField(blank=True, max_length=500, null=True)
     short_title = models.CharField(blank=True, max_length=200)
     notes = models.TextField(blank=True)
+    pmtiles_md5_hash = models.CharField(max_length=32, blank=True)
     ValidationError = ValueError
 
     objects = DivisionSetQuerySet.as_manager()
@@ -44,6 +49,11 @@ class OrganisationDivisionSet(
 
     @cached_property
     def has_pmtiles_file(self):
+        try:
+            self.pmtiles_file_name
+        except ValueError:
+            return False
+
         if settings.PUBLIC_DATA_BUCKET:
             s3_wrapper = S3Wrapper(settings.PUBLIC_DATA_BUCKET)
             if s3_wrapper.check_s3_obj_exists(self.pmtiles_s3_key):
@@ -57,7 +67,9 @@ class OrganisationDivisionSet(
 
     @property
     def pmtiles_file_name(self):
-        return f"{self.organisation.slug}-{self.id}.pmtiles"
+        if not self.pmtiles_md5_hash or not self.organisation.slug:
+            raise ValueError("Missing PMTiles MD5 hash or organisation slug.")
+        return f"{self.organisation.slug}_{self.id}_{self.pmtiles_md5_hash}.pmtiles"
 
     @property
     def pmtiles_s3_key(self):
@@ -85,8 +97,34 @@ class OrganisationDivisionSet(
                 divisions_by_type[division.division_type].append(division)
         return divisions_by_type
 
+    def get_division_geographies(self):
+        return DivisionGeography.objects.filter(
+            division__divisionset=self
+        ).order_by("id")
+
+    def generate_pmtiles_md5_hash(self):
+        """Generate an MD5 hash based on the given feature attributes and geographies."""
+        div_geogs = self.get_division_geographies()
+        aggregate_dict = div_geogs.annotate(
+            fields_concat=Concat(
+                *PMTILES_FEATURE_ATTR_FIELDS,
+                MD5(Cast("geography", output_field=BinaryField())),
+                output_field=CharField(),
+            )
+        ).aggregate(result_hash=MD5(StringAgg("fields_concat", delimiter="")))
+
+        return aggregate_dict["result_hash"]
+
     def save(self, *args, **kwargs):
         self.check_end_date()
+
+        # generate pmtiles md5 hash if missing
+        if (
+            self.get_division_geographies().exists()
+            and not self.pmtiles_md5_hash
+        ):
+            self.pmtiles_md5_hash = self.generate_pmtiles_md5_hash()
+
         return super().save(*args, **kwargs)
 
     class Meta:
