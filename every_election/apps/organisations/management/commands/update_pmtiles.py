@@ -139,6 +139,9 @@ class Command(BaseCommand):
     def create_lookup_dict(self, existing_pmtiles):
         lookup = defaultdict(list)
         for file_path in existing_pmtiles:
+            # Skip directory marker in S3 listing
+            if file_path.endswith("/"):
+                continue
             file_name = os.path.splitext(os.path.basename(file_path))[0]
             file_start, file_hash = self.parse_filename(file_name)
             lookup[file_start].append(file_hash)
