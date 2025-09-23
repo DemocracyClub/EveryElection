@@ -49,6 +49,11 @@ class OrganisationDivisionSet(
 
     @cached_property
     def has_pmtiles_file(self):
+        try:
+            self.pmtiles_file_name
+        except ValueError:
+            return False
+
         if settings.PUBLIC_DATA_BUCKET:
             s3_wrapper = S3Wrapper(settings.PUBLIC_DATA_BUCKET)
             if s3_wrapper.check_s3_obj_exists(self.pmtiles_s3_key):
@@ -62,7 +67,9 @@ class OrganisationDivisionSet(
 
     @property
     def pmtiles_file_name(self):
-        return f"{self.organisation.slug}-{self.id}-{self.pmtiles_md5_hash}.pmtiles"
+        if not self.pmtiles_md5_hash or not self.organisation.slug:
+            raise ValueError("Missing PMTiles MD5 hash or organisation slug.")
+        return f"{self.organisation.slug}_{self.id}_{self.pmtiles_md5_hash}.pmtiles"
 
     @property
     def pmtiles_s3_key(self):
