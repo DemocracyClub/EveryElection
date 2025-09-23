@@ -1,6 +1,30 @@
 # handy test data we can use to keep the tests terse
 
 base_data = {
+    "fake_org_1": {
+        "slug": "babergh",
+        "name": "Babergh",
+        "register_code": None,
+        "consultation_url": "http://www.lgbce.org.uk/all-reviews/babergh",
+        "status": None,
+        "latest_event": None,
+        "boundaries_url": None,
+        "legislation_url": None,
+        "legislation_made": 0,
+        "legislation_title": None,
+    },
+    "fake_org_2": {
+        "slug": "gateshead",
+        "name": "Gateshead",
+        "register_code": None,
+        "consultation_url": "http://www.lgbce.org.uk/all-reviews/gateshead",
+        "status": None,
+        "latest_event": None,
+        "boundaries_url": None,
+        "legislation_url": None,
+        "legislation_made": 0,
+        "legislation_title": None,
+    },
     "allerdale": {
         "slug": "allerdale",
         "name": "Allerdale",

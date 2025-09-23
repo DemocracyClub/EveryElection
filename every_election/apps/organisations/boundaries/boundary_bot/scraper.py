@@ -68,6 +68,9 @@ class LgbceScraper:
         self.ignore = [
             # orgs that break our pipeline can be ignored here
             "plymouth",  # https://www.lgbce.org.uk/all-reviews/plymouth is a breaking edge case that because of devolution atm so we'll ignore it for now
+            "gateshead",  # currently links to draft legislation instead of made
+            "newcastle-upon-tyne",  # currently links to draft legislation instead of made
+            "south-tyneside",  # currently links to draft legislation instead of made
         ]
 
     def scrape_index(self):
