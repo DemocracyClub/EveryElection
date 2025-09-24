@@ -3,7 +3,7 @@ from datetime import datetime
 from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Prefetch, Q
-from django.http import FileResponse, Http404
+from django.http import FileResponse, Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import DetailView, ListView, TemplateView, View
 from elections.models import Election
@@ -118,14 +118,15 @@ class DivisionsetDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if settings.PUBLIC_DATA_BUCKET:
-            context["pmtiles_source_link"] = (
-                f"https://s3.eu-west-2.amazonaws.com/{settings.PUBLIC_DATA_BUCKET}/{self.object.pmtiles_s3_key}"
-            )
-        else:
-            context["pmtiles_source_link"] = reverse(
-                "pmtiles_view", args=[self.object.id]
-            )
+        if self.object.has_pmtiles_file:
+            if settings.PUBLIC_DATA_BUCKET:
+                context["pmtiles_source_link"] = (
+                    f"https://s3.eu-west-2.amazonaws.com/{settings.PUBLIC_DATA_BUCKET}/{self.object.pmtiles_s3_key}"
+                )
+            else:
+                context["pmtiles_source_link"] = reverse(
+                    "pmtiles_view", args=[self.object.id]
+                )
 
         div_type_and_subtype_pairs = set(
             self.object.divisions.values_list(
@@ -157,13 +158,22 @@ class PMtilesView(View):
     """
 
     def get(self, request, divisionset_id):
-        divset = OrganisationDivisionSet.objects.get(id=divisionset_id)
-
-        pmtiles_file = (
-            f"{settings.STATIC_ROOT}/pmtiles-store/{divset.pmtiles_file_name}"
-        )
+        # redirect to detail page if in production
+        if settings.PUBLIC_DATA_BUCKET:
+            divset_detail_url = reverse(
+                "divset_detail_view", args=[divisionset_id]
+            )
+            return HttpResponseRedirect(divset_detail_url)
 
         try:
-            return FileResponse(open(pmtiles_file, "rb"))  # noqa SIM115
-        except FileNotFoundError:
+            divset = OrganisationDivisionSet.objects.get(id=divisionset_id)
+        except OrganisationDivisionSet.DoesNotExist:
+            raise Http404("DivisionSet not found")
+
+        if not divset.has_pmtiles_file:
             raise Http404("pmtiles file not found")
+
+        pmtiles_fp = (
+            f"{settings.STATIC_ROOT}/pmtiles-store/{divset.pmtiles_file_name}"
+        )
+        return FileResponse(open(pmtiles_fp, "rb"))  # noqa SIM115
