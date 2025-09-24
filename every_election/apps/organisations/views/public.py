@@ -3,7 +3,7 @@ from datetime import datetime
 from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Prefetch, Q
-from django.http import FileResponse, Http404
+from django.http import FileResponse, Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import DetailView, ListView, TemplateView, View
 from elections.models import Election
@@ -158,6 +158,13 @@ class PMtilesView(View):
     """
 
     def get(self, request, divisionset_id):
+        # redirect to detail page if in production
+        if settings.PUBLIC_DATA_BUCKET:
+            divset_detail_url = reverse(
+                "divset_detail_view", args=[divisionset_id]
+            )
+            return HttpResponseRedirect(divset_detail_url)
+
         try:
             divset = OrganisationDivisionSet.objects.get(id=divisionset_id)
         except OrganisationDivisionSet.DoesNotExist:
