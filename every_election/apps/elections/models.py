@@ -483,7 +483,14 @@ class Election(TimeStampedModel):
                 self.election_id, country=country_map[territory_code]
             ).timetable
         except NoSuchElectionTypeError:
-            timetable = None
+            return None
+
+        if not self.requires_voter_id:
+            timetable = [
+                date
+                for date in timetable
+                if date["event"] != "VAC_APPLICATION_DEADLINE"
+            ]
 
         return timetable
 
