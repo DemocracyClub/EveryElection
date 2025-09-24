@@ -158,13 +158,15 @@ class PMtilesView(View):
     """
 
     def get(self, request, divisionset_id):
-        divset = OrganisationDivisionSet.objects.get(id=divisionset_id)
+        try:
+            divset = OrganisationDivisionSet.objects.get(id=divisionset_id)
+        except OrganisationDivisionSet.DoesNotExist:
+            raise Http404("DivisionSet not found")
 
-        pmtiles_file = (
+        if not divset.has_pmtiles_file:
+            raise Http404("pmtiles file not found")
+
+        pmtiles_fp = (
             f"{settings.STATIC_ROOT}/pmtiles-store/{divset.pmtiles_file_name}"
         )
-
-        try:
-            return FileResponse(open(pmtiles_file, "rb"))  # noqa SIM115
-        except FileNotFoundError:
-            raise Http404("pmtiles file not found")
+        return FileResponse(open(pmtiles_fp, "rb"))  # noqa SIM115
