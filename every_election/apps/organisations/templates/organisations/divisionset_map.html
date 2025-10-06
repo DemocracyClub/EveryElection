@@ -10,7 +10,7 @@
             top: 10px;
             left: 10px;
             border-radius: 3px;
-            width: 100px;
+            width: 120px;
             border: 1px solid rgba(0, 0, 0, 0.4);
             display: none;
         }
@@ -23,7 +23,6 @@
             border-bottom: 1px solid rgba(0, 0, 0, 0.25);
             text-align: center;
             opacity: 0.6;
-            font-weight: normal;
             transition: all 0.2s;
         }
 
@@ -66,7 +65,7 @@
 
 <div >
     <h3>Map</h3>
-    <div id="maplibre-gl" class="ds-map-leaflet">
+    <div id="map" class="ds-map-maplibre">
         <nav id="map-toggle-menu"></nav>
     </div>
 </div>
@@ -151,7 +150,7 @@
 
 
                 const map = new maplibregl.Map({
-                    container: 'maplibre-gl',
+                    container: 'map',
                     zoom: data.vector_layers[0].maxzoom,
                     style: style,
                 });

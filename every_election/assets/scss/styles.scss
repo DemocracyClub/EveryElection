@@ -27,6 +27,7 @@
 @import 'partials/_dark.scss';
 @import 'partials/_page.scss';
 @import 'partials/_map-leaflet.scss';
+@import 'partials/_map-maplibre.scss';
 @import 'partials/_utilities.scss';
 @import 'partials/_status.scss';
 @import 'partials/_logo.scss';
@@ -53,6 +54,7 @@ $scope: false;
     @include filter;
     @include codeblock;
     @include map-leaflet;
+    @include map-maplibre;
     @include status;
     @include logo;
     @include date-picker;
