@@ -200,12 +200,6 @@ PIPELINE["SASS_ARGUMENTS"] += (
 
 PIPELINE["STYLESHEETS"].update(
     {
-        "map": {
-            "source_filenames": [
-                "leaflet/dist/leaflet.css",
-            ],
-            "output_filename": "css/map.css",
-        },
         "maplibre-gl": {
             "source_filenames": [
                 "maplibre-gl/dist/maplibre-gl.css",
@@ -217,12 +211,6 @@ PIPELINE["STYLESHEETS"].update(
 
 PIPELINE["JAVASCRIPT"].update(
     {
-        "map": {
-            "source_filenames": [
-                "leaflet/dist/leaflet.js",
-            ],
-            "output_filename": "js/map.js",
-        },
         "pmtiles": {
             "source_filenames": [
                 "pmtiles/dist/pmtiles.js",

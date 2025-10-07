@@ -2,11 +2,11 @@
 {% load static %}
 
 {% block extra_site_css %}
-    {% stylesheet 'map' %}
+    {% stylesheet 'maplibre-gl' %}
 {% endblock extra_site_css %}
 
 {% block extra_site_javascript %}
-    {% javascript 'map' %}
+    <script src="{% static 'maplibre-gl/dist/maplibre-gl.js' %}"></script>
 {% endblock extra_site_javascript %}
 
 
@@ -14,47 +14,102 @@
     <summary>
         <h3>Map</h3>
     </summary>
-    <div id="area_map" class="ds-map-leaflet"></div>
+    <div id="area_map" class="ds-map-maplibre"></div>
 </details>
 
 
 {% block in_page_javascript %}
+    {{ dl_title|json_script:"dlTitle" }}
+    {{ api_detail_geo|json_script:"apiDetailGeo" }}
+    {{ org_common_name|json_script:"orgCommonName" }}
 
     <script type="text/javascript">
+        const geojsonUrl = JSON.parse(document.getElementById('apiDetailGeo').textContent);
+        const downloadTitle = JSON.parse(document.getElementById('dlTitle').textContent);
+        const orgCommonName = JSON.parse(document.getElementById('orgCommonName').textContent);
+        var style = {
+            "version": 8,
+            "sources": {
+                "os": {
+                    "type": "raster",
+                    "tiles": [
+                        "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    ],
+                    "tileSize": 256,
+                    "attribution": "© OpenStreetMap contributors"
+                }
+            },
+            layers: [
+                {
+                    "id": "os-baselayer",
+                    "type": "raster",
+                    "source": "os",
+                    "minzoom": 0,
+                    "maxzoom": 19
+                }
+            ]
+        }
         document.getElementById("map_detail").addEventListener(
             "click",
             function() {
-                tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: 'Map data ⓒ <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
-                    subdomains: 'abc'
-                });
-
-                map = L.map('area_map', {
-                    layers: [tiles]
-                });
-
-                function onEachFeature(feature, layer) {
-                    if (feature.properties.division) {
-                        popup = feature.properties.organisation["official_name"] + " - " + feature.properties.division["name"]
-                    } else {
-                        popup = "{{ org_common_name }}"
-                    }
-                    layer.bindPopup(
-                        `<a href={{ api_detail_geo }} download=\'{{ dl_title }}.geojson\'>${popup}</a>`)
-                };
-
-                fetch("{{ api_detail_geo }}").then((response) => {
-                    response.json().then((json) => {
-                        layer = L.geoJSON(json, {
-                            style:  {color:'#007CAD'},
-                            onEachFeature: onEachFeature
+                fetch(geojsonUrl)
+                    .then(response => response.json())
+                    .then(geojson => {
+                        const map = new maplibregl.Map({
+                            container: 'area_map',
+                            center: [-3.43, 55.38],
+                            zoom: 5,
+                            style: style,
                         });
-                        map.addLayer(layer);
-                        map.fitBounds(layer.getBounds(), {
-                            padding: [30, 30]
+                        map.on("load", () => {
+                            map.addSource("geojson-data", {
+                                type: "geojson",
+                                data: geojson
+                            });
+                            map.addLayer({
+                                'id': 'geojson-layer',
+                                'type': 'fill',
+                                'source': 'geojson-data',
+                                'layout': {},
+                                'paint': {
+                                    'fill-color': '#007CAD',
+                                    'fill-opacity': 0.4
+                                }
+                            });
+                            map.addControl(new maplibregl.NavigationControl(), 'top-right');
+
+                            startCoord = geojson.geometry.coordinates[0][0][0];
+                            const bounds = new maplibregl.LngLatBounds(startCoord, startCoord)
+                            geojson.geometry.coordinates.forEach(polygon => {
+                                polygon.forEach(ring => {
+                                    ring.forEach(coord => {
+                                        bounds.extend(coord);
+                                    });
+                                });
+                            });
+
+                            map.fitBounds(bounds, {duration: 0, padding: 20});
+
+                            map.on('click', 'geojson-layer', (e) => {
+                                const feat = e.features[0];
+                                let popupText = "";
+
+                                if (feat.properties.division) {
+                                    popupText = JSON.parse(feat.properties.organisation)["official_name"] + " - " + JSON.parse(feat.properties.division)["name"]
+                                } else {
+                                    popupText = orgCommonName;
+                                }
+
+                                const popupHTML = `<a href=${geojsonUrl} download=\'${downloadTitle}.geojson\'>${popupText}</a>`
+
+                                new maplibregl.Popup({ closeButton: true, closeOnClick: true })
+                                    .setLngLat(e.lngLat)
+                                    .setHTML(popupHTML)
+                                    .addTo(map);
+                            })
+
                         });
-                    })
-                });
+                    });
             },
             {once:true}
         );
