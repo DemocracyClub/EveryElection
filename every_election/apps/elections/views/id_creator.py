@@ -4,7 +4,6 @@ from core.helpers import user_is_moderator
 from django import forms
 from django.db import transaction
 from django.http import HttpResponseRedirect
-from django.utils.functional import cached_property
 from election_snooper.helpers import post_to_slack
 from election_snooper.models import SnoopedElection
 from elections.baker import send_event
@@ -125,7 +124,7 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
     def get_template_names(self):
         return [TEMPLATES[self.steps.current]]
 
-    @cached_property
+    @property
     def get_election_type(self):
         if self.get_cleaned_data_for_step("election_type"):
             return self.get_cleaned_data_for_step("election_type").get(
@@ -133,25 +132,29 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             )
         return None
 
-    @cached_property
+    @property
     def get_election_subtypes(self):
+        if not self.condition_dict["election_subtype"](self):
+            return None
         if self.get_cleaned_data_for_step("election_subtype"):
             return self.get_cleaned_data_for_step("election_subtype").get(
                 "election_subtype"
             )
         return None
 
-    @cached_property
+    @property
     def get_organisations(self):
-        if self.get_cleaned_data_for_step("election_organisation"):
-            return self.get_cleaned_data_for_step("election_organisation").get(
-                "election_organisation"
-            )
         if "election_organisation" in self.storage.extra_data:
             return Organisation.objects.filter(
                 electedrole__election_type__election_type__in=self.storage.extra_data[
                     "election_organisation"
                 ]
+            )
+        if not self.condition_dict["election_organisation"](self):
+            return None
+        if self.get_cleaned_data_for_step("election_organisation"):
+            return self.get_cleaned_data_for_step("election_organisation").get(
+                "election_organisation"
             )
         return None
 
