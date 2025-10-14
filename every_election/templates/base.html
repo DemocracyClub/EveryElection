@@ -29,7 +29,12 @@
                 <li><a href="{% url "snooped_election_view"%}">Election Radar</a></li>
                 <li><a href="{% url "election_moderation_queue"%}">Moderation</a></li>
                 <li>|</li>
-                <li><a href="{% url "logout"%}">Log Out {{ user }}</a></li>
+                <li>
+                    <form class="ds-logout" id="logout-form" method="post" action="{% url 'logout'%}">
+                        {% csrf_token %}
+                        <button type="submit">Log Out {{ user }}</button>
+                    </form>
+                </li>
                 <li><a href="{% url "password_change"%}">Change Password</a></li>
             </ul>
         {% endif %}
