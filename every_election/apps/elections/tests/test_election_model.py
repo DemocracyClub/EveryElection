@@ -1,8 +1,9 @@
 import contextlib
+from datetime import timezone as dt_timezone
 from unittest.mock import patch
 
 from django.test import TestCase
-from django.utils import timezone
+from django.utils import timezone as dj_timezone
 from elections.models import (
     DEFAULT_STATUS,
     Election,
@@ -297,7 +298,9 @@ class TestModified(TestCase):
     def test_update_changes_modified(self):
         election = ElectionFactory()
 
-        future = timezone.datetime(2022, 5, 5, 12, 0, 0, tzinfo=timezone.utc)
+        future = dj_timezone.datetime(
+            2022, 5, 5, 12, 0, 0, tzinfo=dt_timezone.utc
+        )
         with freeze_time("2022-5-5 12:00:00"):
             self.assertNotEqual(election.modified, future)
             Election.private_objects.update()
