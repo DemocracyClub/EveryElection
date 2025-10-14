@@ -30,6 +30,7 @@
 @import 'partials/_utilities.scss';
 @import 'partials/_status.scss';
 @import 'partials/_logo.scss';
+@import 'partials/_logout.scss';
 @import 'partials/_date-picker.scss';
 $scope: false;
 @mixin optional-styles {
@@ -55,6 +56,7 @@ $scope: false;
     @include map-maplibre;
     @include status;
     @include logo;
+    @include logout;
     @include date-picker;
 }
 
