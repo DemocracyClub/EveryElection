@@ -98,9 +98,11 @@ class OrganisationDivisionSet(
         return divisions_by_type
 
     def get_division_geographies(self):
-        return DivisionGeography.objects.filter(
-            division__divisionset=self
-        ).order_by("id")
+        if self.pk:
+            return DivisionGeography.objects.filter(
+                division__divisionset=self
+            ).order_by("id")
+        return DivisionGeography.objects.none()
 
     def generate_pmtiles_md5_hash(self):
         """Generate an MD5 hash based on the given feature attributes and geographies."""
