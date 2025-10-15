@@ -13,7 +13,7 @@ dependencies = [
     "django-cors-headers==4.7.0",
     "django-extensions==3.2.3",
     "django-filter==24.3",
-    "django-formtools==2.5.1",
+    "django-formtools==2.3",
     "django-localflavor==4.0",
     "django-middleware-global-request==0.3.5",
     "django-model-utils==5.0.0",
