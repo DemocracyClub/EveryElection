@@ -4,7 +4,6 @@ from core.helpers import user_is_moderator
 from django import forms
 from django.db import transaction
 from django.http import HttpResponseRedirect
-from django.utils.functional import cached_property
 from election_snooper.helpers import post_to_slack
 from election_snooper.models import SnoopedElection
 from elections.baker import send_event
@@ -122,38 +121,62 @@ CONDITION_DICT = {
 
 
 class IDCreatorWizard(NamedUrlSessionWizardView):
+    def __init__(self, *args, **kwargs):
+        self.cache = {}
+        return super().__init__(*args, **kwargs)
+
     def get_template_names(self):
         return [TEMPLATES[self.steps.current]]
 
-    @cached_property
+    @property
     def get_election_type(self):
-        if self.get_cleaned_data_for_step("election_type"):
-            return self.get_cleaned_data_for_step("election_type").get(
-                "election_type"
-            )
-        return None
+        if "election_type" in self.cache:
+            return self.cache["election_type"]
 
-    @cached_property
+        cleaned_data = self.get_cleaned_data_for_step("election_type")
+        if cleaned_data:
+            self.cache["election_type"] = cleaned_data.get("election_type")
+
+        return self.cache.get("election_type")
+
+    @property
     def get_election_subtypes(self):
-        if self.get_cleaned_data_for_step("election_subtype"):
-            return self.get_cleaned_data_for_step("election_subtype").get(
+        if "election_subtypes" in self.cache:
+            return self.cache["election_subtypes"]
+
+        if not self.condition_dict["election_subtype"](self):
+            return None
+
+        cleaned_data = self.get_cleaned_data_for_step("election_subtype")
+        if cleaned_data:
+            self.cache["election_subtypes"] = cleaned_data.get(
                 "election_subtype"
             )
-        return None
 
-    @cached_property
+        return self.cache.get("election_subtypes")
+
+    @property
     def get_organisations(self):
-        if self.get_cleaned_data_for_step("election_organisation"):
-            return self.get_cleaned_data_for_step("election_organisation").get(
-                "election_organisation"
-            )
         if "election_organisation" in self.storage.extra_data:
             return Organisation.objects.filter(
                 electedrole__election_type__election_type__in=self.storage.extra_data[
                     "election_organisation"
                 ]
             )
-        return None
+
+        if not self.condition_dict["election_organisation"](self):
+            return None
+
+        if "organisations" in self.cache:
+            return self.cache["organisations"]
+
+        cleaned_data = self.get_cleaned_data_for_step("election_organisation")
+        if cleaned_data:
+            self.cache["organisations"] = cleaned_data.get(
+                "election_organisation"
+            )
+
+        return self.cache.get("organisations")
 
     def get_election_date(self):
         election_date = self.get_cleaned_data_for_step("date") or {}
