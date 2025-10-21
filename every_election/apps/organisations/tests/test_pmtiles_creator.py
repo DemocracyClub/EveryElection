@@ -72,7 +72,7 @@ class TestPMtilesCreator(TransactionTestCase):
         )
 
         expected_query = (
-            f'SELECT "organisations_divisiongeography"."id", "organisations_divisiongeography"."source", "organisations_divisiongeography"."division_id", "organisations_organisationdivision"."name", "organisations_organisationdivision"."official_identifier", "organisations_divisiongeography"."geography" '
+            f'SELECT "organisations_divisiongeography"."id" AS "id", "organisations_divisiongeography"."source" AS "source", "organisations_divisiongeography"."division_id" AS "division_id", "organisations_organisationdivision"."name" AS "division__name", "organisations_organisationdivision"."official_identifier" AS "division__official_identifier", "organisations_divisiongeography"."geography" AS "geography" '
             f'FROM "organisations_divisiongeography" '
             f'INNER JOIN "organisations_organisationdivision" '
             f'ON ("organisations_divisiongeography"."division_id" = "organisations_organisationdivision"."id") '
