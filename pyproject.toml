@@ -11,7 +11,7 @@ dependencies = [
     "commitment==4.0.0",
     "Django==4.2.25",
     "django-cors-headers==4.7.0",
-    "django-extensions==3.2.3",
+    "django-extensions==4.1",
     "django-filter==24.3",
     "django-formtools==2.5.1",
     "django-localflavor==4.0",
