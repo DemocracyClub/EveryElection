@@ -86,7 +86,7 @@ class Command(BaseCommand):
                 computed_divset_hash in existing_hashes_for_divset
                 and not options["overwrite"]
             ):
-                warning = f"{divset.pmtiles_file_name} already exists{' on S3' if self.using_s3 else ' locally'}. Skipping (use --overwrite to force)."
+                warning = f"file with hash {computed_divset_hash} already exists for {fp_start} {' on S3' if self.using_s3 else ' locally'}. Skipping (use --overwrite to force)."
                 self.stdout.write(self.style.WARNING(warning))
                 continue
 
