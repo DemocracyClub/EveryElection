@@ -619,6 +619,7 @@ dependencies = [
     { name = "requests" },
     { name = "retry2" },
     { name = "scrapy" },
+    { name = "tippecanoe" },
     { name = "uk-election-ids" },
     { name = "uk-election-timetables" },
     { name = "uk-geo-utils" },
@@ -684,6 +685,7 @@ requires-dist = [
     { name = "requests", specifier = "==2.32.4" },
     { name = "retry2", specifier = "==0.9.5" },
     { name = "scrapy", specifier = "==2.12.0" },
+    { name = "tippecanoe", specifier = "==2.72.0" },
     { name = "uk-election-ids", specifier = "==0.10.0" },
     { name = "uk-election-timetables", specifier = "==4.2.3" },
     { name = "uk-geo-utils", specifier = "==0.18.0" },
@@ -1709,6 +1711,25 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/ab/e2/e9a00f0ccb71718418230718b3d900e71a5d16e701a3dae079a21e9cd8f8/text-unidecode-1.3.tar.gz", hash = "sha256:bad6603bb14d279193107714b288be206cac565dfa49aa5b105294dd5c4aab93", size = 76885, upload-time = "2019-08-30T21:36:45.405Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a6/a5/c0b6468d3824fe3fde30dbb5e1f687b291608f9473681bbf7dabbf5a87d7/text_unidecode-1.3-py2.py3-none-any.whl", hash = "sha256:1311f10e8b895935241623731c2ba64f4c455287888b18189350b67134a822e8", size = 78154, upload-time = "2019-08-30T21:37:03.543Z" },
+]
+
+[[package]]
+name = "tippecanoe"
+version = "2.72.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/2b/2c/fc6ada08e660966b21c14da4503d41c7c7b86a008ad9e37a70a49883fb7f/tippecanoe-2.72.0.tar.gz", hash = "sha256:89a1878a368694097cf02adb66774f9f1832f438bd4791c9e37eb3d39c245c25", size = 12917, upload-time = "2024-12-10T01:36:37.769Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/31/4d/2a273b15dd1cb4bd0b62b76b2bcec141aff30ce4a2cf70f0d5971d22b63d/tippecanoe-2.72.0-py2.py3-none-macosx_10_14_x86_64.whl", hash = "sha256:2316b800fdec59d85c24726d4fe910c3f822af067a825f8d2d5579a8815627be", size = 1530995, upload-time = "2024-12-10T01:35:45.087Z" },
+    { url = "https://files.pythonhosted.org/packages/b0/d7/a2122e270b5721ccd41aff7b0ea05eb26cdd475aacf03ed0cd1428e8175b/tippecanoe-2.72.0-py2.py3-none-macosx_11_0_arm64.whl", hash = "sha256:958b1ba08a06f416690a21714a22ca40462f1251d2d2821dea7624a9034da1f3", size = 1392223, upload-time = "2024-12-10T01:35:48.344Z" },
+    { url = "https://files.pythonhosted.org/packages/db/67/26190cc8602d984eac1fe0ccd5f9ffffbc238e1b2351dfd3c6a14732a6eb/tippecanoe-2.72.0-py2.py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:2c27c220467df763ac75f4643d84315d9e933c76aad7c7599238cf42be713eec", size = 22054802, upload-time = "2024-12-10T01:35:51.61Z" },
+    { url = "https://files.pythonhosted.org/packages/20/32/2f21c1906d576c39298b0b3594daee2d572483cd1d88c25bff95bf4ff02f/tippecanoe-2.72.0-py2.py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:4d8f5c576b8cefc3f83eff679c55f6484a1d421b055e3ec1e7d340ffcf0ce3cc", size = 22073299, upload-time = "2024-12-10T01:35:57.161Z" },
+    { url = "https://files.pythonhosted.org/packages/2a/27/44b0e0b576c3b7b9c9967bf4d2907b1bd417760a4d0f2ec150b82937857a/tippecanoe-2.72.0-py2.py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:0dcc13af896ea7c369a09627009a7181cc36136aef29d80874469e1aac75cc94", size = 22650091, upload-time = "2024-12-10T01:36:04.107Z" },
+    { url = "https://files.pythonhosted.org/packages/3c/c9/e24d41694a43580832a5f09b6cd181345a7e55ebeed5fe440c62dfcca4cf/tippecanoe-2.72.0-py2.py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:cd35371d108b6a3f75517ca10b461c3c0a6110797d5b465ff504fee149136179", size = 22346461, upload-time = "2024-12-10T01:36:08.675Z" },
+    { url = "https://files.pythonhosted.org/packages/6f/6e/a8be3813bb559aea52ae5b8a4a9e90cc5c767da4ea59e1b220fce9682e2d/tippecanoe-2.72.0-py2.py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:d5edbb8021617ee4adac5e23c74c470c347697b6ced43a08ae4aeb61b76b1a89", size = 22681248, upload-time = "2024-12-10T01:36:14.282Z" },
+    { url = "https://files.pythonhosted.org/packages/7c/93/58b32b0f5fba52d1e133f133c40e380b75beecc231fb58cb96c54809d3ba/tippecanoe-2.72.0-py2.py3-none-musllinux_1_2_i686.whl", hash = "sha256:79e1055037372f4ee55672c2fe21d6de32a6376935f9cf1154f37549dfa11cb1", size = 23511048, upload-time = "2024-12-10T01:36:20.171Z" },
+    { url = "https://files.pythonhosted.org/packages/9f/60/3ba789213a72d775692d008a215bd7ba691fc656eca0536a0d0f9124e809/tippecanoe-2.72.0-py2.py3-none-musllinux_1_2_ppc64le.whl", hash = "sha256:3fcfd34f52b55d63d3c28780288e0f9c941bdf475abe98108aadf638a9361831", size = 23792178, upload-time = "2024-12-10T01:36:25.575Z" },
+    { url = "https://files.pythonhosted.org/packages/fb/8b/72aeda5f8b79742ad6a18bcb073d8336782ba2a3289a83f7c4330410a767/tippecanoe-2.72.0-py2.py3-none-musllinux_1_2_s390x.whl", hash = "sha256:0e59dd25192407cc19f978637a0d04b2f0eae98daf4f93968f24a0883f7f18d6", size = 24247407, upload-time = "2024-12-10T01:36:29.874Z" },
+    { url = "https://files.pythonhosted.org/packages/e8/8f/c69b9aed121f6cc810696a19fd1ce57ce897f338bac85cf87fe85747ffbd/tippecanoe-2.72.0-py2.py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:77b5d0606bf73b5afd378b62c11e4fbfa52ad1609bd9f1094ef4ddf231457326", size = 23474808, upload-time = "2024-12-10T01:36:35.171Z" },
 ]
 
 [[package]]
