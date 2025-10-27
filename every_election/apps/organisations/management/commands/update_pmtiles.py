@@ -79,6 +79,11 @@ class Command(BaseCommand):
             # Generate hash for current state of divset
             computed_divset_hash = divset.generate_pmtiles_md5_hash()
 
+            # Update hash on model if necessary
+            if divset.pmtiles_md5_hash != computed_divset_hash:
+                divset.pmtiles_md5_hash = computed_divset_hash
+                divset.save()
+
             fp_start = f"{divset.organisation.slug}_{divset.id}"
             existing_hashes_for_divset = existing_pmtiles_lookup[fp_start]
 
@@ -86,16 +91,12 @@ class Command(BaseCommand):
                 computed_divset_hash in existing_hashes_for_divset
                 and not options["overwrite"]
             ):
-                warning = f"{divset.pmtiles_file_name} already exists{' on S3' if self.using_s3 else ' locally'}. Skipping (use --overwrite to force)."
+                warning = f"file with hash {computed_divset_hash} already exists for {fp_start} {' on S3' if self.using_s3 else ' locally'}. Skipping (use --overwrite to force)."
                 self.stdout.write(self.style.WARNING(warning))
                 continue
 
             # remove outdated pmtiles
             self.remove_pmtiles(fp_start, existing_hashes_for_divset)
-
-            # Update hash on model if necessary
-            if divset.pmtiles_md5_hash != computed_divset_hash:
-                self.update_divset_hash(divset, computed_divset_hash)
 
             pmtiles_creator = PMtilesCreator(divset)
 
@@ -131,10 +132,6 @@ class Command(BaseCommand):
             raise CommandError(f"Failed to process {failures} DivisionSets")
 
         self.stdout.write(self.style.SUCCESS("Completed successfully."))
-
-    def update_divset_hash(self, divset, computed_divset_hash):
-        divset.pmtiles_md5_hash = computed_divset_hash
-        divset.save()
 
     def create_lookup_dict(self, existing_pmtiles):
         lookup = defaultdict(list)
