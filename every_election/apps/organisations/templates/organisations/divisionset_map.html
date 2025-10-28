@@ -255,8 +255,8 @@
                             continue;
                         }
                         featuresData.push({
-                            name: feat.properties.name || "Name Missing",
-                            officialIdentifier: feat.properties.official_identifier || "",
+                            name: feat.properties.division__name || "Name Missing",
+                            officialIdentifier: feat.properties.division__official_identifier || "",
                             layerColor: feat.layer.paint['fill-color'] || feat.layer.paint['line-color'],
                             layerDisplayName: getLayerDisplayName(divisionType),
                         });
