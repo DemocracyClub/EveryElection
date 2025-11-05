@@ -71,13 +71,11 @@ dev = [
 
 
 [tool.uv]
-
-# safety depends on a pre-release version of dparse
-prerelease = "allow"
-
 package = false
-
 required-version = "==0.8.*"
+environments = [
+    "platform_python_implementation == 'CPython'"
+]
 
 [tool.uv.sources]
 dc-django-utils = { git = "https://github.com/DemocracyClub/dc_django_utils.git", tag = "8.0.5" }
