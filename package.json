@@ -20,7 +20,7 @@
   "homepage": "https://github.com/DemocracyClub/EveryElection#readme",
   "dependencies": {
     "aws-cdk": "2.178.2",
-    "maplibre-gl": "5.6.2",
+    "maplibre-gl": "5.12.0",
     "pmtiles": "4.3.0",
     "topojson-server": "3.0.1",
     "topojson-simplify": "3.0.3"
