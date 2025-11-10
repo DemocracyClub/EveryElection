@@ -708,7 +708,7 @@ dev = [
     { name = "django-debug-toolbar", specifier = "==6.0.0" },
     { name = "djhtml", specifier = "==3.0.7" },
     { name = "factory-boy", specifier = "==3.3.1" },
-    { name = "moto", extras = ["events", "sqs"], specifier = "==5.0.26" },
+    { name = "moto", extras = ["events", "sqs"], specifier = "==5.1.16" },
     { name = "playwright", specifier = "==1.49.1" },
     { name = "pytest", specifier = "==8.3.4" },
     { name = "pytest-cov", specifier = "==6.0.0" },
@@ -1049,7 +1049,7 @@ wheels = [
 
 [[package]]
 name = "moto"
-version = "5.0.26"
+version = "5.1.16"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "boto3", marker = "platform_python_implementation == 'CPython'" },
@@ -1062,9 +1062,9 @@ dependencies = [
     { name = "werkzeug", marker = "platform_python_implementation == 'CPython'" },
     { name = "xmltodict", marker = "platform_python_implementation == 'CPython'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/8b/a9/996e9d0c8c5d6f8b044d4facfe6eb6c42feb4ab5c2a24d78f780bd942f61/moto-5.0.26.tar.gz", hash = "sha256:6829f58a670a087e7c5b63f8183c6b72d64a1444e420c212250b7326b69a9183", size = 6442983, upload-time = "2025-01-05T21:06:36.53Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/33/0e/346bdadba09fd86854fa3363892ca12f4232652c9d210b93c673c48807ea/moto-5.1.16.tar.gz", hash = "sha256:792045b345d16a8aa09068ad4a7656894e707c796f0799b438fffb738e8fae7c", size = 8229581, upload-time = "2025-11-02T21:56:40.257Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0b/dd/40c20b3bcdf335f56776e1adea5edd1b1026f3f98816944a123393f64df3/moto-5.0.26-py3-none-any.whl", hash = "sha256:803831f427ca6c0452ae4fb898d731cfc19906466a33a88cbc1076abcbfcbba7", size = 4614956, upload-time = "2025-01-05T21:06:32.282Z" },
+    { url = "https://files.pythonhosted.org/packages/a6/a5/403b7adbf9932861ff7f3b19f4f9b9b8ec0dceb1fcea0633046b7f5e9ced/moto-5.1.16-py3-none-any.whl", hash = "sha256:8e6186f20b3aa91755d186e47701fe7e47f74e625c36fdf3bd7747da68468b19", size = 6330584, upload-time = "2025-11-02T21:56:37.585Z" },
 ]
 
 [package.optional-dependencies]

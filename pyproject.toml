@@ -65,7 +65,7 @@ dev = [
     "pytest-ruff==0.4.1",
     "playwright==1.49.1",
     "pytest-playwright==0.6.2",
-    "moto[events,sqs]==5.0.26",
+    "moto[events,sqs]==5.1.16",
     "pytest-dotenv==0.5.2",
 ]
 
