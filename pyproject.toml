@@ -27,7 +27,7 @@ dependencies = [
     "rapidfuzz==3.12.1",
     "requests==2.32.4",
     "retry2==0.9.5",
-    "scrapy==2.12.0",
+    "scrapy==2.13.3",
     "uk-election-ids==0.10.0",
     "uk-election-timetables==4.2.3",
     "uk-geo-utils==0.18.0",
