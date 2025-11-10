@@ -482,14 +482,14 @@ wheels = [
 
 [[package]]
 name = "django-middleware-global-request"
-version = "0.3.5"
+version = "0.3.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", marker = "platform_python_implementation == 'CPython'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/16/9a/e83cdf055240a60b6da5f51cc12ec31a33c11f20092b79f2871acc85a122/django-middleware-global-request-0.3.5.tar.gz", hash = "sha256:37c79c9cd80e73751ae2821696e20af13ba7628a0915ff1818d124e0e72980b1", size = 5943, upload-time = "2024-08-20T14:01:22.264Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/2b/71/209ad7bf97a22a9e3c3e84784dcd2d53d131f7eb6539e037d52952d274af/django_middleware_global_request-0.3.6.tar.gz", hash = "sha256:a6012861113f323920d593304425fb8bd59981f9c42512830767e6857b67e573", size = 6141, upload-time = "2025-10-22T11:48:23.493Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/3c/80/9cab9c945eb5f7a8fc21c044a4d531527a18068f90c7177d00ccbf3eeeb6/django_middleware_global_request-0.3.5-py3-none-any.whl", hash = "sha256:7beb2c8ca9106aac641692cda2bac290bd7083a315446a12db06fa91b73903d6", size = 7037, upload-time = "2024-08-20T14:01:20.93Z" },
+    { url = "https://files.pythonhosted.org/packages/b1/5d/c12d0dbc194d109aeea2f705a5f4655b7c4ae5926c2f1861e0cf6834a5ce/django_middleware_global_request-0.3.6-py3-none-any.whl", hash = "sha256:7eca276aabc6fb8b09c1a59811e5a131fcb1c826577506cb500a29b204590f23", size = 7125, upload-time = "2025-10-22T11:48:21.856Z" },
 ]
 
 [[package]]
@@ -675,7 +675,7 @@ requires-dist = [
     { name = "django-filter", specifier = "==25.2" },
     { name = "django-formtools", specifier = "==2.5.1" },
     { name = "django-localflavor", specifier = "==5.0" },
-    { name = "django-middleware-global-request", specifier = "==0.3.5" },
+    { name = "django-middleware-global-request", specifier = "==0.3.6" },
     { name = "django-model-utils", specifier = "==5.0.0" },
     { name = "django-storages", specifier = "==1.14.6" },
     { name = "djangorangemiddleware", specifier = "==1.0.1" },

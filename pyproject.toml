@@ -15,7 +15,7 @@ dependencies = [
     "django-filter==25.2",
     "django-formtools==2.5.1",
     "django-localflavor==5.0",
-    "django-middleware-global-request==0.3.5",
+    "django-middleware-global-request==0.3.6",
     "django-model-utils==5.0.0",
     "django-storages==1.14.6",
     "djangorestframework==3.16.1",
