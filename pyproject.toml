@@ -3,7 +3,7 @@ name = "EveryElection"
 version = "0.0.0"
 description = "For recording every election in the UK"
 readme = "README.md"
-requires-python = "==3.12.*"
+requires-python = "==3.12.12"
 dependencies = [
     "beautifulsoup4==4.12.3",
     "boto3==1.35.98",
