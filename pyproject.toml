@@ -63,8 +63,8 @@ dev = [
     "ruff==0.9.4",
     "djhtml==3.0.7",
     "pytest-ruff==0.4.1",
-    "playwright==1.49.1",
-    "pytest-playwright==0.6.2",
+    "playwright==1.56.0",
+    "pytest-playwright==0.7.1",
     "moto[events,sqs]==5.0.26",
     "pytest-dotenv==0.5.2",
 ]
