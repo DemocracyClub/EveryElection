@@ -25,10 +25,17 @@ class Command(BaseCommand):
             type=int,
             help="ID of the DivisionSet to export.",
         )
+
+        parser.add_argument(
+            "--bucket",
+            type=str,
+            help="S3 bucket to upload the CSV to. Defaults to ee.data-cache.<environment>.",
+            default=f"ee.data-cache.{settings.DC_ENVIRONMENT}",
+        )
         return super().add_arguments(parser)
 
     def handle(self, *args, **options):
-        s3 = S3Wrapper(settings.PUBLIC_DATA_BUCKET)
+        s3 = S3Wrapper(options["bucket"])
         divisionset_id = options["divisionset_id"]
         divisionset = self.validate_divisionset_id(divisionset_id)
 
@@ -51,10 +58,10 @@ class Command(BaseCommand):
                     csv_writer.writerow(row)
 
             temp_file.flush()
-            s3_key = f"divisionset_csvs/{divisionset_id}.csv"
+            s3_key = f"divisionsets-with-wkt/{divisionset_id}.csv"
             s3.upload_file_from_fp(temp_file.name, key=s3_key)
             self.stdout.write(
-                f"Uploaded divisionset CSV for id {divisionset_id} to {settings.PUBLIC_DATA_BUCKET}/{s3_key}."
+                f"Uploaded divisionset CSV for id {divisionset_id} to {options['bucket']}/{s3_key}."
             )
 
     def validate_divisionset_id(self, divisionset_id):
