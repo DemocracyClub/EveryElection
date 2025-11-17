@@ -12,7 +12,10 @@ CSV_HEADER = [
     "division_composite_id",
     "division_name",
     "division_slug",
-    "geography_text",
+    "division_type",
+    "division_subtype",
+    "division_official_identifier",
+    "division_geography_wkt",
 ]
 
 
@@ -53,6 +56,9 @@ class Command(BaseCommand):
                         composite_id,
                         div.name,
                         div.slug,
+                        div.division_type,
+                        div.division_subtype,
+                        div.official_identifier,
                         subdiv["wkt"],
                     ]
                     csv_writer.writerow(row)
