@@ -70,6 +70,20 @@ class ByElectionFilter(admin.SimpleListFilter):
         return queryset
 
 
+class CurrentStatusFilter(admin.SimpleListFilter):
+    title = "moderation status"
+    parameter_name = "current_status"
+
+    def lookups(self, request, model_admin):
+        return [(x.value, x.value) for x in ModerationStatuses]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(current_status=self.value())
+
+        return queryset
+
+
 def mark_current(modeladmin, request, queryset):
     queryset.update(current=True)
 
@@ -197,6 +211,7 @@ class ElectionAdmin(admin.ModelAdmin):
         "current_status_display",
     )
     list_filter = [
+        CurrentStatusFilter,
         "current",
         "cancelled",
         GroupTypeListFilter,
