@@ -77,23 +77,25 @@
                     </div>
                 {% endif %}
             {% else %}
-                <div>
-                    <dt
-                        title="The total number of seats in this division"
-                    >Total Seats</dt><dd>{{ object.seats_total }}</dd>
-                </div>
-                {% if object.cancelled %}
+                {% if object.seats_total is not None and object.seats_contested is not None %}
                     <div>
                         <dt
-                            title="Number of seats that would have been contested in this ballot, were it not cancelled"
-                        >Seats Cancelled</dt><dd>{{ object.group_seats_cancelled }}</dd>
+                            title="The total number of seats in this division"
+                        >Total Seats</dt><dd>{{ object.seats_total }}</dd>
                     </div>
-                {% else %}
-                    <div>
-                        <dt
-                            title="Number of seats contested in this ballot"
-                        >Seats Contested</dt><dd>{{ object.group_seats_contested }}</dd>
-                    </div>
+                    {% if object.cancelled %}
+                        <div>
+                            <dt
+                                title="Number of seats that would have been contested in this ballot, were it not cancelled"
+                            >Seats Cancelled</dt><dd>{{ object.group_seats_cancelled }}</dd>
+                        </div>
+                    {% else %}
+                        <div>
+                            <dt
+                                title="Number of seats contested in this ballot"
+                            >Seats Contested</dt><dd>{{ object.group_seats_contested }}</dd>
+                        </div>
+                    {% endif %}
                 {% endif %}
             {% endif %}
 
