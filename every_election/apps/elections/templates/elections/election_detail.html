@@ -95,6 +95,12 @@
                     </a>
                     </li>
                 {% endif %}
+                {% if object.group_type is not None and request.user.is_authenticated %}
+                    <li><a href="{% url 'ballots_csv_view' election_id=object.election_id %}">
+                        All ballots in this group (CSV)
+                    </a>
+                    </li>
+                {% endif %}
             </ul>
 
             {% if object.whocivf_link or object.ynr_link %}

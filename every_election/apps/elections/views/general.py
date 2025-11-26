@@ -1,9 +1,13 @@
+import csv
+import io
 from collections import OrderedDict
 
 from core.helpers import user_is_moderator
 from django.contrib.auth.mixins import AccessMixin
+from django.http import Http404, HttpResponse
 from django.urls import reverse
 from django.utils.html import mark_safe
+from django.views import View
 from django.views.generic import DetailView, ListView, TemplateView
 from elections.forms import NoticeOfElectionForm
 from elections.models import ByElectionReason, Document, Election, ElectionType
@@ -145,3 +149,52 @@ class SingleElection(AccessMixin, DetailView):
             e.save()
 
         return self.get(*args, **kwargs)
+
+
+class BallotsCsv(View):
+    def get(self, *args, election_id, **kwargs):
+        try:
+            group = Election.public_objects.get(election_id=election_id)
+        except Election.DoesNotExist:
+            raise Http404("Election not found")
+
+        if group.group_type is None:
+            raise Http404(f"{election_id} is a ballot")
+
+        ballots = (
+            group.get_descendents("public_objects", inclusive=False)
+            .filter(group_type__isnull=True)
+            .order_by("election_id")
+        )
+
+        if ballots.count() == 0:
+            raise Http404("No ballots found")
+
+        output = io.StringIO()
+        writer = csv.writer(output)
+
+        # header
+        writer.writerow(
+            ["election_id", "cancelled", "seats_total", "seats_contested"]
+        )
+
+        # content
+        for b in ballots:
+            writer.writerow(
+                [
+                    b.election_id,
+                    b.cancelled,
+                    b.seats_total,
+                    b.seats_contested,
+                ]
+            )
+
+        csv_content = output.getvalue()
+        output.close()
+
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = (
+            f'attachment; filename="{election_id}.csv"'
+        )
+        response.write(csv_content)
+        return response
