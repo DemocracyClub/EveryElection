@@ -427,19 +427,44 @@ class Election(TimeStampedModel):
     @property
     def group_seats_contested(self):
         """
-        Returns the sum of the seats_contested property on all ballots that are
-        descended from the election, unless self is a ballot, in which case
-        self.seats_contested is returned.
-        It's likely there are election groups where not every ballot has had
-        seats_contested filled in, so treat with care.
+        Returns the sum of the seats_contested property on all
+        non-cancelled ballots that are descended from the election,
+        unless self is a ballot.
         """
         if self.group_type:
             return (
                 self.get_ballots()
+                .filter(cancelled=False)
                 .aggregate(models.Sum("seats_contested"))
                 .get("seats_contested__sum")
+                or 0
             )
+
+        if self.cancelled:
+            return 0
+
         return self.seats_contested
+
+    @property
+    def group_seats_cancelled(self):
+        """
+        Returns the sum of the seats_contested property on all
+        cancelled ballots that are descended from the election,
+        unless self is a ballot.
+        """
+        if self.group_type:
+            return (
+                self.get_ballots()
+                .filter(cancelled=True)
+                .aggregate(models.Sum("seats_contested"))
+                .get("seats_contested__sum")
+                or 0
+            )
+
+        if self.cancelled:
+            return self.seats_contested
+
+        return 0
 
     def __str__(self):
         return self.get_id()

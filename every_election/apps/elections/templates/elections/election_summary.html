@@ -61,19 +61,42 @@
                 {# Only do this for non-group IDs #}
             {% endif %}
 
-            {% if object.seats_total and object.seats_contested %}
-                <div>
-                    <dt>Total Seats</dt><dd>{{ object.seats_total }}</dd>
-                </div>
-                <div>
-                    <dt>Seats Contested</dt><dd>{{ object.seats_contested }}</dd>
-                </div>
-            {% endif %}
             {% if object.group_type %}
                 <div>
-                    <dt>Seats Up</dt>
+                    <dt
+                        title="Total number of seats contested across all non-cancelled ballots in this group"
+                    >Seats Contested</dt>
                     <dd>{{ object.group_seats_contested }}</dd>
                 </div>
+                {% if object.group_seats_cancelled %}
+                    <div>
+                        <dt
+                            title="Total number of seats that would have been contested across all cancelled ballots in this group"
+                        >Seats Cancelled</dt>
+                        <dd>{{ object.group_seats_cancelled }}</dd>
+                    </div>
+                {% endif %}
+            {% else %}
+                {% if object.seats_total is not None and object.seats_contested is not None %}
+                    <div>
+                        <dt
+                            title="The total number of seats in this division"
+                        >Total Seats</dt><dd>{{ object.seats_total }}</dd>
+                    </div>
+                    {% if object.cancelled %}
+                        <div>
+                            <dt
+                                title="Number of seats that would have been contested in this ballot, were it not cancelled"
+                            >Seats Cancelled</dt><dd>{{ object.group_seats_cancelled }}</dd>
+                        </div>
+                    {% else %}
+                        <div>
+                            <dt
+                                title="Number of seats contested in this ballot"
+                            >Seats Contested</dt><dd>{{ object.group_seats_contested }}</dd>
+                        </div>
+                    {% endif %}
+                {% endif %}
             {% endif %}
 
             {% if document %}

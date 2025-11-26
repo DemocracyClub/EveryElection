@@ -140,7 +140,7 @@ class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
         )
         self.assertEqual(len(self.election_group.get_ballots()), 2)
 
-    def test_group_seats_contested(self):
+    def test_seat_counts(self):
         for election in [
             self.election_group,
             self.testshire_org_group,
@@ -148,16 +148,27 @@ class TestElectionModel(BaseElectionCreatorMixIn, TestCase):
         ]:
             election.save(status=ModerationStatuses.approved.value)
 
-        for ballot in [
-            self.testshire_ballot,
-            self.ballot,
-        ]:
-            ballot.seats_contested = 3
-            ballot.save(status=ModerationStatuses.approved.value)
+        self.testshire_ballot.seats_contested = 2
+        self.testshire_ballot.save(status=ModerationStatuses.approved.value)
 
-        self.assertEqual(self.ballot.group_seats_contested, 3)
-        self.assertEqual(self.org_group.group_seats_contested, 3)
-        self.assertEqual(self.election_group.group_seats_contested, 6)
+        self.ballot.cancelled = True
+        self.ballot.seats_contested = 4
+        self.ballot.save(status=ModerationStatuses.approved.value)
+
+        self.assertEqual(self.testshire_ballot.group_seats_contested, 2)
+        self.assertEqual(self.testshire_ballot.group_seats_cancelled, 0)
+
+        self.assertEqual(self.ballot.group_seats_contested, 0)
+        self.assertEqual(self.ballot.group_seats_cancelled, 4)
+
+        self.assertEqual(self.testshire_org_group.group_seats_contested, 2)
+        self.assertEqual(self.testshire_org_group.group_seats_cancelled, 0)
+
+        self.assertEqual(self.org_group.group_seats_contested, 0)
+        self.assertEqual(self.org_group.group_seats_cancelled, 4)
+
+        self.assertEqual(self.election_group.group_seats_contested, 2)
+        self.assertEqual(self.election_group.group_seats_cancelled, 4)
 
     def test_get_admin_url(self):
         election = Election(pk=2021)
