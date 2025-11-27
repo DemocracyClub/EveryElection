@@ -1,9 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from elections.models import Election
 from elections.tests.factories import ElectionWithStatusFactory, related_status
 
 
-# @pytest.mark.django_db
 class TestSingleElectionView(TestCase):
     def test_election_status(self):
         # 4 ballots with different moderation statuses
@@ -86,3 +86,51 @@ class TestSingleElectionView(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Edit in admin")
+
+
+class TestBallotsCsv(TestCase):
+    def setUp(self):
+        super().setUp()
+        Election.private_objects.all().delete()
+
+        self.election_group = ElectionWithStatusFactory(
+            group=None,
+            group_type="election",
+            moderation_status=related_status("Approved"),
+            election_id="local.2017-03-23",
+        )
+        self.org_group = ElectionWithStatusFactory(
+            group=self.election_group,
+            group_type="organisation",
+            moderation_status=related_status("Approved"),
+            election_id="local.org.2017-03-23",
+        )
+        self.ballot1 = ElectionWithStatusFactory(
+            group=self.org_group,
+            moderation_status=related_status("Approved"),
+            election_id="local.org.div1.2017-03-23",
+        )
+        self.ballot2 = ElectionWithStatusFactory(
+            group=self.org_group,
+            moderation_status=related_status("Approved"),
+            election_id="local.org.div2.2017-03-23",
+        )
+
+    def test_invalid_election_id(self):
+        resp = self.client.get("/elections/does-not-exist/ballots_csv/")
+        self.assertEqual(404, resp.status_code)
+
+    def test_election_id_is_ballot(self):
+        resp = self.client.get(
+            f"/elections/{self.ballot1.election_id}/ballots_csv/"
+        )
+        self.assertEqual(404, resp.status_code)
+
+    def test_valid_csv(self):
+        resp = self.client.get(
+            f"/elections/{self.election_group.election_id}/ballots_csv/"
+        )
+        self.assertEqual(200, resp.status_code)
+
+        content = resp.content.decode()
+        self.assertEqual(3, content.count("\n"))

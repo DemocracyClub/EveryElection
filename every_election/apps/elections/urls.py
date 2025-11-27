@@ -4,6 +4,7 @@ from .views import (
     CONDITION_DICT,
     FORMS,
     AllElectionsView,
+    BallotsCsv,
     ElectionTypesView,
     IDCreatorWizard,
     ReferenceDefinitionView,
@@ -31,12 +32,19 @@ urlpatterns = [
     ),
     re_path(r"^elections/$", AllElectionsView.as_view(), name="elections_view"),
     re_path(
-        r"^elections/(?P<election_id>.+)/$",
+        r"^elections/(?P<election_id>[^/]+)/$",
         SingleElection.as_view(),
         name="single_election_view",
     ),
     re_path(
-        r"^id_creator/(?P<step>.+)/$", id_creator_wizard, name="id_creator_step"
+        r"^elections/(?P<election_id>[^/]+)/ballots_csv/$",
+        BallotsCsv.as_view(),
+        name="ballots_csv_view",
+    ),
+    re_path(
+        r"^id_creator/(?P<step>[^/]+)/$",
+        id_creator_wizard,
+        name="id_creator_step",
     ),
     re_path(r"^id_creator/$", id_creator_wizard, name="id_creator"),
 ]
