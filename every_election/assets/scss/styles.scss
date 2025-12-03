@@ -120,3 +120,13 @@ $scope: false;
 .maplibregl-ctrl-attrib-button::before {
     display: none;
 }
+
+.alert {
+    background-color: $black;
+    color: $white;
+}
+
+.label {
+    font-size: $s1;
+    padding: 3px;
+}
