@@ -1,4 +1,6 @@
 import subprocess
+import sys
+from pathlib import Path
 
 import psycopg2
 from django.db import connection
@@ -36,7 +38,9 @@ class PMtilesCreator:
             geojson_fp = self._create_geojson(dest_dir, div_type)
             geojson_files.append(geojson_fp)
 
-        tippecanoe_command = f"tippecanoe -o {pmtiles_fp} -zg --drop-rate=2 --drop-densest-as-needed {' '.join(geojson_files)}"
+        tippecanoe_path = Path(sys.prefix) / "bin" / "tippecanoe"
+        tippecanoe_command = f"{tippecanoe_path} -o {pmtiles_fp} -zg --drop-rate=2 --drop-densest-as-needed {' '.join(geojson_files)}"
+
         subprocess.run(tippecanoe_command, shell=True, check=True)
 
         return pmtiles_fp
