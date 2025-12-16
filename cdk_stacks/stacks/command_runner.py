@@ -62,13 +62,13 @@ class EEOncePerTagCommandRunner(Stack):
                 "cron(30 * * * ? *)",
                 "output-on-error manage-py-command snoop",
             )
-
-            # Generate map layers and sync to S3
-            self.add_job(
-                "sync_map_layers_to_s3",
-                "cron(40 1 * * ? *)",
-                "output-on-error /var/www/every_election/code/serverscripts/sync_map_layers_to_s3.sh",
-            )
+            # TODO: fix or remove
+            # # Generate map layers and sync to S3
+            # self.add_job(
+            #     "sync_map_layers_to_s3",
+            #     "cron(40 1 * * ? *)",
+            #     "output-on-error /var/www/every_election/code/serverscripts/sync_map_layers_to_s3.sh",
+            # )
 
             # Update PMTiles
             self.add_job(
