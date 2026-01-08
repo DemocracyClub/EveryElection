@@ -82,3 +82,22 @@ class NotificationTests(TestCase):
             "Completed boundary review"
             in scraper.github_helper.issues[0]["body"]
         )
+
+    def test_single_send_event_on_send_notifications(self):
+        with mock.patch(
+            "organisations.boundaries.boundary_bot.scraper.send_event"
+        ) as mock_send_event:
+            scraper = LgbceScraper(False, True)
+            scraper.data = {
+                "babergh": base_data["babergh"].copy(),
+                "allerdale": base_data["allerdale"].copy(),
+            }
+            scraper.data["babergh"]["register_code"] = "BAB"
+            scraper.data["babergh"]["latest_event"] = "foo"
+            scraper.data["allerdale"]["register_code"] = "ALL"
+            scraper.data["allerdale"]["latest_event"] = "bar"
+
+            scraper.make_notifications()
+            scraper.send_notifications()
+
+            mock_send_event.assert_called_once()
