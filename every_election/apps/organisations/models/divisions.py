@@ -11,6 +11,7 @@ from django.db.models.fields import BinaryField, CharField
 from django.db.models.functions import MD5, Cast, Concat
 from django.utils.functional import cached_property
 from django_extensions.db.models import TimeStampedModel
+from elections.baker import send_event
 from organisations.constants import PMTILES_FEATURE_ATTR_FIELDS
 from storage.s3wrapper import S3Wrapper
 
@@ -419,3 +420,11 @@ class OrganisationBoundaryReview(TimeStampedModel):
             and self.can_make_end_date_csv
             and not self.divisionset
         )
+
+    def save(self, push_event=True, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if push_event:
+            send_event(
+                detail={"description": "boundary review saved"},
+                detail_type="boundary_change_set_changed",
+            )

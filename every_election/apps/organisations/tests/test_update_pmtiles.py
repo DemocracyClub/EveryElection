@@ -29,13 +29,19 @@ def mock_create_pmtile(self, temp_dir):
 class TestUpdatePmtiles(TestCase):
     def setUp(self):
         # Patch create_pmtile to avoid actually running tippecanoe
-        self.patcher = mock.patch(
+        self.mock_create_pmtile_patcher = mock.patch(
             "organisations.pmtiles_creator.PMtilesCreator.create_pmtile",
             side_effect=mock_create_pmtile,
             autospec=True,
         )
 
-        self.mock_create_pmtile = self.patcher.start()
+        self.send_event_patcher = mock.patch(
+            "organisations.management.commands.update_pmtiles.send_event",
+            autospec=True,
+        )
+
+        self.mock_create_pmtile = self.mock_create_pmtile_patcher.start()
+        self.mock_send_event = self.send_event_patcher.start()
 
         for _ in range(2):
             divisionset = OrganisationDivisionSetFactory()
@@ -60,7 +66,8 @@ class TestUpdatePmtiles(TestCase):
         self.override_static_root.enable()
 
     def tearDown(self):
-        self.patcher.stop()
+        self.mock_create_pmtile_patcher.stop()
+        self.send_event_patcher.stop()
         # Reset Mock STATIC_ROOT
         self.override_static_root.disable()
         shutil.rmtree(self.tmp_static_root)
@@ -70,6 +77,12 @@ class TestUpdatePmtiles(TestCase):
         divsets = OrganisationDivisionSet.objects.all()
         has_files = [ds.has_pmtiles_file for ds in divsets]
         assert all(has_files)
+
+    def test_send_event_called_once_on_file_creation(self):
+        # test setup creates multiple divisionsets without pmtiles files
+        call_command("update_pmtiles", all=True)
+        # we only want to send one event for the whole run
+        self.mock_send_event.assert_called_once()
 
     @override_settings(PUBLIC_DATA_BUCKET=MOCK_PUBLIC_DATA_BUCKET)
     def test_create_pmtiles_when_file_absent_s3(self):

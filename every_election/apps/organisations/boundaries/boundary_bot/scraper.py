@@ -5,6 +5,7 @@ from urllib.parse import urlparse
 import lxml.html
 import requests
 from django.core import serializers
+from elections.baker import send_event
 from organisations.boundaries.boundary_bot.code_matcher import CodeMatcher
 from organisations.boundaries.boundary_bot.common import (
     BASE_URL,
@@ -304,13 +305,16 @@ class LgbceScraper:
                 record["organisation"] = self.get_org_from_reg_code(
                     record["register_code"]
                 )
-                OrganisationBoundaryReview.objects.create(
+
+                br = OrganisationBoundaryReview(
                     **{
                         k: v
                         for k, v in record.items()
                         if k in field_names and v
                     }
                 )
+
+                br.save(push_event=False)
 
             if (
                 len(result) == 1
@@ -340,6 +344,14 @@ class LgbceScraper:
 
         if not self.SEND_NOTIFICATIONS:
             return
+
+        if self.slack_helper.messages:
+            send_event(
+                detail={
+                    "description": "lgbce scraper updated and/or created boundary reviews"
+                },
+                detail_type="boundary_change_set_changed",
+            )
 
         if SLACK_WEBHOOK_URL:
             self.slack_helper.post_messages()
