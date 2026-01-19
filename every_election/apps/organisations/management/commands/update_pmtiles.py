@@ -4,6 +4,7 @@ from collections import defaultdict
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
+from elections.baker import send_event
 from organisations.models import OrganisationDivisionSet
 from organisations.pmtiles_creator import PMtilesCreator
 
@@ -53,6 +54,7 @@ class Command(BaseCommand):
             )
 
         existing_pmtiles_lookup = self.create_lookup_dict(existing_pmtiles)
+        tiles_updated = False
         failures = 0
 
         if options["all"]:
@@ -127,9 +129,16 @@ class Command(BaseCommand):
                             f"PMTile created at {static_path}/{divset.pmtiles_file_name}."
                         )
                     )
+                tiles_updated = True
 
         if failures:
             raise CommandError(f"Failed to process {failures} DivisionSets")
+
+        if tiles_updated:
+            send_event(
+                detail={"description": "Pmtiles files updated"},
+                detail_type="boundary_change_set_changed",
+            )
 
         self.stdout.write(self.style.SUCCESS("Completed successfully."))
 
