@@ -1,3 +1,4 @@
+from django.contrib.gis.geos import MultiPolygon, Polygon
 from django.utils.text import slugify
 
 
@@ -27,3 +28,16 @@ def normalize_name_for_matching(name):
 
 def split_code(code):
     return tuple(code.split(":"))
+
+
+def union_list(geoms: list[MultiPolygon]) -> MultiPolygon:
+    combined = geoms[0]
+    for geom in geoms[1:]:
+        combined = combined.union(geom)
+    if isinstance(combined, MultiPolygon):
+        return combined
+    return MultiPolygon(combined)
+
+
+def extract_exterior_ring(geom: MultiPolygon) -> MultiPolygon:
+    return MultiPolygon([Polygon(p.exterior_ring) for p in geom])

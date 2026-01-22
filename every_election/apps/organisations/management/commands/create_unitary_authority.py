@@ -1,24 +1,11 @@
 from datetime import datetime
 
-from django.contrib.gis.geos import MultiPolygon, Polygon
 from django.core.management import BaseCommand, CommandError
 from django.db import transaction
 from django.utils.text import slugify
 from elections.models import ElectedRole, ElectionType
+from organisations.boundaries.helpers import extract_exterior_ring, union_list
 from organisations.models import Organisation, OrganisationGeography
-
-
-def union_list(geoms: list[MultiPolygon]) -> MultiPolygon:
-    combined = geoms[0]
-    for geom in geoms[1:]:
-        combined = combined.union(geom)
-    if isinstance(combined, MultiPolygon):
-        return combined
-    return MultiPolygon(combined)
-
-
-def extract_exterior_ring(geom: MultiPolygon) -> MultiPolygon:
-    return MultiPolygon([Polygon(p.exterior_ring) for p in geom])
 
 
 class Command(BaseCommand):
