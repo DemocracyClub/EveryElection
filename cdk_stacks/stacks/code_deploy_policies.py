@@ -104,6 +104,8 @@ EE_CODE_DEPLOY_EC2_POLICY = {
             "Resource": [
                 "arn:aws:s3:::dc-ee-production-database-backups/*",
                 "arn:aws:s3:::dc-ee-production-database-backups",
+                "arn:aws:s3:::notice-of-election/*",
+                "arn:aws:s3:::notice-of-election",
             ],
         },
         {
