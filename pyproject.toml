@@ -30,7 +30,7 @@ dependencies = [
     "scrapy==2.12.0",
     "uk-election-ids==0.10.0",
     "uk-election-timetables==4.2.3",
-    "uk-geo-utils==0.18.0",
+    "uk-geo-utils==0.19.1",
     "dc-django-utils",
     "dc-design-system",
     "python-dotenv==1.0.1",
