@@ -39,7 +39,7 @@ class PMtilesCreator:
             geojson_files.append(geojson_fp)
 
         tippecanoe_path = Path(sys.prefix) / "bin" / "tippecanoe"
-        tippecanoe_command = f"{tippecanoe_path} -o {pmtiles_fp} -zg --drop-rate=2 --drop-densest-as-needed {' '.join(geojson_files)}"
+        tippecanoe_command = f"{tippecanoe_path} -o {pmtiles_fp} -zg --drop-densest-as-needed --no-simplification-of-shared-nodes --no-tiny-polygon-reduction --low-detail=10  {' '.join(geojson_files)}"
 
         subprocess.run(tippecanoe_command, shell=True, check=True)
 
