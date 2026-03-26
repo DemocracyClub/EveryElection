@@ -61,7 +61,7 @@ def test_northern_ireland_assembly(row):
 
     actual_date = read_date(row["sopn_publish_date"])
 
-    assert same_or_next_day(actual_date, expected_date)
+    assert actual_date == expected_date
 
 
 @mark.parametrize("row", generate_test_cases("sp"), ids=generate_test_id)
@@ -72,7 +72,7 @@ def test_scottish_parliament(row):
 
     actual_date = read_date(row["sopn_publish_date"])
 
-    assert same_or_next_day(actual_date, expected_date)
+    assert actual_date == expected_date
 
 
 @mark.parametrize("row", generate_test_cases("naw"), ids=generate_test_id)
