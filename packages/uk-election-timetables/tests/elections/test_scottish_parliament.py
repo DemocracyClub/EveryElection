@@ -1,17 +1,35 @@
 from datetime import date
 
+import pytest
+
 from uk_election_timetables.elections import (
     ScottishParliamentElection,
 )
 
+sopn_test_cases = [
+    {
+        # Reference election: sp.c.shetland-islands.2021-05-06
+        # https://candidates.democracyclub.org.uk/elections/sp.c.shetland-islands.2021-05-06/sopn/
+        # In 2021 Easter Monday fell between SOPN Publish date and polling day
+        "poll_date": date(2021, 5, 6),
+        "sopn_publish_date": date(2021, 3, 31),
+    },
+    {
+        # Reference election: sp.c.shetland-islands.2016-05-05
+        # https://candidates.democracyclub.org.uk/elections/sp.c.shetland-islands.2016-05-05/sopn/
+        # In 2016 Easter Monday was on 27th March so does not factor in here
+        "poll_date": date(2016, 5, 5),
+        "sopn_publish_date": date(2016, 4, 1),
+    },
+]
 
-# Reference election: sp.c.shetland-islands.2016-05-05
-def test_publish_date_scottish_parliament():
-    publish_date = ScottishParliamentElection(
-        date(2016, 5, 5)
-    ).sopn_publish_date
 
-    assert publish_date == date(2016, 4, 1)
+@pytest.mark.parametrize("election", sopn_test_cases)
+def test_publish_date_scottish_parliament(election):
+    assert (
+        ScottishParliamentElection(election["poll_date"]).sopn_publish_date
+        == election["sopn_publish_date"]
+    )
 
 
 # Reference election: sp.2021-05-06
