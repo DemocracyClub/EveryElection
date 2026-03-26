@@ -80,7 +80,7 @@ def test_timetable_sort_order_scottish_parliament_postal_vote():
     assert election.timetable == [
         {
             "label": "List of candidates published",
-            "date": datetime.date(2021, 4, 1),
+            "date": datetime.date(2021, 3, 31),
             "event": "SOPN_PUBLISH_DATE",
         },
         {
