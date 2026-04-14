@@ -30,55 +30,59 @@ def events_client(boto_session):
         yield boto_session.client("events")
 
 
-@mock_aws
-@pytest.fixture
+@pytest.fixture()
 def sqs_queue_details(sqs_client):
-    policy = {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Effect": "Allow",
-                "Principal": {"Service": "events.amazonaws.com"},
-                "Action": "sqs:SendMessage",
-                "Resource": "*",
-            }
-        ],
-    }
-    queue = sqs_client.create_queue(
-        QueueName="CurrentElectionsEventQueue.fifo",
-        Attributes={
-            "FifoQueue": "true",
-            "ContentBasedDeduplication": "true",
-            "Policy": json.dumps(policy),
-        },
-    )
-    queue_url = queue["QueueUrl"]
-    queue_attributes = sqs_client.get_queue_attributes(
-        QueueUrl=queue_url, AttributeNames=["All"]
-    )
-    queue_arn = queue_attributes["Attributes"]["QueueArn"]
-    return queue_url, queue_arn
+    with mock_aws():
+        policy = {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {"Service": "events.amazonaws.com"},
+                    "Action": "sqs:SendMessage",
+                    "Resource": "*",
+                }
+            ],
+        }
+        queue = sqs_client.create_queue(
+            QueueName="CurrentElectionsEventQueue.fifo",
+            Attributes={
+                "FifoQueue": "true",
+                "ContentBasedDeduplication": "true",
+                "Policy": json.dumps(policy),
+            },
+        )
+        queue_url = queue["QueueUrl"]
+        queue_attributes = sqs_client.get_queue_attributes(
+            QueueUrl=queue_url, AttributeNames=["All"]
+        )
+        queue_arn = queue_attributes["Attributes"]["QueueArn"]
+        yield queue_url, queue_arn
 
 
-@mock_aws
 @pytest.fixture(autouse=True)
 def eventbridge_rule(events_client, sqs_queue_details):
-    _, queue_arn = sqs_queue_details
-    eventpattern = {"detail-type": ["elections_set_changed"]}
-    rule_name = "RebuildCurrentElectionsParquetTrigger"
-    events_client.put_rule(
-        Name=rule_name, State="ENABLED", EventPattern=json.dumps(eventpattern)
-    )
-    events_client.put_targets(
-        Rule=rule_name,
-        Targets=[
-            {
-                "Id": "CurrentElectionsEventQueue.fifo",
-                "Arn": queue_arn,
-                "SqsParameters": {"MessageGroupId": "elections_set_changed"},
-            }
-        ],
-    )
+    with mock_aws():
+        _, queue_arn = sqs_queue_details
+        eventpattern = {"detail-type": ["elections_set_changed"]}
+        rule_name = "RebuildCurrentElectionsParquetTrigger"
+        events_client.put_rule(
+            Name=rule_name,
+            State="ENABLED",
+            EventPattern=json.dumps(eventpattern),
+        )
+        events_client.put_targets(
+            Rule=rule_name,
+            Targets=[
+                {
+                    "Id": "CurrentElectionsEventQueue.fifo",
+                    "Arn": queue_arn,
+                    "SqsParameters": {
+                        "MessageGroupId": "elections_set_changed"
+                    },
+                }
+            ],
+        )
 
 
 @pytest.fixture()
