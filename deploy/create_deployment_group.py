@@ -98,6 +98,10 @@ def create_default_asg():
     min_size = 1
     max_size = 1
     desired_capacity = 1
+    if os.environ.get("DC_ENVIRONMENT") == "production":
+        min_size = 2
+        max_size = 8
+        desired_capacity = 2
 
     return client.create_auto_scaling_group(
         AutoScalingGroupName="default",
