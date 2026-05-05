@@ -95,13 +95,18 @@ def create_default_asg():
     if "default" in existing_asgs:
         return None
 
+    """
+    These settings are only used when we create a new ASG for the first time.
+
+    When we run a deploy, we typically re-use an existing ASG,
+    so we don't apply these settings.
+
+    If we want to modify the ASG (e.g: to add more capacity),
+    we need to do that through the GUI.
+    """
     min_size = 1
     max_size = 1
     desired_capacity = 1
-    if os.environ.get("DC_ENVIRONMENT") == "production":
-        min_size = 2
-        max_size = 8
-        desired_capacity = 2
 
     return client.create_auto_scaling_group(
         AutoScalingGroupName="default",
