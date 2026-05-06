@@ -33,7 +33,7 @@ dependencies = [
     "uk-geo-utils==0.19.1",
     "dc-django-utils",
     "dc-design-system",
-    "python-dotenv==1.0.1",
+    "python-dotenv==1.2.2",
     "djangorangemiddleware==1.0.1",
     "tippecanoe==2.72.0",
 ]
