@@ -68,9 +68,15 @@ class LgbceSpider(scrapy.Spider):
         return None
 
     def get_latest_event(self, response):
-        review_card_titles = response.css("h3.vits-review-card__title")
-        if review_card_titles:
-            return review_card_titles[-1].xpath("text()")[0].extract().strip()
+        # get review cards but exclude those with the upcoming status
+        review_card_divs = response.css("div.vits-review-card").xpath(
+            "self::div[not(.//div[contains(@class, 'vits-review-card__status')][contains(., 'Upcoming')])]"
+        )
+        if review_card_divs:
+            latest_review_card_title = review_card_divs.css(
+                "h3.vits-review-card__title"
+            )[-1]
+            return latest_review_card_title.xpath("text()")[0].extract().strip()
         return None
 
     def get_eco_title_and_link(self, response, latest_event):
