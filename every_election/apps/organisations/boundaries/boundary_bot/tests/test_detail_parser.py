@@ -111,6 +111,25 @@ class DetailParserTest(TestCase):
         self.assertEqual(1, result[0]["legislation_made"])
         self.assertIsNone(result[0]["boundaries_url"])
 
+    def test_eco_alt_legislation_link(self):
+        # In recent pages, the legislation title/link container is not in
+        # the Latest Information section, but in Previous Stages instead.
+        spider = LgbceSpider()
+        fixture = mock_response(
+            "fixtures/detail/eco_alt_legislation_link.html",
+            "https://www.lgbce.org.uk/all-reviews/calderdale",
+        )
+        result = list(spider.parse(fixture))
+        self.assertEqual(
+            "The Calderdale (Electoral Changes) Order 2024",
+            result[0]["legislation_title"],
+        )
+        self.assertEqual(
+            "https://www.legislation.gov.uk/uksi/2024/1182/contents/made",
+            result[0]["legislation_url"],
+        )
+        self.assertEqual(1, result[0]["legislation_made"])
+
     def test_no_matches(self):
         spider = LgbceSpider()
         fixture = mock_response(
