@@ -68,10 +68,31 @@ class LgbceSpider(scrapy.Spider):
         return None
 
     def get_latest_event(self, response):
-        review_card_titles = response.css("h3.vits-review-card__title")
-        if review_card_titles:
-            return review_card_titles[-1].xpath("text()")[0].extract().strip()
+        # get review cards but exclude those with the upcoming status
+        review_card_divs = response.css("div.vits-review-card").xpath(
+            "self::div[not(.//div[contains(@class, 'vits-review-card__status')][contains(., 'Upcoming')])]"
+        )
+        if review_card_divs:
+            latest_review_card_title = review_card_divs.css(
+                "h3.vits-review-card__title"
+            )[-1]
+            return latest_review_card_title.xpath("text()")[0].extract().strip()
         return None
+
+    def get_eco_containers(self, response):
+        latest_info_containers = response.xpath(
+            '//div[@class="latest-information"]//div[@class="link-name-and-view-container"]'
+        )
+        # if there's a link container in latest info, use that
+        if latest_info_containers:
+            return latest_info_containers
+        # otherwise, look for a made order div in previous stages
+        previous_stages_containers = response.css("div.previous-steps").xpath(
+            '//div[h5[contains(text(), "Made Order")]]//div[@class="link-name-and-view-container"]'
+        )
+        if previous_stages_containers:
+            return previous_stages_containers
+        return []
 
     def get_eco_title_and_link(self, response, latest_event):
         def get_link_title(selector):
@@ -90,11 +111,11 @@ class LgbceSpider(scrapy.Spider):
                 in title.lower()
             )
 
+        eco_containers = self.get_eco_containers(response)
+
         links = [
             (get_link_title(selector), get_link(selector))
-            for selector in response.xpath(
-                '//div[@class="latest-information"]//div[@class="link-name-and-view-container"]'
-            )
+            for selector in eco_containers
         ]
 
         made_ecos = [
