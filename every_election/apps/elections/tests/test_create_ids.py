@@ -220,6 +220,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             "election_organisation": [mayor_org],
             "election_type": mayor_election_type,
             "date": self.date,
+            "ballot_type": {str(mayor_org.pk): "scheduled"},
         }
 
         expected_ids = [

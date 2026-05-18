@@ -61,6 +61,31 @@ function add_action_button(label, actions) {
     return action_button
 }
 
+var mayor_pcc_picker = document.getElementById("id_creator_mayor_pcc_ballot_type");
+if (mayor_pcc_picker != undefined) {
+    var mayor_button_div = document.createElement('div');
+    mayor_button_div.classList.add("ds-cluster");
+    mayor_button_div.innerHTML = `<div></div>`;
+
+    var mayor_scheduled_button = add_action_button("All scheduled", [
+        {
+            selector: "#id_creator_mayor_pcc_ballot_type input[value=scheduled]",
+            action: function (el) { el.checked = true; }
+        },
+    ]);
+    mayor_button_div.querySelector("div").insertAdjacentElement("beforeend", mayor_scheduled_button);
+
+    var mayor_reset_button = add_action_button("Reset", [
+        {
+            selector: "#id_creator_mayor_pcc_ballot_type input[type=radio]",
+            action: function (el) { el.checked = false; }
+        },
+    ]);
+    mayor_button_div.querySelector("div").insertAdjacentElement("beforeend", mayor_reset_button);
+
+    mayor_pcc_picker.insertAdjacentElement("beforebegin", mayor_button_div);
+}
+
 var division_picker = document.getElementById("id_creator_election_organisation_division");
 if (division_picker != undefined && document.querySelector("main.authenticated")) {
     // Create a cluster
@@ -130,7 +155,7 @@ if (division_picker != undefined && document.querySelector("main.authenticated")
 document.querySelectorAll("input[value=seats_contested], input[value=by_election]").forEach((el) => {
     el.addEventListener("click", (el) => {
         var seats = el.currentTarget.closest("fieldset").querySelector("input[name$='-seats_contested']");
-        if (seats.value < 1) {
+        if (seats && seats.value < 1) {
             seats.value = 1;
         }
     });
@@ -138,6 +163,8 @@ document.querySelectorAll("input[value=seats_contested], input[value=by_election
 document.querySelectorAll("input[value=no_seats]").forEach((el) => {
     el.addEventListener("click", (el) => {
         var seats = el.currentTarget.closest("fieldset").querySelector("input[name$='-seats_contested']");
-        seats.value = "";
+        if (seats) {
+          seats.value = "";
+        }
     });
 });

@@ -14,6 +14,7 @@ from elections.forms import (
     ElectionOrganisationForm,
     ElectionSubTypeForm,
     ElectionTypeForm,
+    MayorPCCBallotTypeFormSet,
 )
 from elections.models import (
     Document,
@@ -36,6 +37,7 @@ FORMS = [
     ("election_subtype", ElectionSubTypeForm),
     ("election_organisation", ElectionOrganisationForm),
     ("election_organisation_division", DivFormSet),
+    ("mayor_pcc_ballot_type", MayorPCCBallotTypeFormSet),
     ("by_elections_source", ByElectionSourceFormSet),
     ("review", forms.Form),
 ]
@@ -46,6 +48,7 @@ TEMPLATES = {
     "election_subtype": "id_creator/election_subtype.html",
     "election_organisation": "id_creator/election_organisation.html",
     "election_organisation_division": "id_creator/election_organisation_division.html",
+    "mayor_pcc_ballot_type": "id_creator/mayor_pcc_ballot_type.html",
     "by_elections_source": "id_creator/by_election_source.html",
     "review": "id_creator/review.html",
 }
@@ -103,10 +106,27 @@ def select_organisation_division(wizard):
     )
 
 
+def select_mayor_pcc_ballot_type(wizard):
+    """
+    Only logged-in users are asked to choose ballot
+    type for mayor/pcc elections.
+    Anonymous users are assumed to be creating a by-election.
+    """
+    election_type = wizard.get_election_type
+    if not election_type:
+        return False
+    if election_type.election_type not in ["mayor", "pcc"]:
+        return False
+    return wizard.request.user.is_authenticated
+
+
 def should_show_by_elections_source(wizard):
     """
-    We never ask for a source when creating elections for users that are
-    logged in
+    We never ask for a source when creating elections
+    for users that are logged in
+
+    Also skip by-election source for Mayor/PCC by-election
+    to keep things simpler
     """
     return not wizard.request.user.is_authenticated and wizard.get_divisions()
 
@@ -116,6 +136,7 @@ CONDITION_DICT = {
     "election_organisation": select_organisation,
     "election_organisation_division": select_organisation_division,
     "election_subtype": select_subtype,
+    "mayor_pcc_ballot_type": select_mayor_pcc_ballot_type,
     "by_elections_source": should_show_by_elections_source,
 }
 
@@ -250,6 +271,23 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
             )
         return []
 
+    def get_mayor_pcc_ballot_type(self):
+        if not self.condition_dict["mayor_pcc_ballot_type"](self):
+            # Anonymous users are assumed to be creating a by-election
+            if not self.request.user.is_authenticated:
+                organisations = self.get_organisations
+                if organisations:
+                    return {str(org.pk): "by_election" for org in organisations}
+            return {}
+        cleaned_data = self.get_cleaned_data_for_step("mayor_pcc_ballot_type")
+        if cleaned_data:
+            return {
+                str(form["organisation_id"]): form["ballot_type"]
+                for form in cleaned_data
+                if form.get("organisation_id")
+            }
+        return {}
+
     def get_by_election_source(self):
         if "by_elections_source" in self.storage.data["step_data"]:
             return {
@@ -269,6 +307,7 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
         all_data["election_organisation"] = self.get_organisations
         all_data["election_divisions"] = self.get_divisions()
         all_data["election_type"] = self.get_election_type
+        all_data["ballot_type"] = self.get_mayor_pcc_ballot_type()
 
         if not all_data.get("election_organisation"):
             all_data.update(self.storage.extra_data)
@@ -324,6 +363,9 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
 
         if step == "election_type":
             return {"date": self.get_election_date()}
+
+        if step == "mayor_pcc_ballot_type":
+            return {"organisations": self.get_organisations}
 
         if step == "by_elections_source":
             kwargs = {}
