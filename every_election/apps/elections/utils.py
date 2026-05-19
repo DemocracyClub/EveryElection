@@ -464,13 +464,19 @@ def create_ids_for_each_ballot_paper(all_data, subtypes=None):
 
         if all_data["election_type"].election_type in ["mayor", "pcc"]:
             group_id = date_id
-            mayor_id = (
+            builder = (
                 ElectionBuilder(all_data["election_type"], all_data["date"])
                 .with_organisation(organisation)
                 .with_source(all_data.get("source", ""))
                 .with_snooped_election(all_data.get("radar_id", None))
-                .build_ballot(group_id)
             )
+            ballot_types = all_data.get("ballot_type", {})
+            contest_type = ballot_types[str(organisation.pk)]
+            if contest_type == "by_election":
+                builder.with_contest_type("by")
+
+            mayor_id = builder.build_ballot(group_id)
+
             if mayor_id.election_id not in [e.election_id for e in all_ids]:
                 all_ids.append(mayor_id)
 

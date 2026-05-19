@@ -1,0 +1,37 @@
+{% extends "id_creator/id_creator_base.html" %}
+{% block page_title %}Ballot Type{% endblock page_title %}
+
+{% block form_page_header %}
+    <h1>Contest Type</h1>
+    <p>Are the <strong>{{ all_data.election_type }}</strong>
+        elections taking place on <strong>{{ all_data.date }}</strong>
+        scheduled elections or by-elections?
+    </p>
+{% endblock form_page_header %}
+
+{% block form_content %}
+    {{ wizard.form.management_form }}
+    {% for form in wizard.form.forms %}
+        {% for field in form %}
+            {% if field.is_hidden %}{{ field }}{% endif %}
+        {% endfor %}
+        <fieldset>
+            <legend>{{ form.organisation.name }}</legend>
+            <div class="ds-cluster ds-cluster-tight">
+                <div class="ds-stack-smallest">
+                    {% for radio in form.ballot_type %}
+                        <label class="ds-field-radio" for="{{ radio.id_for_label }}">
+                            {{ radio.tag }}
+                            <span>{{ radio.choice_label }}</span>
+                        </label>
+                    {% endfor %}
+                    {% if form.ballot_type.errors %}
+                        {% for error in form.ballot_type.errors %}
+                            <div class="ds-error">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </fieldset>
+    {% endfor %}
+{% endblock form_content %}

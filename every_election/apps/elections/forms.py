@@ -337,6 +337,51 @@ ByElectionSourceFormSet = forms.formset_factory(
 )
 
 
+class MayorPCCBallotTypeForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.organisation: Organisation = kwargs.pop("organisation", None)
+        super().__init__(*args, **kwargs)
+        if self.organisation:
+            self.fields["organisation_id"] = forms.IntegerField(
+                initial=self.organisation.pk,
+                required=True,
+                widget=forms.HiddenInput,
+            )
+
+    organisation_id = forms.IntegerField(
+        widget=forms.HiddenInput, required=False
+    )
+    ballot_type = forms.ChoiceField(
+        choices=(
+            ("scheduled", "Scheduled"),
+            ("by_election", "By-election"),
+        ),
+        widget=forms.RadioSelect,
+        label="Is this a by-election or a scheduled election?",
+    )
+
+
+class MayorPCCBallotTypeBaseFormSet(forms.BaseFormSet):
+    def __init__(self, *args, **kwargs):
+        self.organisations = kwargs.pop("organisations", None) or []
+        kwargs["initial"] = []
+        self._form_kwargs = []
+        for organisation in self.organisations:
+            kwargs["initial"].append({"organisation_id": organisation.pk})
+            self._form_kwargs.append({"organisation": organisation})
+        super().__init__(*args, **kwargs)
+
+    def get_form_kwargs(self, index):
+        if not self._form_kwargs:
+            return {}
+        return self._form_kwargs[index]
+
+
+MayorPCCBallotTypeFormSet = forms.formset_factory(
+    MayorPCCBallotTypeForm, formset=MayorPCCBallotTypeBaseFormSet, extra=0
+)
+
+
 class NoticeOfElectionForm(forms.Form):
     document = forms.URLField(
         required=True,
