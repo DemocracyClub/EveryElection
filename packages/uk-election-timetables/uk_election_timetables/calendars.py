@@ -19,25 +19,6 @@ class Country(Enum):
     WALES = 4
 
 
-class Region(Enum):
-    """
-    The regions of the United Kingdom and Gibraltar as elected in the EU Parliament
-    """
-
-    EAST_MIDLANDS = 1
-    EAST_OF_ENGLAND = 2
-    LONDON = 3
-    NORTH_EAST_ENGLAND = 4
-    NORTH_WEST_ENGLAND = 5
-    NORTHERN_IRELAND = 6
-    SCOTLAND = 7
-    SOUTH_EAST_ENGLAND = 8
-    SOUTH_WEST_ENGLAND = 9
-    WALES = 10
-    WEST_MIDLANDS = 11
-    YORKSHIRE_AND_THE_HUMBER = 12
-
-
 class BaseCalendar(ABC):
     @abstractmethod
     def exempted_dates(self):
