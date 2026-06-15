@@ -1,6 +1,10 @@
 from datetime import date
 
-from uk_election_timetables.calendars import Country, working_days_before
+from uk_election_timetables.calendars import (
+    Country,
+    EasterMondayRule,
+    working_days_before,
+)
 from uk_election_timetables.election import Election
 
 
@@ -35,4 +39,5 @@ class ScottishParliamentElection(Election):
 
         :return: a datetime representing the expected publish date
         """
-        return working_days_before(self.poll_date, 23, super()._calendar())
+        calendar = self.get_extended_calendar([EasterMondayRule()])
+        return working_days_before(self.poll_date, 23, calendar)

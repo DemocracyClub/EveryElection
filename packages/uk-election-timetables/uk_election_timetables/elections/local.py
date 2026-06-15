@@ -1,6 +1,10 @@
 from datetime import date
 
-from uk_election_timetables.calendars import Country, working_days_before
+from uk_election_timetables.calendars import (
+    Country,
+    EasterMondayRule,
+    working_days_before,
+)
 from uk_election_timetables.election import Election
 
 
@@ -28,8 +32,12 @@ class LocalElection(Election):
 
         days_prior = country_specific_duration[self.country]
 
+        calendar = super()._calendar()
+        if self.country == Country.SCOTLAND:
+            calendar = self.get_extended_calendar([EasterMondayRule()])
+
         return working_days_before(
             self.poll_date,
             days_prior,
-            super()._calendar(),
+            calendar,
         )
