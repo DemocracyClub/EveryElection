@@ -6,6 +6,7 @@ from typing import Dict, List
 
 from uk_election_timetables.calendars import (
     Country,
+    ExtendedCalendar,
     UnitedKingdomBankHolidays,
     working_days_before,
 )
@@ -107,6 +108,20 @@ class Election(metaclass=ABCMeta):
 
     def _calendar(self):
         return self.BANK_HOLIDAY_CALENDAR.from_country(self.country)
+
+    def get_extended_calendar(self, rules):
+        return ExtendedCalendar(
+            self._calendar(),
+            rules,
+            # Note: There's a useful optimisation we are using here.
+            #
+            # When we need to add an extra excluded date (or range),
+            # we don't need to go back to the start of time.
+            # For any given poll_date we need to add for at maximum
+            # the year containing poll_date and the previous year.
+            # That will be enough for any event we want to calculate.
+            years=[self.poll_date.year - 1, self.poll_date.year],
+        )
 
     def get_date_for_event_type(self, event):
         for e in self.timetable:

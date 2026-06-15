@@ -1,7 +1,9 @@
 import json
 import os
+from abc import ABC, abstractmethod
 from datetime import date, datetime
 from enum import Enum
+from typing import List
 
 from uk_election_timetables.date import DateMatcher, days_before
 
@@ -36,7 +38,13 @@ class Region(Enum):
     YORKSHIRE_AND_THE_HUMBER = 12
 
 
-class BankHolidayCalendar:
+class BaseCalendar(ABC):
+    @abstractmethod
+    def exempted_dates(self):
+        pass
+
+
+class BankHolidayCalendar(BaseCalendar):
     """
     A calendar that excludes the input list of dates.
     """
@@ -68,7 +76,7 @@ class BankHolidayCalendar:
         return self._exempted_dates
 
 
-class UnitedKingdomBankHolidays(object):
+class UnitedKingdomBankHolidays:
     """
     A representation of the bank holiday calendars in the United Kingdom.
 
@@ -122,8 +130,42 @@ class UnitedKingdomBankHolidays(object):
         return self.scotland()
 
 
+class ExcludedDateRule(ABC):
+    @abstractmethod
+    def generate(
+        self, year: int, bank_holidays: List[DateMatcher]
+    ) -> List[DateMatcher]:
+        pass
+
+
+class ExtendedCalendar(BaseCalendar):
+    """
+    Wraps a BankHolidayCalendar and layers additional ExcludedDateRules on top.
+
+    Also implements the BaseCalendar ABC so we can drop it in as a
+    replacement for BankHolidayCalendar.
+    """
+
+    def __init__(
+        self,
+        base: BankHolidayCalendar,
+        rules: List[ExcludedDateRule],
+        years: List[int],
+    ):
+        extra = [
+            d
+            for rule in rules
+            for y in years
+            for d in rule.generate(y, base._bank_holidays)
+        ]
+        self._all_dates = base.exempted_dates() + extra
+
+    def exempted_dates(self):
+        return self._all_dates
+
+
 def working_days_before(
-    end_date: date, days: int, calendar: BankHolidayCalendar
+    end_date: date, days: int, calendar: BaseCalendar
 ) -> date:
     """
     Return date corresponding to `count` working days before `poll_date` according to the given bank holiday calendar
