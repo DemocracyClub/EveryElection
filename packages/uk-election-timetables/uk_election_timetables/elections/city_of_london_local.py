@@ -1,9 +1,9 @@
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from typing import List
 
 from uk_election_timetables.calendars import (
     Country,
-    UnitedKingdomBankHolidays,
+    ExcludedDateRule,
     working_days_before,
 )
 from uk_election_timetables.date import WEEKEND, DateMatcher
@@ -14,44 +14,46 @@ def _is_bank_holiday(date: date, bank_holidays: List[DateMatcher]) -> bool:
     return any(bh.matches(date) for bh in bank_holidays)
 
 
-def _get_easter_break(bank_holidays: List[DateMatcher]) -> List[DateMatcher]:
-    """
-    “the Easter break” means the period beginning with the Thursday before
-    and ending with the Tuesday after Easter Day
+class EasterBreakRule(ExcludedDateRule):
+    def generate(
+        self, year: int, bank_holidays: List[DateMatcher]
+    ) -> List[DateMatcher]:
+        """
+        “the Easter break” means the period beginning with the Thursday before
+        and ending with the Tuesday after Easter Day
 
-    Fortunately the Gov.UK bank holidays are consistently labelled
-    """
-    easter_break = []
-    for bh in bank_holidays:
-        if bh.name == "Good Friday":
-            good_friday = date(bh.year, bh.month, bh.day)
-            for offset in range(-1, 5):
-                day = good_friday + timedelta(days=offset)
-                easter_break.append(
-                    DateMatcher(
-                        name="City of London Easter Break",
-                        year=day.year,
-                        month=day.month,
-                        day=day.day,
+        Fortunately the Gov.UK bank holidays are consistently labelled
+        """
+        easter_break = []
+        for bh in bank_holidays:
+            if bh.year != year:
+                continue
+            if bh.name == "Good Friday":
+                good_friday = date(bh.year, bh.month, bh.day)
+                for offset in range(-1, 5):
+                    day = good_friday + timedelta(days=offset)
+                    easter_break.append(
+                        DateMatcher(
+                            name="City of London Easter Break",
+                            year=day.year,
+                            month=day.month,
+                            day=day.day,
+                        )
                     )
-                )
-    return easter_break
+        return easter_break
 
 
-def _get_christmas_break(bank_holidays: List[DateMatcher]) -> List[DateMatcher]:
-    """
-    “the Christmas break” means the period beginning with the last week day
-    before Christmas Day and ending with the first week day after Christmas
-    Day which is not a bank holiday
-    """
-    christmas_break = []
+class ChristmasBreakRule(ExcludedDateRule):
+    def generate(
+        self, year: int, bank_holidays: List[DateMatcher]
+    ) -> List[DateMatcher]:
+        """
+        “the Christmas break” means the period beginning with the last week day
+        before Christmas Day and ending with the first week day after Christmas
+        Day which is not a bank holiday
+        """
+        christmas_break = []
 
-    # 2012 is the first year that exists in our bank holiday calendar
-    # so we won't go any further back than that
-    beginning_of_time = 2012
-    current_year = datetime.now().year
-
-    for year in range(beginning_of_time, current_year + 1):
         break_start = date(year, 12, 24)
         while break_start.weekday() in WEEKEND:
             break_start -= timedelta(days=1)
@@ -73,7 +75,7 @@ def _get_christmas_break(bank_holidays: List[DateMatcher]) -> List[DateMatcher]:
                 )
             )
             current_date += timedelta(days=1)
-    return christmas_break
+        return christmas_break
 
 
 class CityOfLondonLocalElection(Election):
@@ -109,20 +111,9 @@ class CityOfLondonLocalElection(Election):
         :return: a datetime representing the expected publish date
         """
 
-        # Make a new calendar object so we don't mutate
-        # the shared England & Wales calendar
-        calendar = UnitedKingdomBankHolidays().from_country(Country.ENGLAND)
-
-        # Add the City of London Christmas and Easter breaks
-        # This will result in some duplication in _exempted_dates
-        # where existing bank holidays are also inside these intervals
-        # but this doesn't really matter
-        calendar._exempted_dates = (
-            calendar._exempted_dates
-            + _get_easter_break(calendar._bank_holidays)
-            + _get_christmas_break(calendar._bank_holidays)
+        calendar = self.get_extended_calendar(
+            [EasterBreakRule(), ChristmasBreakRule()]
         )
-
         return working_days_before(self.poll_date, 16, calendar)
 
     @property

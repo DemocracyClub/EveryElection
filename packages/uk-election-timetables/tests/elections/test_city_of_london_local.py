@@ -5,8 +5,8 @@ import pytest
 from uk_election_timetables.calendars import Country, UnitedKingdomBankHolidays
 from uk_election_timetables.elections import CityOfLondonLocalElection
 from uk_election_timetables.elections.city_of_london_local import (
-    _get_christmas_break,
-    _get_easter_break,
+    ChristmasBreakRule,
+    EasterBreakRule,
 )
 
 registration_test_cases = [
@@ -65,27 +65,34 @@ def test_city_of_london_sopn_date(election):
     )
 
 
-def test_get_easter_break():
-    # The main thing we're asserting here is that we've got matchers objects
-    # for each year. If there were some future year where Good Friday wasn't
-    # labelled with "Good Friday" in the gov.uk data, we'd have zero matchers
-    # for that year. this test would catch it and fail.
-    easter_break_matchers = _get_easter_break(
+def test_easter_break_2022():
+    rule = EasterBreakRule()
+    # Easter Sunday 2022 = April 17; Good Friday = April 15
+    # Break: April 14 (Thu) through April 19 (Tue) = 6 days
+    bank_holidays = (
         UnitedKingdomBankHolidays().from_country(Country.ENGLAND)._bank_holidays
     )
-    beginning_of_time = 2012
-    current_year = datetime.now().year
-    for year in range(beginning_of_time, current_year + 1):
-        assert (
-            len(
-                [
-                    matcher
-                    for matcher in easter_break_matchers
-                    if matcher.year == year
-                ]
-            )
-            == 6
-        )
+    matchers = rule.generate(2022, bank_holidays)
+    assert len(matchers) == 6
+    dates = {(m.year, m.month, m.day) for m in matchers}
+    assert (2022, 4, 14) in dates  # Thursday before Good Friday
+    assert (2022, 4, 15) in dates  # Good Friday
+    assert (2022, 4, 17) in dates  # Easter Sunday
+    assert (2022, 4, 18) in dates  # Easter Monday
+    assert (2022, 4, 19) in dates  # Tuesday after Easter
+
+
+def test_get_easter_break_current_year():
+    # Assert that we've got matcher objects for the current year.
+    # If there were some future year where Good Friday wasn't labelled
+    # with "Good Friday" in the gov.uk data, we'd have zero matchers
+    # for that year. this test would catch it and fail.
+    bank_holidays = (
+        UnitedKingdomBankHolidays().from_country(Country.ENGLAND)._bank_holidays
+    )
+    rule = EasterBreakRule()
+    matchers = rule.generate(datetime.now().year, bank_holidays)
+    assert len(matchers) == 6
 
 
 def _contains_matcher_for_date(matchers, date):
@@ -102,11 +109,14 @@ def _contains_matcher_for_date(matchers, date):
     )
 
 
-def test_get_christmas_break_2014():
+def test_christmas_break_2014():
     # In 2014, Christmas and Boxing day are Friday and Saturday
     # The next available weekday is Monday 29th
-    christmas_break_matchers = _get_christmas_break(
+    bank_holidays = (
         UnitedKingdomBankHolidays().from_country(Country.ENGLAND)._bank_holidays
+    )
+    christmas_break_matchers = ChristmasBreakRule().generate(
+        2014, bank_holidays
     )
     assert _contains_matcher_for_date(
         christmas_break_matchers, date(2014, 12, 24)
@@ -116,11 +126,14 @@ def test_get_christmas_break_2014():
     )
 
 
-def test_get_christmas_break_2021():
+def test_christmas_break_2021():
     # In 2021, Christmas and Boxing day both fall at the weekend
     # with substitute bank holidays on the 27th and 28th
-    christmas_break_matchers = _get_christmas_break(
+    bank_holidays = (
         UnitedKingdomBankHolidays().from_country(Country.ENGLAND)._bank_holidays
+    )
+    christmas_break_matchers = ChristmasBreakRule().generate(
+        2021, bank_holidays
     )
     assert _contains_matcher_for_date(
         christmas_break_matchers, date(2021, 12, 24)
@@ -130,11 +143,14 @@ def test_get_christmas_break_2021():
     )
 
 
-def test_get_christmas_break_2022():
+def test_christmas_break_2022():
     # In 2022, Christmas day falls on Sunday
     # with a substitute bank holiday on the 27th
-    christmas_break_matchers = _get_christmas_break(
+    bank_holidays = (
         UnitedKingdomBankHolidays().from_country(Country.ENGLAND)._bank_holidays
+    )
+    christmas_break_matchers = ChristmasBreakRule().generate(
+        2022, bank_holidays
     )
     assert _contains_matcher_for_date(
         christmas_break_matchers, date(2022, 12, 23)
@@ -144,10 +160,13 @@ def test_get_christmas_break_2022():
     )
 
 
-def test_get_christmas_break_2024():
+def test_christmas_break_2024():
     # In 2024, Christmas Eve, Christmas Day, Boxing day and the 27th are all weekdays
-    christmas_break_matchers = _get_christmas_break(
+    bank_holidays = (
         UnitedKingdomBankHolidays().from_country(Country.ENGLAND)._bank_holidays
+    )
+    christmas_break_matchers = ChristmasBreakRule().generate(
+        2024, bank_holidays
     )
     assert _contains_matcher_for_date(
         christmas_break_matchers, date(2024, 12, 24)
