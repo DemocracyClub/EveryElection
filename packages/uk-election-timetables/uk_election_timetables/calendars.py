@@ -1,7 +1,7 @@
 import json
 import os
 from abc import ABC, abstractmethod
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from enum import Enum
 from typing import List
 
@@ -162,6 +162,36 @@ class ExtendedCalendar(BaseCalendar):
 
     def exempted_dates(self):
         return self._all_dates
+
+
+class EasterMondayRule(ExcludedDateRule):
+    def generate(
+        self, year: int, bank_holidays: List[DateMatcher]
+    ) -> List[DateMatcher]:
+        """
+        Easter Monday is not usually a bank holiday in Scotland but some
+        legislation considers it a "non-working" day in Scotland anyway.
+
+        This rule allows us to easily extend the Scotland holiday
+        calendar when necessary.
+
+        Fortunately the Gov.UK bank holidays are consistently labelled
+        """
+        for bh in bank_holidays:
+            if bh.year != year:
+                continue
+            if bh.name == "Good Friday":
+                good_friday = date(bh.year, bh.month, bh.day)
+                easter_monday = good_friday + timedelta(days=3)
+                return [
+                    DateMatcher(
+                        name="Easter Monday",
+                        year=easter_monday.year,
+                        month=easter_monday.month,
+                        day=easter_monday.day,
+                    )
+                ]
+        return []
 
 
 def working_days_before(
