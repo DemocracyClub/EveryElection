@@ -47,7 +47,7 @@ class Election(metaclass=ABCMeta):
         """
         Calculates the Voter Authority Certificate (VAC) application deadline for this Election
 
-        This is set out by the Electoral Commission here: https://www.electoralcommission.org.uk/cy/node/25624
+        This is set out in `The Voter Identification Regulations 2022 <https://www.legislation.gov.uk/uksi/2022/1382/made>`_.
 
         :return: datetime.date representing the VAC application deadline
         """

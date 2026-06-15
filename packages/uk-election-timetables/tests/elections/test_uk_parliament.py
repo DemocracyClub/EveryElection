@@ -52,7 +52,10 @@ def test_postal_vote_application_deadline_uk_parliament_2019():
     "country, deadline_date",
     [
         (Country.ENGLAND, date(2023, 4, 3)),
-        (Country.SCOTLAND, date(2023, 4, 4)),  # No Easter Monday BH in Scotland
+        # No Easter Monday BH in Scotland
+        # and Easter Monday is non special-cased for Scotland in
+        # The Voter Identification Regulations 2022
+        (Country.SCOTLAND, date(2023, 4, 4)),
         (Country.WALES, date(2023, 4, 3)),
     ],
 )
