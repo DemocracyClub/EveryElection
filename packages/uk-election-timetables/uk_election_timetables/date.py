@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+import datetime as dt
 from typing import List
 
 SATURDAY = 5
@@ -20,7 +20,7 @@ class DateMatcher:
         self.day = day
         self.year = year
 
-    def matches(self, other: date) -> bool:
+    def matches(self, other: dt.date) -> bool:
         """
         Return whether the input date matches the attributes of this class
 
@@ -40,8 +40,8 @@ class DateMatcher:
 
 
 def days_before(
-    poll_date: date, days: int, ignore: List[DateMatcher] = None
-) -> date:
+    poll_date: dt.date, days: int, ignore: List[DateMatcher] = None
+) -> dt.date:
     """
     Return date corresponding to `days` working days before `poll_date`, not counting the list of provided exemptions
 
@@ -52,7 +52,7 @@ def days_before(
     """
 
     while days > 0:
-        poll_date -= timedelta(days=1)
+        poll_date -= dt.timedelta(days=1)
 
         if poll_date.weekday() in WEEKEND:
             continue
@@ -65,7 +65,7 @@ def days_before(
     return poll_date
 
 
-def easter_sunday(year: int) -> date:
+def easter_sunday(year: int) -> dt.date:
     # Compute Easter Sunday for a given year using Revised Gregorian algorithm
     # vendored from dateutil
     y = year
@@ -78,4 +78,4 @@ def easter_sunday(year: int) -> date:
     p = i - j + e
     d = 1 + (p + 27 + (p + 6) // 40) % 31
     m = 3 + (p + 26) // 30
-    return date(int(y), int(m), int(d))
+    return dt.date(int(y), int(m), int(d))

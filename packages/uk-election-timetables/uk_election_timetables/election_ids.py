@@ -1,4 +1,4 @@
-from datetime import date, datetime
+import datetime as dt
 
 from uk_election_timetables.calendars import Country
 from uk_election_timetables.election import Election
@@ -52,7 +52,7 @@ class AmbiguousElectionIdError(Exception):
         return "Cannot derive country from election id [%s]" % self.election_id
 
 
-def type_and_poll_date(election_id: str) -> (str, date):
+def type_and_poll_date(election_id: str) -> (str, dt.date):
     """
     Extract election_type (e.g. parl, local, mayor) and poll_date from an election id.
 
@@ -62,7 +62,7 @@ def type_and_poll_date(election_id: str) -> (str, date):
     try:
         election_type, *_, poll_date = election_id.split(".")
 
-        date_of_poll = datetime.strptime(poll_date, "%Y-%m-%d").date()
+        date_of_poll = dt.datetime.strptime(poll_date, "%Y-%m-%d").date()
 
         return election_type, date_of_poll
     except Exception:

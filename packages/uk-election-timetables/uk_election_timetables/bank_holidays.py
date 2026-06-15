@@ -1,6 +1,6 @@
+import datetime as dt
 import json
 import os
-from datetime import datetime
 from typing import Dict, List
 
 import requests
@@ -46,11 +46,11 @@ def combine_bank_holiday_lists(
         combined_events = sorted(combined_events, key=lambda d: d["date"])
 
         # Remove duplicated records (any events within date range of .gov list which are not present in .gov list)
-        earliest_new_event: datetime.date = datetime.strptime(
+        earliest_new_event: dt.date = dt.datetime.strptime(
             new_events[0]["date"], "%Y-%m-%d"
         ).date()
         for event in combined_events:
-            event_date: datetime.date = datetime.strptime(
+            event_date: dt.date = dt.datetime.strptime(
                 event["date"], "%Y-%m-%d"
             ).date()
             if (event_date >= earliest_new_event) and (event not in new_events):

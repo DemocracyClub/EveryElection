@@ -1,4 +1,4 @@
-from datetime import date
+import datetime as dt
 
 from pytest import raises
 
@@ -31,19 +31,19 @@ def test_publish_date_local_id():
 def test_publish_date_local_id_with_country():
     election = from_election_id("local.2019-02-21", country=Country.ENGLAND)
 
-    assert election.sopn_publish_date == date(2019, 1, 25)
+    assert election.sopn_publish_date == dt.date(2019, 1, 25)
 
 
 def test_publish_date_parl_id_with_country():
     election = from_election_id("parl.2019-02-21", country=Country.ENGLAND)
 
-    assert election.sopn_publish_date == date(2019, 1, 25)
+    assert election.sopn_publish_date == dt.date(2019, 1, 25)
 
 
 def test_publish_date_parl_id_without_country():
     election = from_election_id("parl.2019-02-21")
 
-    assert election.sopn_publish_date == date(2019, 1, 25)
+    assert election.sopn_publish_date == dt.date(2019, 1, 25)
 
 
 def test_publish_date_not_an_election_type():
@@ -56,7 +56,7 @@ def test_publish_date_not_an_election_type():
 def test_publish_date_id_that_does_not_need_country():
     election = from_election_id("naw.c.ceredigion.2016-05-05")
 
-    assert election.sopn_publish_date == date(2016, 4, 7)
+    assert election.sopn_publish_date == dt.date(2016, 4, 7)
 
 
 def test_publish_date_invalid_id():
@@ -82,7 +82,7 @@ def test_publish_date_invalid_date():
 def test_publish_date_senedd_election_id():
     election = from_election_id("senedd.c.ceredigion.2016-05-05")
 
-    assert election.sopn_publish_date == date(2016, 4, 7)
+    assert election.sopn_publish_date == dt.date(2016, 4, 7)
 
 
 def test_publish_date_referendum():
@@ -95,12 +95,14 @@ def test_publish_date_referendum():
 
 def test_christmas_eve_not_counted():
     election_and_expected_sopn_date = {
-        PoliceAndCrimeCommissionerElection: date(2018, 12, 11),
-        UKParliamentElection: date(2018, 12, 7),
-        ScottishParliamentElection: date(2018, 12, 3),
-        NorthernIrelandAssemblyElection: date(2018, 12, 13),
-        SeneddCymruElection: date(2018, 12, 10),
+        PoliceAndCrimeCommissionerElection: dt.date(2018, 12, 11),
+        UKParliamentElection: dt.date(2018, 12, 7),
+        ScottishParliamentElection: dt.date(2018, 12, 3),
+        NorthernIrelandAssemblyElection: dt.date(2018, 12, 13),
+        SeneddCymruElection: dt.date(2018, 12, 10),
     }
 
     for election_on, expected_date in election_and_expected_sopn_date.items():
-        assert election_on(date(2019, 1, 10)).sopn_publish_date == expected_date
+        assert (
+            election_on(dt.date(2019, 1, 10)).sopn_publish_date == expected_date
+        )

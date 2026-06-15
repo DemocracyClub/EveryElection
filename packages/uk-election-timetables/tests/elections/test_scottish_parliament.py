@@ -1,4 +1,4 @@
-from datetime import date
+import datetime as dt
 
 import pytest
 
@@ -11,15 +11,15 @@ sopn_test_cases = [
         # Reference election: sp.c.shetland-islands.2021-05-06
         # https://candidates.democracyclub.org.uk/elections/sp.c.shetland-islands.2021-05-06/sopn/
         # In 2021 Easter Monday fell between SOPN Publish date and polling day
-        "poll_date": date(2021, 5, 6),
-        "sopn_publish_date": date(2021, 3, 31),
+        "poll_date": dt.date(2021, 5, 6),
+        "sopn_publish_date": dt.date(2021, 3, 31),
     },
     {
         # Reference election: sp.c.shetland-islands.2016-05-05
         # https://candidates.democracyclub.org.uk/elections/sp.c.shetland-islands.2016-05-05/sopn/
         # In 2016 Easter Monday was on 27th March so does not factor in here
-        "poll_date": date(2016, 5, 5),
-        "sopn_publish_date": date(2016, 4, 1),
+        "poll_date": dt.date(2016, 5, 5),
+        "sopn_publish_date": dt.date(2016, 4, 1),
     },
 ]
 
@@ -34,13 +34,13 @@ def test_publish_date_scottish_parliament(election):
 
 # Reference election: sp.2021-05-06
 def test_registration_deadline_scottish_parliament():
-    election = ScottishParliamentElection(date(2021, 5, 6))
+    election = ScottishParliamentElection(dt.date(2021, 5, 6))
 
-    assert election.registration_deadline == date(2021, 4, 19)
+    assert election.registration_deadline == dt.date(2021, 4, 19)
 
 
 # Reference election: sp.2021-05-06
 def test_postal_vote_application_deadline_scottish_parliament():
-    election = ScottishParliamentElection(date(2021, 5, 6))
+    election = ScottishParliamentElection(dt.date(2021, 5, 6))
 
-    assert election.postal_vote_application_deadline == date(2021, 4, 6)
+    assert election.postal_vote_application_deadline == dt.date(2021, 4, 6)

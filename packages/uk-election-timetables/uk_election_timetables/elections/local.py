@@ -1,4 +1,4 @@
-from datetime import date
+import datetime as dt
 
 from uk_election_timetables.calendars import (
     Country,
@@ -10,7 +10,7 @@ from uk_election_timetables.election import Election
 
 class LocalElection(Election):
     @property
-    def sopn_publish_date(self) -> date:
+    def sopn_publish_date(self) -> dt.date:
         """
         Calculate the publish date for a local election.
 

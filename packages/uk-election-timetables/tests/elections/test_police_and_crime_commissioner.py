@@ -1,24 +1,24 @@
-from datetime import date
+import datetime as dt
 
 from uk_election_timetables.elections import PoliceAndCrimeCommissionerElection
 
 
 # Reference election: pcc.avon-and-somerset.2016-05-05
 def test_publish_date_police_and_crime_commissioner():
-    election = PoliceAndCrimeCommissionerElection(date(2016, 5, 5))
+    election = PoliceAndCrimeCommissionerElection(dt.date(2016, 5, 5))
 
-    assert election.sopn_publish_date == date(2016, 4, 8)
+    assert election.sopn_publish_date == dt.date(2016, 4, 8)
 
 
 # Reference election: pcc.2021-05-06
 def test_registration_deadline_police_and_crime_commissioner():
-    election = PoliceAndCrimeCommissionerElection(date(2021, 5, 6))
+    election = PoliceAndCrimeCommissionerElection(dt.date(2021, 5, 6))
 
-    assert election.registration_deadline == date(2021, 4, 19)
+    assert election.registration_deadline == dt.date(2021, 4, 19)
 
 
 # Reference election: pcc.2021-05-06
 def test_postal_vote_application_deadline_police_and_crime_commissioner():
-    election = PoliceAndCrimeCommissionerElection(date(2021, 5, 6))
+    election = PoliceAndCrimeCommissionerElection(dt.date(2021, 5, 6))
 
-    assert election.postal_vote_application_deadline == date(2021, 4, 20)
+    assert election.postal_vote_application_deadline == dt.date(2021, 4, 20)

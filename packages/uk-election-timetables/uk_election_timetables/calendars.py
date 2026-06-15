@@ -1,7 +1,7 @@
+import datetime as dt
 import json
 import os
 from abc import ABC, abstractmethod
-from datetime import date, datetime, timedelta
 from enum import Enum
 from typing import List
 
@@ -51,7 +51,7 @@ class BankHolidayCalendar(BaseCalendar):
 
     @staticmethod
     def create_matcher_from_entry(entry: dict) -> DateMatcher:
-        event_date = datetime.strptime(entry["date"], "%Y-%m-%d")
+        event_date = dt.datetime.strptime(entry["date"], "%Y-%m-%d")
 
         return DateMatcher(
             name=entry["title"],
@@ -175,7 +175,7 @@ class EasterMondayRule(ExcludedDateRule):
         This rule allows us to easily extend the Scotland holiday
         calendar when necessary.
         """
-        easter_monday = easter_sunday(year) + timedelta(days=1)
+        easter_monday = easter_sunday(year) + dt.timedelta(days=1)
         return [
             DateMatcher(
                 name="Easter Monday",
@@ -187,8 +187,8 @@ class EasterMondayRule(ExcludedDateRule):
 
 
 def working_days_before(
-    end_date: date, days: int, calendar: BaseCalendar
-) -> date:
+    end_date: dt.date, days: int, calendar: BaseCalendar
+) -> dt.date:
     """
     Return date corresponding to `count` working days before `poll_date` according to the given bank holiday calendar
 

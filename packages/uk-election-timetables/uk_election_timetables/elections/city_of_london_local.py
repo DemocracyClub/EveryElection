@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+import datetime as dt
 from typing import List
 
 from uk_election_timetables.calendars import (
@@ -10,7 +10,7 @@ from uk_election_timetables.date import WEEKEND, DateMatcher, easter_sunday
 from uk_election_timetables.election import Election
 
 
-def _is_bank_holiday(date: date, bank_holidays: List[DateMatcher]) -> bool:
+def _is_bank_holiday(date: dt.date, bank_holidays: List[DateMatcher]) -> bool:
     return any(bh.matches(date) for bh in bank_holidays)
 
 
@@ -23,9 +23,9 @@ class EasterBreakRule(ExcludedDateRule):
         and ending with the Tuesday after Easter Day
         """
         easter_break = []
-        maundy_thursday = easter_sunday(year) - timedelta(days=3)
+        maundy_thursday = easter_sunday(year) - dt.timedelta(days=3)
         for offset in range(0, 6):
-            day = maundy_thursday + timedelta(days=offset)
+            day = maundy_thursday + dt.timedelta(days=offset)
             easter_break.append(
                 DateMatcher(
                     name="City of London Easter Break",
@@ -48,15 +48,15 @@ class ChristmasBreakRule(ExcludedDateRule):
         """
         christmas_break = []
 
-        break_start = date(year, 12, 24)
+        break_start = dt.date(year, 12, 24)
         while break_start.weekday() in WEEKEND:
-            break_start -= timedelta(days=1)
+            break_start -= dt.timedelta(days=1)
 
-        break_end = date(year, 12, 27)
+        break_end = dt.date(year, 12, 27)
         while break_end.weekday() in WEEKEND or _is_bank_holiday(
             break_end, bank_holidays
         ):
-            break_end += timedelta(days=1)
+            break_end += dt.timedelta(days=1)
 
         current_date = break_start
         while current_date <= break_end:
@@ -68,19 +68,19 @@ class ChristmasBreakRule(ExcludedDateRule):
                     day=current_date.day,
                 )
             )
-            current_date += timedelta(days=1)
+            current_date += dt.timedelta(days=1)
         return christmas_break
 
 
 class CityOfLondonLocalElection(Election):
-    def __init__(self, poll_date: date):
+    def __init__(self, poll_date: dt.date):
         """
         :param poll_date: a datetime representing the date of the poll
         """
         Election.__init__(self, poll_date, Country.ENGLAND)
 
     @property
-    def sopn_publish_date(self) -> date:
+    def sopn_publish_date(self) -> dt.date:
         """
         Calculate the "SOPN publish date" for a City of London local election.
 
@@ -111,12 +111,12 @@ class CityOfLondonLocalElection(Election):
         return working_days_before(self.poll_date, 16, calendar)
 
     @property
-    def registration_deadline(self) -> date:
+    def registration_deadline(self) -> dt.date:
         """
         Calculates the voter registration deadline for a City of London local election.
 
         :return: a datetime representing the voter registration deadline
         """
-        if self.poll_date <= date(self.poll_date.year, 2, 15):
-            return date(self.poll_date.year - 2, 11, 30)
-        return date(self.poll_date.year - 1, 11, 30)
+        if self.poll_date <= dt.date(self.poll_date.year, 2, 15):
+            return dt.date(self.poll_date.year - 2, 11, 30)
+        return dt.date(self.poll_date.year - 1, 11, 30)

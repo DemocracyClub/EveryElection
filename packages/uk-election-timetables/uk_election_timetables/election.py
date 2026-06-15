@@ -1,6 +1,6 @@
 import contextlib
+import datetime as dt
 from abc import ABCMeta, abstractmethod
-from datetime import date, datetime, timezone
 from enum import Enum
 from typing import Dict, List
 
@@ -22,12 +22,12 @@ class TimetableEvent(Enum):
 class Election(metaclass=ABCMeta):
     BANK_HOLIDAY_CALENDAR = UnitedKingdomBankHolidays()
 
-    def __init__(self, poll_date: date, country: Country):
+    def __init__(self, poll_date: dt.date, country: Country):
         self.poll_date = poll_date
         self.country = country
 
     @property
-    def postal_vote_application_deadline(self) -> date:
+    def postal_vote_application_deadline(self) -> dt.date:
         """
         Calculates the postal vote application deadline for this Election
 
@@ -43,7 +43,7 @@ class Election(metaclass=ABCMeta):
         return working_days_before(self.poll_date, 11, self._calendar())
 
     @property
-    def vac_application_deadline(self) -> date:
+    def vac_application_deadline(self) -> dt.date:
         """
         Calculates the Voter Authority Certificate (VAC) application deadline for this Election
 
@@ -55,11 +55,11 @@ class Election(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def sopn_publish_date(self) -> date:
+    def sopn_publish_date(self) -> dt.date:
         pass
 
     @property
-    def registration_deadline(self) -> date:
+    def registration_deadline(self) -> dt.date:
         """
         Calculates the voter registration deadline for this Election
 
@@ -131,10 +131,10 @@ class Election(metaclass=ABCMeta):
 
     def is_before(self, event, date=None):
         if not date:
-            date = datetime.now(timezone.utc).date()
+            date = dt.datetime.now(dt.timezone.utc).date()
         return self.get_date_for_event_type(event) >= date
 
     def is_after(self, event, date=None):
         if not date:
-            date = datetime.now(timezone.utc).date()
+            date = dt.datetime.now(dt.timezone.utc).date()
         return self.get_date_for_event_type(event) < date

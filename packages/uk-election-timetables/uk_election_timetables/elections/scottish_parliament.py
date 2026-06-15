@@ -1,4 +1,4 @@
-from datetime import date
+import datetime as dt
 
 from uk_election_timetables.calendars import (
     Country,
@@ -9,14 +9,14 @@ from uk_election_timetables.election import Election
 
 
 class ScottishParliamentElection(Election):
-    def __init__(self, poll_date: date):
+    def __init__(self, poll_date: dt.date):
         """
         :param poll_date: a datetime representing the date of the poll
         """
         Election.__init__(self, poll_date, Country.SCOTLAND)
 
     @property
-    def postal_vote_application_deadline(self) -> date:
+    def postal_vote_application_deadline(self) -> dt.date:
         """
         Calculates the postal vote application deadline for this Election
 
@@ -25,13 +25,13 @@ class ScottishParliamentElection(Election):
         :return: a datetime representing the postal vote application deadline
         """
 
-        if self.poll_date == date(2021, 5, 6):
+        if self.poll_date == dt.date(2021, 5, 6):
             return working_days_before(self.poll_date, 21, super()._calendar())
 
         return super().postal_vote_application_deadline
 
     @property
-    def sopn_publish_date(self) -> date:
+    def sopn_publish_date(self) -> dt.date:
         """
         Calculate the publish date for an election to the Scottish Parliament
 

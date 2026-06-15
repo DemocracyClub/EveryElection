@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 from typing import Dict
 
 import pytest
@@ -14,7 +14,7 @@ def test_timetable_sopn_publish_date():
 
     sopn_publish_date = lookup(election, "List of candidates published")
 
-    assert sopn_publish_date["date"] == datetime.date(2019, 1, 25)
+    assert sopn_publish_date["date"] == dt.date(2019, 1, 25)
 
 
 def test_timetable_registration_deadline():
@@ -24,7 +24,7 @@ def test_timetable_registration_deadline():
         election, "Register to vote deadline"
     )
 
-    assert electoral_registration_deadline["date"] == datetime.date(2021, 4, 19)
+    assert electoral_registration_deadline["date"] == dt.date(2021, 4, 19)
 
 
 def test_timetable_postal_vote_application_deadline():
@@ -32,7 +32,7 @@ def test_timetable_postal_vote_application_deadline():
 
     postal_vote_dealine = lookup(election, "Postal vote application deadline")
 
-    assert postal_vote_dealine["date"] == datetime.date(2021, 4, 20)
+    assert postal_vote_dealine["date"] == dt.date(2021, 4, 20)
 
 
 def test_timetable_vac_application_deadline():
@@ -40,7 +40,7 @@ def test_timetable_vac_application_deadline():
 
     vac_deadline = lookup(election, "VAC application deadline")
 
-    assert vac_deadline["date"] == datetime.date(2023, 4, 25)
+    assert vac_deadline["date"] == dt.date(2023, 4, 25)
 
 
 def test_timetable_sort_order():
@@ -51,22 +51,22 @@ def test_timetable_sort_order():
     assert election.timetable == [
         {
             "label": "List of candidates published",
-            "date": datetime.date(2021, 4, 8),
+            "date": dt.date(2021, 4, 8),
             "event": "SOPN_PUBLISH_DATE",
         },
         {
             "label": "Register to vote deadline",
-            "date": datetime.date(2021, 4, 19),
+            "date": dt.date(2021, 4, 19),
             "event": "REGISTRATION_DEADLINE",
         },
         {
             "label": "Postal vote application deadline",
-            "date": datetime.date(2021, 4, 20),
+            "date": dt.date(2021, 4, 20),
             "event": "POSTAL_VOTE_APPLICATION_DEADLINE",
         },
         {
             "label": "VAC application deadline",
-            "date": datetime.date(2021, 4, 27),
+            "date": dt.date(2021, 4, 27),
             "event": "VAC_APPLICATION_DEADLINE",
         },
     ]
@@ -80,22 +80,22 @@ def test_timetable_sort_order_scottish_parliament_postal_vote():
     assert election.timetable == [
         {
             "label": "List of candidates published",
-            "date": datetime.date(2021, 3, 31),
+            "date": dt.date(2021, 3, 31),
             "event": "SOPN_PUBLISH_DATE",
         },
         {
             "label": "Postal vote application deadline",
-            "date": datetime.date(2021, 4, 6),
+            "date": dt.date(2021, 4, 6),
             "event": "POSTAL_VOTE_APPLICATION_DEADLINE",
         },
         {
             "label": "Register to vote deadline",
-            "date": datetime.date(2021, 4, 19),
+            "date": dt.date(2021, 4, 19),
             "event": "REGISTRATION_DEADLINE",
         },
         {
             "label": "VAC application deadline",
-            "date": datetime.date(2021, 4, 27),
+            "date": dt.date(2021, 4, 27),
             "event": "VAC_APPLICATION_DEADLINE",
         },
     ]
@@ -109,17 +109,17 @@ def test_timetable_referendum():
     assert election.timetable == [
         {
             "label": "Register to vote deadline",
-            "date": datetime.date(2021, 4, 19),
+            "date": dt.date(2021, 4, 19),
             "event": "REGISTRATION_DEADLINE",
         },
         {
             "label": "Postal vote application deadline",
-            "date": datetime.date(2021, 4, 20),
+            "date": dt.date(2021, 4, 20),
             "event": "POSTAL_VOTE_APPLICATION_DEADLINE",
         },
         {
             "label": "VAC application deadline",
-            "date": datetime.date(2021, 4, 27),
+            "date": dt.date(2021, 4, 27),
             "event": "VAC_APPLICATION_DEADLINE",
         },
     ]
@@ -135,16 +135,16 @@ def test_get_date_for_event_type():
     election = from_election_id("parl.2019-02-21", country=Country.ENGLAND)
     assert election.get_date_for_event_type(
         TimetableEvent("List of candidates published")
-    ) == datetime.date(2019, 1, 25)
+    ) == dt.date(2019, 1, 25)
     assert election.get_date_for_event_type(
         TimetableEvent("Postal vote application deadline")
-    ) == datetime.date(2019, 2, 6)
+    ) == dt.date(2019, 2, 6)
     assert election.get_date_for_event_type(
         TimetableEvent("Register to vote deadline")
-    ) == datetime.date(2019, 2, 5)
+    ) == dt.date(2019, 2, 5)
     assert election.get_date_for_event_type(
         TimetableEvent("VAC application deadline")
-    ) == datetime.date(2019, 2, 13)
+    ) == dt.date(2019, 2, 13)
 
 
 def test_event_type_enum():
@@ -281,14 +281,14 @@ def test_from_election_types_types(election):
 def test_city_of_london_does_not_mutate_global_calendar():
     assert from_election_id(
         "mayor.doncaster.2025-05-01", Country.ENGLAND
-    ).sopn_publish_date == datetime.date(2025, 4, 2)
+    ).sopn_publish_date == dt.date(2025, 4, 2)
 
     assert from_election_id(
         "local.city-of-london.aldersgate.2025-03-20", Country.ENGLAND
-    ).sopn_publish_date == datetime.date(2025, 2, 26)
+    ).sopn_publish_date == dt.date(2025, 2, 26)
 
     # calculating the date for a City of London election
     # shouldn't change this result
     assert from_election_id(
         "mayor.doncaster.2025-05-01", Country.ENGLAND
-    ).sopn_publish_date == datetime.date(2025, 4, 2)
+    ).sopn_publish_date == dt.date(2025, 4, 2)

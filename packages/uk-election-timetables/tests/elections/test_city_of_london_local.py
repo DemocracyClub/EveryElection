@@ -1,4 +1,4 @@
-from datetime import date
+import datetime as dt
 
 import pytest
 
@@ -11,20 +11,20 @@ from uk_election_timetables.elections.city_of_london_local import (
 
 registration_test_cases = [
     {
-        "poll_date": date(2025, 1, 1),
-        "expected_registration_deadline": date(2023, 11, 30),
+        "poll_date": dt.date(2025, 1, 1),
+        "expected_registration_deadline": dt.date(2023, 11, 30),
     },
     {
-        "poll_date": date(2025, 2, 15),
-        "expected_registration_deadline": date(2023, 11, 30),
+        "poll_date": dt.date(2025, 2, 15),
+        "expected_registration_deadline": dt.date(2023, 11, 30),
     },
     {
-        "poll_date": date(2025, 2, 16),
-        "expected_registration_deadline": date(2024, 11, 30),
+        "poll_date": dt.date(2025, 2, 16),
+        "expected_registration_deadline": dt.date(2024, 11, 30),
     },
     {
-        "poll_date": date(2025, 11, 29),
-        "expected_registration_deadline": date(2024, 11, 30),
+        "poll_date": dt.date(2025, 11, 29),
+        "expected_registration_deadline": dt.date(2024, 11, 30),
     },
 ]
 
@@ -40,19 +40,19 @@ def test_city_of_london_registration_deadline(election):
 sopn_test_cases = [
     {
         # https://candidates.democracyclub.org.uk/elections/local.city-of-london.cordwainer.by.2022-09-15/sopn/
-        "poll_date": date(2022, 9, 15),
-        "sopn_publish_date": date(2022, 8, 23),
+        "poll_date": dt.date(2022, 9, 15),
+        "sopn_publish_date": dt.date(2022, 8, 23),
     },
     {
         # https://candidates.democracyclub.org.uk/elections/local.city-of-london.bassishaw.by.2019-04-30/sopn/
         # includes an easter break
-        "poll_date": date(2019, 4, 30),
-        "sopn_publish_date": date(2019, 4, 2),
+        "poll_date": dt.date(2019, 4, 30),
+        "sopn_publish_date": dt.date(2019, 4, 2),
     },
     {
         # https://candidates.democracyclub.org.uk/elections/local.city-of-london-alder.cornhill.2022-05-26/sopn/
-        "poll_date": date(2022, 5, 26),
-        "sopn_publish_date": date(2022, 5, 4),
+        "poll_date": dt.date(2022, 5, 26),
+        "sopn_publish_date": dt.date(2022, 5, 4),
     },
 ]
 
@@ -108,10 +108,10 @@ def test_christmas_break_2014():
         2014, bank_holidays
     )
     assert _contains_matcher_for_date(
-        christmas_break_matchers, date(2014, 12, 24)
+        christmas_break_matchers, dt.date(2014, 12, 24)
     )
     assert _contains_matcher_for_date(
-        christmas_break_matchers, date(2014, 12, 29)
+        christmas_break_matchers, dt.date(2014, 12, 29)
     )
 
 
@@ -125,10 +125,10 @@ def test_christmas_break_2021():
         2021, bank_holidays
     )
     assert _contains_matcher_for_date(
-        christmas_break_matchers, date(2021, 12, 24)
+        christmas_break_matchers, dt.date(2021, 12, 24)
     )
     assert _contains_matcher_for_date(
-        christmas_break_matchers, date(2021, 12, 29)
+        christmas_break_matchers, dt.date(2021, 12, 29)
     )
 
 
@@ -142,10 +142,10 @@ def test_christmas_break_2022():
         2022, bank_holidays
     )
     assert _contains_matcher_for_date(
-        christmas_break_matchers, date(2022, 12, 23)
+        christmas_break_matchers, dt.date(2022, 12, 23)
     )
     assert _contains_matcher_for_date(
-        christmas_break_matchers, date(2022, 12, 28)
+        christmas_break_matchers, dt.date(2022, 12, 28)
     )
 
 
@@ -158,8 +158,8 @@ def test_christmas_break_2024():
         2024, bank_holidays
     )
     assert _contains_matcher_for_date(
-        christmas_break_matchers, date(2024, 12, 24)
+        christmas_break_matchers, dt.date(2024, 12, 24)
     )
     assert _contains_matcher_for_date(
-        christmas_break_matchers, date(2024, 12, 27)
+        christmas_break_matchers, dt.date(2024, 12, 27)
     )

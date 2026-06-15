@@ -1,24 +1,24 @@
-from datetime import date
+import datetime as dt
 
 from uk_election_timetables.elections import MayoralElection
 
 
 # Reference election: mayor.liverpool-city-ca.2017-05-04
 def test_publish_date_mayor():
-    election = MayoralElection(date(2017, 5, 4))
+    election = MayoralElection(dt.date(2017, 5, 4))
 
-    assert election.sopn_publish_date == date(2017, 4, 4)
+    assert election.sopn_publish_date == dt.date(2017, 4, 4)
 
 
 # Reference election: mayor.2021-05-06
 def test_registration_deadline_mayor():
-    election = MayoralElection(date(2021, 5, 6))
+    election = MayoralElection(dt.date(2021, 5, 6))
 
-    assert election.registration_deadline == date(2021, 4, 19)
+    assert election.registration_deadline == dt.date(2021, 4, 19)
 
 
 # Reference election: mayor.2021-05-06
 def test_postal_vote_application_deadline_mayor():
-    election = MayoralElection(date(2021, 5, 6))
+    election = MayoralElection(dt.date(2021, 5, 6))
 
-    assert election.postal_vote_application_deadline == date(2021, 4, 20)
+    assert election.postal_vote_application_deadline == dt.date(2021, 4, 20)
