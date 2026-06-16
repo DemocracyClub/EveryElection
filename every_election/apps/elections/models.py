@@ -19,11 +19,6 @@ from django.urls import reverse
 from django_extensions.db.models import TimeStampedModel
 from storages.backends.s3boto3 import S3Boto3Storage
 from uk_election_ids.datapackage import ID_REQUIREMENTS, VOTING_SYSTEMS
-from uk_election_timetables.calendars import Country
-from uk_election_timetables.election_ids import (
-    NoSuchElectionTypeError,
-    from_election_id,
-)
 from uk_geo_utils.models import Onspd
 
 from .baker import send_event
@@ -189,7 +184,28 @@ class Election(TimeStampedModel):
     election_subtype = models.ForeignKey(
         ElectionSubType, null=True, on_delete=models.CASCADE
     )
+
+    # timetable
     poll_open_date = models.DateField(blank=True, null=True)
+    close_of_nominations = models.DateField(
+        blank=True, null=True, help_text="Close of Nominations"
+    )
+    registration_deadline = models.DateField(
+        blank=True, null=True, help_text="Register to vote deadline"
+    )
+    postal_vote_application_deadline = models.DateField(
+        blank=True, null=True, help_text="Postal vote application deadline"
+    )
+    vac_application_deadline = models.DateField(
+        blank=True, null=True, help_text="VAC application deadline"
+    )
+    TIMETABLE_FIELDS = (
+        "close_of_nominations",
+        "registration_deadline",
+        "postal_vote_application_deadline",
+        "vac_application_deadline",
+    )
+
     organisation = models.ForeignKey(
         "organisations.Organisation", null=True, on_delete=models.CASCADE
     )
@@ -517,37 +533,16 @@ class Election(TimeStampedModel):
         return None
 
     @property
-    def get_timetable(self):
-        country_map = {
-            "WLS": Country.WALES,
-            "ENG": Country.ENGLAND,
-            "NIR": Country.NORTHERN_IRELAND,
-            "SCT": Country.SCOTLAND,
-            "GBN": None,
-        }
-        area = self.division or self.organisation
-        if not area:
-            return None
-
-        territory_code = area.territory_code or self.organisation.territory_code
-        if not territory_code:
-            return None
-
-        try:
-            timetable = from_election_id(
-                self.election_id, country=country_map[territory_code]
-            ).timetable
-        except NoSuchElectionTypeError:
-            return None
-
-        if not self.requires_voter_id:
-            timetable = [
-                date
-                for date in timetable
-                if date["event"] != "VAC_APPLICATION_DEADLINE"
-            ]
-
-        return timetable
+    def timetable(self):
+        timetable = [
+            {
+                "label": self._meta.get_field(field).help_text,
+                "date": getattr(self, field),
+            }
+            for field in self.TIMETABLE_FIELDS
+            if getattr(self, field)
+        ]
+        return sorted(timetable, key=lambda r: r["date"])
 
     def get_id(self):
         if self.election_id:

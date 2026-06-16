@@ -36,7 +36,7 @@
                 </ul>
             {% endif %}
 
-            {% if object.get_timetable %}
+            {% if object.timetable %}
                 <div class="ds-table">
                     <table>
                         <caption><h2>Timetable</h2></caption>
@@ -45,7 +45,7 @@
                             <th>Date</th>
                         </thead>
                         <tbody>
-                            {% for row in object.get_timetable %}
+                            {% for row in object.timetable %}
                                 <tr>
                                     <td>{{ row.label }}</td>
                                     <td>{{ row.date }}</td>
