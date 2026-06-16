@@ -6,7 +6,7 @@ from uk_election_timetables.calendars import (
     ExcludedDateRule,
     working_days_before,
 )
-from uk_election_timetables.date import WEEKEND, DateMatcher
+from uk_election_timetables.date import WEEKEND, DateMatcher, easter_sunday
 from uk_election_timetables.election import Election
 
 
@@ -21,25 +21,19 @@ class EasterBreakRule(ExcludedDateRule):
         """
         “the Easter break” means the period beginning with the Thursday before
         and ending with the Tuesday after Easter Day
-
-        Fortunately the Gov.UK bank holidays are consistently labelled
         """
         easter_break = []
-        for bh in bank_holidays:
-            if bh.year != year:
-                continue
-            if bh.name == "Good Friday":
-                good_friday = date(bh.year, bh.month, bh.day)
-                for offset in range(-1, 5):
-                    day = good_friday + timedelta(days=offset)
-                    easter_break.append(
-                        DateMatcher(
-                            name="City of London Easter Break",
-                            year=day.year,
-                            month=day.month,
-                            day=day.day,
-                        )
-                    )
+        maundy_thursday = easter_sunday(year) - timedelta(days=3)
+        for offset in range(0, 6):
+            day = maundy_thursday + timedelta(days=offset)
+            easter_break.append(
+                DateMatcher(
+                    name="City of London Easter Break",
+                    year=day.year,
+                    month=day.month,
+                    day=day.day,
+                )
+            )
         return easter_break
 
 

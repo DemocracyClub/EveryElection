@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date
 
 import pytest
 
@@ -65,9 +65,11 @@ def test_city_of_london_sopn_date(election):
     )
 
 
-def test_easter_break_2022():
+def test_easter_break():
     rule = EasterBreakRule()
-    # Easter Sunday 2022 = April 17; Good Friday = April 15
+    # Test by example: 2022
+    # Easter Sunday = April 17
+    # Easter Sunday 2022 = April 17
     # Break: April 14 (Thu) through April 19 (Tue) = 6 days
     bank_holidays = (
         UnitedKingdomBankHolidays().from_country(Country.ENGLAND)._bank_holidays
@@ -80,19 +82,6 @@ def test_easter_break_2022():
     assert (2022, 4, 17) in dates  # Easter Sunday
     assert (2022, 4, 18) in dates  # Easter Monday
     assert (2022, 4, 19) in dates  # Tuesday after Easter
-
-
-def test_get_easter_break_current_year():
-    # Assert that we've got matcher objects for the current year.
-    # If there were some future year where Good Friday wasn't labelled
-    # with "Good Friday" in the gov.uk data, we'd have zero matchers
-    # for that year. this test would catch it and fail.
-    bank_holidays = (
-        UnitedKingdomBankHolidays().from_country(Country.ENGLAND)._bank_holidays
-    )
-    rule = EasterBreakRule()
-    matchers = rule.generate(datetime.now().year, bank_holidays)
-    assert len(matchers) == 6
 
 
 def _contains_matcher_for_date(matchers, date):

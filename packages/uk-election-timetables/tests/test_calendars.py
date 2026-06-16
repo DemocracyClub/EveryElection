@@ -1,5 +1,3 @@
-import datetime as dt
-
 from uk_election_timetables.calendars import (
     Country,
     EasterMondayRule,
@@ -29,10 +27,10 @@ def should_not_contain_holiday(calendar, name):
     ]
 
 
-def test_easter_monday_rule_2022():
+def test_easter_monday_rule():
     rule = EasterMondayRule()
-    # Easter 2022
-    # Good Friday = April 15
+    # Test by example: 2022
+    # Easter Sunday = April 17
     # Easter Monday = April 18
     bank_holidays = (
         UnitedKingdomBankHolidays().from_country(Country.ENGLAND)._bank_holidays
@@ -43,16 +41,3 @@ def test_easter_monday_rule_2022():
     matcher = matchers[0]
     date_ = (matcher.year, matcher.month, matcher.day)
     assert date_ == (2022, 4, 18)
-
-
-def test_easter_monday_rule_current_year():
-    # Assert that we've got a matcher object for the current year.
-    # If there were some future year where Good Friday wasn't labelled
-    # with "Good Friday" in the gov.uk data, we'd have zero matchers
-    # for that year. this test would catch it and fail.
-    bank_holidays = (
-        UnitedKingdomBankHolidays().from_country(Country.ENGLAND)._bank_holidays
-    )
-    rule = EasterMondayRule()
-    matchers = rule.generate(dt.datetime.now().year, bank_holidays)
-    assert len(matchers) == 1

@@ -5,7 +5,7 @@ from datetime import date, datetime, timedelta
 from enum import Enum
 from typing import List
 
-from uk_election_timetables.date import DateMatcher, days_before
+from uk_election_timetables.date import DateMatcher, days_before, easter_sunday
 
 
 class Country(Enum):
@@ -174,24 +174,16 @@ class EasterMondayRule(ExcludedDateRule):
 
         This rule allows us to easily extend the Scotland holiday
         calendar when necessary.
-
-        Fortunately the Gov.UK bank holidays are consistently labelled
         """
-        for bh in bank_holidays:
-            if bh.year != year:
-                continue
-            if bh.name == "Good Friday":
-                good_friday = date(bh.year, bh.month, bh.day)
-                easter_monday = good_friday + timedelta(days=3)
-                return [
-                    DateMatcher(
-                        name="Easter Monday",
-                        year=easter_monday.year,
-                        month=easter_monday.month,
-                        day=easter_monday.day,
-                    )
-                ]
-        return []
+        easter_monday = easter_sunday(year) + timedelta(days=1)
+        return [
+            DateMatcher(
+                name="Easter Monday",
+                year=easter_monday.year,
+                month=easter_monday.month,
+                day=easter_monday.day,
+            )
+        ]
 
 
 def working_days_before(
