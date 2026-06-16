@@ -162,6 +162,12 @@ class ElectionAdmin(admin.ModelAdmin):
             },
         ),
         (
+            "Timetable",
+            {
+                "fields": Election.TIMETABLE_FIELDS,
+            },
+        ),
+        (
             "Source Information",
             {
                 "fields": (
@@ -233,9 +239,15 @@ class ElectionAdmin(admin.ModelAdmin):
     friendly_group_type.short_description = "Group type"
 
     def get_readonly_fields(self, request, obj=None):
-        if obj.identifier_type == "ballot":
-            return self.readonly_fields
-        return self.readonly_fields + ("cancelled",)
+        readonly_fields = self.readonly_fields
+
+        if obj.identifier_type != "ballot":
+            readonly_fields = readonly_fields + Election.TIMETABLE_FIELDS
+
+        if obj.identifier_type != "ballot":
+            readonly_fields = readonly_fields + ("cancelled",)
+
+        return readonly_fields
 
     def get_fieldsets(self, request, obj=None):
         if obj.group_type:
