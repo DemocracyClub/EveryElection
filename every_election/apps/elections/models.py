@@ -504,7 +504,9 @@ class Election(TimeStampedModel):
             return (
                 Onspd.objects.filter(location__within=self.geography.geography)
                 .filter(
-                    location__dwithin=(self.geography.geography.centroid, 0.08)
+                    location__dwithin=(self.geography.geography.centroid, 0.08),
+                    doterm="",  # Active postcodes (not terminated)
+                    usrtypind="0",  # Standard geographic postcodes
                 )
                 .annotate(
                     distance=Distance(
