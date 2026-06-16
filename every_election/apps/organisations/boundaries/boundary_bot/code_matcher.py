@@ -1,5 +1,4 @@
 import csv
-from base64 import b64decode
 
 import requests
 from rapidfuzz import process
@@ -16,13 +15,12 @@ class CodeMatcher:
 
     def get_data(self):
         resp = requests.get(
-            "https://api.github.com/repos/mysociety/uk_local_authority_names_and_codes/contents/data/lookup_name_to_registry.csv"
+            "https://pages.mysociety.org/uk_local_authority_names_and_codes/data/uk_la_future/latest/lookup_name_to_registry.csv"
         )
         resp.raise_for_status()
-        body = resp.json()
-        decoded = b64decode(body["content"]).decode("utf-8")
+        body = resp.text.splitlines()
 
-        csv_reader = csv.DictReader(decoded.splitlines())
+        csv_reader = csv.DictReader(body)
         return list(csv_reader)
 
     def get_register_code(self, name):
