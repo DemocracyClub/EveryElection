@@ -63,3 +63,19 @@ def days_before(
         days -= 1
 
     return poll_date
+
+
+def easter_sunday(year: int) -> date:
+    # Compute Easter Sunday for a given year using Revised Gregorian algorithm
+    # vendored from dateutil
+    y = year
+    g = y % 19
+    e = 0
+    c = y // 100
+    h = (c - c // 4 - (8 * c + 13) // 25 + 19 * g + 15) % 30
+    i = h - (h // 28) * (1 - (h // 28) * (29 // (h + 1)) * ((21 - g) // 11))
+    j = (y + y // 4 + i + 2 - c + c // 4) % 7
+    p = i - j + e
+    d = 1 + (p + 27 + (p + 6) // 40) % 31
+    m = 3 + (p + 26) // 30
+    return date(int(y), int(m), int(d))
