@@ -16,9 +16,13 @@ class DivisionProblemAdmin(admin.ModelAdmin):
     list_display = (
         "official_identifier",
         "name",
-        "divisionset",
+        "division_type",
+        "divisionset__id",
+        "divisionset__short_title",
+        "divisionset__start_date",
         "problem_text",
     )
+    list_filter = ("division_type",)
     readonly_fields = (
         "problem_text",
         "no_gss_code",
