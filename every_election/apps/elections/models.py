@@ -19,6 +19,10 @@ from django.urls import reverse
 from django_extensions.db.models import TimeStampedModel
 from storages.backends.s3boto3 import S3Boto3Storage
 from uk_election_ids.datapackage import ID_REQUIREMENTS, VOTING_SYSTEMS
+from uk_election_timetables.calendars import Country
+from uk_election_timetables.election_ids import (
+    from_election_id,
+)
 from uk_geo_utils.models import Onspd
 
 from .baker import send_event
@@ -641,6 +645,62 @@ class Election(TimeStampedModel):
                 "Only a by election can have a by_election_reason"
             )
 
+    def get_expected_timetable_fields(self):
+        timetable_fields = []
+
+        # we can't calculate a timetable for en election with
+        # no polling day
+        if self.poll_open_date is None:
+            return []
+
+        # only calculate a timetable for ballots
+        if self.group_type is not None:
+            return []
+
+        # We don't have logic for computing timetable for
+        # EU Parliament elections
+        if self.election_id.startswith("europarl."):
+            return []
+
+        # There is no nominations or SOPN for refenda
+        if not self.election_id.startswith("ref."):
+            timetable_fields.append("close_of_nominations")
+
+        timetable_fields.append("registration_deadline")
+        timetable_fields.append("postal_vote_application_deadline")
+
+        # VAC deadline is only relevant if the election requires ID
+        if self.requires_voter_id:
+            timetable_fields.append("vac_application_deadline")
+
+        return timetable_fields
+
+    def set_timetable_fields(self):
+        fields = self.get_expected_timetable_fields()
+        if not fields:
+            return
+
+        country_map = {
+            "WLS": Country.WALES,
+            "ENG": Country.ENGLAND,
+            "NIR": Country.NORTHERN_IRELAND,
+            "SCT": Country.SCOTLAND,
+        }
+
+        area = self.division or self.organisation
+        territory_code = area.territory_code or self.organisation.territory_code
+
+        timetable = from_election_id(
+            self.election_id, country=country_map[territory_code]
+        )
+
+        for field in fields:
+            if getattr(self, field) is None:
+                if field == "close_of_nominations":
+                    setattr(self, field, timetable.sopn_publish_date)
+                else:
+                    setattr(self, field, getattr(timetable, field))
+
     @transaction.atomic
     def save(
         self, *, push_event=True, status=None, user=None, notes="", **kwargs
@@ -648,8 +708,9 @@ class Election(TimeStampedModel):
         if self.requires_voter_id == "":
             self.requires_voter_id = None
 
-        # used later to determine if we should look for ballots
-        created = not self.pk
+        # only calculate timetable fields the first time we save an object
+        if not self.pk:
+            self.set_timetable_fields()
 
         notes = notes[:255]
 
@@ -665,7 +726,10 @@ class Election(TimeStampedModel):
                 group_model = self.group.save(**kwargs)
             self.group = group_model
 
+        # used later to determine if we should look for ballots
+        created = not self.pk
         super().save(**kwargs)
+
         if (
             status
             and status != DEFAULT_STATUS
