@@ -645,6 +645,30 @@ class Election(TimeStampedModel):
                 "Only a by election can have a by_election_reason"
             )
 
+        expected_timetable_fields = self.get_expected_timetable_fields()
+        for field in self.TIMETABLE_FIELDS:
+            if (
+                field in expected_timetable_fields
+                and getattr(self, field) is None
+            ):
+                raise ValidationError(f"{field} is required")
+
+            if (
+                field not in expected_timetable_fields
+                and getattr(self, field) is not None
+            ):
+                raise ValidationError(
+                    f"{field} should not be set for this election"
+                )
+
+            if getattr(self, field) > self.poll_open_date:
+                raise ValidationError(f"{field} must be before poll_open_date")
+
+            if getattr(self, field) < self.poll_open_date - timedelta(days=50):
+                raise ValidationError(
+                    f"{field} must be within 50 days of poll_open_date"
+                )
+
     def get_expected_timetable_fields(self):
         timetable_fields = []
 
