@@ -1,6 +1,11 @@
 import datetime as dt
 
-from uk_election_timetables.calendars import Country, working_days_before
+from uk_election_timetables.calendars import (
+    ChristmasEveRule,
+    Country,
+    ExtendedCalendar,
+    working_days_before,
+)
 from uk_election_timetables.election import Election
 
 
@@ -36,6 +41,10 @@ class UKParliamentElection(Election):
         return min(possible_dates)
 
     def date_for_country(self, country: Country) -> dt.date:
-        calendar = type(self).BANK_HOLIDAY_CALENDAR.from_country(country)
+        calendar = ExtendedCalendar(
+            type(self).BANK_HOLIDAY_CALENDAR.from_country(country),
+            rules=[ChristmasEveRule()],
+            years=[self.poll_date.year - 1, self.poll_date.year],
+        )
 
         return working_days_before(self.poll_date, 19, calendar)

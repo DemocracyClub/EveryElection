@@ -42,8 +42,6 @@ class BankHolidayCalendar(BaseCalendar):
         )
 
     def __init__(self, dates):
-        christmas_eve = DateMatcher(month=12, day=24)
-
         days_not_counted = [
             BankHolidayCalendar.create_matcher_from_entry(entry)
             for entry in dates
@@ -51,10 +49,8 @@ class BankHolidayCalendar(BaseCalendar):
 
         self._bank_holidays = days_not_counted
 
-        self._exempted_dates = self._bank_holidays + [christmas_eve]
-
     def exempted_dates(self):
-        return self._exempted_dates
+        return self._bank_holidays
 
 
 class UnitedKingdomBankHolidays:
@@ -137,7 +133,7 @@ class ExtendedCalendar(BaseCalendar):
             d
             for rule in rules
             for y in years
-            for d in rule.generate(y, base._bank_holidays)
+            for d in rule.generate(y, base.exempted_dates())
         ]
         self._all_dates = base.exempted_dates() + extra
 
@@ -165,6 +161,17 @@ class EasterMondayRule(ExcludedDateRule):
                 day=easter_monday.day,
             )
         ]
+
+
+class ChristmasEveRule(ExcludedDateRule):
+    def generate(
+        self, year: int, bank_holidays: List[DateMatcher]
+    ) -> List[DateMatcher]:
+        """
+        Christmas Eve is a bank holiday but most legislation
+        explicity considers it a "non-working" day anyway.
+        """
+        return [DateMatcher(name="Christmas Eve", year=year, month=12, day=24)]
 
 
 def working_days_before(

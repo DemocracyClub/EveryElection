@@ -5,6 +5,7 @@ from enum import Enum
 from typing import Dict, List
 
 from uk_election_timetables.calendars import (
+    ChristmasEveRule,
     Country,
     ExtendedCalendar,
     UnitedKingdomBankHolidays,
@@ -107,7 +108,13 @@ class Election(metaclass=ABCMeta):
         return sorted(dates, key=lambda r: r["date"])
 
     def _calendar(self):
-        return self.BANK_HOLIDAY_CALENDAR.from_country(self.country)
+        return ExtendedCalendar(
+            self.BANK_HOLIDAY_CALENDAR.from_country(self.country),
+            # by default, always consider Christmas Eve a non-working
+            # day, even though it is not a bank holiday
+            rules=[ChristmasEveRule()],
+            years=[self.poll_date.year - 1, self.poll_date.year],
+        )
 
     def get_extended_calendar(self, rules):
         return ExtendedCalendar(
