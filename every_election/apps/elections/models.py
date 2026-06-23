@@ -663,6 +663,7 @@ class Election(TimeStampedModel):
                     f"{field} should not be set for this election"
                 )
 
+        for field in expected_timetable_fields:
             if getattr(self, field) > self.poll_open_date:
                 raise ValidationError(f"{field} must be before poll_open_date")
 
