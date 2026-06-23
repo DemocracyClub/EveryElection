@@ -75,7 +75,7 @@ def from_election_id(election_id: str, country: Country = None) -> Election:
 
     :param election_id: a string representing an election id in uk-election-ids format
     :param country: an optional Country representing the country where the election will be held
-    :return: a datetime representing the expected publish date
+    :return: Election object
     """
     election_id_lookup = {
         "nia": NorthernIrelandAssemblyElection,
