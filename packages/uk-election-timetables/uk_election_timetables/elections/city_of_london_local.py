@@ -75,7 +75,7 @@ class ChristmasBreakRule(ExcludedDateRule):
 class CityOfLondonLocalElection(Election):
     def __init__(self, poll_date: dt.date):
         """
-        :param poll_date: a datetime representing the date of the poll
+        :param poll_date: datetime.date representing the date of the poll
         """
         Election.__init__(self, poll_date, Country.ENGLAND)
 
@@ -102,7 +102,7 @@ class CityOfLondonLocalElection(Election):
         means the period beginning with the Thursday before and ending with the
         Tuesday after Easter Day;
 
-        :return: a datetime representing the expected publish date
+        :return: datetime.date representing the expected publish date
         """
 
         calendar = self.get_extended_calendar(
@@ -115,7 +115,7 @@ class CityOfLondonLocalElection(Election):
         """
         Calculates the voter registration deadline for a City of London local election.
 
-        :return: a datetime representing the voter registration deadline
+        :return: datetime.date representing the voter registration deadline
         """
         if self.poll_date <= dt.date(self.poll_date.year, 2, 15):
             return dt.date(self.poll_date.year - 2, 11, 30)

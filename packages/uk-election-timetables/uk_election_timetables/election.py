@@ -37,7 +37,7 @@ class Election(metaclass=ABCMeta):
 
         In Northern Ireland, this is set out in `The Representation of the People (Northern Ireland) Regulations 2008 <https://www.legislation.gov.uk/uksi/2008/1741/regulation/61/made>`
 
-        :return: a datetime representing the postal vote application deadline
+        :return: datetime.date representing the postal vote application deadline
         """
         if self.country == Country.NORTHERN_IRELAND:
             return working_days_before(self.poll_date, 14, self._calendar())
@@ -72,7 +72,7 @@ class Election(metaclass=ABCMeta):
 
         This explained in a `background note from the Electoral Commission <https://www.electoralcommission.org.uk/media/2457>`_
 
-        :return: a datetime representing the voter registration deadline
+        :return: datetime.date representing the voter registration deadline
         """
         return working_days_before(self.poll_date, 12, self._calendar())
 

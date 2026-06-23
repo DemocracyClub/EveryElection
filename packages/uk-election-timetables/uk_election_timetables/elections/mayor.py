@@ -7,7 +7,7 @@ from uk_election_timetables.election import Election
 class MayoralElection(Election):
     def __init__(self, poll_date: dt.date):
         """
-        :param poll_date: a datetime representing the date of the poll
+        :param poll_date: datetime.date representing the date of the poll
         """
         Election.__init__(self, poll_date, Country.ENGLAND)
 
@@ -20,7 +20,7 @@ class MayoralElection(Election):
         - `The Local Authorities (Mayoral Elections) (England and Wales) (Amendment) Regulations 2014 <https://www.legislation.gov.uk/uksi/2014/370/made>`_
         - `The Combined Authorities (Mayoral Elections) Order 2017 <https://www.legislation.gov.uk/uksi/2017/67/made>`_
 
-        :return: a datetime representing the expected publish date
+        :return: datetime.date representing the expected publish date
         """
         return working_days_before(self.poll_date, 19, super()._calendar())
 

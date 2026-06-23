@@ -11,7 +11,7 @@ from uk_election_timetables.election import Election
 class ScottishParliamentElection(Election):
     def __init__(self, poll_date: dt.date):
         """
-        :param poll_date: a datetime representing the date of the poll
+        :param poll_date: datetime.date representing the date of the poll
         """
         Election.__init__(self, poll_date, Country.SCOTLAND)
 
@@ -22,7 +22,7 @@ class ScottishParliamentElection(Election):
 
         This is set out in `Scottish General Election (Coronavirus) Act 2021 <https://www.legislation.gov.uk/asp/2021/5/crossheading/postal-voting-arrangements-for-2021-election>`_.
 
-        :return: a datetime representing the postal vote application deadline
+        :return: datetime.date representing the postal vote application deadline
         """
 
         if self.poll_date == dt.date(2021, 5, 6):
@@ -37,7 +37,7 @@ class ScottishParliamentElection(Election):
 
         This is set out in `The Scottish Parliament (Elections etc.) Order 2015 <https://www.legislation.gov.uk/ssi/2015/425/made>`_
 
-        :return: a datetime representing the expected publish date
+        :return: datetime.date representing the expected publish date
         """
         calendar = self.get_extended_calendar([EasterMondayRule()])
         return working_days_before(self.poll_date, 23, calendar)

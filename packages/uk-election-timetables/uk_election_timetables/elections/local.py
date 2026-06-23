@@ -20,7 +20,7 @@ class LocalElection(Election):
          * `The Local Elections (Northern Ireland) Order 2010 <https://www.legislation.gov.uk/uksi/2010/2977/schedule/1/part/4/made>`_ and its amendments
          * `The Scottish Local Government Elections Order 2011 <https://www.legislation.gov.uk/ssi/2011/399/made>`_
 
-        :return: a datetime representing the expected publish date
+        :return: datetime.date representing the expected publish date
         """
 
         country_specific_duration = {
