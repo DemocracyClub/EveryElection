@@ -21,7 +21,6 @@ from storages.backends.s3boto3 import S3Boto3Storage
 from uk_election_ids.datapackage import ID_REQUIREMENTS, VOTING_SYSTEMS
 from uk_election_timetables.calendars import Country
 from uk_election_timetables.election_ids import (
-    NoSuchElectionTypeError,
     from_election_id,
 )
 from uk_geo_utils.models import Onspd
@@ -189,7 +188,28 @@ class Election(TimeStampedModel):
     election_subtype = models.ForeignKey(
         ElectionSubType, null=True, on_delete=models.CASCADE
     )
+
+    # timetable
     poll_open_date = models.DateField(blank=True, null=True)
+    close_of_nominations = models.DateField(
+        blank=True, null=True, help_text="Close of Nominations"
+    )
+    registration_deadline = models.DateField(
+        blank=True, null=True, help_text="Register to vote deadline"
+    )
+    postal_vote_application_deadline = models.DateField(
+        blank=True, null=True, help_text="Postal vote application deadline"
+    )
+    vac_application_deadline = models.DateField(
+        blank=True, null=True, help_text="VAC application deadline"
+    )
+    TIMETABLE_FIELDS = (
+        "close_of_nominations",
+        "registration_deadline",
+        "postal_vote_application_deadline",
+        "vac_application_deadline",
+    )
+
     organisation = models.ForeignKey(
         "organisations.Organisation", null=True, on_delete=models.CASCADE
     )
@@ -519,37 +539,16 @@ class Election(TimeStampedModel):
         return None
 
     @property
-    def get_timetable(self):
-        country_map = {
-            "WLS": Country.WALES,
-            "ENG": Country.ENGLAND,
-            "NIR": Country.NORTHERN_IRELAND,
-            "SCT": Country.SCOTLAND,
-            "GBN": None,
-        }
-        area = self.division or self.organisation
-        if not area:
-            return None
-
-        territory_code = area.territory_code or self.organisation.territory_code
-        if not territory_code:
-            return None
-
-        try:
-            timetable = from_election_id(
-                self.election_id, country=country_map[territory_code]
-            ).timetable
-        except NoSuchElectionTypeError:
-            return None
-
-        if not self.requires_voter_id:
-            timetable = [
-                date
-                for date in timetable
-                if date["event"] != "VAC_APPLICATION_DEADLINE"
-            ]
-
-        return timetable
+    def timetable(self):
+        timetable = [
+            {
+                "label": self._meta.get_field(field).help_text,
+                "date": getattr(self, field),
+            }
+            for field in self.TIMETABLE_FIELDS
+            if getattr(self, field)
+        ]
+        return sorted(timetable, key=lambda r: r["date"])
 
     def get_id(self):
         if self.election_id:
@@ -648,6 +647,86 @@ class Election(TimeStampedModel):
                 "Only a by election can have a by_election_reason"
             )
 
+        expected_timetable_fields = self.get_expected_timetable_fields()
+        for field in self.TIMETABLE_FIELDS:
+            if (
+                field in expected_timetable_fields
+                and getattr(self, field) is None
+            ):
+                raise ValidationError(f"{field} is required")
+
+            if (
+                field not in expected_timetable_fields
+                and getattr(self, field) is not None
+            ):
+                raise ValidationError(
+                    f"{field} should not be set for this election"
+                )
+
+            if getattr(self, field) > self.poll_open_date:
+                raise ValidationError(f"{field} must be before poll_open_date")
+
+            if getattr(self, field) < self.poll_open_date - timedelta(days=50):
+                raise ValidationError(
+                    f"{field} must be within 50 days of poll_open_date"
+                )
+
+    def get_expected_timetable_fields(self):
+        timetable_fields = []
+
+        # we can't calculate a timetable for en election with
+        # no polling day
+        if self.poll_open_date is None:
+            return []
+
+        # only calculate a timetable for ballots
+        if self.group_type is not None:
+            return []
+
+        # We don't have logic for computing timetable for
+        # EU Parliament elections
+        if self.election_id.startswith("europarl."):
+            return []
+
+        # There is no nominations or SOPN for refenda
+        if not self.election_id.startswith("ref."):
+            timetable_fields.append("close_of_nominations")
+
+        timetable_fields.append("registration_deadline")
+        timetable_fields.append("postal_vote_application_deadline")
+
+        # VAC deadline is only relevant if the election requires ID
+        if self.requires_voter_id:
+            timetable_fields.append("vac_application_deadline")
+
+        return timetable_fields
+
+    def set_timetable_fields(self):
+        fields = self.get_expected_timetable_fields()
+        if not fields:
+            return
+
+        country_map = {
+            "WLS": Country.WALES,
+            "ENG": Country.ENGLAND,
+            "NIR": Country.NORTHERN_IRELAND,
+            "SCT": Country.SCOTLAND,
+        }
+
+        area = self.division or self.organisation
+        territory_code = area.territory_code or self.organisation.territory_code
+
+        timetable = from_election_id(
+            self.election_id, country=country_map[territory_code]
+        )
+
+        for field in fields:
+            if getattr(self, field) is None:
+                if field == "close_of_nominations":
+                    setattr(self, field, timetable.sopn_publish_date)
+                else:
+                    setattr(self, field, getattr(timetable, field))
+
     @transaction.atomic
     def save(
         self, *, push_event=True, status=None, user=None, notes="", **kwargs
@@ -655,8 +734,9 @@ class Election(TimeStampedModel):
         if self.requires_voter_id == "":
             self.requires_voter_id = None
 
-        # used later to determine if we should look for ballots
-        created = not self.pk
+        # only calculate timetable fields the first time we save an object
+        if not self.pk:
+            self.set_timetable_fields()
 
         notes = notes[:255]
 
@@ -672,7 +752,10 @@ class Election(TimeStampedModel):
                 group_model = self.group.save(**kwargs)
             self.group = group_model
 
+        # used later to determine if we should look for ballots
+        created = not self.pk
         super().save(**kwargs)
+
         if (
             status
             and status != DEFAULT_STATUS

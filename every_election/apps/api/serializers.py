@@ -145,6 +145,7 @@ election_fields = (
     "tmp_election_id",
     "election_title",
     "poll_open_date",
+    "timetable",
     "election_type",
     "election_subtype",
     "organisation",
@@ -193,7 +194,13 @@ class BaseElectionSerializer(serializers.ModelSerializer):
     replaced_by = serializers.SlugRelatedField(
         slug_field="election_id", read_only=True
     )
+    timetable = serializers.SerializerMethodField()
     tags = serializers.JSONField()
+
+    def get_timetable(self, obj: Election):
+        return {
+            field: getattr(obj, field) for field in Election.TIMETABLE_FIELDS
+        }
 
     def get_deleted(self, obj: Election):
         return obj.current_status == ModerationStatuses.deleted.value

@@ -445,6 +445,12 @@ class TestElectionAPIQueries(APITestCase):
             "identifier_type": "ballot",
             "current": true,
             "poll_open_date": "2017-03-23",
+            "timetable": {
+                "close_of_nominations": "2017-02-24",
+                "registration_deadline": "2017-03-07",
+                "postal_vote_application_deadline": "2017-03-08",
+                "vac_application_deadline": null
+            },
             "election_id": "local.place-name-0.2017-03-23",
             "group": null,
             "division": {

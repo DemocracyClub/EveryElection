@@ -10,9 +10,14 @@ from elections.models import (
     ModerationHistory,
     ModerationStatuses,
 )
-from elections.tests.factories import ElectionFactory
+from elections.tests.factories import ElectionFactory, ElectionTypeFactory
 from elections.utils import ElectionBuilder
 from freezegun import freeze_time
+from organisations.tests.factories import (
+    OrganisationDivisionFactory,
+    OrganisationDivisionSetFactory,
+    OrganisationFactory,
+)
 
 from .base_tests import BaseElectionCreatorMixIn
 
@@ -317,3 +322,217 @@ class TestModified(TestCase):
             Election.private_objects.update()
             election.refresh_from_db()
             self.assertEqual(election.modified, future)
+
+
+class TestTimetableFields(TestCase):
+    POLL_DATE = "2024-05-02"
+
+    def assert_timetable_fields_all_none(self, election):
+        for field in Election.TIMETABLE_FIELDS:
+            self.assertIsNone(getattr(election, field))
+
+    def test_requires_id(self):
+        org = OrganisationFactory(territory_code="ENG")
+        election_type = ElectionTypeFactory(election_type="local")
+        div_set = OrganisationDivisionSetFactory(organisation=org)
+        div = OrganisationDivisionFactory(divisionset=div_set)
+
+        election_group = Election(
+            election_id=f"local.{self.POLL_DATE}",
+            election_title="Local elections",
+            election_type=election_type,
+            poll_open_date=self.POLL_DATE,
+            group_type="election",
+        )
+        election_group.save()
+
+        org_group = Election(
+            election_id=f"local.{org.slug}.{self.POLL_DATE}",
+            election_title=f"Local elections - {org.official_name}",
+            election_type=election_type,
+            organisation=org,
+            poll_open_date=self.POLL_DATE,
+            group=election_group,
+            group_type="organisation",
+        )
+        org_group.save()
+
+        ballot = Election(
+            election_id=f"local.{org.slug}.{div.slug}.{self.POLL_DATE}",
+            election_title=f"Local elections - {org.official_name} - {div.name}",
+            election_type=election_type,
+            organisation=org,
+            division=div,
+            poll_open_date=self.POLL_DATE,
+            group=org_group,
+            group_type=None,
+            requires_voter_id="EA-2022",
+        )
+        ballot.save()
+
+        ballot.refresh_from_db()
+        election_group.refresh_from_db()
+        org_group.refresh_from_db()
+
+        # All 4 timetable fields should be populated on the ballot
+        self.assertIsNotNone(ballot.close_of_nominations)
+        self.assertIsNotNone(ballot.registration_deadline)
+        self.assertIsNotNone(ballot.postal_vote_application_deadline)
+        self.assertIsNotNone(ballot.vac_application_deadline)
+
+        # Timetable fields should all be none on the parent groups
+        self.assert_timetable_fields_all_none(election_group)
+        self.assert_timetable_fields_all_none(org_group)
+
+    def test_no_id_required(self):
+        org = OrganisationFactory(territory_code="WLS")
+        election_type = ElectionTypeFactory(election_type="local")
+        div_set = OrganisationDivisionSetFactory(organisation=org)
+        div = OrganisationDivisionFactory(divisionset=div_set)
+
+        election_group = Election(
+            election_id=f"local.{self.POLL_DATE}",
+            election_title="Local elections",
+            election_type=election_type,
+            poll_open_date=self.POLL_DATE,
+            group_type="election",
+        )
+        election_group.save()
+
+        org_group = Election(
+            election_id=f"local.{org.slug}.{self.POLL_DATE}",
+            election_title=f"Local elections - {org.official_name}",
+            election_type=election_type,
+            organisation=org,
+            poll_open_date=self.POLL_DATE,
+            group=election_group,
+            group_type="organisation",
+        )
+        org_group.save()
+
+        ballot = Election(
+            election_id=f"local.{org.slug}.{div.slug}.{self.POLL_DATE}",
+            election_title=f"Local elections - {org.official_name} - {div.name}",
+            election_type=election_type,
+            organisation=org,
+            division=div,
+            poll_open_date=self.POLL_DATE,
+            group=org_group,
+            group_type=None,
+            requires_voter_id=None,
+        )
+        ballot.save()
+
+        ballot.refresh_from_db()
+        election_group.refresh_from_db()
+        org_group.refresh_from_db()
+
+        self.assertIsNotNone(ballot.close_of_nominations)
+        self.assertIsNotNone(ballot.registration_deadline)
+        self.assertIsNotNone(ballot.postal_vote_application_deadline)
+
+        # VAC deadline should be none on the ballot
+        self.assertIsNone(ballot.vac_application_deadline)
+
+        # Timetable fields should all be none on the parent groups
+        self.assert_timetable_fields_all_none(election_group)
+        self.assert_timetable_fields_all_none(org_group)
+
+    def test_referendum(self):
+        org = OrganisationFactory(territory_code="ENG")
+        election_type = ElectionTypeFactory(election_type="ref")
+        div_set = OrganisationDivisionSetFactory(organisation=org)
+        div = OrganisationDivisionFactory(divisionset=div_set)
+
+        election_group = Election(
+            election_id=f"ref.{self.POLL_DATE}",
+            election_title="Referendum",
+            election_type=election_type,
+            poll_open_date=self.POLL_DATE,
+            group_type="election",
+        )
+        election_group.save()
+
+        org_group = Election(
+            election_id=f"ref.{org.slug}.{self.POLL_DATE}",
+            election_title=f"Referendum - {org.official_name}",
+            election_type=election_type,
+            organisation=org,
+            poll_open_date=self.POLL_DATE,
+            group=election_group,
+            group_type="organisation",
+        )
+        org_group.save()
+
+        ballot = Election(
+            election_id=f"ref.{org.slug}.{div.slug}.{self.POLL_DATE}",
+            election_title=f"Referendum - {org.official_name} - {div.name}",
+            election_type=election_type,
+            organisation=org,
+            division=div,
+            poll_open_date=self.POLL_DATE,
+            group=org_group,
+            group_type=None,
+        )
+        ballot.save()
+
+        ballot.refresh_from_db()
+        election_group.refresh_from_db()
+        org_group.refresh_from_db()
+
+        self.assertIsNotNone(ballot.registration_deadline)
+        self.assertIsNotNone(ballot.postal_vote_application_deadline)
+
+        # Close of nominations should be none on the ballot
+        self.assertIsNone(ballot.close_of_nominations)
+
+        # Timetable fields should all be none on the parent groups
+        self.assert_timetable_fields_all_none(election_group)
+        self.assert_timetable_fields_all_none(org_group)
+
+    def test_provisional_ballot(self):
+        org = OrganisationFactory(territory_code="ENG")
+        election_type = ElectionTypeFactory(election_type="local")
+        div_set = OrganisationDivisionSetFactory(organisation=org)
+        div = OrganisationDivisionFactory(divisionset=div_set)
+
+        election_group = Election(
+            tmp_election_id="local.TBD",
+            election_title="Local elections",
+            election_type=election_type,
+            poll_open_date=None,
+            group_type="election",
+        )
+        election_group.save()
+
+        org_group = Election(
+            tmp_election_id=f"local.{org.slug}.TBD",
+            election_title=f"Local elections - {org.official_name}",
+            election_type=election_type,
+            organisation=org,
+            poll_open_date=None,
+            group=election_group,
+            group_type="organisation",
+        )
+        org_group.save()
+
+        ballot = Election(
+            tmp_election_id=f"local.{org.slug}.{div.slug}.TBD",
+            election_title=f"Local elections - {org.official_name} - {div.name}",
+            election_type=election_type,
+            organisation=org,
+            division=div,
+            poll_open_date=None,
+            group=org_group,
+            group_type=None,
+        )
+        ballot.save()
+
+        ballot.refresh_from_db()
+        election_group.refresh_from_db()
+        org_group.refresh_from_db()
+
+        # Timetable fields should all be none on  all election objects
+        self.assert_timetable_fields_all_none(ballot)
+        self.assert_timetable_fields_all_none(election_group)
+        self.assert_timetable_fields_all_none(org_group)
