@@ -26,3 +26,10 @@ def test_registration_deadline_london_assembly():
     election = GreaterLondonAssemblyElection(dt.date(2021, 5, 6))
 
     assert election.registration_deadline == dt.date(2021, 4, 19)
+
+
+# Reference election: gla.2024-05-02
+def test_notice_of_election_deadline():
+    election = GreaterLondonAssemblyElection(dt.date(2024, 5, 2))
+
+    assert election.notice_of_election_deadline == dt.date(2024, 3, 19)

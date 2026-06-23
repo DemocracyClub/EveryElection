@@ -10,3 +10,10 @@ def test_publish_date_northern_ireland_assembly():
     ).sopn_publish_date
 
     assert publish_date == dt.date(2017, 2, 8)
+
+
+# Reference election: nia.2022-05-05
+def test_notice_of_election_deadline():
+    election = NorthernIrelandAssemblyElection(dt.date(2022, 5, 5))
+
+    assert election.notice_of_election_deadline == dt.date(2022, 3, 28)

@@ -41,3 +41,15 @@ class ScottishParliamentElection(Election):
         """
         calendar = self.get_extended_calendar([EasterMondayRule()])
         return working_days_before(self.poll_date, 23, calendar)
+
+    @property
+    def notice_of_election_deadline(self) -> dt.date:
+        """
+        Calculate the deadline for publishing a Notice of Election document for an election to the Scottish Parliament
+
+        This is set out in `The Scottish Parliament (Elections etc.) Order 2015 <https://www.legislation.gov.uk/ssi/2015/425/made>`_
+
+        :return: datetime.date representing the deadline to publish
+        """
+        calendar = self.get_extended_calendar([EasterMondayRule()])
+        return working_days_before(self.poll_date, 28, calendar)

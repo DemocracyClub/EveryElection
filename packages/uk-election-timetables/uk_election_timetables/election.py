@@ -60,6 +60,11 @@ class Election(metaclass=ABCMeta):
         pass
 
     @property
+    @abstractmethod
+    def notice_of_election_deadline(self) -> dt.date:
+        pass
+
+    @property
     def registration_deadline(self) -> dt.date:
         """
         Calculates the voter registration deadline for this Election

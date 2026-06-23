@@ -22,3 +22,10 @@ def test_postal_vote_application_deadline_mayor():
     election = MayoralElection(dt.date(2021, 5, 6))
 
     assert election.postal_vote_application_deadline == dt.date(2021, 4, 20)
+
+
+# Reference election: mayor.2025-05-01
+def test_notice_of_election_deadline():
+    election = MayoralElection(dt.date(2025, 5, 1))
+
+    assert election.notice_of_election_deadline == dt.date(2025, 3, 25)

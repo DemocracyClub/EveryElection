@@ -46,3 +46,33 @@ def test_postal_vote_application_deadline_local_election_northern_ireland():
     ).postal_vote_application_deadline
 
     assert deadline == dt.date(2023, 4, 26)
+
+
+# Reference election: local.2026-05-07
+def test_notice_of_election_deadline_england():
+    election = LocalElection(dt.date(2026, 5, 7), country=Country.ENGLAND)
+
+    assert election.notice_of_election_deadline == dt.date(2026, 3, 30)
+
+
+# Reference election: local.2022-05-05
+def test_notice_of_election_deadline_scotland():
+    election = LocalElection(dt.date(2022, 5, 5), country=Country.SCOTLAND)
+
+    assert election.notice_of_election_deadline == dt.date(2022, 3, 23)
+
+
+def test_notice_of_election_deadline_northern_ireland():
+    """
+    note: this test is just reverse-engineered from the code
+
+    There were no local elections in Northern Ireland in 2026
+
+    Replace it with a test based on a real-world example
+    when we have one to hand (TODO: 2027)
+    """
+    election = LocalElection(
+        dt.date(2026, 5, 7), country=Country.NORTHERN_IRELAND
+    )
+
+    assert election.notice_of_election_deadline == dt.date(2026, 3, 30)

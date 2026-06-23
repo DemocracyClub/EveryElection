@@ -50,6 +50,13 @@ def test_postal_vote_application_deadline_uk_parliament_2019():
     assert election.postal_vote_application_deadline == dt.date(2019, 11, 26)
 
 
+# Reference election: parl.2024-07-04
+def test_notice_of_election_deadline():
+    election = UKParliamentElection(dt.date(2024, 7, 4))
+
+    assert election.notice_of_election_deadline == dt.date(2024, 6, 4)
+
+
 @pytest.mark.parametrize(
     "country, deadline_date",
     [

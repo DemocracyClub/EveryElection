@@ -65,6 +65,20 @@ def test_city_of_london_sopn_date(election):
     )
 
 
+def test_notice_of_election_deadline():
+    """
+    note: this test is just reverse-engineered from the code
+
+    There is no local.city-of-london.2021-05-06
+
+    Replace it with a test based on a real-world example
+    when we have one to hand.
+    """
+    election = CityOfLondonLocalElection(dt.date(2021, 5, 6))
+
+    assert election.notice_of_election_deadline == dt.date(2021, 3, 25)
+
+
 def test_easter_break():
     rule = EasterBreakRule()
     # Test by example: 2022

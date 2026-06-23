@@ -120,3 +120,17 @@ class CityOfLondonLocalElection(Election):
         if self.poll_date <= dt.date(self.poll_date.year, 2, 15):
             return dt.date(self.poll_date.year - 2, 11, 30)
         return dt.date(self.poll_date.year - 1, 11, 30)
+
+    @property
+    def notice_of_election_deadline(self) -> dt.date:
+        """
+        Calculate the deadline for publishing a Notice of Election document for City of London Common Council or Alderman election
+
+        The same exceptions for Christmas and Easter breaks that we use for the SOPN date apply here.
+
+        :return: a datetime.date representing the expected publish date
+        """
+        calendar = self.get_extended_calendar(
+            [EasterBreakRule(), ChristmasBreakRule()]
+        )
+        return working_days_before(self.poll_date, 25, calendar)
