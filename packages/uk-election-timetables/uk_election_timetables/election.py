@@ -14,6 +14,7 @@ from uk_election_timetables.calendars import (
 
 
 class TimetableEvent(Enum):
+    NOTICE_OF_ELECTION_DEADLINE = "Notice of election deadline"
     REGISTRATION_DEADLINE = "Register to vote deadline"
     SOPN_PUBLISH_DATE = "List of candidates published"
     POSTAL_VOTE_APPLICATION_DEADLINE = "Postal vote application deadline"
@@ -83,7 +84,18 @@ class Election(metaclass=ABCMeta):
         :return: a list representing the entire timetable for this particular election.
         """
 
-        dates = [
+        dates = []
+
+        with contextlib.suppress(NotImplementedError):
+            dates.append(
+                {
+                    "label": TimetableEvent.NOTICE_OF_ELECTION_DEADLINE.value,
+                    "date": self.notice_of_election_deadline,
+                    "event": TimetableEvent.NOTICE_OF_ELECTION_DEADLINE.name,
+                }
+            )
+
+        dates += [
             {
                 "label": TimetableEvent.REGISTRATION_DEADLINE.value,
                 "date": self.registration_deadline,

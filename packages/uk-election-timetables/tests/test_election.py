@@ -46,9 +46,14 @@ def test_timetable_vac_application_deadline():
 def test_timetable_sort_order():
     election = from_election_id("local.2021-05-06", country=Country.ENGLAND)
 
-    assert len(election.timetable) == 4
+    assert len(election.timetable) == 5
 
     assert election.timetable == [
+        {
+            "label": "Notice of election deadline",
+            "date": dt.date(2021, 3, 29),
+            "event": "NOTICE_OF_ELECTION_DEADLINE",
+        },
         {
             "label": "List of candidates published",
             "date": dt.date(2021, 4, 8),
@@ -75,9 +80,14 @@ def test_timetable_sort_order():
 def test_timetable_sort_order_scottish_parliament_postal_vote():
     election = from_election_id("sp.c.2021-05-06")
 
-    assert len(election.timetable) == 4
+    assert len(election.timetable) == 5
 
     assert election.timetable == [
+        {
+            "label": "Notice of election deadline",
+            "date": dt.date(2021, 3, 24),
+            "event": "NOTICE_OF_ELECTION_DEADLINE",
+        },
         {
             "label": "List of candidates published",
             "date": dt.date(2021, 3, 31),
@@ -148,6 +158,10 @@ def test_get_date_for_event_type():
 
 
 def test_event_type_enum():
+    assert (
+        TimetableEvent.NOTICE_OF_ELECTION_DEADLINE.value
+        == "Notice of election deadline"
+    )
     assert (
         TimetableEvent.REGISTRATION_DEADLINE.value
         == "Register to vote deadline"
