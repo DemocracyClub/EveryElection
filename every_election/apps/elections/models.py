@@ -697,7 +697,7 @@ class Election(TimeStampedModel):
         timetable_fields.append("postal_vote_application_deadline")
 
         # VAC deadline is only relevant if the election requires ID
-        if self.requires_voter_id:
+        if self.requires_voter_id == "EA-2022":
             timetable_fields.append("vac_application_deadline")
 
         return timetable_fields
