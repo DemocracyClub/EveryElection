@@ -25,7 +25,7 @@ class Command(BaseCommand):
         )
 
     @transaction.atomic
-    def copy_divsions(self, old_divset_id, new_divset_id, include_geographies):
+    def copy_divisions(self, old_divset_id, new_divset_id, include_geographies):
         try:
             old_divset = OrganisationDivisionSet.objects.get(pk=old_divset_id)
         except OrganisationDivisionSet.DoesNotExist:
@@ -75,7 +75,7 @@ class Command(BaseCommand):
         self.stdout.write("...done!")
 
     def handle(self, *args, **options):
-        self.copy_divsions(
+        self.copy_divisions(
             options["src_id"],
             options["dst_id"],
             options["geographies"],
