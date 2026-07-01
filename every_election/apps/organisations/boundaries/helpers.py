@@ -41,3 +41,10 @@ def union_list(geoms: list[MultiPolygon]) -> MultiPolygon:
 
 def extract_exterior_ring(geom: MultiPolygon) -> MultiPolygon:
     return MultiPolygon([Polygon(p.exterior_ring) for p in geom])
+
+
+def create_temp_division_identifier(div_set, division_name):
+    division_name = division_name.replace("&", "and")
+    division_name = division_name.strip()
+    org_id = div_set.organisation.official_identifier
+    return f"{org_id}:{slugify(division_name)}"
