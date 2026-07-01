@@ -1,5 +1,6 @@
 import contextlib
 import datetime as dt
+import warnings
 from abc import ABCMeta, abstractmethod
 from enum import Enum
 from typing import Dict, List
@@ -9,6 +10,7 @@ from uk_election_timetables.calendars import (
     Country,
     ExtendedCalendar,
     UnitedKingdomBankHolidays,
+    working_days_after,
     working_days_before,
 )
 
@@ -16,7 +18,8 @@ from uk_election_timetables.calendars import (
 class TimetableEvent(Enum):
     NOTICE_OF_ELECTION_DEADLINE = "Notice of election deadline"
     REGISTRATION_DEADLINE = "Register to vote deadline"
-    SOPN_PUBLISH_DATE = "List of candidates published"
+    CLOSE_OF_NOMINATIONS = "Close of Nominations"
+    SOPN_PUBLISH_DEADLINE = "SOPN publishing deadline"
     POSTAL_VOTE_APPLICATION_DEADLINE = "Postal vote application deadline"
     VAC_APPLICATION_DEADLINE = "VAC application deadline"
 
@@ -57,13 +60,36 @@ class Election(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def sopn_publish_date(self) -> dt.date:
+    def notice_of_election_deadline(self) -> dt.date:
         pass
 
     @property
     @abstractmethod
-    def notice_of_election_deadline(self) -> dt.date:
+    def close_of_nominations(self) -> dt.date:
         pass
+
+    @property
+    def sopn_publish_deadline(self) -> dt.date:
+        """
+        Calculates the deadline after which a SOPN must be published
+
+        :return: datetime.date representing the SOPN publish deadline
+        """
+        return working_days_after(
+            self.close_of_nominations, 1, self._calendar()
+        )
+
+    @property
+    def sopn_publish_date(self) -> dt.date:
+        """
+        Alias for close_of_nominations
+        Deprecated
+        """
+        warnings.warn(
+            "Deprecated. Use 'close_of_nominations' or 'sopn_publish_deadline' instead",
+            DeprecationWarning,
+        )
+        return self.close_of_nominations
 
     @property
     def registration_deadline(self) -> dt.date:
@@ -116,9 +142,16 @@ class Election(metaclass=ABCMeta):
         with contextlib.suppress(NotImplementedError):
             dates.append(
                 {
-                    "label": TimetableEvent.SOPN_PUBLISH_DATE.value,
-                    "date": self.sopn_publish_date,
-                    "event": TimetableEvent.SOPN_PUBLISH_DATE.name,
+                    "label": TimetableEvent.CLOSE_OF_NOMINATIONS.value,
+                    "date": self.close_of_nominations,
+                    "event": TimetableEvent.CLOSE_OF_NOMINATIONS.name,
+                }
+            )
+            dates.append(
+                {
+                    "label": TimetableEvent.SOPN_PUBLISH_DEADLINE.value,
+                    "date": self.sopn_publish_deadline,
+                    "event": TimetableEvent.SOPN_PUBLISH_DEADLINE.name,
                 }
             )
 

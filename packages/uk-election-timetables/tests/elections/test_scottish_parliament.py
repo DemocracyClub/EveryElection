@@ -12,14 +12,14 @@ sopn_test_cases = [
         # https://candidates.democracyclub.org.uk/elections/sp.c.shetland-islands.2021-05-06/sopn/
         # In 2021 Easter Monday fell between SOPN Publish date and polling day
         "poll_date": dt.date(2021, 5, 6),
-        "sopn_publish_date": dt.date(2021, 3, 31),
+        "close_of_nominations": dt.date(2021, 3, 31),
     },
     {
         # Reference election: sp.c.shetland-islands.2016-05-05
         # https://candidates.democracyclub.org.uk/elections/sp.c.shetland-islands.2016-05-05/sopn/
         # In 2016 Easter Monday was on 27th March so does not factor in here
         "poll_date": dt.date(2016, 5, 5),
-        "sopn_publish_date": dt.date(2016, 4, 1),
+        "close_of_nominations": dt.date(2016, 4, 1),
     },
 ]
 
@@ -27,8 +27,8 @@ sopn_test_cases = [
 @pytest.mark.parametrize("election", sopn_test_cases)
 def test_publish_date_scottish_parliament(election):
     assert (
-        ScottishParliamentElection(election["poll_date"]).sopn_publish_date
-        == election["sopn_publish_date"]
+        ScottishParliamentElection(election["poll_date"]).close_of_nominations
+        == election["close_of_nominations"]
     )
 
 

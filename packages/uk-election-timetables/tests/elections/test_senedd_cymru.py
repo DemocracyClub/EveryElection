@@ -5,7 +5,7 @@ from uk_election_timetables.elections import SeneddCymruElection
 
 # Reference election: naw.c.ceredigion.2016-05-05
 def test_publish_date_senedd_cymru():
-    publish_date = SeneddCymruElection(dt.date(2016, 5, 5)).sopn_publish_date
+    publish_date = SeneddCymruElection(dt.date(2016, 5, 5)).close_of_nominations
 
     assert publish_date == dt.date(2016, 4, 7)
 

@@ -39,30 +39,34 @@ class DateMatcher:
         return True
 
 
-def days_before(
-    poll_date: dt.date, days: int, ignore: List[DateMatcher] = None
+def days_diff(
+    base_date: dt.date, days: int, ignore: List[DateMatcher] = None
 ) -> dt.date:
     """
-    Return date corresponding to `days` working days before `poll_date`, not counting the list of provided exemptions
+    Return date corresponding to `days` working days before or after `base_date`,
+    not counting the list of provided exemptions.
 
-    :param poll_date: the date of the poll
-    :param days: the number of days before the poll date
-    :param ignore: the list of DateMatchers to ignore in the look-back calculation
+    :param base_date: the reference date
+    :param days: the number of working days to offset; positive = after, negative = before
+    :param ignore: the list of DateMatchers to ignore in the calculation
     :return: the calculated date
     """
+    delta = 1 if days > 0 else -1
+    step = dt.timedelta(days=delta)
+    remaining = abs(days)
 
-    while days > 0:
-        poll_date -= dt.timedelta(days=1)
+    while remaining > 0:
+        base_date += step
 
-        if poll_date.weekday() in WEEKEND:
+        if base_date.weekday() in WEEKEND:
             continue
 
-        if ignore and any(day.matches(poll_date) for day in ignore):
+        if ignore and any(day.matches(base_date) for day in ignore):
             continue
 
-        days -= 1
+        remaining -= 1
 
-    return poll_date
+    return base_date
 
 
 def easter_sunday(year: int) -> dt.date:

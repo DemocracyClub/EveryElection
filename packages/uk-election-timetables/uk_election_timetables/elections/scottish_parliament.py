@@ -31,7 +31,7 @@ class ScottishParliamentElection(Election):
         return super().postal_vote_application_deadline
 
     @property
-    def sopn_publish_date(self) -> dt.date:
+    def close_of_nominations(self) -> dt.date:
         """
         Calculate the publish date for an election to the Scottish Parliament
 

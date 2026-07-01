@@ -10,14 +10,14 @@ from uk_election_timetables.elections import UKParliamentElection
 def test_publish_date_uk_parliament_wales():
     election = UKParliamentElection(dt.date(2017, 6, 8), Country.WALES)
 
-    assert election.sopn_publish_date == dt.date(2017, 5, 11)
+    assert election.close_of_nominations == dt.date(2017, 5, 11)
 
 
 # Reference election: parl.na-h-eileanan-an-iar.2017-06-08
 def test_publish_date_uk_parliament_scotland():
     election = UKParliamentElection(dt.date(2017, 6, 8), Country.SCOTLAND)
 
-    assert election.sopn_publish_date == dt.date(2017, 5, 11)
+    assert election.close_of_nominations == dt.date(2017, 5, 11)
 
 
 # Reference election: parl.belfast-east.2017-06-08
@@ -26,21 +26,21 @@ def test_publish_date_uk_parliament_northern_ireland():
         dt.date(2017, 6, 8), Country.NORTHERN_IRELAND
     )
 
-    assert election.sopn_publish_date == dt.date(2017, 5, 11)
+    assert election.close_of_nominations == dt.date(2017, 5, 11)
 
 
 # Reference election: parl.hemel-hempstead.2017-06-08
 def test_publish_date_uk_parliament_england():
     election = UKParliamentElection(dt.date(2017, 6, 8), Country.ENGLAND)
 
-    assert election.sopn_publish_date == dt.date(2017, 5, 11)
+    assert election.close_of_nominations == dt.date(2017, 5, 11)
 
 
 # Reference election: parl.2019-12-12
 def test_publish_date_uk_parliament_2019():
     election = UKParliamentElection(dt.date(2019, 12, 12))
 
-    assert election.sopn_publish_date == dt.date(2019, 11, 14)
+    assert election.close_of_nominations == dt.date(2019, 11, 14)
 
 
 # Reference election: parl.2019-12-12

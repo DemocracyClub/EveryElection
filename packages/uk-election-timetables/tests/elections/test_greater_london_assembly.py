@@ -7,7 +7,7 @@ from uk_election_timetables.elections import GreaterLondonAssemblyElection
 def test_publish_date_greater_london_assembly():
     publish_date = GreaterLondonAssemblyElection(
         dt.date(2016, 5, 5)
-    ).sopn_publish_date
+    ).close_of_nominations
 
     assert publish_date == dt.date(2016, 4, 4)
 
@@ -16,7 +16,7 @@ def test_publish_date_greater_london_assembly():
 def test_publish_date_mayor_london():
     publish_date = GreaterLondonAssemblyElection(
         dt.date(2016, 5, 5)
-    ).sopn_publish_date
+    ).close_of_nominations
 
     assert publish_date == dt.date(2016, 4, 4)
 

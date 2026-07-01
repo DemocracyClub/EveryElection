@@ -16,7 +16,7 @@ from uk_election_timetables.elections.uk_parliament import UKParliamentElection
 
 election = UKParliamentElection(date(2019, 2, 21))
 
-print(election.sopn_publish_date) # date(2019, 1, 25)
+print(election.close_of_nominations) # date(2019, 1, 25)
 ```
  
 ## Installation

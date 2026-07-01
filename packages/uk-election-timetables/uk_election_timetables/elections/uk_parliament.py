@@ -18,7 +18,7 @@ class UKParliamentElection(Election):
         Election.__init__(self, poll_date, country)
 
     @property
-    def sopn_publish_date(self) -> dt.date:
+    def close_of_nominations(self) -> dt.date:
         """
         Calculate the publish date for an election to the Parliament of the United Kingdom
 

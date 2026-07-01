@@ -12,7 +12,7 @@ class NorthernIrelandAssemblyElection(Election):
         Election.__init__(self, poll_date, Country.NORTHERN_IRELAND)
 
     @property
-    def sopn_publish_date(self) -> dt.date:
+    def close_of_nominations(self) -> dt.date:
         """
         Calculate the publish date for an election to the Northern Ireland Assembly
 

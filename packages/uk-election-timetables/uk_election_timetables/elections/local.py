@@ -10,7 +10,7 @@ from uk_election_timetables.election import Election
 
 class LocalElection(Election):
     @property
-    def sopn_publish_date(self) -> dt.date:
+    def close_of_nominations(self) -> dt.date:
         """
         Calculate the publish date for a local election.
 

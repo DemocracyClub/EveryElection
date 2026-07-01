@@ -2,26 +2,33 @@ import datetime as dt
 
 import pytest
 
-from uk_election_timetables.date import DateMatcher, days_before, easter_sunday
+from uk_election_timetables.date import DateMatcher, days_diff, easter_sunday
 
 
-def test_zero_days_before():
+def test_zero_days_diff():
     example = dt.date(2020, 1, 1)
 
-    assert days_before(example, 0) == example
+    assert days_diff(example, 0) == example
 
 
-def test_non_zero_days_before():
+def test_negative_days_diff():
     example = dt.date(2020, 1, 1)
 
-    assert days_before(example, 1) == dt.date(2019, 12, 31)
-    assert days_before(example, 2) == dt.date(2019, 12, 30)
+    assert days_diff(example, -1) == dt.date(2019, 12, 31)
+    assert days_diff(example, -2) == dt.date(2019, 12, 30)
+
+
+def test_positive_days_diff():
+    example = dt.date(2020, 1, 1)
+
+    assert days_diff(example, 1) == dt.date(2020, 1, 2)
+    assert days_diff(example, 2) == dt.date(2020, 1, 3)
 
 
 def test_ignore_weekends():
     example = dt.date(2020, 1, 6)  # Monday
 
-    assert days_before(example, 1) == dt.date(2020, 1, 3)
+    assert days_diff(example, -1) == dt.date(2020, 1, 3)
 
 
 def test_ignore_exempted_day_with_year():
@@ -29,7 +36,7 @@ def test_ignore_exempted_day_with_year():
 
     exempted_dates = [DateMatcher(year=2019, month=12, day=31)]
 
-    assert days_before(example, 1, exempted_dates) == dt.date(2019, 12, 30)
+    assert days_diff(example, -1, exempted_dates) == dt.date(2019, 12, 30)
 
 
 def test_ignore_exempted_day_without_year():
@@ -37,7 +44,7 @@ def test_ignore_exempted_day_without_year():
 
     exempted_dates = [DateMatcher(month=12, day=31)]
 
-    assert days_before(example, 1, exempted_dates) == dt.date(2019, 12, 30)
+    assert days_diff(example, -1, exempted_dates) == dt.date(2019, 12, 30)
 
 
 # vendored from dateutil

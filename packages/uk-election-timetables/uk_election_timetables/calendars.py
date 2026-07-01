@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import List
 
-from uk_election_timetables.date import DateMatcher, days_before, easter_sunday
+from uk_election_timetables.date import DateMatcher, days_diff, easter_sunday
 
 
 class Country(Enum):
@@ -186,4 +186,19 @@ def working_days_before(
     :return: the calculated date
     """
 
-    return days_before(end_date, days, calendar.exempted_dates())
+    return days_diff(end_date, 0 - days, calendar.exempted_dates())
+
+
+def working_days_after(
+    base_date: dt.date, days: int, calendar: BaseCalendar
+) -> dt.date:
+    """
+    Return date corresponding to `count` working days after `base_date` according to the given bank holiday calendar
+
+    :param base_date: the date to count from
+    :param days: the number of days to count
+    :param calendar: the bank holiday calendar used in the calculation
+    :return: the calculated date
+    """
+
+    return days_diff(base_date, days, calendar.exempted_dates())

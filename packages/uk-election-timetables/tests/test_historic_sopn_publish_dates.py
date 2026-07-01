@@ -3,7 +3,7 @@ from csv import DictReader
 
 from pytest import mark
 
-from uk_election_timetables.date import days_before
+from uk_election_timetables.date import days_diff
 from uk_election_timetables.elections import (
     GreaterLondonAssemblyElection,
     MayoralElection,
@@ -25,18 +25,18 @@ def read_date(date_as_string):
 
 
 def same_or_next_day(actual_date, expected_date):
-    return days_before(actual_date, 1) <= expected_date <= actual_date
+    return days_diff(actual_date, -1) <= expected_date <= actual_date
 
 
 def no_later_than(actual_date, expected_date):
     # We use "up to 3 days before" as a test heuristic, it's good enough
-    return days_before(expected_date, 3) <= actual_date <= expected_date
+    return days_diff(expected_date, -3) <= actual_date <= expected_date
 
 
 def within_one_day(actual_date, expected_date):
     return same_or_next_day(
         actual_date, expected_date
-    ) or actual_date == days_before(expected_date, 1)
+    ) or actual_date == days_diff(expected_date, -1)
 
 
 def generate_test_id(val):
@@ -57,7 +57,9 @@ def generate_test_cases(search, exceptions=None):
 def test_northern_ireland_assembly(row):
     poll_date = read_date(row["election_date"])
 
-    expected_date = NorthernIrelandAssemblyElection(poll_date).sopn_publish_date
+    expected_date = NorthernIrelandAssemblyElection(
+        poll_date
+    ).close_of_nominations
 
     actual_date = read_date(row["sopn_publish_date"])
 
@@ -68,7 +70,7 @@ def test_northern_ireland_assembly(row):
 def test_scottish_parliament(row):
     poll_date = read_date(row["election_date"])
 
-    expected_date = ScottishParliamentElection(poll_date).sopn_publish_date
+    expected_date = ScottishParliamentElection(poll_date).close_of_nominations
 
     actual_date = read_date(row["sopn_publish_date"])
 
@@ -79,7 +81,7 @@ def test_scottish_parliament(row):
 def test_old_national_assembly_for_wales(row):
     poll_date = read_date(row["election_date"])
 
-    expected_date = SeneddCymruElection(poll_date).sopn_publish_date
+    expected_date = SeneddCymruElection(poll_date).close_of_nominations
 
     actual_date = read_date(row["sopn_publish_date"])
 
@@ -90,7 +92,9 @@ def test_old_national_assembly_for_wales(row):
 def test_greater_london_assembly(row):
     poll_date = read_date(row["election_date"])
 
-    expected_date = GreaterLondonAssemblyElection(poll_date).sopn_publish_date
+    expected_date = GreaterLondonAssemblyElection(
+        poll_date
+    ).close_of_nominations
 
     actual_date = read_date(row["sopn_publish_date"])
 
@@ -103,7 +107,7 @@ def test_police_and_crime_commissioner(row):
 
     expected_date = PoliceAndCrimeCommissionerElection(
         poll_date
-    ).sopn_publish_date
+    ).close_of_nominations
 
     actual_date = read_date(row["sopn_publish_date"])
 
@@ -118,7 +122,7 @@ def test_police_and_crime_commissioner(row):
 def test_mayoral(row):
     poll_date = read_date(row["election_date"])
 
-    expected_date = MayoralElection(poll_date).sopn_publish_date
+    expected_date = MayoralElection(poll_date).close_of_nominations
 
     actual_date = read_date(row["sopn_publish_date"])
 
@@ -131,7 +135,9 @@ def test_mayoral(row):
 def test_mayor_of_london(row):
     poll_date = read_date(row["election_date"])
 
-    expected_date = GreaterLondonAssemblyElection(poll_date).sopn_publish_date
+    expected_date = GreaterLondonAssemblyElection(
+        poll_date
+    ).close_of_nominations
 
     actual_date = read_date(row["sopn_publish_date"])
 
@@ -142,7 +148,7 @@ def test_mayor_of_london(row):
 def test_uk_parliament(row):
     poll_date = read_date(row["election_date"])
 
-    expected_date = UKParliamentElection(poll_date).sopn_publish_date
+    expected_date = UKParliamentElection(poll_date).close_of_nominations
 
     actual_date = read_date(row["sopn_publish_date"])
 
