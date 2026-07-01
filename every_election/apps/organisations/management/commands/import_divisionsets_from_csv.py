@@ -18,6 +18,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils.text import slugify
+from organisations.boundaries.helpers import create_temp_division_identifier
 from organisations.constants import (
     ORG_CURIE_TO_MAPIT_AREA_TYPE,
     PARENT_TO_CHILD_AREAS,
@@ -118,21 +119,11 @@ class Command(ReadFromCSVMixin, BaseCommand):
                 )
             )
 
-    def name_to_id(self, name):
-        name = name.replace("&", "and")
-        name = name.strip()
-        return slugify(name)
-
     def get_identifier_from_line(self, div_set, line):
         identifier = line["official_identifier"]
         if not identifier:
             # This area doesn't have an ID yet, so we have to create one.
-            identifier = ":".join(
-                [
-                    div_set.organisation.official_identifier,
-                    self.name_to_id(line["Name"]),
-                ]
-            )
+            identifier = create_temp_division_identifier(div_set, line["Name"])
         return identifier
 
     def get_division_type_from_registers(self, line):
