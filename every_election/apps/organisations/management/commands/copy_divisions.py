@@ -1,3 +1,5 @@
+from argparse import BooleanOptionalAction
+
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from organisations.models import OrganisationDivision, OrganisationDivisionSet
@@ -11,11 +13,19 @@ class Command(BaseCommand):
             "src_id", action="store", help="PK for the source DivisionSet"
         )
         parser.add_argument(
-            "dst_id", action="store", help="PK for the destination DivisionSet"
+            "dst_id",
+            action="store",
+            help="PK for the destination DivisionSet",
+        )
+        parser.add_argument(
+            "--geographies",
+            action=BooleanOptionalAction,
+            default=True,
+            help="Whether to copy division geographies",
         )
 
     @transaction.atomic
-    def copy_divsions(self, old_divset_id, new_divset_id):
+    def copy_divisions(self, old_divset_id, new_divset_id, include_geographies):
         try:
             old_divset = OrganisationDivisionSet.objects.get(pk=old_divset_id)
         except OrganisationDivisionSet.DoesNotExist:
@@ -39,21 +49,24 @@ class Command(BaseCommand):
             div.save()
 
         # copy the geographies
-        geographies = [
-            (div.official_identifier, div.geography)
-            for div in old_divset.divisions.all()
-        ]
-        for gss, geog in geographies:
-            div = OrganisationDivision.objects.get(
-                official_identifier=gss, divisionset=new_divset
-            )
+        if include_geographies:
+            geographies = [
+                (div.official_identifier, div.geography)
+                for div in old_divset.divisions.all()
+            ]
+            for gss, geog in geographies:
+                div = OrganisationDivision.objects.get(
+                    official_identifier=gss, divisionset=new_divset
+                )
 
-            geog.pk = None
-            geog.division_id = div.id
-            geog.save()
-            # attach it to the target division
-            div.geography = geog
-            div.save()
+                geog.pk = None
+                geog.division_id = div.id
+                geog.save()
+                # attach it to the target division
+                div.geography = geog
+                div.save()
+        else:
+            self.stdout.write("...excluding geographies")
 
         assert len(old_divset.divisions.all()) == len(
             new_divset.divisions.all()
@@ -62,4 +75,8 @@ class Command(BaseCommand):
         self.stdout.write("...done!")
 
     def handle(self, *args, **options):
-        self.copy_divsions(options["src_id"], options["dst_id"])
+        self.copy_divisions(
+            options["src_id"],
+            options["dst_id"],
+            options["geographies"],
+        )
