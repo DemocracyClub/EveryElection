@@ -2,6 +2,7 @@ from argparse import BooleanOptionalAction
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
+from organisations.boundaries.helpers import create_temp_division_identifier
 from organisations.models import OrganisationDivision, OrganisationDivisionSet
 
 
@@ -46,6 +47,14 @@ class Command(BaseCommand):
         for div in old_divset.divisions.all():
             div.pk = None
             div.divisionset = new_divset
+            if not include_geographies:
+                # if we're not copying geographies,
+                # we should overwrite the official_identifier because its likely a GSS code
+                tmp_identifier = create_temp_division_identifier(
+                    new_divset, div.name
+                )
+                div.official_identifier = tmp_identifier
+                div.temp_id = tmp_identifier
             div.save()
 
         # copy the geographies
