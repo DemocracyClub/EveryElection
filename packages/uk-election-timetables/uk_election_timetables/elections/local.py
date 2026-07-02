@@ -3,6 +3,7 @@ import datetime as dt
 from uk_election_timetables.calendars import (
     Country,
     EasterMondayRule,
+    working_days_after,
     working_days_before,
 )
 from uk_election_timetables.election import Election
@@ -41,6 +42,14 @@ class LocalElection(Election):
             days_prior,
             calendar,
         )
+
+    @property
+    def sopn_publish_deadline(self) -> dt.date:
+        calendar = super()._calendar()
+        if self.country == Country.SCOTLAND:
+            calendar = self.get_extended_calendar([EasterMondayRule()])
+
+        return working_days_after(self.close_of_nominations, 1, calendar)
 
     @property
     def notice_of_election_deadline(self) -> dt.date:

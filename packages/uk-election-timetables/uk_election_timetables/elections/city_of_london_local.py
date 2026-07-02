@@ -114,6 +114,13 @@ class CityOfLondonLocalElection(Election):
         return working_days_before(self.poll_date, 17, calendar)
 
     @property
+    def sopn_publish_deadline(self) -> dt.date:
+        calendar = self.get_extended_calendar(
+            [EasterBreakRule(), ChristmasBreakRule()]
+        )
+        return working_days_before(self.poll_date, 15, calendar)
+
+    @property
     def registration_deadline(self) -> dt.date:
         """
         Calculates the voter registration deadline for a City of London local election.
