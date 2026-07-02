@@ -41,18 +41,18 @@ sopn_test_cases = [
     {
         # https://candidates.democracyclub.org.uk/elections/local.city-of-london.cordwainer.by.2022-09-15/sopn/
         "poll_date": dt.date(2022, 9, 15),
-        "sopn_publish_date": dt.date(2022, 8, 23),
+        "close_of_nominations": dt.date(2022, 8, 22),
     },
     {
         # https://candidates.democracyclub.org.uk/elections/local.city-of-london.bassishaw.by.2019-04-30/sopn/
         # includes an easter break
         "poll_date": dt.date(2019, 4, 30),
-        "sopn_publish_date": dt.date(2019, 4, 2),
+        "close_of_nominations": dt.date(2019, 4, 1),
     },
     {
         # https://candidates.democracyclub.org.uk/elections/local.city-of-london-alder.cornhill.2022-05-26/sopn/
         "poll_date": dt.date(2022, 5, 26),
-        "sopn_publish_date": dt.date(2022, 5, 4),
+        "close_of_nominations": dt.date(2022, 5, 3),
     },
 ]
 
@@ -60,8 +60,8 @@ sopn_test_cases = [
 @pytest.mark.parametrize("election", sopn_test_cases)
 def test_city_of_london_sopn_date(election):
     assert (
-        CityOfLondonLocalElection(election["poll_date"]).sopn_publish_date
-        == election["sopn_publish_date"]
+        CityOfLondonLocalElection(election["poll_date"]).close_of_nominations
+        == election["close_of_nominations"]
     )
 
 

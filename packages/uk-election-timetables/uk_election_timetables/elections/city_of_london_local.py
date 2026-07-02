@@ -80,18 +80,9 @@ class CityOfLondonLocalElection(Election):
         Election.__init__(self, poll_date, Country.ENGLAND)
 
     @property
-    def sopn_publish_date(self) -> dt.date:
+    def close_of_nominations(self) -> dt.date:
         """
         Calculate the "SOPN publish date" for a City of London local election.
-
-        There are actually 2 releavant dates here:
-        The SOPN is _published_ **17 (working) days before polling day**
-        but then candidates can be withdrawn from it for an additional day
-        after that.
-        So the SOPN becomes _final_ **16 (working) days before polling day**
-
-        For the sake of simplicity, we are going to call 16 days before
-        polling day the "sopn_publish_date".
 
         As well as the usual exclusions for weekends and bank holidays,
         the City of London also exclude a Christmas break and Easter break.
@@ -102,13 +93,25 @@ class CityOfLondonLocalElection(Election):
         means the period beginning with the Thursday before and ending with the
         Tuesday after Easter Day;
 
+        Note: There is an additional way that City of London is unusual here.
+
+        For all other election types, the withdrawal deadline aligns with
+        close_of_nominations. For City of London, it lines up with the
+        sopn_publish_deadline.
+
+        This means the first SOPN can be _published_
+        **17 (working) days before polling day**
+        but then candidates can be withdrawn from it for an additional day
+        after that.
+        So the SOPN becomes _final_ **16 (working) days before polling day**
+
         :return: datetime.date representing the expected publish date
         """
 
         calendar = self.get_extended_calendar(
             [EasterBreakRule(), ChristmasBreakRule()]
         )
-        return working_days_before(self.poll_date, 16, calendar)
+        return working_days_before(self.poll_date, 17, calendar)
 
     @property
     def registration_deadline(self) -> dt.date:

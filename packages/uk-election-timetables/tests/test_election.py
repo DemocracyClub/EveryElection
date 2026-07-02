@@ -303,14 +303,14 @@ def test_from_election_types_types(election):
 def test_city_of_london_does_not_mutate_global_calendar():
     assert from_election_id(
         "mayor.doncaster.2025-05-01", Country.ENGLAND
-    ).sopn_publish_date == dt.date(2025, 4, 2)
+    ).close_of_nominations == dt.date(2025, 4, 2)
 
     assert from_election_id(
         "local.city-of-london.aldersgate.2025-03-20", Country.ENGLAND
-    ).sopn_publish_date == dt.date(2025, 2, 26)
+    ).close_of_nominations == dt.date(2025, 2, 25)
 
     # calculating the date for a City of London election
     # shouldn't change this result
     assert from_election_id(
         "mayor.doncaster.2025-05-01", Country.ENGLAND
-    ).sopn_publish_date == dt.date(2025, 4, 2)
+    ).close_of_nominations == dt.date(2025, 4, 2)
