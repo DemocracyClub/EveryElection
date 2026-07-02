@@ -9,12 +9,12 @@ from uk_election_timetables.election import Election, TimetableEvent
 from uk_election_timetables.election_ids import from_election_id
 
 
-def test_timetable_sopn_publish_date():
+def test_timetable_close_of_nominations():
     election = from_election_id("parl.2019-02-21", country=Country.ENGLAND)
 
-    sopn_publish_date = lookup(election, "Close of Nominations")
+    close_of_nominations = lookup(election, "Close of Nominations")
 
-    assert sopn_publish_date["date"] == dt.date(2019, 1, 25)
+    assert close_of_nominations["date"] == dt.date(2019, 1, 25)
 
 
 def test_timetable_registration_deadline():
