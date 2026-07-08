@@ -658,21 +658,14 @@ class Election(TimeStampedModel):
             )
 
         expected_timetable_fields = self.get_expected_timetable_fields()
+        optional_timetable_fields = self.get_optional_timetable_fields()
         for field in self.TIMETABLE_FIELDS:
             if (
                 field in expected_timetable_fields
+                and field not in optional_timetable_fields
                 and getattr(self, field) is None
             ):
-                if (
-                    field == "notice_of_election_deadline"
-                    and self.election_id.startswith("ref.")
-                ):
-                    # Allow notice_of_election_deadline to be None
-                    # in this case even though it is
-                    # conceptually applicable to a referendum
-                    pass
-                else:
-                    raise ValidationError(f"{field} is required")
+                raise ValidationError(f"{field} is required")
 
             if (
                 field not in expected_timetable_fields
@@ -684,8 +677,7 @@ class Election(TimeStampedModel):
 
         for field in expected_timetable_fields:
             if (
-                field == "notice_of_election_deadline"
-                and self.election_id.startswith("ref.")
+                field in optional_timetable_fields
                 and getattr(self, field) is None
             ):
                 continue
@@ -697,6 +689,23 @@ class Election(TimeStampedModel):
                 raise ValidationError(
                     f"{field} must be within 50 days of poll_open_date"
                 )
+
+    def get_optional_timetable_fields(self):
+        # timetable is only applicable to elections with
+        # polling day
+        if self.poll_open_date is None:
+            return []
+
+        # timetable is only applicable to ballots
+        if self.group_type is not None:
+            return []
+
+        if self.election_id.startswith("ref."):
+            # notice_of_election_deadline is conceptually applicable to
+            # referenda but is valid to leave blank
+            return ["notice_of_election_deadline"]
+
+        return []
 
     def get_expected_timetable_fields(self):
         timetable_fields = []
@@ -732,8 +741,9 @@ class Election(TimeStampedModel):
         return timetable_fields
 
     def set_timetable_fields(self):
-        fields = self.get_expected_timetable_fields()
-        if not fields:
+        expected_timetable_fields = self.get_expected_timetable_fields()
+        optional_timetable_fields = self.get_optional_timetable_fields()
+        if not expected_timetable_fields:
             return
 
         country_map = {
@@ -750,12 +760,9 @@ class Election(TimeStampedModel):
             self.election_id, country=country_map[territory_code]
         )
 
-        for field in fields:
+        for field in expected_timetable_fields:
             if getattr(self, field) is None:
-                if (
-                    field == "notice_of_election_deadline"
-                    and self.election_id.startswith("ref.")
-                ):
+                if field in optional_timetable_fields:
                     setattr(self, field, None)
                 else:
                     setattr(self, field, getattr(timetable, field))
