@@ -374,8 +374,10 @@ class TestTimetableFields(TestCase):
         election_group.refresh_from_db()
         org_group.refresh_from_db()
 
-        # All 4 timetable fields should be populated on the ballot
+        # All timetable fields should be populated on the ballot
+        self.assertIsNotNone(ballot.notice_of_election_deadline)
         self.assertIsNotNone(ballot.close_of_nominations)
+        self.assertIsNotNone(ballot.sopn_publish_deadline)
         self.assertIsNotNone(ballot.registration_deadline)
         self.assertIsNotNone(ballot.postal_vote_application_deadline)
         self.assertIsNotNone(ballot.vac_application_deadline)
@@ -427,7 +429,9 @@ class TestTimetableFields(TestCase):
         election_group.refresh_from_db()
         org_group.refresh_from_db()
 
+        self.assertIsNotNone(ballot.notice_of_election_deadline)
         self.assertIsNotNone(ballot.close_of_nominations)
+        self.assertIsNotNone(ballot.sopn_publish_deadline)
         self.assertIsNotNone(ballot.registration_deadline)
         self.assertIsNotNone(ballot.postal_vote_application_deadline)
 
@@ -481,7 +485,9 @@ class TestTimetableFields(TestCase):
         election_group.refresh_from_db()
         org_group.refresh_from_db()
 
+        self.assertIsNotNone(ballot.notice_of_election_deadline)
         self.assertIsNotNone(ballot.close_of_nominations)
+        self.assertIsNotNone(ballot.sopn_publish_deadline)
         self.assertIsNotNone(ballot.registration_deadline)
         self.assertIsNotNone(ballot.postal_vote_application_deadline)
 
@@ -539,8 +545,11 @@ class TestTimetableFields(TestCase):
         self.assertIsNotNone(ballot.registration_deadline)
         self.assertIsNotNone(ballot.postal_vote_application_deadline)
 
-        # Close of nominations should be none on the ballot
+        # notice_of_election_deadline is optional for referenda
+        self.assertIsNone(ballot.notice_of_election_deadline)
+        # There is no nominations or SOPN for referenda
         self.assertIsNone(ballot.close_of_nominations)
+        self.assertIsNone(ballot.sopn_publish_deadline)
 
         # Timetable fields should all be none on the parent groups
         self.assert_timetable_fields_all_none(election_group)
