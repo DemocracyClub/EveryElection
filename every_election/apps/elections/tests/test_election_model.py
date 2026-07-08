@@ -438,6 +438,62 @@ class TestTimetableFields(TestCase):
         self.assert_timetable_fields_all_none(election_group)
         self.assert_timetable_fields_all_none(org_group)
 
+    def test_nothern_ireland_ballot(self):
+        org = OrganisationFactory(territory_code="WLS")
+        election_type = ElectionTypeFactory(election_type="local")
+        div_set = OrganisationDivisionSetFactory(organisation=org)
+        div = OrganisationDivisionFactory(divisionset=div_set)
+
+        election_group = Election(
+            election_id=f"local.{self.POLL_DATE}",
+            election_title="Local elections",
+            election_type=election_type,
+            poll_open_date=self.POLL_DATE,
+            group_type="election",
+        )
+        election_group.save()
+
+        org_group = Election(
+            election_id=f"local.{org.slug}.{self.POLL_DATE}",
+            election_title=f"Local elections - {org.official_name}",
+            election_type=election_type,
+            organisation=org,
+            poll_open_date=self.POLL_DATE,
+            group=election_group,
+            group_type="organisation",
+        )
+        org_group.save()
+
+        ballot = Election(
+            election_id=f"local.{org.slug}.{div.slug}.{self.POLL_DATE}",
+            election_title=f"Local elections - {org.official_name} - {div.name}",
+            election_type=election_type,
+            organisation=org,
+            division=div,
+            poll_open_date=self.POLL_DATE,
+            group=org_group,
+            group_type=None,
+            requires_voter_id="EFA-2002",
+        )
+        ballot.save()
+
+        ballot.refresh_from_db()
+        election_group.refresh_from_db()
+        org_group.refresh_from_db()
+
+        self.assertIsNotNone(ballot.close_of_nominations)
+        self.assertIsNotNone(ballot.registration_deadline)
+        self.assertIsNotNone(ballot.postal_vote_application_deadline)
+
+        # VAC deadline should be none on the ballot
+        # although ID is required in NI
+        # VACs are GB-only
+        self.assertIsNone(ballot.vac_application_deadline)
+
+        # Timetable fields should all be none on the parent groups
+        self.assert_timetable_fields_all_none(election_group)
+        self.assert_timetable_fields_all_none(org_group)
+
     def test_referendum(self):
         org = OrganisationFactory(territory_code="ENG")
         election_type = ElectionTypeFactory(election_type="ref")
