@@ -191,8 +191,16 @@ class Election(TimeStampedModel):
 
     # timetable
     poll_open_date = models.DateField(blank=True, null=True)
+    notice_of_election_deadline = models.DateField(
+        blank=True,
+        null=True,
+        help_text="Deadline to publish Notice of Election document",
+    )
     close_of_nominations = models.DateField(
         blank=True, null=True, help_text="Close of Nominations"
+    )
+    sopn_publish_deadline = models.DateField(
+        blank=True, null=True, help_text="Deadline to publish SOPN document"
     )
     registration_deadline = models.DateField(
         blank=True, null=True, help_text="Register to vote deadline"
@@ -204,7 +212,9 @@ class Election(TimeStampedModel):
         blank=True, null=True, help_text="VAC application deadline"
     )
     TIMETABLE_FIELDS = (
+        "notice_of_election_deadline",
         "close_of_nominations",
+        "sopn_publish_deadline",
         "registration_deadline",
         "postal_vote_application_deadline",
         "vac_application_deadline",
@@ -653,7 +663,16 @@ class Election(TimeStampedModel):
                 field in expected_timetable_fields
                 and getattr(self, field) is None
             ):
-                raise ValidationError(f"{field} is required")
+                if (
+                    field == "notice_of_election_deadline"
+                    and self.election_id.startswith("ref.")
+                ):
+                    # Allow notice_of_election_deadline to be None
+                    # in this case even though it is
+                    # conceptually applicable to a referendum
+                    pass
+                else:
+                    raise ValidationError(f"{field} is required")
 
             if (
                 field not in expected_timetable_fields
@@ -664,6 +683,13 @@ class Election(TimeStampedModel):
                 )
 
         for field in expected_timetable_fields:
+            if (
+                field == "notice_of_election_deadline"
+                and self.election_id.startswith("ref.")
+                and getattr(self, field) is None
+            ):
+                continue
+
             if getattr(self, field) > self.poll_open_date:
                 raise ValidationError(f"{field} must be before poll_open_date")
 
@@ -689,9 +715,12 @@ class Election(TimeStampedModel):
         if self.election_id.startswith("europarl."):
             return []
 
-        # There is no nominations or SOPN for refenda
+        timetable_fields.append("notice_of_election_deadline")
+
+        # There is no nominations or SOPN for referenda
         if not self.election_id.startswith("ref."):
             timetable_fields.append("close_of_nominations")
+            timetable_fields.append("sopn_publish_deadline")
 
         timetable_fields.append("registration_deadline")
         timetable_fields.append("postal_vote_application_deadline")
@@ -723,8 +752,11 @@ class Election(TimeStampedModel):
 
         for field in fields:
             if getattr(self, field) is None:
-                if field == "close_of_nominations":
-                    setattr(self, field, timetable.sopn_publish_date)
+                if (
+                    field == "notice_of_election_deadline"
+                    and self.election_id.startswith("ref.")
+                ):
+                    setattr(self, field, None)
                 else:
                     setattr(self, field, getattr(timetable, field))
 
