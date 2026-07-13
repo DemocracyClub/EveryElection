@@ -16,33 +16,27 @@ country_map = {
 
 def backfill_new_timetable_fields(apps, schema_editor):
     Election = apps.get_model("elections", "Election")
-    qs = Election.private_objects.using(schema_editor.connection.alias)
+    qs = (
+        Election.private_objects.using(schema_editor.connection.alias)
+        # we can't calculate a timetable for an election with no polling day
+        .filter(poll_open_date__isnull=False)
+        # only calculate a timetable for ballots
+        .filter(group_type__isnull=True)
+        # We don't have logic for computing timetable for
+        # EU Parliament elections but some do exist in the DB
+        # from back in the day
+        .exclude(election_id__startswith="europarl.")
+        # There is no nominations or SOPN for referenda
+        # Notice of election deadline is applicable
+        # but not implemented
+        .exclude(election_id__startswith="ref.")
+        .select_related("division", "organisation")
+    )
 
     elections_to_update = []
     city_of_london_to_update = []
 
     for election in qs.iterator():
-        # we can't calculate a timetable for en election with
-        # no polling day
-        if election.poll_open_date is None:
-            continue
-
-        # only calculate a timetable for ballots
-        if election.group_type is not None:
-            continue
-
-        # We don't have logic for computing timetable for
-        # EU Parliament elections but some do exist in the DB
-        # from back in the day
-        if election.election_id.startswith("europarl."):
-            continue
-
-        # There is no nominations or SOPN for refenda
-        # Notice of election deadline is applicable
-        # but not implemented
-        if election.election_id.startswith("ref."):
-            continue
-
         area = election.division or election.organisation
         territory_code = (
             area.territory_code or election.organisation.territory_code
