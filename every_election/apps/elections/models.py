@@ -191,8 +191,16 @@ class Election(TimeStampedModel):
 
     # timetable
     poll_open_date = models.DateField(blank=True, null=True)
+    notice_of_election_deadline = models.DateField(
+        blank=True,
+        null=True,
+        help_text="Deadline to publish Notice of Election document",
+    )
     close_of_nominations = models.DateField(
         blank=True, null=True, help_text="Close of Nominations"
+    )
+    sopn_publish_deadline = models.DateField(
+        blank=True, null=True, help_text="Deadline to publish SOPN document"
     )
     registration_deadline = models.DateField(
         blank=True, null=True, help_text="Register to vote deadline"
@@ -204,7 +212,9 @@ class Election(TimeStampedModel):
         blank=True, null=True, help_text="VAC application deadline"
     )
     TIMETABLE_FIELDS = (
+        "notice_of_election_deadline",
         "close_of_nominations",
+        "sopn_publish_deadline",
         "registration_deadline",
         "postal_vote_application_deadline",
         "vac_application_deadline",
@@ -648,9 +658,11 @@ class Election(TimeStampedModel):
             )
 
         expected_timetable_fields = self.get_expected_timetable_fields()
+        optional_timetable_fields = self.get_optional_timetable_fields()
         for field in self.TIMETABLE_FIELDS:
             if (
                 field in expected_timetable_fields
+                and field not in optional_timetable_fields
                 and getattr(self, field) is None
             ):
                 raise ValidationError(f"{field} is required")
@@ -664,6 +676,12 @@ class Election(TimeStampedModel):
                 )
 
         for field in expected_timetable_fields:
+            if (
+                field in optional_timetable_fields
+                and getattr(self, field) is None
+            ):
+                continue
+
             if getattr(self, field) > self.poll_open_date:
                 raise ValidationError(f"{field} must be before poll_open_date")
 
@@ -671,6 +689,23 @@ class Election(TimeStampedModel):
                 raise ValidationError(
                     f"{field} must be within 50 days of poll_open_date"
                 )
+
+    def get_optional_timetable_fields(self):
+        # timetable is only applicable to elections with
+        # polling day
+        if self.poll_open_date is None:
+            return []
+
+        # timetable is only applicable to ballots
+        if self.group_type is not None:
+            return []
+
+        if self.election_id.startswith("ref."):
+            # notice_of_election_deadline is conceptually applicable to
+            # referenda but is valid to leave blank
+            return ["notice_of_election_deadline"]
+
+        return []
 
     def get_expected_timetable_fields(self):
         timetable_fields = []
@@ -689,9 +724,12 @@ class Election(TimeStampedModel):
         if self.election_id.startswith("europarl."):
             return []
 
-        # There is no nominations or SOPN for refenda
+        timetable_fields.append("notice_of_election_deadline")
+
+        # There is no nominations or SOPN for referenda
         if not self.election_id.startswith("ref."):
             timetable_fields.append("close_of_nominations")
+            timetable_fields.append("sopn_publish_deadline")
 
         timetable_fields.append("registration_deadline")
         timetable_fields.append("postal_vote_application_deadline")
@@ -703,8 +741,9 @@ class Election(TimeStampedModel):
         return timetable_fields
 
     def set_timetable_fields(self):
-        fields = self.get_expected_timetable_fields()
-        if not fields:
+        expected_timetable_fields = self.get_expected_timetable_fields()
+        optional_timetable_fields = self.get_optional_timetable_fields()
+        if not expected_timetable_fields:
             return
 
         country_map = {
@@ -721,10 +760,10 @@ class Election(TimeStampedModel):
             self.election_id, country=country_map[territory_code]
         )
 
-        for field in fields:
+        for field in expected_timetable_fields:
             if getattr(self, field) is None:
-                if field == "close_of_nominations":
-                    setattr(self, field, timetable.sopn_publish_date)
+                if field in optional_timetable_fields:
+                    setattr(self, field, None)
                 else:
                     setattr(self, field, getattr(timetable, field))
 

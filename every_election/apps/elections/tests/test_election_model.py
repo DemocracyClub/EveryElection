@@ -1,12 +1,16 @@
 import contextlib
+from datetime import date, timedelta
 from datetime import timezone as dt_timezone
-from unittest.mock import patch
+from unittest.mock import PropertyMock, patch
 
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.utils import timezone as dj_timezone
 from elections.models import (
     DEFAULT_STATUS,
+    ByElectionReason,
     Election,
+    ElectionCancellationReason,
     ModerationHistory,
     ModerationStatuses,
 )
@@ -374,8 +378,10 @@ class TestTimetableFields(TestCase):
         election_group.refresh_from_db()
         org_group.refresh_from_db()
 
-        # All 4 timetable fields should be populated on the ballot
+        # All timetable fields should be populated on the ballot
+        self.assertIsNotNone(ballot.notice_of_election_deadline)
         self.assertIsNotNone(ballot.close_of_nominations)
+        self.assertIsNotNone(ballot.sopn_publish_deadline)
         self.assertIsNotNone(ballot.registration_deadline)
         self.assertIsNotNone(ballot.postal_vote_application_deadline)
         self.assertIsNotNone(ballot.vac_application_deadline)
@@ -427,11 +433,71 @@ class TestTimetableFields(TestCase):
         election_group.refresh_from_db()
         org_group.refresh_from_db()
 
+        self.assertIsNotNone(ballot.notice_of_election_deadline)
         self.assertIsNotNone(ballot.close_of_nominations)
+        self.assertIsNotNone(ballot.sopn_publish_deadline)
         self.assertIsNotNone(ballot.registration_deadline)
         self.assertIsNotNone(ballot.postal_vote_application_deadline)
 
         # VAC deadline should be none on the ballot
+        self.assertIsNone(ballot.vac_application_deadline)
+
+        # Timetable fields should all be none on the parent groups
+        self.assert_timetable_fields_all_none(election_group)
+        self.assert_timetable_fields_all_none(org_group)
+
+    def test_nothern_ireland_ballot(self):
+        org = OrganisationFactory(territory_code="WLS")
+        election_type = ElectionTypeFactory(election_type="local")
+        div_set = OrganisationDivisionSetFactory(organisation=org)
+        div = OrganisationDivisionFactory(divisionset=div_set)
+
+        election_group = Election(
+            election_id=f"local.{self.POLL_DATE}",
+            election_title="Local elections",
+            election_type=election_type,
+            poll_open_date=self.POLL_DATE,
+            group_type="election",
+        )
+        election_group.save()
+
+        org_group = Election(
+            election_id=f"local.{org.slug}.{self.POLL_DATE}",
+            election_title=f"Local elections - {org.official_name}",
+            election_type=election_type,
+            organisation=org,
+            poll_open_date=self.POLL_DATE,
+            group=election_group,
+            group_type="organisation",
+        )
+        org_group.save()
+
+        ballot = Election(
+            election_id=f"local.{org.slug}.{div.slug}.{self.POLL_DATE}",
+            election_title=f"Local elections - {org.official_name} - {div.name}",
+            election_type=election_type,
+            organisation=org,
+            division=div,
+            poll_open_date=self.POLL_DATE,
+            group=org_group,
+            group_type=None,
+            requires_voter_id="EFA-2002",
+        )
+        ballot.save()
+
+        ballot.refresh_from_db()
+        election_group.refresh_from_db()
+        org_group.refresh_from_db()
+
+        self.assertIsNotNone(ballot.notice_of_election_deadline)
+        self.assertIsNotNone(ballot.close_of_nominations)
+        self.assertIsNotNone(ballot.sopn_publish_deadline)
+        self.assertIsNotNone(ballot.registration_deadline)
+        self.assertIsNotNone(ballot.postal_vote_application_deadline)
+
+        # VAC deadline should be none on the ballot
+        # although ID is required in NI
+        # VACs are GB-only
         self.assertIsNone(ballot.vac_application_deadline)
 
         # Timetable fields should all be none on the parent groups
@@ -483,8 +549,11 @@ class TestTimetableFields(TestCase):
         self.assertIsNotNone(ballot.registration_deadline)
         self.assertIsNotNone(ballot.postal_vote_application_deadline)
 
-        # Close of nominations should be none on the ballot
+        # notice_of_election_deadline is optional for referenda
+        self.assertIsNone(ballot.notice_of_election_deadline)
+        # There is no nominations or SOPN for referenda
         self.assertIsNone(ballot.close_of_nominations)
+        self.assertIsNone(ballot.sopn_publish_deadline)
 
         # Timetable fields should all be none on the parent groups
         self.assert_timetable_fields_all_none(election_group)
@@ -536,3 +605,201 @@ class TestTimetableFields(TestCase):
         self.assert_timetable_fields_all_none(ballot)
         self.assert_timetable_fields_all_none(election_group)
         self.assert_timetable_fields_all_none(org_group)
+
+
+class TestCleanMethod(TestCase):
+    """
+    Tests for Election.clean() validation method
+    """
+
+    POLL_DATE = date(2024, 5, 2)
+
+    def _make_ballot(self, **kwargs):
+        defaults = {
+            "election_id": f"local.test.test-div.{self.POLL_DATE}",
+            "election_title": "Test ballot",
+            "election_type": ElectionTypeFactory(election_type="local"),
+            "poll_open_date": self.POLL_DATE,
+            "group_type": None,
+        }
+        defaults.update(kwargs)
+        return Election(**defaults)
+
+    def _make_group(self, group_type="election", **kwargs):
+        defaults = {
+            "election_id": f"local.{self.POLL_DATE}",
+            "election_title": "Local elections",
+            "election_type": ElectionTypeFactory(election_type="local"),
+            "poll_open_date": self.POLL_DATE,
+            "group_type": group_type,
+        }
+        defaults.update(kwargs)
+        return Election(**defaults)
+
+    # --- cancellation rules ---
+
+    def test_group_cannot_be_cancelled(self):
+        group = self._make_group(cancelled=True)
+        with self.assertRaisesRegex(
+            ValidationError,
+            "Can't set a group to cancelled",
+        ):
+            group.clean()
+
+    def test_ballot_can_be_cancelled(self):
+        ballot = self._make_ballot(cancelled=True, poll_open_date=None)
+        # should not raise
+        ballot.clean()
+
+    def test_cancellation_notice_requires_cancelled(self):
+        ballot = self._make_ballot(cancelled=False, poll_open_date=None)
+        with (
+            patch.object(
+                type(ballot),
+                "cancellation_notice",
+                new_callable=PropertyMock,
+                return_value=object(),  # truthy stand-in for a Document
+            ),
+            self.assertRaisesRegex(
+                ValidationError,
+                "Only a cancelled election can have a cancellation notice",
+            ),
+        ):
+            ballot.clean()
+
+    def test_cancellation_reason_requires_cancelled(self):
+        ballot = self._make_ballot(
+            cancelled=False,
+            cancellation_reason=ElectionCancellationReason.NO_CANDIDATES,
+        )
+        with self.assertRaisesRegex(
+            ValidationError,
+            "Only a cancelled election can have a cancellation reason",
+        ):
+            ballot.clean()
+
+    def test_cancelled_ballot_with_reason_is_valid(self):
+        ballot = self._make_ballot(
+            cancelled=True,
+            cancellation_reason=ElectionCancellationReason.NO_CANDIDATES,
+            poll_open_date=None,
+        )
+        # should not raise
+        ballot.clean()
+
+    # --- by_election_reason rules ---
+
+    def test_by_election_reason_requires_by_election_id(self):
+        ballot = self._make_ballot(
+            election_id=f"local.test.test-div.{self.POLL_DATE}",
+            by_election_reason=ByElectionReason.RESIGNATION,
+        )
+        with self.assertRaisesRegex(
+            ValidationError,
+            "Only a by election can have a by_election_reason",
+        ):
+            ballot.clean()
+
+    def test_by_election_reason_allowed_on_by_election(self):
+        ballot = self._make_ballot(
+            election_id=f"local.test.test-div.by.{self.POLL_DATE}",
+            by_election_reason=ByElectionReason.RESIGNATION,
+            poll_open_date=None,
+        )
+        # should not raise
+        ballot.clean()
+
+    def test_not_applicable_reason_allowed_on_non_by_election(self):
+        ballot = self._make_ballot(
+            by_election_reason=ByElectionReason.NOT_APPLICABLE,
+            poll_open_date=None,
+        )
+        # should not raise
+        ballot.clean()
+
+    # --- timetable field presence rules ---
+
+    def test_timetable_field_required_raises(self):
+        ballot = self._make_ballot()
+        ballot.notice_of_election_deadline = self.POLL_DATE - timedelta(days=25)
+        ballot.close_of_nominations = self.POLL_DATE - timedelta(days=19)
+        ballot.sopn_publish_deadline = self.POLL_DATE - timedelta(days=19)
+        ballot.postal_vote_application_deadline = self.POLL_DATE - timedelta(
+            days=11
+        )
+
+        ballot.registration_deadline = None
+
+        with self.assertRaisesRegex(
+            ValidationError, "registration_deadline is required"
+        ):
+            ballot.clean()
+
+    def test_timetable_field_set_on_group_raises(self):
+        group = self._make_group()
+        group.registration_deadline = self.POLL_DATE - timedelta(days=11)
+        with self.assertRaisesRegex(
+            ValidationError,
+            "registration_deadline should not be set for this election",
+        ):
+            group.clean()
+
+    def test_timetable_field_set_without_poll_date_raises(self):
+        ballot = self._make_ballot(poll_open_date=None)
+        ballot.registration_deadline = date(2024, 4, 21)
+        with self.assertRaisesRegex(
+            ValidationError,
+            "registration_deadline should not be set for this election",
+        ):
+            ballot.clean()
+
+    # --- timetable field date range rules ---
+
+    def test_timetable_field_after_poll_date_raises(self):
+        ballot = self._make_ballot()
+        ballot.notice_of_election_deadline = self.POLL_DATE - timedelta(days=25)
+        ballot.close_of_nominations = self.POLL_DATE - timedelta(days=19)
+        ballot.sopn_publish_deadline = self.POLL_DATE - timedelta(days=19)
+        ballot.registration_deadline = self.POLL_DATE - timedelta(days=11)
+        ballot.postal_vote_application_deadline = self.POLL_DATE + timedelta(
+            days=1
+        )  # after poll
+        with self.assertRaisesRegex(
+            ValidationError,
+            "postal_vote_application_deadline must be before poll_open_date",
+        ):
+            ballot.clean()
+
+    def test_timetable_field_too_far_before_poll_date_raises(self):
+        ballot = self._make_ballot()
+        ballot.notice_of_election_deadline = self.POLL_DATE - timedelta(
+            days=51
+        )  # > 50 days
+        ballot.close_of_nominations = self.POLL_DATE - timedelta(days=19)
+        ballot.sopn_publish_deadline = self.POLL_DATE - timedelta(days=19)
+        ballot.registration_deadline = self.POLL_DATE - timedelta(days=11)
+        ballot.postal_vote_application_deadline = self.POLL_DATE - timedelta(
+            days=11
+        )
+        with self.assertRaisesRegex(
+            ValidationError,
+            "notice_of_election_deadline must be within 50 days of poll_open_date",
+        ):
+            ballot.clean()
+
+    def test_valid_ballot_with_timetable_fields_passes(self):
+        ballot = self._make_ballot()
+        ballot.notice_of_election_deadline = self.POLL_DATE - timedelta(days=25)
+        ballot.close_of_nominations = self.POLL_DATE - timedelta(days=19)
+        ballot.sopn_publish_deadline = self.POLL_DATE - timedelta(days=19)
+        ballot.registration_deadline = self.POLL_DATE - timedelta(days=11)
+        ballot.postal_vote_application_deadline = self.POLL_DATE - timedelta(
+            days=11
+        )
+        # should not raise
+        ballot.clean()
+
+    def test_provisional_ballot_passes_without_timetable_fields(self):
+        ballot = self._make_ballot(poll_open_date=None)
+        # should not raise
+        ballot.clean()

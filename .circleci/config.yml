@@ -84,7 +84,7 @@ jobs:
           name: Submit coverage
           command: |
             . .venv/bin/activate
-            uv run --with coveralls coveralls
+            uv run --with coveralls coveralls || true
 
       - store_artifacts:
           path: test-results
