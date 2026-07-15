@@ -316,6 +316,11 @@ class EditStatus(models.TextChoices):
     LOCKED = "LOCKED", "Locked"
 
 
+class PublicVisibility(models.TextChoices):
+    HIDDEN = "HIDDEN", "Hidden"
+    MAP = "MAP", "Map"
+
+
 class OrganisationBoundaryReview(TimeStampedModel):
     organisation = models.ForeignKey(
         "Organisation", null=True, blank=True, on_delete=models.CASCADE
@@ -328,6 +333,9 @@ class OrganisationBoundaryReview(TimeStampedModel):
     consultation_url = models.URLField(blank=True, default="")
     boundaries_url = models.CharField(blank=True, default="")
     status = models.CharField(choices=ReviewStatus.choices)
+    public_visibility = models.CharField(
+        choices=PublicVisibility.choices, default=PublicVisibility.HIDDEN
+    )
     latest_event = models.CharField(blank=True, default="")
     legislation_url = models.URLField(blank=True, default="")
     legislation_made = models.BooleanField(default=False)
