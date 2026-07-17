@@ -5,6 +5,8 @@ from .views import (
     ElectionSubTypeViewSet,
     ElectionTypeViewSet,
     ElectionViewSet,
+    OrganisationDivisionSetViewSet,
+    OrganisationDivisionViewSet,
     OrganisationViewSet,
 )
 
@@ -26,6 +28,8 @@ router.register(r"elections", ElectionViewSet)
 router.register(r"election_types", ElectionTypeViewSet)
 router.register(r"election_subtypes", ElectionSubTypeViewSet)
 router.register(r"organisations", OrganisationViewSet)
+router.register(r"divisions", OrganisationDivisionViewSet, basename="division")
+router.register(r"divisionsets", OrganisationDivisionSetViewSet, basename="divisionset")
 
 routes = router.get_urls()
 

@@ -5,11 +5,13 @@ from elections.models import (
     ModerationStatuses,
 )
 from organisations.models import (
+    DivisionGeography,
     Organisation,
     OrganisationDivision,
     OrganisationDivisionSet,
 )
 from rest_framework import serializers
+from rest_framework.reverse import reverse
 from rest_framework_gis.serializers import (
     GeoFeatureModelSerializer,
     GeometrySerializerMethodField,
@@ -64,6 +66,51 @@ class OrganisationSerializer(serializers.ModelSerializer):
         fields = org_fields
 
 
+class OrganisationCurrentDivisionSetSerializer(serializers.ModelSerializer):
+    division_count = serializers.SerializerMethodField()
+
+    def get_division_count(self, obj):
+        return obj.divisions.count()
+
+    class Meta:
+        model = OrganisationDivisionSet
+        fields = (
+            "start_date",
+            "end_date",
+            "short_title",
+            "legislation_url",
+            "consultation_url",
+            "notes",
+            "division_count",
+        )
+
+
+class OrganisationDetailSerializer(OrganisationSerializer):
+    """Extends OrganisationSerializer with divisionset fields. Use prefetch_related("divisionset")
+    on the queryset to avoid N+1 queries when listing multiple organisations."""
+
+    current_divisionset = serializers.SerializerMethodField()
+    divisionsets_url = serializers.SerializerMethodField()
+
+    def get_current_divisionset(self, obj):
+        # Iterates the prefetch cache when available instead of issuing a new query.
+        active = [ds for ds in obj.divisionset.all() if ds.end_date is None]
+        if len(active) != 1:
+            return None
+        return OrganisationCurrentDivisionSetSerializer(active[0]).data
+
+    def get_divisionsets_url(self, obj):
+        request = self.context.get("request")
+        url = reverse("api:division-list")
+        full_url = f"{url}?org_slug={obj.slug}"
+        if request:
+            return request.build_absolute_uri(full_url)
+        return full_url
+
+    class Meta(OrganisationSerializer.Meta):
+        fields = org_fields + ("current_divisionset", "divisionsets_url")
+
+
 class OrganisationGeoSerializer(GeoFeatureModelSerializer):
     geography_model = GeometrySerializerMethodField()
     url = OrganisationHyperlinkedIdentityField(
@@ -93,6 +140,8 @@ class OrganisationDivisionSetSerializer(serializers.ModelSerializer):
 
 
 class OrganisationDivisionSerializer(serializers.ModelSerializer):
+    """Base division serializer — used when a division is nested inside an election."""
+
     divisionset = OrganisationDivisionSetSerializer()
 
     class Meta:
@@ -109,6 +158,133 @@ class OrganisationDivisionSerializer(serializers.ModelSerializer):
             "territory_code",
             "created",
             "modified",
+        )
+
+
+class DivisionOrganisationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Organisation
+        fields = (
+            "official_identifier",
+            "organisation_type",
+            "slug",
+        )
+
+
+class FlatDivisionSerializer(OrganisationDivisionSerializer):
+    """Division serializer for the flat /api/divisions/ endpoint — includes parent organisation."""
+
+    organisation = DivisionOrganisationSerializer(source="divisionset.organisation")
+
+    class Meta(OrganisationDivisionSerializer.Meta):
+        fields = (
+            "divisionset",
+            "organisation",
+            "name",
+            "official_identifier",
+            "slug",
+            "division_type",
+            "division_subtype",
+            "division_election_sub_type",
+            "seats_total",
+            "territory_code",
+            "created",
+            "modified",
+        )
+
+
+class DivisionGeoSerializer(GeoFeatureModelSerializer):
+    geography_model = GeometrySerializerMethodField()
+
+    def get_geography_model(self, obj):
+        try:
+            return obj.geography.geography
+        except DivisionGeography.DoesNotExist:
+            return None
+
+    class Meta:
+        model = OrganisationDivision
+        geo_field = "geography_model"
+        fields = (
+            "name",
+            "official_identifier",
+            "slug",
+            "division_type",
+            "division_subtype",
+            "seats_total",
+            "territory_code",
+        )
+
+
+class DivisionForDivisionSetSerializer(serializers.ModelSerializer):
+    geo_url = serializers.SerializerMethodField()
+    geography_url = serializers.SerializerMethodField()
+
+    def get_geo_url(self, obj):
+        request = self.context.get("request")
+        url = reverse("api:division-geo", args=[obj.pk])
+        if request:
+            return request.build_absolute_uri(url)
+        return url
+
+    def get_geography_url(self, obj):
+        return obj.format_geography_link()
+
+    class Meta:
+        model = OrganisationDivision
+        fields = (
+            "name",
+            "official_identifier",
+            "slug",
+            "division_type",
+            "division_subtype",
+            "division_election_sub_type",
+            "seats_total",
+            "territory_code",
+            "geo_url",
+            "geography_url",
+        )
+
+
+class DivisionSetOrganisationSerializer(serializers.ModelSerializer):
+    url = OrganisationHyperlinkedIdentityField(
+        view_name="api:organisation-detail", read_only=True
+    )
+
+    class Meta:
+        model = Organisation
+        fields = (
+            "url",
+            "official_identifier",
+            "organisation_type",
+            "slug",
+        )
+
+
+class DivisionSetSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name="api:divisionset-detail", read_only=True
+    )
+    organisation = DivisionSetOrganisationSerializer()
+    divisions = serializers.SerializerMethodField()
+
+    def get_divisions(self, obj):
+        return DivisionForDivisionSetSerializer(
+            obj.divisions.all(), many=True, context=self.context
+        ).data
+
+    class Meta:
+        model = OrganisationDivisionSet
+        fields = (
+            "url",
+            "organisation",
+            "start_date",
+            "end_date",
+            "short_title",
+            "legislation_url",
+            "consultation_url",
+            "notes",
+            "divisions",
         )
 
 
