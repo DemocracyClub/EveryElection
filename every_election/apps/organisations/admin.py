@@ -104,7 +104,12 @@ class OrganisationBoundaryReviewAdmin(admin.ModelAdmin):
     # List view
     search_fields = ("organisation__common_name", "slug")
     list_display = ("lgbce_review_title", "status", "latest_event")
-    list_filter = (ReadyForProcessingListFilter, "status", "latest_event")
+    list_filter = (
+        ReadyForProcessingListFilter,
+        "public_visibility",
+        "status",
+        "latest_event",
+    )
     list_select_related = ["organisation"]
 
     # Detail view
