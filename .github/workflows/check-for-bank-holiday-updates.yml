@@ -1,0 +1,30 @@
+name: Check for updates to GOV.UK bank holiday JSON
+
+on:
+  schedule:
+    # Runs every day at 12:30pm
+    - cron: '30 12 * * *'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Check for updates
+      run: |
+        set +e
+        deploy/hooks/afterinstall/install_uv.sh
+        . .venv/bin/activate
+        uv sync --package uk-election-timetables --group dev
+        cd packages/uk-election-timetables
+        python manage_bank_holidays.py --update
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v6
+      with:
+        commit-message: Update bank holidays
+        title: Update bank holidays
