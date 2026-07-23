@@ -3,6 +3,13 @@ name = "uk-election-timetables"
 version = "5.0.0"
 description = "Derives significant dates for UK elections"
 requires-python = ">=3.10"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest==9.0.3",
+    "requests==2.33.0",
+]
 
 [tool.uv]
 package = true

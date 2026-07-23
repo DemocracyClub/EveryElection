@@ -1807,6 +1807,20 @@ name = "uk-election-timetables"
 version = "5.0.0"
 source = { editable = "packages/uk-election-timetables" }
 
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
+    { name = "requests" },
+]
+
+[package.metadata]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "pytest", specifier = "==9.0.3" },
+    { name = "requests", specifier = "==2.33.0" },
+]
+
 [[package]]
 name = "uk-geo-utils"
 version = "0.19.1"
