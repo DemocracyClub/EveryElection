@@ -27,16 +27,11 @@ class DateMatcher:
         :param other: the date being matched against
         :return: a boolean representing if the input date matches this class's attributes
         """
-        if self.day != other.day:
-            return False
-
-        if self.month != other.month:
-            return False
-
-        if self.year is not None and self.year != other.year:
-            return False
-
-        return True
+        return (
+            self.day == other.day
+            and self.month == other.month
+            and (self.year is None or self.year == other.year)
+        )
 
 
 def days_diff(
