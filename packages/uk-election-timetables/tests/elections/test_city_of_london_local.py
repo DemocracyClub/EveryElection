@@ -1,7 +1,6 @@
 import datetime as dt
 
 import pytest
-
 from uk_election_timetables.calendars import Country, UnitedKingdomBankHolidays
 from uk_election_timetables.elections import CityOfLondonLocalElection
 from uk_election_timetables.elections.city_of_london_local import (

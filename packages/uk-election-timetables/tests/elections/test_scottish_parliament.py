@@ -1,7 +1,6 @@
 import datetime as dt
 
 import pytest
-
 from uk_election_timetables.elections import (
     ScottishParliamentElection,
 )

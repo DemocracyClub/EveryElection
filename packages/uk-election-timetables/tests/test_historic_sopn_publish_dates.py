@@ -2,7 +2,6 @@ import datetime as dt
 from csv import DictReader
 
 from pytest import mark
-
 from uk_election_timetables.date import days_diff
 from uk_election_timetables.elections import (
     GreaterLondonAssemblyElection,

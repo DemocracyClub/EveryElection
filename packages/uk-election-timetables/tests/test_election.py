@@ -2,7 +2,6 @@ import datetime as dt
 from typing import Dict
 
 import pytest
-
 from uk_election_timetables import elections
 from uk_election_timetables.calendars import Country
 from uk_election_timetables.election import Election, TimetableEvent
