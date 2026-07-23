@@ -1,0 +1,31 @@
+import datetime as dt
+
+from uk_election_timetables.elections import MayoralElection
+
+
+# Reference election: mayor.liverpool-city-ca.2017-05-04
+def test_publish_date_mayor():
+    election = MayoralElection(dt.date(2017, 5, 4))
+
+    assert election.close_of_nominations == dt.date(2017, 4, 4)
+
+
+# Reference election: mayor.2021-05-06
+def test_registration_deadline_mayor():
+    election = MayoralElection(dt.date(2021, 5, 6))
+
+    assert election.registration_deadline == dt.date(2021, 4, 19)
+
+
+# Reference election: mayor.2021-05-06
+def test_postal_vote_application_deadline_mayor():
+    election = MayoralElection(dt.date(2021, 5, 6))
+
+    assert election.postal_vote_application_deadline == dt.date(2021, 4, 20)
+
+
+# Reference election: mayor.2025-05-01
+def test_notice_of_election_deadline():
+    election = MayoralElection(dt.date(2025, 5, 1))
+
+    assert election.notice_of_election_deadline == dt.date(2025, 3, 25)

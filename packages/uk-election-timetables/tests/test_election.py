@@ -1,0 +1,315 @@
+import datetime as dt
+from typing import Dict
+
+import pytest
+from uk_election_timetables import elections
+from uk_election_timetables.calendars import Country
+from uk_election_timetables.election import Election, TimetableEvent
+from uk_election_timetables.election_ids import from_election_id
+
+
+def test_timetable_close_of_nominations():
+    election = from_election_id("parl.2019-02-21", country=Country.ENGLAND)
+
+    close_of_nominations = lookup(election, "Close of Nominations")
+
+    assert close_of_nominations["date"] == dt.date(2019, 1, 25)
+
+
+def test_timetable_registration_deadline():
+    election = from_election_id("local.2021-05-06", country=Country.ENGLAND)
+
+    electoral_registration_deadline = lookup(
+        election, "Register to vote deadline"
+    )
+
+    assert electoral_registration_deadline["date"] == dt.date(2021, 4, 19)
+
+
+def test_timetable_postal_vote_application_deadline():
+    election = from_election_id("local.2021-05-06", country=Country.ENGLAND)
+
+    postal_vote_dealine = lookup(election, "Postal vote application deadline")
+
+    assert postal_vote_dealine["date"] == dt.date(2021, 4, 20)
+
+
+def test_timetable_vac_application_deadline():
+    election = from_election_id("parl.2023-05-04", country=Country.ENGLAND)
+
+    vac_deadline = lookup(election, "VAC application deadline")
+
+    assert vac_deadline["date"] == dt.date(2023, 4, 25)
+
+
+def test_timetable_sort_order():
+    election = from_election_id("local.2021-05-06", country=Country.ENGLAND)
+
+    assert len(election.timetable) == 6
+
+    assert election.timetable == [
+        {
+            "label": "Notice of election deadline",
+            "date": dt.date(2021, 3, 29),
+            "event": "NOTICE_OF_ELECTION_DEADLINE",
+        },
+        {
+            "label": "Close of Nominations",
+            "date": dt.date(2021, 4, 8),
+            "event": "CLOSE_OF_NOMINATIONS",
+        },
+        {
+            "label": "SOPN publishing deadline",
+            "date": dt.date(2021, 4, 9),
+            "event": "SOPN_PUBLISH_DEADLINE",
+        },
+        {
+            "label": "Register to vote deadline",
+            "date": dt.date(2021, 4, 19),
+            "event": "REGISTRATION_DEADLINE",
+        },
+        {
+            "label": "Postal vote application deadline",
+            "date": dt.date(2021, 4, 20),
+            "event": "POSTAL_VOTE_APPLICATION_DEADLINE",
+        },
+        {
+            "label": "VAC application deadline",
+            "date": dt.date(2021, 4, 27),
+            "event": "VAC_APPLICATION_DEADLINE",
+        },
+    ]
+
+
+def test_timetable_sort_order_scottish_parliament_postal_vote():
+    election = from_election_id("sp.c.2021-05-06")
+
+    assert len(election.timetable) == 6
+
+    assert election.timetable == [
+        {
+            "label": "Notice of election deadline",
+            "date": dt.date(2021, 3, 24),
+            "event": "NOTICE_OF_ELECTION_DEADLINE",
+        },
+        {
+            "label": "Close of Nominations",
+            "date": dt.date(2021, 3, 31),
+            "event": "CLOSE_OF_NOMINATIONS",
+        },
+        {
+            "label": "SOPN publishing deadline",
+            "date": dt.date(2021, 4, 1),
+            "event": "SOPN_PUBLISH_DEADLINE",
+        },
+        {
+            "label": "Postal vote application deadline",
+            "date": dt.date(2021, 4, 6),
+            "event": "POSTAL_VOTE_APPLICATION_DEADLINE",
+        },
+        {
+            "label": "Register to vote deadline",
+            "date": dt.date(2021, 4, 19),
+            "event": "REGISTRATION_DEADLINE",
+        },
+        {
+            "label": "VAC application deadline",
+            "date": dt.date(2021, 4, 27),
+            "event": "VAC_APPLICATION_DEADLINE",
+        },
+    ]
+
+
+def test_timetable_referendum():
+    election = from_election_id("ref.2021-05-06", country=Country.ENGLAND)
+
+    assert len(election.timetable) == 3
+
+    assert election.timetable == [
+        {
+            "label": "Register to vote deadline",
+            "date": dt.date(2021, 4, 19),
+            "event": "REGISTRATION_DEADLINE",
+        },
+        {
+            "label": "Postal vote application deadline",
+            "date": dt.date(2021, 4, 20),
+            "event": "POSTAL_VOTE_APPLICATION_DEADLINE",
+        },
+        {
+            "label": "VAC application deadline",
+            "date": dt.date(2021, 4, 27),
+            "event": "VAC_APPLICATION_DEADLINE",
+        },
+    ]
+
+
+def lookup(election: Election, label: str) -> Dict:
+    return next(
+        entry for entry in election.timetable if entry["label"] == label
+    )
+
+
+def test_get_date_for_event_type():
+    election = from_election_id("parl.2019-02-21", country=Country.ENGLAND)
+    assert election.get_date_for_event_type(
+        TimetableEvent("Close of Nominations")
+    ) == dt.date(2019, 1, 25)
+    assert election.get_date_for_event_type(
+        TimetableEvent("Postal vote application deadline")
+    ) == dt.date(2019, 2, 6)
+    assert election.get_date_for_event_type(
+        TimetableEvent("Register to vote deadline")
+    ) == dt.date(2019, 2, 5)
+    assert election.get_date_for_event_type(
+        TimetableEvent("VAC application deadline")
+    ) == dt.date(2019, 2, 13)
+
+
+def test_event_type_enum():
+    assert (
+        TimetableEvent.NOTICE_OF_ELECTION_DEADLINE.value
+        == "Notice of election deadline"
+    )
+    assert (
+        TimetableEvent.REGISTRATION_DEADLINE.value
+        == "Register to vote deadline"
+    )
+    assert TimetableEvent.CLOSE_OF_NOMINATIONS.value == "Close of Nominations"
+    assert (
+        TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE.value
+        == "Postal vote application deadline"
+    )
+    assert (
+        TimetableEvent.VAC_APPLICATION_DEADLINE.value
+        == "VAC application deadline"
+    )
+
+
+def test_is_before():
+    election = from_election_id("parl.2019-02-21", country=Country.ENGLAND)
+    assert election.is_before(TimetableEvent.REGISTRATION_DEADLINE) is False
+    assert election.is_before(TimetableEvent.CLOSE_OF_NOMINATIONS) is False
+    assert (
+        election.is_before(TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE)
+        is False
+    )
+    assert election.is_before(TimetableEvent.VAC_APPLICATION_DEADLINE) is False
+
+
+def test_is_after():
+    election = from_election_id("parl.2019-02-21", country=Country.ENGLAND)
+    assert election.is_after(TimetableEvent.REGISTRATION_DEADLINE) is True
+    assert election.is_after(TimetableEvent.CLOSE_OF_NOMINATIONS) is True
+    assert (
+        election.is_after(TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE)
+        is True
+    )
+    assert election.is_after(TimetableEvent.VAC_APPLICATION_DEADLINE) is True
+
+
+election_types = [
+    {
+        "election_id": "nia.2019-02-21",
+        "country": None,
+        "expected_type": elections.NorthernIrelandAssemblyElection,
+    },
+    {
+        "election_id": "naw.2019-02-21",
+        "country": None,
+        "expected_type": elections.SeneddCymruElection,
+    },
+    {
+        "election_id": "senedd.2019-02-21",
+        "country": None,
+        "expected_type": elections.SeneddCymruElection,
+    },
+    {
+        "election_id": "gla.2019-02-21",
+        "country": None,
+        "expected_type": elections.GreaterLondonAssemblyElection,
+    },
+    {
+        "election_id": "pcc.2019-02-21",
+        "country": None,
+        "expected_type": elections.PoliceAndCrimeCommissionerElection,
+    },
+    {
+        "election_id": "mayor.doncaster.2019-02-21",
+        "country": None,
+        "expected_type": elections.MayoralElection,
+    },
+    {
+        "election_id": "mayor.london.2019-02-21",
+        "country": None,
+        "expected_type": elections.GreaterLondonAssemblyElection,
+    },
+    # City of London
+    {
+        "election_id": "local.city-of-london.2019-02-21",  # Common Council
+        "country": None,
+        "expected_type": elections.CityOfLondonLocalElection,
+    },
+    {
+        "election_id": "local.city-of-london-alder.2019-02-21",  # Aldermen
+        "country": None,
+        "expected_type": elections.CityOfLondonLocalElection,
+    },
+    # local
+    {
+        "election_id": "local.somewhere.2019-02-21",
+        "country": Country.ENGLAND,
+        "expected_type": elections.LocalElection,
+    },
+    {
+        "election_id": "local.somewhere.2019-02-21",
+        "country": Country.WALES,
+        "expected_type": elections.LocalElection,
+    },
+    # parl
+    {
+        "election_id": "parl.somewhere.2019-02-21",
+        "country": Country.ENGLAND,
+        "expected_type": elections.UKParliamentElection,
+    },
+    {
+        "election_id": "parl.somewhere.2019-02-21",
+        "country": Country.WALES,
+        "expected_type": elections.UKParliamentElection,
+    },
+    # ref
+    {
+        "election_id": "ref.somewhere.2019-02-21",
+        "country": Country.ENGLAND,
+        "expected_type": elections.Referendum,
+    },
+    {
+        "election_id": "ref.somewhere.2019-02-21",
+        "country": Country.WALES,
+        "expected_type": elections.Referendum,
+    },
+]
+
+
+@pytest.mark.parametrize("election", election_types)
+def test_from_election_types_types(election):
+    assert isinstance(
+        from_election_id(election["election_id"], election["country"]),
+        election["expected_type"],
+    )
+
+
+def test_city_of_london_does_not_mutate_global_calendar():
+    assert from_election_id(
+        "mayor.doncaster.2025-05-01", Country.ENGLAND
+    ).close_of_nominations == dt.date(2025, 4, 2)
+
+    assert from_election_id(
+        "local.city-of-london.aldersgate.2025-03-20", Country.ENGLAND
+    ).close_of_nominations == dt.date(2025, 2, 25)
+
+    # calculating the date for a City of London election
+    # shouldn't change this result
+    assert from_election_id(
+        "mayor.doncaster.2025-05-01", Country.ENGLAND
+    ).close_of_nominations == dt.date(2025, 4, 2)
