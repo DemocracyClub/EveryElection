@@ -2,6 +2,7 @@
 
 import os
 import sys
+from importlib.metadata import version
 
 sys.path.insert(0, os.path.abspath(".."))
 
@@ -9,10 +10,7 @@ project = "uk-election-timetables"
 copyright = "2020, Alex Wilson"
 author = "Alex Wilson"
 
-# The short X.Y version
-version = "5.0"
-# The full version, including alpha/beta/rc tags
-release = "5.0.0"
+version = release = version("uk-election-timetables")
 
 
 # -- General configuration ---------------------------------------------------
