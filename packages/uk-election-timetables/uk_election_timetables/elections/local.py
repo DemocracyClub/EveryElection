@@ -1,0 +1,84 @@
+import datetime as dt
+
+from uk_election_timetables.calendars import (
+    Country,
+    EasterMondayRule,
+    working_days_after,
+    working_days_before,
+)
+from uk_election_timetables.election import Election
+
+
+class LocalElection(Election):
+    @property
+    def close_of_nominations(self) -> dt.date:
+        """
+        Calculate the publish date for a local election.
+
+        This is set out in:
+
+         * `The Local Elections (Principal Areas) (England and Wales) (Amendment) Rules 2014 <https://www.legislation.gov.uk/uksi/2014/494/made>`_
+         * `The Local Elections (Northern Ireland) Order 2010 <https://www.legislation.gov.uk/uksi/2010/2977/schedule/1/part/4/made>`_ and its amendments
+         * `The Scottish Local Government Elections Order 2011 <https://www.legislation.gov.uk/ssi/2011/399/made>`_
+
+        :return: datetime.date representing the expected publish date
+        """
+
+        country_specific_duration = {
+            Country.ENGLAND: 19,
+            Country.NORTHERN_IRELAND: 16,
+            Country.SCOTLAND: 23,
+            Country.WALES: 19,
+        }
+
+        days_prior = country_specific_duration[self.country]
+
+        calendar = super()._calendar()
+        if self.country == Country.SCOTLAND:
+            calendar = self.get_extended_calendar([EasterMondayRule()])
+
+        return working_days_before(
+            self.poll_date,
+            days_prior,
+            calendar,
+        )
+
+    @property
+    def sopn_publish_deadline(self) -> dt.date:
+        calendar = super()._calendar()
+        if self.country == Country.SCOTLAND:
+            calendar = self.get_extended_calendar([EasterMondayRule()])
+
+        return working_days_after(self.close_of_nominations, 1, calendar)
+
+    @property
+    def notice_of_election_deadline(self) -> dt.date:
+        """
+        Calculate the deadline for publishing a Notice of Election document for a local election
+
+        This is set out in:
+
+         * `The Local Elections (Principal Areas) (England and Wales) (Amendment) Rules 2014 <https://www.legislation.gov.uk/uksi/2014/494/made>`_
+         * `The Local Elections (Northern Ireland) Order 2010 <https://www.legislation.gov.uk/uksi/2010/2977/schedule/1/part/4/made>`_ and its amendments
+         * `The Scottish Local Government Elections Order 2011 <https://www.legislation.gov.uk/ssi/2011/399/made>`_
+
+        :return: datetime.date representing the deadline to publish
+        """
+        country_specific_duration = {
+            Country.ENGLAND: 25,
+            Country.NORTHERN_IRELAND: 25,
+            Country.SCOTLAND: 28,
+            Country.WALES: 25,
+        }
+
+        days_prior = country_specific_duration[self.country]
+
+        calendar = super()._calendar()
+        if self.country == Country.SCOTLAND:
+            calendar = self.get_extended_calendar([EasterMondayRule()])
+
+        return working_days_before(
+            self.poll_date,
+            days_prior,
+            calendar,
+        )

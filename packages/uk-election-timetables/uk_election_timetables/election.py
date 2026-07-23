@@ -1,0 +1,197 @@
+import contextlib
+import datetime as dt
+import warnings
+from abc import ABCMeta, abstractmethod
+from enum import Enum
+from typing import Dict, List
+
+from uk_election_timetables.calendars import (
+    ChristmasEveRule,
+    Country,
+    ExtendedCalendar,
+    UnitedKingdomBankHolidays,
+    working_days_after,
+    working_days_before,
+)
+
+
+class TimetableEvent(Enum):
+    NOTICE_OF_ELECTION_DEADLINE = "Notice of election deadline"
+    REGISTRATION_DEADLINE = "Register to vote deadline"
+    CLOSE_OF_NOMINATIONS = "Close of Nominations"
+    SOPN_PUBLISH_DEADLINE = "SOPN publishing deadline"
+    POSTAL_VOTE_APPLICATION_DEADLINE = "Postal vote application deadline"
+    VAC_APPLICATION_DEADLINE = "VAC application deadline"
+
+
+class Election(metaclass=ABCMeta):
+    BANK_HOLIDAY_CALENDAR = UnitedKingdomBankHolidays()
+
+    def __init__(self, poll_date: dt.date, country: Country):
+        self.poll_date = poll_date
+        self.country = country
+
+    @property
+    def postal_vote_application_deadline(self) -> dt.date:
+        """
+        Calculates the postal vote application deadline for this Election
+
+        This is set out in `The Representation of the People (England and Wales) Regulations 2001 <https://www.legislation.gov.uk/uksi/2001/341/regulation/56/made>`_.
+
+        In Northern Ireland, this is set out in `The Representation of the People (Northern Ireland) Regulations 2008 <https://www.legislation.gov.uk/uksi/2008/1741/regulation/61/made>`
+
+        :return: datetime.date representing the postal vote application deadline
+        """
+        if self.country == Country.NORTHERN_IRELAND:
+            return working_days_before(self.poll_date, 14, self._calendar())
+
+        return working_days_before(self.poll_date, 11, self._calendar())
+
+    @property
+    def vac_application_deadline(self) -> dt.date:
+        """
+        Calculates the Voter Authority Certificate (VAC) application deadline for this Election
+
+        This is set out in `The Voter Identification Regulations 2022 <https://www.legislation.gov.uk/uksi/2022/1382/made>`_.
+
+        :return: datetime.date representing the VAC application deadline
+        """
+        return working_days_before(self.poll_date, 6, self._calendar())
+
+    @property
+    @abstractmethod
+    def notice_of_election_deadline(self) -> dt.date:
+        pass
+
+    @property
+    @abstractmethod
+    def close_of_nominations(self) -> dt.date:
+        pass
+
+    @property
+    def sopn_publish_deadline(self) -> dt.date:
+        """
+        Calculates the deadline after which a SOPN must be published
+
+        :return: datetime.date representing the SOPN publish deadline
+        """
+        return working_days_after(
+            self.close_of_nominations, 1, self._calendar()
+        )
+
+    @property
+    def sopn_publish_date(self) -> dt.date:
+        """
+        Alias for close_of_nominations
+        Deprecated
+        """
+        warnings.warn(
+            "Deprecated. Use 'close_of_nominations' or 'sopn_publish_deadline' instead",
+            DeprecationWarning,
+        )
+        return self.close_of_nominations
+
+    @property
+    def registration_deadline(self) -> dt.date:
+        """
+        Calculates the voter registration deadline for this Election
+
+        This explained in a `background note from the Electoral Commission <https://www.electoralcommission.org.uk/media/2457>`_
+
+        :return: datetime.date representing the voter registration deadline
+        """
+        return working_days_before(self.poll_date, 12, self._calendar())
+
+    @property
+    def timetable(self) -> List[Dict]:
+        """
+        An aggregate of all known dates for the specific election type.
+
+        :return: a list representing the entire timetable for this particular election.
+        """
+
+        dates = []
+
+        with contextlib.suppress(NotImplementedError):
+            dates.append(
+                {
+                    "label": TimetableEvent.NOTICE_OF_ELECTION_DEADLINE.value,
+                    "date": self.notice_of_election_deadline,
+                    "event": TimetableEvent.NOTICE_OF_ELECTION_DEADLINE.name,
+                }
+            )
+
+        dates += [
+            {
+                "label": TimetableEvent.REGISTRATION_DEADLINE.value,
+                "date": self.registration_deadline,
+                "event": TimetableEvent.REGISTRATION_DEADLINE.name,
+            },
+            {
+                "label": TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE.value,
+                "date": self.postal_vote_application_deadline,
+                "event": TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE.name,
+            },
+            {
+                "label": TimetableEvent.VAC_APPLICATION_DEADLINE.value,
+                "date": self.vac_application_deadline,
+                "event": TimetableEvent.VAC_APPLICATION_DEADLINE.name,
+            },
+        ]
+
+        with contextlib.suppress(NotImplementedError):
+            dates.append(
+                {
+                    "label": TimetableEvent.CLOSE_OF_NOMINATIONS.value,
+                    "date": self.close_of_nominations,
+                    "event": TimetableEvent.CLOSE_OF_NOMINATIONS.name,
+                }
+            )
+            dates.append(
+                {
+                    "label": TimetableEvent.SOPN_PUBLISH_DEADLINE.value,
+                    "date": self.sopn_publish_deadline,
+                    "event": TimetableEvent.SOPN_PUBLISH_DEADLINE.name,
+                }
+            )
+
+        return sorted(dates, key=lambda r: r["date"])
+
+    def _calendar(self):
+        return ExtendedCalendar(
+            self.BANK_HOLIDAY_CALENDAR.from_country(self.country),
+            # by default, always consider Christmas Eve a non-working
+            # day, even though it is not a bank holiday
+            rules=[ChristmasEveRule()],
+            years=[self.poll_date.year - 1, self.poll_date.year],
+        )
+
+    def get_extended_calendar(self, rules):
+        return ExtendedCalendar(
+            self._calendar(),
+            rules,
+            # Note: There's a useful optimisation we are using here.
+            #
+            # When we need to add an extra excluded date (or range),
+            # we don't need to go back to the start of time.
+            # For any given poll_date we need to add for at maximum
+            # the year containing poll_date and the previous year.
+            # That will be enough for any event we want to calculate.
+            years=[self.poll_date.year - 1, self.poll_date.year],
+        )
+
+    def get_date_for_event_type(self, event):
+        for e in self.timetable:
+            if e["event"] == event.name:
+                return e["date"]
+        raise KeyError("event not found")
+
+    def is_before(self, event, date=None):
+        if not date:
+            date = dt.datetime.now(dt.timezone.utc).date()
+        return self.get_date_for_event_type(event) >= date
+
+    def is_after(self, event, date=None):
+        if not date:
+            date = dt.datetime.now(dt.timezone.utc).date()
+        return self.get_date_for_event_type(event) < date
