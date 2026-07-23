@@ -1,7 +1,6 @@
 import datetime as dt
 
 from pytest import raises
-
 from uk_election_timetables.calendars import Country
 from uk_election_timetables.election_ids import (
     AmbiguousElectionIdError,

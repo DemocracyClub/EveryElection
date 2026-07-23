@@ -2,7 +2,6 @@ import copy
 from typing import Dict
 
 import pytest
-
 from uk_election_timetables.bank_holidays import (
     combine_bank_holiday_lists,
     get_additions_count,
