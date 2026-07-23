@@ -112,6 +112,10 @@ jobs:
           name: Run tests
           command: cd packages/uk-election-timetables && uv run pytest
 
+      - run:
+          name: Build wheel
+          command: cd packages/uk-election-timetables && uv build
+
   cdk_synth:
     machine:
       image: ubuntu-2404:2024.05.1
