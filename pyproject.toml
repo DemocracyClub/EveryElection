@@ -29,13 +29,13 @@ dependencies = [
     "retry2==0.9.5",
     "scrapy==2.16.0",
     "uk-election-ids==0.10.1",
-    "uk-election-timetables==5.0.0",
     "uk-geo-utils==0.19.1",
     "dc-django-utils",
     "dc-design-system",
     "python-dotenv==1.2.2",
     "djangorangemiddleware==1.0.1",
     "tippecanoe==2.72.0",
+    "uk-election-timetables",
 ]
 
 [dependency-groups]
@@ -80,6 +80,12 @@ environments = [
 [tool.uv.sources]
 dc-django-utils = { git = "https://github.com/DemocracyClub/dc_django_utils.git", tag = "8.0.5" }
 dc-design-system = { git = "https://github.com/DemocracyClub/design-system.git", tag = "0.9.0" }
+uk-election-timetables = { workspace = true }
+
+[tool.uv.workspace]
+members = [
+    "packages/*",
+]
 
 [tool.ruff]
 line-length = 80
@@ -99,6 +105,7 @@ extend-select = [
 norecursedirs = [
     "node_modules",
     "src",
+    "packages",
     "every_election/static_root",
     "every_election/static",
     ".aws-sam",
