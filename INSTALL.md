@@ -1,5 +1,15 @@
 # Installation
+
 EveryElection requires Python 3.x and Postgres.
+
+This repo contains two things:
+
+- Every Election Web Application (the repo root)
+- uk-election-timetables package (in `packages/uk-election-timetables`)
+
+These instructions get you a working copy of the
+Every Election Web Application
+There are some seperate docs for package development in [packages/uk-election-timetables/DEVELOPMENT.md](packages/uk-election-timetables/DEVELOPMENT.md)
 
 ## Install Python dependencies
 
