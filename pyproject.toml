@@ -9,7 +9,7 @@ dependencies = [
     "boto3==1.35.98",
     "botocore==1.35.98",
     "commitment==4.0.0",
-    "django==5.2.15",
+    "django==5.2.16",
     "django-cors-headers==4.9.0",
     "django-extensions==4.1",
     "django-filter==25.2",
@@ -40,9 +40,9 @@ dependencies = [
 
 [dependency-groups]
 cdk = [
-    "aws-cdk-lib==2.175.1",
-    "aws-cdk.aws-lambda-python-alpha==2.160.0a0",
-    "constructs==10.4.2",
+    "aws-cdk-lib==2.253.0",
+    "aws-cdk.aws-lambda-python-alpha==2.253.0a0",
+    "constructs==10.5.0",
     "diagrams==0.24.1",
     "pyyaml==6.0.2",
 ]
