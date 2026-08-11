@@ -4,6 +4,7 @@ version = "5.0.1"
 description = "Derives significant dates for UK elections"
 requires-python = ">=3.10"
 dependencies = []
+readme = "README.md"
 
 [dependency-groups]
 dev = [
