@@ -3,7 +3,7 @@ orbs:
   node: circleci/node@5.2.0
   slack: circleci/slack@4.13.3
 jobs:
-  build_and_test:
+  build_and_test_app:
     docker:
       - image: cimg/python:3.12-browsers
         environment:
@@ -91,6 +91,30 @@ jobs:
           destination: test-results
       - store_test_results:
           path: test-results
+
+  build_and_test_package:
+    parameters:
+      python-version:
+        type: string
+    docker:
+      - image: cimg/python:<< parameters.python-version >>
+    steps:
+      - checkout
+
+      - run:
+          name: Install
+          command: deploy/hooks/afterinstall/install_uv.sh
+            uv venv --verbose --no-python-downloads
+            . .venv/bin/activate
+            uv sync --package uk-election-timetables --group dev
+
+      - run:
+          name: Run tests
+          command: cd packages/uk-election-timetables && uv run pytest
+
+      - run:
+          name: Build wheel
+          command: cd packages/uk-election-timetables && uv build
 
   cdk_synth:
     machine:
@@ -218,11 +242,16 @@ workflows:
   version: 2
   test_build_deploy:
     jobs:
-    - build_and_test
+    - build_and_test_app
+    - build_and_test_package:
+        matrix:
+          parameters:
+            python-version: [ "3.10", "3.11", "3.12" ]
     - cdk_synth:
         name: "CDK Synth"
         requires:
-        - build_and_test
+        - build_and_test_app
+        - build_and_test_package
         context: [deployment-development-ee, slack-secrets]
         dc-environment: development
     - cdk_deploy:
