@@ -1964,7 +1964,7 @@ wheels = [
 
 [[package]]
 name = "uk-election-timetables"
-version = "5.0.0"
+version = "5.0.1"
 source = { editable = "packages/uk-election-timetables" }
 
 [package.dev-dependencies]
