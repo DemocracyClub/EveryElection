@@ -61,7 +61,7 @@ def test_notice_of_election_deadline():
     [
         (Country.ENGLAND, dt.date(2023, 4, 3)),
         # No Easter Monday BH in Scotland
-        # and Easter Monday is non special-cased for Scotland in
+        # and Easter Monday is not special-cased for Scotland in
         # The Voter Identification Regulations 2022
         (Country.SCOTLAND, dt.date(2023, 4, 4)),
         (Country.WALES, dt.date(2023, 4, 3)),

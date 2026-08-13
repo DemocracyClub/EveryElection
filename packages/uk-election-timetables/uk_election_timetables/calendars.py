@@ -168,7 +168,7 @@ class ChristmasEveRule(ExcludedDateRule):
         self, year: int, bank_holidays: List[DateMatcher]
     ) -> List[DateMatcher]:
         """
-        Christmas Eve is a bank holiday but most legislation
+        Christmas Eve is not a bank holiday but most legislation
         explicity considers it a "non-working" day anyway.
         """
         return [DateMatcher(name="Christmas Eve", year=year, month=12, day=24)]
