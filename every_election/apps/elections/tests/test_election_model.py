@@ -764,6 +764,9 @@ class TestCleanMethod(TestCase):
         ballot.postal_vote_application_deadline = self.POLL_DATE + timedelta(
             days=1
         )  # after poll
+        ballot.proxy_vote_application_deadline = self.POLL_DATE - timedelta(
+            days=6
+        )
         with self.assertRaisesRegex(
             ValidationError,
             "postal_vote_application_deadline must be before poll_open_date",
@@ -781,6 +784,9 @@ class TestCleanMethod(TestCase):
         ballot.postal_vote_application_deadline = self.POLL_DATE - timedelta(
             days=11
         )
+        ballot.proxy_vote_application_deadline = self.POLL_DATE - timedelta(
+            days=6
+        )
         with self.assertRaisesRegex(
             ValidationError,
             "notice_of_election_deadline must be within 50 days of poll_open_date",
@@ -795,6 +801,9 @@ class TestCleanMethod(TestCase):
         ballot.registration_deadline = self.POLL_DATE - timedelta(days=11)
         ballot.postal_vote_application_deadline = self.POLL_DATE - timedelta(
             days=11
+        )
+        ballot.proxy_vote_application_deadline = self.POLL_DATE - timedelta(
+            days=6
         )
         # should not raise
         ballot.clean()
