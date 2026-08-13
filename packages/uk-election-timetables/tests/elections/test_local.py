@@ -92,3 +92,10 @@ def test_proxy_vote_application_deadline_local_election_northern_ireland():
     )
 
     assert election.proxy_vote_application_deadline == dt.date(2023, 4, 26)
+
+
+# Reference election: local.2026-05-07
+def test_replacement_pack_start_date_england():
+    election = LocalElection(dt.date(2026, 5, 7), country=Country.ENGLAND)
+
+    assert election.replacement_pack_start_date == dt.date(2026, 4, 30)
