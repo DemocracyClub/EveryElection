@@ -208,6 +208,9 @@ class Election(TimeStampedModel):
     postal_vote_application_deadline = models.DateField(
         blank=True, null=True, help_text="Postal vote application deadline"
     )
+    proxy_vote_application_deadline = models.DateField(
+        blank=True, null=True, help_text="Proxy vote application deadline"
+    )
     vac_application_deadline = models.DateField(
         blank=True, null=True, help_text="VAC application deadline"
     )
@@ -217,6 +220,7 @@ class Election(TimeStampedModel):
         "sopn_publish_deadline",
         "registration_deadline",
         "postal_vote_application_deadline",
+        "proxy_vote_application_deadline",
         "vac_application_deadline",
     )
 
@@ -733,6 +737,7 @@ class Election(TimeStampedModel):
 
         timetable_fields.append("registration_deadline")
         timetable_fields.append("postal_vote_application_deadline")
+        timetable_fields.append("proxy_vote_application_deadline")
 
         # VAC deadline is only relevant if the election requires ID
         if self.requires_voter_id == "EA-2022":
