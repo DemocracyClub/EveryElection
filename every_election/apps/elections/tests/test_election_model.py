@@ -615,12 +615,19 @@ class TestCleanMethod(TestCase):
     POLL_DATE = date(2024, 5, 2)
 
     def _make_ballot(self, **kwargs):
+        organisation = OrganisationFactory(territory_code="ENG")
+        division_set = OrganisationDivisionSetFactory(organisation=organisation)
+        division = OrganisationDivisionFactory(
+            divisionset=division_set, territory_code="ENG"
+        )
         defaults = {
             "election_id": f"local.test.test-div.{self.POLL_DATE}",
             "election_title": "Test ballot",
             "election_type": ElectionTypeFactory(election_type="local"),
             "poll_open_date": self.POLL_DATE,
             "group_type": None,
+            "organisation": organisation,
+            "division": division,
         }
         defaults.update(kwargs)
         return Election(**defaults)
@@ -767,6 +774,7 @@ class TestCleanMethod(TestCase):
         ballot.proxy_vote_application_deadline = self.POLL_DATE - timedelta(
             days=6
         )
+        ballot.replacement_pack_start_date = self.POLL_DATE - timedelta(days=4)
         with self.assertRaisesRegex(
             ValidationError,
             "postal_vote_application_deadline must be before poll_open_date",
@@ -787,6 +795,7 @@ class TestCleanMethod(TestCase):
         ballot.proxy_vote_application_deadline = self.POLL_DATE - timedelta(
             days=6
         )
+        ballot.replacement_pack_start_date = self.POLL_DATE - timedelta(days=4)
         with self.assertRaisesRegex(
             ValidationError,
             "notice_of_election_deadline must be within 50 days of poll_open_date",
@@ -805,6 +814,7 @@ class TestCleanMethod(TestCase):
         ballot.proxy_vote_application_deadline = self.POLL_DATE - timedelta(
             days=6
         )
+        ballot.replacement_pack_start_date = self.POLL_DATE - timedelta(days=4)
         # should not raise
         ballot.clean()
 

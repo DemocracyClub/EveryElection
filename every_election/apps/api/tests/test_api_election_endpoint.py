@@ -452,6 +452,7 @@ class TestElectionAPIQueries(APITestCase):
                 "registration_deadline": "2017-03-07",
                 "postal_vote_application_deadline": "2017-03-08",
                 "proxy_vote_application_deadline": "2017-03-15",
+                "replacement_pack_start_date": "2017-03-17",
                 "vac_application_deadline": null
             },
             "election_id": "local.place-name-0.2017-03-23",
