@@ -29,3 +29,10 @@ def test_notice_of_election_deadline():
     election = PoliceAndCrimeCommissionerElection(dt.date(2024, 5, 2))
 
     assert election.notice_of_election_deadline == dt.date(2024, 3, 26)
+
+
+# Reference election: pcc.2024-05-02
+def test_proxy_vote_application_deadline():
+    election = PoliceAndCrimeCommissionerElection(dt.date(2024, 5, 2))
+
+    assert election.proxy_vote_application_deadline == dt.date(2024, 4, 24)
