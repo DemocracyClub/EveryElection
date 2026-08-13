@@ -95,3 +95,12 @@ def test_proxy_vote_application_deadline_ni():
     )
 
     assert election.proxy_vote_application_deadline == dt.date(2025, 4, 14)
+
+
+# Reference election: parl.2024-07-04
+def test_replacement_pack_start_date_gb():
+    election = UKParliamentElection(
+        dt.date(2024, 7, 4), country=Country.ENGLAND
+    )
+
+    assert election.replacement_pack_start_date == dt.date(2024, 6, 28)

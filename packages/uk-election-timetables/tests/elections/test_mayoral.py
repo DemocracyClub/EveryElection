@@ -36,3 +36,10 @@ def test_proxy_vote_application_deadline():
     election = MayoralElection(dt.date(2025, 5, 1))
 
     assert election.proxy_vote_application_deadline == dt.date(2025, 4, 23)
+
+
+# Reference election: mayor.2025-05-01
+def test_replacement_pack_start_date():
+    election = MayoralElection(dt.date(2025, 5, 1))
+
+    assert election.replacement_pack_start_date == dt.date(2025, 4, 25)
