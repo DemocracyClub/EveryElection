@@ -21,6 +21,7 @@ class TimetableEvent(Enum):
     CLOSE_OF_NOMINATIONS = "Close of Nominations"
     SOPN_PUBLISH_DEADLINE = "SOPN publishing deadline"
     POSTAL_VOTE_APPLICATION_DEADLINE = "Postal vote application deadline"
+    PROXY_VOTE_APPLICATION_DEADLINE = "Proxy vote application deadline"
     VAC_APPLICATION_DEADLINE = "VAC application deadline"
 
 
@@ -46,6 +47,22 @@ class Election(metaclass=ABCMeta):
             return working_days_before(self.poll_date, 14, self._calendar())
 
         return working_days_before(self.poll_date, 11, self._calendar())
+
+    @property
+    def proxy_vote_application_deadline(self) -> dt.date:
+        """
+        Calculates the proxy vote application deadline for this Election
+
+        This is set out in `The Representation of the People (England and Wales) Regulations 2001 <https://www.legislation.gov.uk/uksi/2001/341/regulation/56/made>`_.
+
+        In Northern Ireland, this is set out in `The Representation of the People (Northern Ireland) Regulations 2008 <https://www.legislation.gov.uk/uksi/2008/1741/regulation/61/made>`
+
+        :return: datetime.date representing the proxy vote application deadline
+        """
+        if self.country == Country.NORTHERN_IRELAND:
+            return working_days_before(self.poll_date, 14, self._calendar())
+
+        return working_days_before(self.poll_date, 6, self._calendar())
 
     @property
     def vac_application_deadline(self) -> dt.date:
@@ -131,6 +148,11 @@ class Election(metaclass=ABCMeta):
                 "label": TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE.value,
                 "date": self.postal_vote_application_deadline,
                 "event": TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE.name,
+            },
+            {
+                "label": TimetableEvent.PROXY_VOTE_APPLICATION_DEADLINE.value,
+                "date": self.proxy_vote_application_deadline,
+                "event": TimetableEvent.PROXY_VOTE_APPLICATION_DEADLINE.name,
             },
             {
                 "label": TimetableEvent.VAC_APPLICATION_DEADLINE.value,
