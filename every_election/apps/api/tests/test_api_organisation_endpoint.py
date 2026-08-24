@@ -1,6 +1,8 @@
 from datetime import date
 
 from organisations.tests.factories import (
+    OrganisationDivisionFactory,
+    OrganisationDivisionSetFactory,
     OrganisationFactory,
     OrganisationGeographyFactory,
 )
@@ -88,3 +90,69 @@ class TestOrganisationAPIEndpoint(APITestCase):
         data = resp.json()
         self.assertEqual(200, resp.status_code)
         self.assertEqual([], data["results"])
+
+
+class TestOrganisationDivisionSetFields(APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.org = OrganisationFactory(
+            official_identifier="STR",
+            organisation_type="local-authority",
+            start_date=date(2019, 4, 1),
+            end_date=None,
+        )
+        self.active_ds = OrganisationDivisionSetFactory(
+            organisation=self.org,
+            start_date=date(2019, 5, 2),
+            end_date=None,
+            short_title="Stroud 2019 Review",
+        )
+        OrganisationDivisionFactory(divisionset=self.active_ds)
+        OrganisationDivisionFactory(divisionset=self.active_ds)
+
+        self.org_url = "/api/organisations/local-authority/STR/2019-04-01.json"
+
+    def test_response_includes_divisionset_keys(self):
+        resp = self.client.get(self.org_url)
+        self.assertEqual(200, resp.status_code)
+        data = resp.json()
+        self.assertIn("current_divisionset", data)
+        self.assertIn("divisionsets_url", data)
+
+    def test_current_divisionset_non_null_for_active_org(self):
+        resp = self.client.get(self.org_url)
+        data = resp.json()
+        self.assertIsNotNone(data["current_divisionset"])
+        self.assertEqual(
+            "Stroud 2019 Review", data["current_divisionset"]["short_title"]
+        )
+        self.assertIsNone(data["current_divisionset"]["end_date"])
+
+    def test_current_divisionset_null_when_all_historical(self):
+        org2 = OrganisationFactory(
+            official_identifier="OLD",
+            organisation_type="local-authority",
+            start_date=date(2010, 1, 1),
+            end_date=None,
+        )
+        OrganisationDivisionSetFactory(
+            organisation=org2,
+            start_date=date(2010, 1, 1),
+            end_date=date(2019, 1, 1),
+        )
+        resp = self.client.get(
+            "/api/organisations/local-authority/OLD/2010-01-01.json"
+        )
+        data = resp.json()
+        self.assertIsNone(data["current_divisionset"])
+
+    def test_current_divisionset_division_count(self):
+        resp = self.client.get(self.org_url)
+        data = resp.json()
+        self.assertEqual(2, data["current_divisionset"]["division_count"])
+
+    def test_divisionsets_url_contains_org_slug(self):
+        resp = self.client.get(self.org_url)
+        data = resp.json()
+        self.assertIn(f"?org_slug={self.org.slug}", data["divisionsets_url"])
+        self.assertTrue(data["divisionsets_url"].startswith("http"))
