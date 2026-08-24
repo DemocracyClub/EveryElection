@@ -318,6 +318,7 @@ class EditStatus(models.TextChoices):
 
 class PublicVisibility(models.TextChoices):
     HIDDEN = "HIDDEN", "Hidden"
+    CONSULTATION = "CONSULTATION", "Consultation"
     MAP = "MAP", "Map"
 
 
