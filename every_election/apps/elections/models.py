@@ -208,8 +208,16 @@ class Election(TimeStampedModel):
     postal_vote_application_deadline = models.DateField(
         blank=True, null=True, help_text="Postal vote application deadline"
     )
+    proxy_vote_application_deadline = models.DateField(
+        blank=True, null=True, help_text="Proxy vote application deadline"
+    )
     vac_application_deadline = models.DateField(
         blank=True, null=True, help_text="VAC application deadline"
+    )
+    replacement_pack_start_date = models.DateField(
+        blank=True,
+        null=True,
+        help_text="First date electors can apply for a postal vote replacement pack",
     )
     TIMETABLE_FIELDS = (
         "notice_of_election_deadline",
@@ -217,7 +225,9 @@ class Election(TimeStampedModel):
         "sopn_publish_deadline",
         "registration_deadline",
         "postal_vote_application_deadline",
+        "proxy_vote_application_deadline",
         "vac_application_deadline",
+        "replacement_pack_start_date",
     )
 
     organisation = models.ForeignKey(
@@ -737,10 +747,46 @@ class Election(TimeStampedModel):
 
         timetable_fields.append("registration_deadline")
         timetable_fields.append("postal_vote_application_deadline")
+        timetable_fields.append("proxy_vote_application_deadline")
 
         # VAC deadline is only relevant if the election requires ID
         if self.requires_voter_id == "EA-2022":
             timetable_fields.append("vac_application_deadline")
+
+        area = self.division or self.organisation
+        territory_code = area.territory_code or self.organisation.territory_code
+
+        if territory_code == "NIR":
+            """
+            Northern Ireland has different rules around replacement packs
+            In general, absent ballots are harder to obtain due to elevated
+            concerns about electoral fraud,
+            and this particularly applies to replacement packs.
+            Whereas in England/Wales/Scotland you can basically say
+            "My postal vote didn't arrive. Can I have another one please"
+            this process doesn't really exist in Northern Ireland.
+            A replacement can be obtained but you have to prove you
+            accidentally spoiled your original one.
+
+            Treat the concept of a "replacement_pack_start_date"
+            as not applicable for Northern Ireland.
+            """
+            pass
+        elif self.election_id.startswith("sp."):
+            """
+            Replacement packs are allwed in Scottish Parliament elections
+            But unlike Local and Parliamentary elections there
+            is no explicit start date from which you're allowed to request one
+
+            The Scottish Parliament (Elections etc.) Order 2015
+            https://www.legislation.gov.uk/ssi/2015/425/schedule/4
+
+            This date is also not applicable for Scottish Parliament,
+            but for different reasons than Northern Ireland.
+            """
+            pass
+        else:
+            timetable_fields.append("replacement_pack_start_date")
 
         return timetable_fields
 

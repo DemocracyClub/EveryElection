@@ -21,7 +21,11 @@ class TimetableEvent(Enum):
     CLOSE_OF_NOMINATIONS = "Close of Nominations"
     SOPN_PUBLISH_DEADLINE = "SOPN publishing deadline"
     POSTAL_VOTE_APPLICATION_DEADLINE = "Postal vote application deadline"
+    PROXY_VOTE_APPLICATION_DEADLINE = "Proxy vote application deadline"
     VAC_APPLICATION_DEADLINE = "VAC application deadline"
+    REPLACEMENT_PACK_START_DATE = (
+        "First date electors can apply for a postal vote replacement pack"
+    )
 
 
 class Election(metaclass=ABCMeta):
@@ -48,6 +52,22 @@ class Election(metaclass=ABCMeta):
         return working_days_before(self.poll_date, 11, self._calendar())
 
     @property
+    def proxy_vote_application_deadline(self) -> dt.date:
+        """
+        Calculates the proxy vote application deadline for this Election
+
+        This is set out in `The Representation of the People (England and Wales) Regulations 2001 <https://www.legislation.gov.uk/uksi/2001/341/regulation/56/made>`_.
+
+        In Northern Ireland, this is set out in `The Representation of the People (Northern Ireland) Regulations 2008 <https://www.legislation.gov.uk/uksi/2008/1741/regulation/61/made>`
+
+        :return: datetime.date representing the proxy vote application deadline
+        """
+        if self.country == Country.NORTHERN_IRELAND:
+            return working_days_before(self.poll_date, 14, self._calendar())
+
+        return working_days_before(self.poll_date, 6, self._calendar())
+
+    @property
     def vac_application_deadline(self) -> dt.date:
         """
         Calculates the Voter Authority Certificate (VAC) application deadline for this Election
@@ -57,6 +77,22 @@ class Election(metaclass=ABCMeta):
         :return: datetime.date representing the VAC application deadline
         """
         return working_days_before(self.poll_date, 6, self._calendar())
+
+    @property
+    def replacement_pack_start_date(self) -> dt.date:
+        """
+        Calculate the replacement pack start date for an election to the Greater London Assembly
+
+        This is defined by Representation of the People (England and Wales) Regulations 2001, Regulation 78
+        https://www.legislation.gov.uk/uksi/2001/341/regulation/78
+        and
+        Representation of the People (Scotland) Regulations 2001, Regulation 78
+        https://www.legislation.gov.uk/uksi/2001/497/regulation/78
+
+        :return: a datetime.date representing the first date electors can apply for a postal vote replacement pack
+        """
+
+        return working_days_before(self.poll_date, 4, self._calendar())
 
     @property
     @abstractmethod
@@ -133,9 +169,19 @@ class Election(metaclass=ABCMeta):
                 "event": TimetableEvent.POSTAL_VOTE_APPLICATION_DEADLINE.name,
             },
             {
+                "label": TimetableEvent.PROXY_VOTE_APPLICATION_DEADLINE.value,
+                "date": self.proxy_vote_application_deadline,
+                "event": TimetableEvent.PROXY_VOTE_APPLICATION_DEADLINE.name,
+            },
+            {
                 "label": TimetableEvent.VAC_APPLICATION_DEADLINE.value,
                 "date": self.vac_application_deadline,
                 "event": TimetableEvent.VAC_APPLICATION_DEADLINE.name,
+            },
+            {
+                "label": TimetableEvent.REPLACEMENT_PACK_START_DATE.value,
+                "date": self.replacement_pack_start_date,
+                "event": TimetableEvent.REPLACEMENT_PACK_START_DATE.name,
             },
         ]
 

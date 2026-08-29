@@ -33,3 +33,24 @@ def test_notice_of_election_deadline():
     election = GreaterLondonAssemblyElection(dt.date(2024, 5, 2))
 
     assert election.notice_of_election_deadline == dt.date(2024, 3, 19)
+
+
+# Reference election: gla.2024-05-02
+def test_postal_vote_application_deadline():
+    election = GreaterLondonAssemblyElection(dt.date(2024, 5, 2))
+
+    assert election.postal_vote_application_deadline == dt.date(2024, 4, 17)
+
+
+# Reference election: gla.2024-05-02
+def test_proxy_vote_application_deadline():
+    election = GreaterLondonAssemblyElection(dt.date(2024, 5, 2))
+
+    assert election.proxy_vote_application_deadline == dt.date(2024, 4, 24)
+
+
+# Reference election: gla.2024-05-02
+def test_replacement_pack_start_date():
+    election = GreaterLondonAssemblyElection(dt.date(2024, 5, 2))
+
+    assert election.replacement_pack_start_date == dt.date(2024, 4, 26)

@@ -61,7 +61,7 @@ def test_notice_of_election_deadline():
     [
         (Country.ENGLAND, dt.date(2023, 4, 3)),
         # No Easter Monday BH in Scotland
-        # and Easter Monday is non special-cased for Scotland in
+        # and Easter Monday is not special-cased for Scotland in
         # The Voter Identification Regulations 2022
         (Country.SCOTLAND, dt.date(2023, 4, 4)),
         (Country.WALES, dt.date(2023, 4, 3)),
@@ -70,3 +70,37 @@ def test_notice_of_election_deadline():
 def test_vac_application_deadline_uk_parliament(country, deadline_date):
     election = UKParliamentElection(dt.date(2023, 4, 13), country=country)
     assert election.vac_application_deadline == deadline_date
+
+
+# Reference election: parl.2024-07-04
+def test_proxy_vote_application_deadline_gb():
+    election = UKParliamentElection(
+        dt.date(2024, 7, 4), country=Country.ENGLAND
+    )
+
+    assert election.proxy_vote_application_deadline == dt.date(2024, 6, 26)
+
+
+def test_proxy_vote_application_deadline_ni():
+    """
+    note: this test is just reverse-engineered from the code
+
+    There was no general election in 2026
+
+    TODO: Replace it with a test based on a real-world example
+    when we have one to hand
+    """
+    election = UKParliamentElection(
+        dt.date(2025, 5, 7), country=Country.NORTHERN_IRELAND
+    )
+
+    assert election.proxy_vote_application_deadline == dt.date(2025, 4, 14)
+
+
+# Reference election: parl.2024-07-04
+def test_replacement_pack_start_date_gb():
+    election = UKParliamentElection(
+        dt.date(2024, 7, 4), country=Country.ENGLAND
+    )
+
+    assert election.replacement_pack_start_date == dt.date(2024, 6, 28)

@@ -50,3 +50,17 @@ def test_notice_of_election_deadline():
     election = ScottishParliamentElection(dt.date(2026, 5, 7))
 
     assert election.notice_of_election_deadline == dt.date(2026, 3, 25)
+
+
+# Reference election: sp.2026-05-07
+def test_postal_vote_application_deadline():
+    election = ScottishParliamentElection(dt.date(2026, 5, 7))
+
+    assert election.postal_vote_application_deadline == dt.date(2026, 4, 21)
+
+
+# Reference election: sp.2026-05-07
+def test_proxy_vote_application_deadline():
+    election = ScottishParliamentElection(dt.date(2026, 5, 7))
+
+    assert election.proxy_vote_application_deadline == dt.date(2026, 4, 28)
