@@ -1,7 +1,9 @@
 from core.mixins import UpdateElectionsTimestampedModel
 from django.contrib.gis.db import models
 from django.db import connection, transaction
+from django.db.models import Q
 from django.urls import reverse
+from django_extensions.db.models import TimeStampedModel
 from model_utils import Choices
 
 from .mixins import DateConstraintMixin, DateDisplayMixin
@@ -214,3 +216,105 @@ class OrganisationGeographySubdivided(models.Model):
         FROM organisations_organisationgeography og
         WHERE og.id IN (SELECT id FROM missing_subdivided_geography);
     """
+
+
+class OrganisationChangeType(models.TextChoices):
+    CREATE = "CREATE", "Create"
+    UPDATE = "UPDATE", "Update"
+    END = "END", "End"
+
+
+class OrganisationChange(models.Model):
+    organisation_change_legislation = models.ForeignKey(
+        "OrganisationChangeLegislation", on_delete=models.CASCADE
+    )
+    organisation = models.ForeignKey(
+        "Organisation",
+        on_delete=models.CASCADE,
+        limit_choices_to=~Q(organisation_type__in=["police-area", "europarl"]),
+    )
+    change_type = models.CharField(
+        max_length=10, choices=OrganisationChangeType.choices
+    )
+    information_url = models.URLField(
+        blank=True,
+        default="",
+        help_text=(
+            "A link to an org-specific information resource. "
+            "This field can be used in addition to, or instead of, "
+            "the multi-org information url on the legislation, "
+            "if the affected org has its own dedicated info resource."
+        ),
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["organisation_change_legislation", "organisation"],
+                name="unique_ocl_organisation",
+            )
+        ]
+
+    def __str__(self):
+        return f"Org Change for {self.organisation.common_name} ({self.change_type})"
+
+
+class OCLPublicVisibility(models.TextChoices):
+    HIDDEN = "HIDDEN", "Hidden"
+    INFORM = "INFORM", "Inform"
+    MAP = "MAP", "Map"
+
+
+class OrganisationChangeLegislation(TimeStampedModel):
+    """
+    A model for legislation that can:
+
+    - Create or end organisations
+    - Modify organisation boundaries
+
+    Some examples include:
+
+    - The Surrey (Structural Changes) Order 2026: https://www.legislation.gov.uk/uksi/2026/264/made
+    - The Glasgow and North Lanarkshire Boundaries Amendment Order 2018: https://www.legislation.gov.uk/ssi/2018/308/made
+    - The Hampshire and the Solent Combined County Authority Regulations 2026: https://www.legislation.gov.uk/uksi/2026/595
+
+    """
+
+    provisional_name = models.CharField(blank=True, default="", max_length=255)
+    affected_organisations = models.ManyToManyField(
+        "Organisation",
+        through=OrganisationChange,
+        blank=True,
+    )
+    public_visibility = models.CharField(
+        choices=OCLPublicVisibility.choices, default=OCLPublicVisibility.HIDDEN
+    )
+    information_url = models.URLField(
+        blank=True,
+        default="",
+        help_text="A Link to a general, multi-org information resource",
+    )
+    explanation = models.TextField(blank=True, default="")
+    legislation_title = models.CharField(blank=True, default="")
+    legislation_url = models.URLField(blank=True, default="")
+    legislation_made = models.BooleanField(default=False)
+    effective_date = models.DateField(blank=True, null=True, default=None)
+
+    class Meta(TimeStampedModel.Meta):
+        verbose_name_plural = "Organisation Change Legislation"
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(provisional_name__gt="")
+                | Q(legislation_title__gt=""),
+                name="provisional_name_or_legislation_title_not_blank",
+            )
+        ]
+
+    def __str__(self):
+        return self.generic_title
+
+    @property
+    def generic_title(self):
+        if self.legislation_title:
+            return self.legislation_title
+        return self.provisional_name
