@@ -1,5 +1,8 @@
+from datetime import timedelta
+
 from core.mixins import UpdateElectionsTimestampedModel
 from django.contrib.gis.db import models
+from django.core.exceptions import ValidationError
 from django.db import connection, transaction
 from django.db.models import Q
 from django.urls import reverse
@@ -257,6 +260,48 @@ class OrganisationChange(models.Model):
 
     def __str__(self):
         return f"Org Change for {self.organisation.common_name} ({self.change_type})"
+
+    def clean(self):
+        super().clean()
+        ocl_effective_date = self.organisation_change_legislation.effective_date
+        if not ocl_effective_date:
+            # If the OCL's effective date is not set, we can skip this validation.
+            # This is because we still want to be able to communicate organisation changes to users
+            # before we know the effective date of the legislation.
+            return
+
+        org_start_date = self.organisation.start_date
+        org_end_date = self.organisation.end_date
+
+        error_kwargs = {"message": {}, "code": "invalid_date"}
+
+        if self.change_type == OrganisationChangeType.END and (
+            org_end_date is None or org_end_date >= ocl_effective_date
+        ):
+            error_kwargs["message"]["organisation"] = (
+                f"The Organisation's end date ({org_end_date}) must be before the OCL's effective_date {ocl_effective_date}"
+            )
+            raise ValidationError(**error_kwargs)
+
+        if (
+            self.change_type == OrganisationChangeType.CREATE
+            and org_start_date < (ocl_effective_date - timedelta(days=365))
+        ):
+            # New orgs normally have shadow elections the year before they actually are created,
+            # so, in order for us to create those elections, we set their start date earlier than the actual effective date
+            error_kwargs["message"]["organisation"] = (
+                f"The Organisation's start date ({org_start_date}) must be within a year of the OCL's effective_date ({ocl_effective_date})"
+            )
+            raise ValidationError(**error_kwargs)
+
+        if self.change_type == OrganisationChangeType.UPDATE and (
+            ocl_effective_date < org_start_date
+            or (org_end_date is not None and ocl_effective_date > org_end_date)
+        ):
+            error_kwargs["message"]["organisation"] = (
+                f"The OCL's effective_date ({ocl_effective_date}) must be between the Organisation's start date ({org_start_date}) and its end date ({org_end_date})"
+            )
+            raise ValidationError(**error_kwargs)
 
 
 class OCLPublicVisibility(models.TextChoices):

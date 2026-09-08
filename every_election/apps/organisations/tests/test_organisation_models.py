@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
@@ -6,12 +6,14 @@ from elections.tests.factories import ElectionFactory
 from organisations.models import (
     DivisionGeographySubdivided,
     Organisation,
+    OrganisationChangeType,
     OrganisationGeographySubdivided,
 )
 from organisations.tests.factories import (
     CompletedOrganisationBoundaryReviewFactory,
     DivisionGeographyFactory,
     IncompleteOrganisationBoundaryReviewFactory,
+    OrganisationChangeFactory,
     OrganisationDivisionFactory,
     OrganisationDivisionSetFactory,
     OrganisationFactory,
@@ -412,3 +414,90 @@ class TestOrganisationDivisionBoundaryReview(TestCase):
             self.processed_review.legislation_title,
             self.processed_review.generic_title,
         )
+
+
+class TestOrgChange(TestCase):
+    def setUp(self):
+        self.date = date(2026, 4, 1)
+        self.day_before = self.date - timedelta(days=1)
+        self.day_after = self.date + timedelta(days=1)
+
+    def test_ending_org_end_date_before_effective_date_is_valid(self):
+        org_change = OrganisationChangeFactory(
+            organisation_change_legislation__effective_date=self.date,
+            organisation__end_date=self.day_before,
+            change_type=OrganisationChangeType.END,
+        )
+        org_change.clean()
+
+    def test_ending_org_end_date_after_effective_date_is_invalid(self):
+        org_change = OrganisationChangeFactory(
+            organisation_change_legislation__effective_date=self.date,
+            organisation__end_date=self.day_after,
+            change_type=OrganisationChangeType.END,
+        )
+        with self.assertRaises(ValidationError) as e:
+            org_change.clean()
+        self.assertIn("must be before", str(e.exception))
+
+    def test_created_org_start_date_after_effective_date_is_valid(self):
+        org_change = OrganisationChangeFactory(
+            organisation_change_legislation__effective_date=self.date,
+            organisation__start_date=self.day_after,
+            change_type=OrganisationChangeType.CREATE,
+        )
+        org_change.clean()
+
+    def test_created_org_start_date_within_one_year_of_effective_date_is_valid(
+        self,
+    ):
+        org_change = OrganisationChangeFactory(
+            organisation_change_legislation__effective_date=self.date,
+            organisation__start_date=(self.date - timedelta(days=364)),
+            change_type=OrganisationChangeType.CREATE,
+        )
+        org_change.clean()
+
+    def test_created_org_start_date_over_one_year_of_effective_date_is_invalid(
+        self,
+    ):
+        org_change = OrganisationChangeFactory(
+            organisation_change_legislation__effective_date=self.date,
+            organisation__start_date=(self.date - timedelta(days=366)),
+            change_type=OrganisationChangeType.CREATE,
+        )
+        with self.assertRaises(ValidationError) as e:
+            org_change.clean()
+        self.assertIn("must be within", str(e.exception))
+
+    def test_effective_date_within_updated_org_dates_is_valid(self):
+        org_change = OrganisationChangeFactory(
+            organisation_change_legislation__effective_date=self.date,
+            organisation__start_date=self.day_before,
+            organisation__end_date=self.day_after,
+            change_type=OrganisationChangeType.UPDATE,
+        )
+        org_change.clean()
+
+    def test_effective_date_outside_updated_org_dates_is_invalid(self):
+        org_change = OrganisationChangeFactory(
+            organisation_change_legislation__effective_date=(
+                self.date - timedelta(days=2)
+            ),
+            organisation__start_date=self.day_before,
+            organisation__end_date=self.day_after,
+            change_type=OrganisationChangeType.UPDATE,
+        )
+        with self.assertRaises(ValidationError) as e:
+            org_change.clean()
+        self.assertIn("must be between", str(e.exception))
+
+    def test_no_validation_if_no_effective_date(self):
+        org_change = OrganisationChangeFactory(
+            organisation__end_date=self.day_after,
+            change_type=OrganisationChangeType.END,
+        )
+        org_change.clean()  # does not raise when effective date is not set
+        org_change.organisation_change_legislation.effective_date = self.date
+        with self.assertRaises(ValidationError):
+            org_change.clean()  # raises with effective date set
