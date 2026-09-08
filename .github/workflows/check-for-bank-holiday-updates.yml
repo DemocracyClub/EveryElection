@@ -19,10 +19,9 @@ jobs:
       run: |
         set +e
         deploy/hooks/afterinstall/install_uv.sh
-        . .venv/bin/activate
         uv sync --package uk-election-timetables --group dev
         cd packages/uk-election-timetables
-        python manage_bank_holidays.py --update
+        uv run manage_bank_holidays.py --update
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v6
       with:
