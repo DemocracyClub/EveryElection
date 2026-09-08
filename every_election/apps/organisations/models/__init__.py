@@ -16,6 +16,7 @@ from organisations.models.organisations import (
     Organisation,
     OrganisationChange,
     OrganisationChangeLegislation,
+    OrganisationChangeType,
     OrganisationGeography,
     OrganisationGeographySubdivided,
 )
@@ -33,6 +34,7 @@ __all__ = [
     "DivisionGeographySubdivided",
     "OrganisationBoundaryReview",
     "OrganisationChange",
+    "OrganisationChangeType",
     "OrganisationChangeLegislation",
     "ReviewStatus",
     "TerritoryCode",
