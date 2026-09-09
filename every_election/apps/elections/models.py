@@ -685,11 +685,13 @@ class Election(TimeStampedModel):
             if getattr(self, field) > self.poll_open_date:
                 raise ValidationError(f"{field} must be before poll_open_date")
 
-            if (
-                getattr(self, field) < self.poll_open_date - timedelta(days=50)
-            ) and not self.election_id.startswith(
+            if field == "registration_deadline" and self.election_id.startswith(
                 "local.city-of-london"
-            ):  # CoL has the same registration deadline every year
+            ):
+                # CoL has the same registration deadline every year
+                continue
+
+            if getattr(self, field) < self.poll_open_date - timedelta(days=50):
                 raise ValidationError(
                     f"{field} must be within 50 days of poll_open_date"
                 )
