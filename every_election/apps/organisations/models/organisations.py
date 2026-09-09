@@ -65,6 +65,7 @@ class Organisation(UpdateElectionsTimestampedModel, DateDisplayMixin):
     start_date = models.DateField(null=False)
     end_date = models.DateField(blank=True, null=True)
     legislation_url = models.CharField(blank=True, max_length=500, null=True)
+    provisional = models.BooleanField(default=False)
     ValidationError = ValueError
     objects = OrganisationManager().as_manager()
 
