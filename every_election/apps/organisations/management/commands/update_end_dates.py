@@ -63,7 +63,7 @@ class Command(ReadFromCSVMixin, BaseCommand):
             divset_end_date = datetime.datetime.strptime(
                 rec["end_date"], "%Y-%m-%d"
             ).date()
-            org = Organisation.objects.all().get_by_date(
+            org = Organisation.public_objects.all().get_by_date(
                 organisation_type="local-authority",
                 official_identifier=rec["org"],
                 date=divset_start_date,

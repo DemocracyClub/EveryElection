@@ -84,7 +84,7 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
             builder.with_organisation(self.org1)
 
     def test_invalid_division_not_child_of_org(self):
-        org2 = Organisation.objects.create(
+        org2 = Organisation.public_objects.create(
             official_identifier="TEST2",
             organisation_type="local-authority",
             official_name="Test Council",
@@ -111,7 +111,7 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
         region_sub_type = ElectionSubType.objects.get(
             election_subtype="r", election_type=naw_election_type
         )
-        naw_org = Organisation.objects.create(
+        naw_org = Organisation.public_objects.create(
             official_identifier="naw",
             organisation_type="naw",
             official_name="naw",
@@ -189,7 +189,7 @@ class TestElectionBuilder(BaseElectionCreatorMixIn, TestCase):
         constituency_sub_type = ElectionSubType.objects.get(
             election_subtype="c", election_type=sp_election_type
         )
-        sp_org = Organisation.objects.create(
+        sp_org = Organisation.public_objects.create(
             official_identifier="sp",
             organisation_type="sp",
             official_name="Scottish Parliament",

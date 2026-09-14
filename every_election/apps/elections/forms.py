@@ -102,7 +102,7 @@ class ElectionOrganisationForm(forms.Form):
                 )
 
     election_organisation = ElectionOrganisationField(
-        queryset=Organisation.objects.all(),
+        queryset=Organisation.public_objects.all(),
         widget=forms.CheckboxSelectMultiple(),
     )
 

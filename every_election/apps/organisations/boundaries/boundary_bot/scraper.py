@@ -151,11 +151,13 @@ class LgbceScraper:
 
     def get_org_from_reg_code(self, register_code):
         try:
-            org = Organisation.objects.get(official_identifier=register_code)
+            org = Organisation.public_objects.get(
+                official_identifier=register_code
+            )
 
         except Organisation.MultipleObjectsReturned:
             if org_pk := AMBIGUOUS_ID_MAP.get(register_code):
-                org = Organisation.objects.get(pk=org_pk)
+                org = Organisation.public_objects.get(pk=org_pk)
             else:
                 raise
 

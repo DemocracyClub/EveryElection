@@ -39,7 +39,7 @@ class Command(ReadFromCSVMixin, BaseCommand):
         self.save_all()
 
     def get_org_from_line(self, line):
-        return Organisation.objects.all().get_by_date(
+        return Organisation.public_objects.all().get_by_date(
             organisation_type="local-authority",
             official_identifier=line["District Register Code"],
             date=datetime.datetime.strptime("2015-04-01", "%Y-%m-%d").date(),

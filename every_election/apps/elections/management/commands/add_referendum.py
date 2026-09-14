@@ -111,7 +111,7 @@ class Command(BaseCommand):
             election=ref_election,
         )
 
-        org = Organisation.objects.get_by_date(
+        org = Organisation.public_objects.get_by_date(
             date=election_date,
             official_identifier=options["official_identifier"],
             organisation_type=options["org_type"],

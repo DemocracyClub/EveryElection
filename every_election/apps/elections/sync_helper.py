@@ -221,7 +221,7 @@ class ElectionSyncer:
         return self.ELECTED_ROLE_CACHE[elected_role]
 
     def get_organisation(self, organisation_dict: dict):
-        organisation = Organisation.objects.get(
+        organisation = Organisation.public_objects.get(
             official_identifier=organisation_dict["official_identifier"],
             start_date=organisation_dict["start_date"],
         )

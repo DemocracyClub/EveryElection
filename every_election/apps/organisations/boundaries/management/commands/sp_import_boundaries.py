@@ -92,7 +92,7 @@ class Command(BaseBoundaryLineCommand):
         return pre_process_layer(ds[0], self.srid)
 
     def get_sp_divisionset(self):
-        sp = Organisation.objects.get(official_identifier="sp")
+        sp = Organisation.public_objects.get(official_identifier="sp")
 
         div_set, _ = OrganisationDivisionSet.objects.update_or_create(
             organisation=sp,

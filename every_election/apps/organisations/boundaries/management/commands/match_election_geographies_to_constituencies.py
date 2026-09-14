@@ -105,7 +105,9 @@ class Command(BaseCommand):
             import rtree
 
             idx = rtree.index.Index()
-            parl_org = Organisation.objects.get(official_identifier="parl-hoc")
+            parl_org = Organisation.public_objects.get(
+                official_identifier="parl-hoc"
+            )
             parl_divs = parl_org.divisionset.latest().divisions.select_related(
                 "geography"
             )

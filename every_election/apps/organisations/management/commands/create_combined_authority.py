@@ -92,7 +92,7 @@ class Command(BaseCommand):
         org_start_date = datetime.strptime(params["start_date"], "%Y-%m-%d")
 
         # Create the Organisation
-        ca_organisation = Organisation.objects.create(
+        ca_organisation = Organisation.public_objects.create(
             official_identifier=org_identifier,
             official_name=org_official_name,
             common_name=org_common_name,

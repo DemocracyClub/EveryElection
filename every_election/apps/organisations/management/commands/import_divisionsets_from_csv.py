@@ -60,7 +60,7 @@ class Command(ReadFromCSVMixin, BaseCommand):
 
     def get_org_from_line(self, line):
         if line["Start Date"]:
-            return Organisation.objects.all().get_by_date(
+            return Organisation.public_objects.all().get_by_date(
                 organisation_type="local-authority",
                 official_identifier=line["Organisation ID"],
                 date=datetime.datetime.strptime(
@@ -71,7 +71,7 @@ class Command(ReadFromCSVMixin, BaseCommand):
         # work out the org without needing one (mostly we can).
         # If we throw an exception here, we will need to call this again
         # with a start date on this divisionset
-        return Organisation.objects.get(
+        return Organisation.public_objects.get(
             organisation_type="local-authority",
             official_identifier=line["Organisation ID"],
         )

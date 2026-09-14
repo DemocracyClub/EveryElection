@@ -59,7 +59,7 @@ class TestOrganisationManager(TestCase):
 
     def test_date_before_start(self):
         with self.assertRaises(Organisation.DoesNotExist):
-            Organisation.objects.all().get_by_date(
+            Organisation.public_objects.all().get_by_date(
                 official_identifier="TEST1",
                 organisation_type="local-authority",
                 date=dt.date(2015, 12, 1),
@@ -67,14 +67,14 @@ class TestOrganisationManager(TestCase):
 
     def test_date_after_end(self):
         with self.assertRaises(Organisation.DoesNotExist):
-            Organisation.objects.all().get_by_date(
+            Organisation.public_objects.all().get_by_date(
                 official_identifier="TEST2",
                 organisation_type="local-authority",
                 date=dt.date(2019, 12, 1),
             )
 
     def test_date_valid_in_range(self):
-        o = Organisation.objects.all().get_by_date(
+        o = Organisation.public_objects.all().get_by_date(
             official_identifier="TEST1",
             organisation_type="local-authority",
             date=dt.date(2016, 12, 1),
@@ -82,12 +82,18 @@ class TestOrganisationManager(TestCase):
         self.assertEqual("Foo & Bar District Council", o.official_name)
 
     def test_date_valid_with_null_end(self):
-        o = Organisation.objects.all().get_by_date(
+        o = Organisation.public_objects.all().get_by_date(
             official_identifier="TEST1",
             organisation_type="local-authority",
             date=dt.date(2018, 12, 1),
         )
         self.assertEqual("Bar with Foo District Council", o.official_name)
+
+    def test_public_private_filter(self):
+        OrganisationFactory(provisional=True)
+
+        self.assertEqual(4, Organisation.public_objects.count())
+        self.assertEqual(5, Organisation.private_objects.count())
 
 
 class TestOrganisationGeographies(TestCase):

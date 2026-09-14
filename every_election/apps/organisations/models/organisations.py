@@ -12,7 +12,7 @@ from model_utils import Choices
 from .mixins import DateConstraintMixin, DateDisplayMixin
 
 
-class OrganisationManager(models.QuerySet):
+class OrganisationQuerySet(models.QuerySet):
     def get_date_filter(self, date):
         return models.Q(start_date__lte=date) & (
             models.Q(end_date__gte=date) | models.Q(end_date=None)
@@ -27,6 +27,29 @@ class OrganisationManager(models.QuerySet):
             & models.Q(official_identifier=official_identifier)
             & self.get_date_filter(date)
         )
+
+
+class PublicOrganisationManager(
+    models.Manager.from_queryset(OrganisationQuerySet)
+):
+    """
+    Similar to PublicElectionsManager, this allows us to expose non-provisional
+    organisations by default without having to remember to filter on (provisional == False)
+    """
+
+    def get_queryset(self):
+        return super().get_queryset().filter(provisional=False)
+
+
+class PrivateOrganisationManager(
+    models.Manager.from_queryset(OrganisationQuerySet)
+):
+    """
+    Similar to PrivateElectionsManager, this allows us to access all organisations,
+    including provisional ones for places where we want that (/admin, OCLs, tests, etc).
+    """
+
+    use_in_migrations = True
 
 
 class Organisation(UpdateElectionsTimestampedModel, DateDisplayMixin):
@@ -67,7 +90,12 @@ class Organisation(UpdateElectionsTimestampedModel, DateDisplayMixin):
     legislation_url = models.CharField(blank=True, max_length=500, null=True)
     provisional = models.BooleanField(default=False)
     ValidationError = ValueError
-    objects = OrganisationManager().as_manager()
+
+    # For explanation of the order of the custom model managers declarations below, see:
+    # https://github.com/DemocracyClub/EveryElection/blob/8a26/every_election/apps/elections/models.py#L434-L452
+
+    private_objects = PrivateOrganisationManager()
+    public_objects = PublicOrganisationManager()
 
     def __str__(self):
         return "{} ({})".format(self.name, self.active_period_text)
