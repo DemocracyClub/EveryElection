@@ -18,6 +18,29 @@ class ElectionTypesView(ListView):
     template_name = "elections/election_types.html"
     model = ElectionType
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        for obj in context["object_list"]:
+            obj.example_election_id = self.build_example_id(obj)
+
+        return context
+
+    def build_example_id(self, obj):
+        id_elements = [obj.election_type]
+
+        if obj.subtype.exists():
+            ex_subtype = obj.subtype.first().election_subtype
+            id_elements.append(ex_subtype)
+
+        if obj.organisation_set.count() > 1:
+            ex_org = obj.organisation_set.exclude(provisional=True).first().slug
+            id_elements.append(ex_org)
+
+        id_elements.append("2016-05-05")
+
+        return ".".join(id_elements)
+
 
 class ReferenceDefinitionView(TemplateView):
     template_name = "elections/reference_definition.html"
