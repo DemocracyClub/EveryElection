@@ -1,9 +1,9 @@
 from collections import OrderedDict
-from datetime import datetime
+from datetime import date, datetime
 
 from api import filters
 from django.conf import settings
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django.http import Http404
 from elections.models import (
     Election,
@@ -12,7 +12,7 @@ from elections.models import (
     ModerationStatuses,
 )
 from elections.query_helpers import PostcodeError
-from organisations.models import Organisation, OrganisationDivision
+from organisations.models import Organisation, OrganisationDivision, OrganisationDivisionSet
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException
@@ -20,10 +20,14 @@ from rest_framework.response import Response
 from uk_election_ids.election_ids import validate
 
 from .serializers import (
+    DivisionGeoSerializer,
+    DivisionSetSerializer,
     ElectionGeoSerializer,
     ElectionSerializer,
     ElectionSubTypeSerializer,
     ElectionTypeSerializer,
+    FlatDivisionSerializer,
+    OrganisationDetailSerializer,
     OrganisationDivisionSerializer,
     OrganisationGeoSerializer,
     OrganisationSerializer,
@@ -70,6 +74,7 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
             "elected_role",
             "division",
             "division__divisionset",
+            "division__divisionset__organisation",
             "group",
             "replaces",
             "metadata",
@@ -197,7 +202,9 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
     def get_object(self, **kwargs):
         kwargs["date"] = datetime.strptime(kwargs["date"], "%Y-%m-%d").date()
         try:
-            return Organisation.objects.all().get_by_date(**kwargs)
+            return Organisation.objects.prefetch_related("divisionset").get_by_date(
+                **kwargs
+            )
         except Organisation.DoesNotExist:
             raise Http404()
 
@@ -247,19 +254,19 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
     def retrieve(self, request, **kwargs):
         kwargs.pop("format", None)
         org = self.get_object(**kwargs)
-        serializer = OrganisationSerializer(
+        serializer = OrganisationDetailSerializer(
             org, read_only=True, context={"request": request}
         )
         return Response(serializer.data)
 
     def filter(self, request, **kwargs):
         kwargs.pop("format", None)
-        orgs = Organisation.objects.all().filter(**kwargs)
+        orgs = Organisation.objects.prefetch_related("divisionset").filter(**kwargs)
 
         page = self.paginate_queryset(orgs)
         if page is not None:
             return self.get_paginated_response(
-                OrganisationSerializer(
+                OrganisationDetailSerializer(
                     page,
                     many=True,
                     read_only=True,
@@ -268,13 +275,65 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
             )
 
         return Response(
-            OrganisationSerializer(
+            OrganisationDetailSerializer(
                 orgs, many=True, read_only=True, context={"request": request}
             ).data
         )
 
 
 class OrganisationDivisionViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = OrganisationDivision.objects.all()
-    serializer_class = OrganisationDivisionSerializer
+    serializer_class = FlatDivisionSerializer
     filterset_fields = ["modified"]
+
+    def get_queryset(self):
+        qs = OrganisationDivision.objects.select_related(
+            "divisionset",
+            "divisionset__organisation",
+        ).order_by("divisionset__organisation__organisation_type", "name")
+
+        org_type = self.request.query_params.get("org_type")
+        if org_type:
+            qs = qs.filter(divisionset__organisation__organisation_type=org_type)
+
+        org_slug = self.request.query_params.get("org_slug")
+        if org_slug:
+            qs = qs.filter(divisionset__organisation__slug=org_slug)
+
+        current = self.request.query_params.get("current")
+        if current == "true":
+            qs = qs.filter(divisionset__end_date__isnull=True)
+
+        return qs
+
+    @action(detail=True, url_path="geo")
+    def geo(self, request, pk=None):
+        division = self.get_object()
+        return Response(
+            DivisionGeoSerializer(division, context={"request": request}).data
+        )
+
+
+class OrganisationDivisionSetViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = DivisionSetSerializer
+
+    def get_queryset(self):
+        qs = OrganisationDivisionSet.objects.select_related(
+            "organisation",
+        ).prefetch_related(
+            "divisions",
+        ).order_by("organisation__organisation_type", "-start_date")
+
+        official_identifier = self.request.query_params.get("official_identifier")
+        if official_identifier:
+            qs = qs.filter(organisation__official_identifier=official_identifier)
+
+        start_date = self.request.query_params.get("start_date")
+        if start_date:
+            qs = qs.filter(start_date=start_date)
+
+        current = self.request.query_params.get("current")
+        if current == "true":
+            today = date.today()
+            qs = qs.filter(Q(end_date__isnull=True) | Q(end_date__gte=today))
+
+        return qs
