@@ -1,4 +1,4 @@
-from datetime import timedelta
+import datetime as dt
 
 from core.mixins import UpdateElectionsTimestampedModel
 from django.contrib.gis.db import models
@@ -285,7 +285,7 @@ class OrganisationChange(models.Model):
 
         if (
             self.change_type == OrganisationChangeType.CREATE
-            and org_start_date < (ocl_effective_date - timedelta(days=365))
+            and org_start_date < (ocl_effective_date - dt.timedelta(days=365))
         ):
             # New orgs normally have shadow elections the year before they actually are created,
             # so, in order for us to create those elections, we set their start date earlier than the actual effective date

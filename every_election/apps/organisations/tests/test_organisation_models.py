@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+import datetime as dt
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
@@ -29,14 +29,14 @@ class TestOrganisationManager(TestCase):
             official_identifier="TEST1",
             official_name="Foo & Bar District Council",
             organisation_type="local-authority",
-            start_date=date(2016, 10, 1),
-            end_date=date(2017, 10, 1),
+            start_date=dt.date(2016, 10, 1),
+            end_date=dt.date(2017, 10, 1),
         )
         OrganisationFactory(
             official_identifier="TEST1",
             official_name="Bar with Foo District Council",
             organisation_type="local-authority",
-            start_date=date(2017, 10, 2),
+            start_date=dt.date(2017, 10, 2),
             end_date=None,
         )
 
@@ -44,15 +44,15 @@ class TestOrganisationManager(TestCase):
             official_identifier="TEST2",
             official_name="Baz District Council",
             organisation_type="local-authority",
-            start_date=date(2016, 10, 1),
-            end_date=date(2017, 10, 1),
+            start_date=dt.date(2016, 10, 1),
+            end_date=dt.date(2017, 10, 1),
         )
         OrganisationFactory(
             official_identifier="TEST2",
             official_name="Baz Metropolitan Borough Council",
             organisation_type="local-authority",
-            start_date=date(2017, 10, 2),
-            end_date=date(2018, 10, 2),
+            start_date=dt.date(2017, 10, 2),
+            end_date=dt.date(2018, 10, 2),
         )
 
     def test_date_before_start(self):
@@ -60,7 +60,7 @@ class TestOrganisationManager(TestCase):
             Organisation.objects.all().get_by_date(
                 official_identifier="TEST1",
                 organisation_type="local-authority",
-                date=date(2015, 12, 1),
+                date=dt.date(2015, 12, 1),
             )
 
     def test_date_after_end(self):
@@ -68,14 +68,14 @@ class TestOrganisationManager(TestCase):
             Organisation.objects.all().get_by_date(
                 official_identifier="TEST2",
                 organisation_type="local-authority",
-                date=date(2019, 12, 1),
+                date=dt.date(2019, 12, 1),
             )
 
     def test_date_valid_in_range(self):
         o = Organisation.objects.all().get_by_date(
             official_identifier="TEST1",
             organisation_type="local-authority",
-            date=date(2016, 12, 1),
+            date=dt.date(2016, 12, 1),
         )
         self.assertEqual("Foo & Bar District Council", o.official_name)
 
@@ -83,7 +83,7 @@ class TestOrganisationManager(TestCase):
         o = Organisation.objects.all().get_by_date(
             official_identifier="TEST1",
             organisation_type="local-authority",
-            date=date(2018, 12, 1),
+            date=dt.date(2018, 12, 1),
         )
         self.assertEqual("Bar with Foo District Council", o.official_name)
 
@@ -91,13 +91,13 @@ class TestOrganisationManager(TestCase):
 class TestOrganisationGeographies(TestCase):
     def test_no_geographies(self):
         org = OrganisationFactory()
-        self.assertEqual(None, org.get_geography(date.today()))
+        self.assertEqual(None, org.get_geography(dt.date.today()))
         self.assertEqual(None, org.format_geography_link())
 
     def test_one_geography_with_gss(self):
         org = OrganisationFactory()
         geo = OrganisationGeographyFactory(organisation=org, gss="X01000001")
-        self.assertEqual(geo, org.get_geography(date.today()))
+        self.assertEqual(geo, org.get_geography(dt.date.today()))
         self.assertEqual(
             geo, org.get_geography("doesn't even need to be a date")
         )
@@ -112,11 +112,11 @@ class TestOrganisationGeographies(TestCase):
     def test_one_geography_no_gss(self):
         org = OrganisationFactory()
         geo = OrganisationGeographyFactory(organisation=org, gss="")
-        self.assertEqual(geo, org.get_geography(date.today()))
+        self.assertEqual(geo, org.get_geography(dt.date.today()))
         self.assertEqual(None, org.format_geography_link())
 
     def test_multiple_geographies(self):
-        org = OrganisationFactory(start_date=date(2001, 1, 1), end_date=None)
+        org = OrganisationFactory(start_date=dt.date(2001, 1, 1), end_date=None)
         OrganisationGeographyFactory(
             organisation=org,
             gss="X01000001",
@@ -135,11 +135,17 @@ class TestOrganisationGeographies(TestCase):
             start_date="2002-01-02",
             end_date=None,
         )
-        self.assertEqual("X01000001", org.get_geography(date(2001, 1, 1)).gss)
-        self.assertEqual("X01000002", org.get_geography(date(2001, 7, 20)).gss)
-        self.assertEqual("X01000003", org.get_geography(date(2099, 1, 1)).gss)
+        self.assertEqual(
+            "X01000001", org.get_geography(dt.date(2001, 1, 1)).gss
+        )
+        self.assertEqual(
+            "X01000002", org.get_geography(dt.date(2001, 7, 20)).gss
+        )
+        self.assertEqual(
+            "X01000003", org.get_geography(dt.date(2099, 1, 1)).gss
+        )
         with self.assertRaises(ValueError):
-            org.get_geography(date(1900, 1, 1))  # before the org start date
+            org.get_geography(dt.date(1900, 1, 1))  # before the org start date
 
     def test_create_subdivided(self):
         # no subdivided geographies exist before we start
@@ -250,7 +256,7 @@ class TestDateConstraints(TestCase):
     def setUp(self):
         super().setUp()
         self.org = OrganisationFactory(
-            start_date=date(2001, 1, 1), end_date=date(2002, 1, 1)
+            start_date=dt.date(2001, 1, 1), end_date=dt.date(2002, 1, 1)
         )
 
     def test_save_divisionset_before_start(self):
@@ -270,7 +276,7 @@ class TestDateConstraints(TestCase):
         try:
             OrganisationDivisionSetFactory(
                 organisation=self.org,
-                start_date=date(2000, 1, 1),
+                start_date=dt.date(2000, 1, 1),
                 end_date=None,
             )
         except ValidationError:
@@ -280,16 +286,16 @@ class TestDateConstraints(TestCase):
         with self.assertRaises(ValidationError):
             OrganisationDivisionSetFactory(
                 organisation=self.org,
-                start_date=date(2001, 1, 1),
-                end_date=date(2003, 1, 1),
+                start_date=dt.date(2001, 1, 1),
+                end_date=dt.date(2003, 1, 1),
             )
 
     def test_save_divisionset_valid(self):
         try:
             OrganisationDivisionSetFactory(
                 organisation=self.org,
-                start_date=date(2001, 1, 1),
-                end_date=date(2002, 1, 1),
+                start_date=dt.date(2001, 1, 1),
+                end_date=dt.date(2002, 1, 1),
             )
         except ValidationError:
             self.fail("ValidationError raised unexpectedly!")
@@ -298,7 +304,7 @@ class TestDateConstraints(TestCase):
         with self.assertRaises(ValidationError):
             OrganisationGeographyFactory(
                 organisation=self.org,
-                start_date=date(2000, 1, 1),
+                start_date=dt.date(2000, 1, 1),
                 end_date=None,
             )
 
@@ -306,16 +312,16 @@ class TestDateConstraints(TestCase):
         with self.assertRaises(ValidationError):
             OrganisationGeographyFactory(
                 organisation=self.org,
-                start_date=date(2001, 1, 1),
-                end_date=date(2003, 1, 1),
+                start_date=dt.date(2001, 1, 1),
+                end_date=dt.date(2003, 1, 1),
             )
 
     def test_save_organisationgeography_valid(self):
         try:
             OrganisationGeographyFactory(
                 organisation=self.org,
-                start_date=date(2001, 1, 1),
-                end_date=date(2002, 1, 1),
+                start_date=dt.date(2001, 1, 1),
+                end_date=dt.date(2002, 1, 1),
             )
         except ValidationError:
             self.fail("ValidationError raised unexpectedly!")
@@ -418,9 +424,9 @@ class TestOrganisationDivisionBoundaryReview(TestCase):
 
 class TestOrgChange(TestCase):
     def setUp(self):
-        self.date = date(2026, 4, 1)
-        self.day_before = self.date - timedelta(days=1)
-        self.day_after = self.date + timedelta(days=1)
+        self.date = dt.date(2026, 4, 1)
+        self.day_before = self.date - dt.timedelta(days=1)
+        self.day_after = self.date + dt.timedelta(days=1)
 
     def test_ending_org_end_date_before_effective_date_is_valid(self):
         org_change = OrganisationChangeFactory(
@@ -453,7 +459,7 @@ class TestOrgChange(TestCase):
     ):
         org_change = OrganisationChangeFactory(
             organisation_change_legislation__effective_date=self.date,
-            organisation__start_date=(self.date - timedelta(days=364)),
+            organisation__start_date=(self.date - dt.timedelta(days=364)),
             change_type=OrganisationChangeType.CREATE,
         )
         org_change.clean()
@@ -463,7 +469,7 @@ class TestOrgChange(TestCase):
     ):
         org_change = OrganisationChangeFactory(
             organisation_change_legislation__effective_date=self.date,
-            organisation__start_date=(self.date - timedelta(days=366)),
+            organisation__start_date=(self.date - dt.timedelta(days=366)),
             change_type=OrganisationChangeType.CREATE,
         )
         with self.assertRaises(ValidationError) as e:
@@ -482,7 +488,7 @@ class TestOrgChange(TestCase):
     def test_effective_date_outside_updated_org_dates_is_invalid(self):
         org_change = OrganisationChangeFactory(
             organisation_change_legislation__effective_date=(
-                self.date - timedelta(days=2)
+                self.date - dt.timedelta(days=2)
             ),
             organisation__start_date=self.day_before,
             organisation__end_date=self.day_after,
