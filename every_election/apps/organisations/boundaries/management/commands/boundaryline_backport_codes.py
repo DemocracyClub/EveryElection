@@ -85,9 +85,9 @@ class Command(BaseBoundaryLineCommand):
                 (div.organisation_id, div.divisionset.start_date)
             ]
 
-        org = Organisation.objects.get(pk=div.organisation_id).get_geography(
-            div.divisionset.start_date
-        )
+        org = Organisation.public_objects.get(
+            pk=div.organisation_id
+        ).get_geography(div.divisionset.start_date)
         self.org_boundaries[
             (div.organisation_id, div.divisionset.start_date)
         ] = org

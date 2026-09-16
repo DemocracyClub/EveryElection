@@ -1,13 +1,18 @@
+import datetime as dt
+
 from core.mixins import UpdateElectionsTimestampedModel
 from django.contrib.gis.db import models
+from django.core.exceptions import ValidationError
 from django.db import connection, transaction
+from django.db.models import Q
 from django.urls import reverse
+from django_extensions.db.models import TimeStampedModel
 from model_utils import Choices
 
 from .mixins import DateConstraintMixin, DateDisplayMixin
 
 
-class OrganisationManager(models.QuerySet):
+class OrganisationQuerySet(models.QuerySet):
     def get_date_filter(self, date):
         return models.Q(start_date__lte=date) & (
             models.Q(end_date__gte=date) | models.Q(end_date=None)
@@ -22,6 +27,29 @@ class OrganisationManager(models.QuerySet):
             & models.Q(official_identifier=official_identifier)
             & self.get_date_filter(date)
         )
+
+
+class PublicOrganisationManager(
+    models.Manager.from_queryset(OrganisationQuerySet)
+):
+    """
+    Similar to PublicElectionsManager, this allows us to expose non-provisional
+    organisations by default without having to remember to filter on (provisional == False)
+    """
+
+    def get_queryset(self):
+        return super().get_queryset().filter(provisional=False)
+
+
+class PrivateOrganisationManager(
+    models.Manager.from_queryset(OrganisationQuerySet)
+):
+    """
+    Similar to PrivateElectionsManager, this allows us to access all organisations,
+    including provisional ones for places where we want that (/admin, OCLs, tests, etc).
+    """
+
+    use_in_migrations = True
 
 
 class Organisation(UpdateElectionsTimestampedModel, DateDisplayMixin):
@@ -60,8 +88,14 @@ class Organisation(UpdateElectionsTimestampedModel, DateDisplayMixin):
     start_date = models.DateField(null=False)
     end_date = models.DateField(blank=True, null=True)
     legislation_url = models.CharField(blank=True, max_length=500, null=True)
+    provisional = models.BooleanField(default=False)
     ValidationError = ValueError
-    objects = OrganisationManager().as_manager()
+
+    # For explanation of the order of the custom model managers declarations below, see:
+    # https://github.com/DemocracyClub/EveryElection/blob/8a26/every_election/apps/elections/models.py#L434-L452
+
+    private_objects = PrivateOrganisationManager()
+    public_objects = PublicOrganisationManager()
 
     def __str__(self):
         return "{} ({})".format(self.name, self.active_period_text)
@@ -214,3 +248,147 @@ class OrganisationGeographySubdivided(models.Model):
         FROM organisations_organisationgeography og
         WHERE og.id IN (SELECT id FROM missing_subdivided_geography);
     """
+
+
+class OrganisationChangeType(models.TextChoices):
+    CREATE = "CREATE", "Create"
+    UPDATE = "UPDATE", "Update"
+    END = "END", "End"
+
+
+class OrganisationChange(models.Model):
+    organisation_change_legislation = models.ForeignKey(
+        "OrganisationChangeLegislation", on_delete=models.CASCADE
+    )
+    organisation = models.ForeignKey(
+        "Organisation",
+        on_delete=models.CASCADE,
+        limit_choices_to=~Q(organisation_type__in=["police-area", "europarl"]),
+    )
+    change_type = models.CharField(
+        max_length=10, choices=OrganisationChangeType.choices
+    )
+    information_url = models.URLField(
+        blank=True,
+        default="",
+        help_text=(
+            "A link to an org-specific information resource. "
+            "This field can be used in addition to, or instead of, "
+            "the multi-org information url on the legislation, "
+            "if the affected org has its own dedicated info resource."
+        ),
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["organisation_change_legislation", "organisation"],
+                name="unique_ocl_organisation",
+            )
+        ]
+
+    def __str__(self):
+        return f"Org Change for {self.organisation.common_name} ({self.change_type})"
+
+    def clean(self):
+        super().clean()
+        ocl_effective_date = self.organisation_change_legislation.effective_date
+        if not ocl_effective_date:
+            # If the OCL's effective date is not set, we can skip this validation.
+            # This is because we still want to be able to communicate organisation changes to users
+            # before we know the effective date of the legislation.
+            return
+
+        org_start_date = self.organisation.start_date
+        org_end_date = self.organisation.end_date
+
+        error_kwargs = {"message": {}, "code": "invalid_date"}
+
+        if self.change_type == OrganisationChangeType.END and (
+            org_end_date is None or org_end_date >= ocl_effective_date
+        ):
+            error_kwargs["message"]["organisation"] = (
+                f"The Organisation's end date ({org_end_date}) must be before the OCL's effective_date {ocl_effective_date}"
+            )
+            raise ValidationError(**error_kwargs)
+
+        if (
+            self.change_type == OrganisationChangeType.CREATE
+            and org_start_date < (ocl_effective_date - dt.timedelta(days=365))
+        ):
+            # New orgs normally have shadow elections the year before they actually are created,
+            # so, in order for us to create those elections, we set their start date earlier than the actual effective date
+            error_kwargs["message"]["organisation"] = (
+                f"The Organisation's start date ({org_start_date}) must be within a year of the OCL's effective_date ({ocl_effective_date})"
+            )
+            raise ValidationError(**error_kwargs)
+
+        if self.change_type == OrganisationChangeType.UPDATE and (
+            ocl_effective_date < org_start_date
+            or (org_end_date is not None and ocl_effective_date > org_end_date)
+        ):
+            error_kwargs["message"]["organisation"] = (
+                f"The OCL's effective_date ({ocl_effective_date}) must be between the Organisation's start date ({org_start_date}) and its end date ({org_end_date})"
+            )
+            raise ValidationError(**error_kwargs)
+
+
+class OCLPublicVisibility(models.TextChoices):
+    HIDDEN = "HIDDEN", "Hidden"
+    INFORM = "INFORM", "Inform"
+    MAP = "MAP", "Map"
+
+
+class OrganisationChangeLegislation(TimeStampedModel):
+    """
+    A model for legislation that can:
+
+    - Create or end organisations
+    - Modify organisation boundaries
+
+    Some examples include:
+
+    - The Surrey (Structural Changes) Order 2026: https://www.legislation.gov.uk/uksi/2026/264/made
+    - The Glasgow and North Lanarkshire Boundaries Amendment Order 2018: https://www.legislation.gov.uk/ssi/2018/308/made
+    - The Hampshire and the Solent Combined County Authority Regulations 2026: https://www.legislation.gov.uk/uksi/2026/595
+
+    """
+
+    provisional_name = models.CharField(blank=True, default="", max_length=255)
+    affected_organisations = models.ManyToManyField(
+        "Organisation",
+        through=OrganisationChange,
+        blank=True,
+    )
+    public_visibility = models.CharField(
+        choices=OCLPublicVisibility.choices, default=OCLPublicVisibility.HIDDEN
+    )
+    information_url = models.URLField(
+        blank=True,
+        default="",
+        help_text="A Link to a general, multi-org information resource",
+    )
+    explanation = models.TextField(blank=True, default="")
+    legislation_title = models.CharField(blank=True, default="")
+    legislation_url = models.URLField(blank=True, default="")
+    legislation_made = models.BooleanField(default=False)
+    effective_date = models.DateField(blank=True, null=True, default=None)
+
+    class Meta(TimeStampedModel.Meta):
+        verbose_name_plural = "Organisation Change Legislation"
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(provisional_name__gt="")
+                | Q(legislation_title__gt=""),
+                name="provisional_name_or_legislation_title_not_blank",
+            )
+        ]
+
+    def __str__(self):
+        return self.generic_title
+
+    @property
+    def generic_title(self):
+        if self.legislation_title:
+            return self.legislation_title
+        return self.provisional_name

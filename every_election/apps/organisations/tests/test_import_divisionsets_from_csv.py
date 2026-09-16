@@ -13,7 +13,7 @@ class ImportDivisionSetsFromCsvTests(TestCase):
 
         self.opts = {"url": "foo.bar/baz", "s3": None, "file": None}
 
-        self.org1 = Organisation.objects.create(
+        self.org1 = Organisation.public_objects.create(
             official_identifier="TEST1",
             organisation_type="local-authority",
             official_name="Test Council 1",
@@ -39,7 +39,7 @@ class ImportDivisionSetsFromCsvTests(TestCase):
             "Territory Code": "ENG",
         }
 
-        self.org3 = Organisation.objects.create(
+        self.org3 = Organisation.public_objects.create(
             official_identifier="TEST3",
             organisation_type="local-authority",
             official_name="Test Council 3",
@@ -48,7 +48,7 @@ class ImportDivisionSetsFromCsvTests(TestCase):
             election_name="Test Council 3 Local Elections",
             start_date=date(2016, 10, 1),
         )
-        self.org4 = Organisation.objects.create(
+        self.org4 = Organisation.public_objects.create(
             official_identifier="TEST4",
             organisation_type="local-authority",
             official_name="Test Council 4",

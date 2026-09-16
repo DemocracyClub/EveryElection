@@ -16,7 +16,7 @@ from organisations.models import (
 
 class SupportedOrganisationsView(ListView):
     template_name = "organisations/supported_organisations.html"
-    queryset = Organisation.objects.all().order_by(
+    queryset = Organisation.public_objects.all().order_by(
         "organisation_type", "common_name"
     )
 
@@ -25,7 +25,7 @@ class OrganisationsFilterView(TemplateView):
     template_name = "organisations/organisation_filter.html"
 
     def get_context_data(self, **kwargs):
-        orgs = Organisation.objects.all().filter(**kwargs)
+        orgs = Organisation.public_objects.all().filter(**kwargs)
         if not orgs.exists():
             raise Http404()
 
@@ -60,7 +60,7 @@ class OrganisationDetailView(TemplateView):
 
         try:
             obj = (
-                Organisation.objects.all()
+                Organisation.public_objects.all()
                 .prefetch_related(Prefetch("election_set", elections))
                 .get_by_date(**kwargs)
             )

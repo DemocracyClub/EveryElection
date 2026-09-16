@@ -179,7 +179,7 @@ class IDCreatorWizard(NamedUrlSessionWizardView):
     @property
     def get_organisations(self):
         if "election_organisation" in self.storage.extra_data:
-            return Organisation.objects.filter(
+            return Organisation.public_objects.filter(
                 electedrole__election_type__election_type__in=self.storage.extra_data[
                     "election_organisation"
                 ]

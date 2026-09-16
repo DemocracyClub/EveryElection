@@ -107,7 +107,7 @@ class Command(ReadFromCSVMixin, BaseCommand):
     def get_new_org(self, new_org_pk):
         # Get organisation
         try:
-            self.new_org = Organisation.objects.get(pk=new_org_pk)
+            self.new_org = Organisation.private_objects.get(pk=new_org_pk)
         except Organisation.DoesNotExist:
             raise CommandError(f"Organisation with pk={new_org_pk} not found")
 

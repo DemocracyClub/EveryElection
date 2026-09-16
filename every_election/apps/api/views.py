@@ -190,14 +190,14 @@ class ElectionSubTypeViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Organisation.objects.all()
+    queryset = Organisation.public_objects.all()
     serializer_class = OrganisationSerializer
     filterset_fields = ["modified"]
 
     def get_object(self, **kwargs):
         kwargs["date"] = datetime.strptime(kwargs["date"], "%Y-%m-%d").date()
         try:
-            return Organisation.objects.all().get_by_date(**kwargs)
+            return self.queryset.get_by_date(**kwargs)
         except Organisation.DoesNotExist:
             raise Http404()
 
@@ -254,7 +254,7 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
 
     def filter(self, request, **kwargs):
         kwargs.pop("format", None)
-        orgs = Organisation.objects.all().filter(**kwargs)
+        orgs = self.queryset.filter(**kwargs)
 
         page = self.paginate_queryset(orgs)
         if page is not None:

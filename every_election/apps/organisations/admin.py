@@ -9,6 +9,8 @@ from organisations.models import (
     DivisionProblem,
     Organisation,
     OrganisationBoundaryReview,
+    OrganisationChange,
+    OrganisationChangeLegislation,
     OrganisationDivision,
     OrganisationDivisionSet,
     OrganisationGeography,
@@ -17,6 +19,10 @@ from organisations.models import (
 )
 from organisations.views.admin.division_problem import DivisionProblemAdmin
 from organisations.views.admin.organisation import OrganisationAdmin
+from organisations.views.admin.organisation_change_legislation import (
+    OrganisationChangeAdmin,
+    OrganisationChangeLegislationAdmin,
+)
 from organisations.views.admin.organisation_division import (
     OrganisationDivisionAdmin,
 )
@@ -128,6 +134,11 @@ class OrganisationBoundaryReviewAdmin(admin.ModelAdmin):
 
 
 admin.site.register(OrganisationBoundaryReview, OrganisationBoundaryReviewAdmin)
+admin.site.register(
+    OrganisationChangeLegislation,
+    OrganisationChangeLegislationAdmin,
+)
+admin.site.register(OrganisationChange, OrganisationChangeAdmin)
 
 admin.site.register(Organisation, OrganisationAdmin)
 admin.site.register(OrganisationDivision, OrganisationDivisionAdmin)

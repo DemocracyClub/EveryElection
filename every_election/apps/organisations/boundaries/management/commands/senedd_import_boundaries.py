@@ -67,7 +67,7 @@ class Command(BaseBoundaryLineCommand):
         return pre_process_layer(ds[0], self.srid)
 
     def get_senedd_divisionset(self):
-        senedd = Organisation.objects.get(official_identifier="senedd")
+        senedd = Organisation.public_objects.get(official_identifier="senedd")
 
         return OrganisationDivisionSet.objects.create(
             organisation=senedd,

@@ -97,7 +97,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         self.run_test_with_data(all_data, expected_ids, expected_titles)
 
     def test_creates_ids_two_orgs(self):
-        org2 = Organisation.objects.create(
+        org2 = Organisation.public_objects.create(
             official_identifier="TEST2",
             organisation_type="local-authority",
             official_name="Test Council 2",
@@ -199,7 +199,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
             assert "by-election" in election.election_title
 
     def test_creates_mayor_id(self):
-        mayor_org = Organisation.objects.create(
+        mayor_org = Organisation.public_objects.create(
             official_identifier="MAYORTEST1",
             organisation_type="combined-authority",
             official_name="Test authority",
@@ -237,7 +237,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         self.assertIsNone(ballot.group_type)
 
     def test_creates_parl_id(self):
-        parl_org = Organisation.objects.create(
+        parl_org = Organisation.public_objects.create(
             official_identifier="parl",
             organisation_type="parl",
             official_name="Parl",
@@ -266,7 +266,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
         self.run_test_with_data(all_data, expected_ids, expected_titles)
 
     def test_creates_naw_id(self):
-        naw_org = Organisation.objects.create(
+        naw_org = Organisation.public_objects.create(
             official_identifier="naw",
             organisation_type="naw",
             official_name="naw",
@@ -455,7 +455,7 @@ class TestCreateIds(BaseElectionCreatorMixIn, TestCase):
 
     def test_gla_a_is_ballot(self):
         election_type = ElectionType.objects.get(election_type="gla")
-        gla = Organisation.objects.create(
+        gla = Organisation.public_objects.create(
             official_identifier="gla",
             organisation_type="gla",
             official_name="Greater London Authority",

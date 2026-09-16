@@ -6,6 +6,9 @@ from organisations.models import (
     DivisionGeographySubdivided,
     Organisation,
     OrganisationBoundaryReview,
+    OrganisationChange,
+    OrganisationChangeLegislation,
+    OrganisationChangeType,
     OrganisationDivision,
     OrganisationDivisionSet,
     OrganisationGeography,
@@ -214,3 +217,23 @@ class UnprocessedOrganisationBoundaryReviewFactory(
     @factory.lazy_attribute
     def legislation_title(self: OrganisationBoundaryReview):
         return f"The {self.organisation.common_name} (Electoral Changes) Order 2023"
+
+
+class OrganisationChangeLegislationFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = OrganisationChangeLegislation
+
+    provisional_name = factory.Sequence(
+        lambda n: f"Organisation Change Legislation {n}"
+    )
+
+
+class OrganisationChangeFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = OrganisationChange
+
+    organisation_change_legislation = factory.SubFactory(
+        OrganisationChangeLegislationFactory, effective_date=None
+    )
+    organisation = factory.SubFactory(OrganisationFactory, end_date=None)
+    change_type = OrganisationChangeType.END

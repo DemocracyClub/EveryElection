@@ -131,7 +131,9 @@ class Command(BaseCommand):
 
     def get_division_set(self, org_code):
         org = (
-            Organisation.objects.filter(organisation_type="local-authority")
+            Organisation.public_objects.filter(
+                organisation_type="local-authority"
+            )
             .filter(official_identifier=org_code)
             .latest()
         )

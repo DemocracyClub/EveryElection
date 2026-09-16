@@ -97,7 +97,7 @@ class Command(BaseCommand):
         )
 
     def create_org(self):
-        self.ua_organisation = Organisation.objects.create(
+        self.ua_organisation = Organisation.public_objects.create(
             official_identifier=self.org_identifier,
             official_name=self.org_official_name,
             common_name=self.org_common_name,

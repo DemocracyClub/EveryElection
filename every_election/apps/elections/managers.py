@@ -122,5 +122,3 @@ class PrivateElectionsManager(models.Manager.from_queryset(ElectionQuerySet)):
     """
 
     use_in_migrations = True
-
-    use_in_migrations = True

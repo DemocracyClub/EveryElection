@@ -23,7 +23,7 @@ def id_creator_data():
     today = date.today()
     future = today + timedelta(days=100)
     election_type1 = ElectionType.objects.get(election_type="local")
-    org1 = Organisation.objects.create(
+    org1 = Organisation.public_objects.create(
         official_identifier="TEST1",
         organisation_type="local-authority",
         official_name="Test Council",
@@ -38,7 +38,7 @@ def id_creator_data():
         elected_title="Local Councillor",
         elected_role_name="Councillor for Test Council",
     )
-    org2 = Organisation.objects.create(
+    org2 = Organisation.public_objects.create(
         official_identifier="TEST2",
         organisation_type="local-authority",
         official_name="Test 2 Council",
@@ -256,7 +256,7 @@ def test_subtype_creation(
     playwright_with_admin, live_server, id_creator_data, settings
 ):
     page = playwright_with_admin
-    naw_org = Organisation.objects.create(
+    naw_org = Organisation.public_objects.create(
         official_identifier="naw",
         organisation_type="naw",
         official_name="naw",
@@ -458,7 +458,7 @@ def test_source_validation_error(page, live_server, id_creator_data, settings):
 def test_gla_a_doesnt_show_division_picker(
     page, live_server, id_creator_data, settings
 ):
-    gla_org = Organisation.objects.create(
+    gla_org = Organisation.public_objects.create(
         official_identifier="gla",
         organisation_type="gla",
         official_name="gla",

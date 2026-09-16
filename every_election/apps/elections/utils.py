@@ -175,7 +175,7 @@ class ElectionBuilder:
         # but the organisation doesn't form part of the id
         if organisation.organisation_type == self.election_type.election_type:
             self._use_org = False
-            self.organisation = Organisation.objects.get(
+            self.organisation = Organisation.public_objects.get(
                 organisation_type=self.election_type.election_type
             )
         else:

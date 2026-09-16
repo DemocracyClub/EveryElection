@@ -10,7 +10,7 @@ from organisations.models import Organisation, OrganisationDivisionSet
 class UpdateEndDatesTests(TestCase):
     def setUp(self):
         # set up test data
-        self.org1 = Organisation.objects.create(
+        self.org1 = Organisation.public_objects.create(
             official_identifier="TEST1",
             organisation_type="local-authority",
             official_name="Test Council 1",
@@ -19,7 +19,7 @@ class UpdateEndDatesTests(TestCase):
             election_name="Test Council 1 Local Elections",
             start_date=date(2004, 12, 2),
         )
-        self.org2 = Organisation.objects.create(
+        self.org2 = Organisation.public_objects.create(
             official_identifier="TEST2",
             organisation_type="local-authority",
             official_name="Test Council 2",
@@ -28,7 +28,7 @@ class UpdateEndDatesTests(TestCase):
             election_name="Test Council 2 Local Elections",
             start_date=date(2004, 12, 2),
         )
-        self.org3 = Organisation.objects.create(
+        self.org3 = Organisation.public_objects.create(
             official_identifier="TEST3",
             organisation_type="local-authority",
             official_name="Test Council 3",

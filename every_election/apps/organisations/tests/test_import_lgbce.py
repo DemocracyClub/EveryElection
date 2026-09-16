@@ -26,7 +26,7 @@ class ImportLgbceTests(TestCase):
         )
 
         # an org with no division set
-        self.org1 = Organisation.objects.create(
+        self.org1 = Organisation.public_objects.create(
             official_identifier="TEST1",
             organisation_type="local-authority",
             official_name="Test Council 1",
@@ -38,7 +38,7 @@ class ImportLgbceTests(TestCase):
 
         # valid org/div
         self.valid_org_code = "TEST2"
-        valid_org = Organisation.objects.create(
+        valid_org = Organisation.public_objects.create(
             official_identifier=self.valid_org_code,
             organisation_type="local-authority",
             official_name="Test Council 2",

@@ -34,7 +34,7 @@ class BaseElectionCreatorMixIn:
         cls.election_type1, _ = ElectionType.objects.get_or_create(
             election_type="local"
         )
-        cls.org1 = Organisation.objects.create(
+        cls.org1 = Organisation.public_objects.create(
             official_identifier="TEST1",
             organisation_type="local-authority",
             official_name="Test Council",
@@ -68,7 +68,7 @@ class BaseElectionCreatorMixIn:
             "date": cls.date,
         }
 
-        cls.testshire_org = Organisation.objects.create(
+        cls.testshire_org = Organisation.public_objects.create(
             official_identifier="TEST1SHIRE",
             organisation_type="local-authority",
             official_name="Testshire County Council",
