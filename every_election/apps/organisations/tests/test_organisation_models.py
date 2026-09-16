@@ -1,6 +1,7 @@
 import datetime as dt
 
 from django.core.exceptions import ValidationError
+from django.db.utils import IntegrityError
 from django.test import TestCase
 from elections.tests.factories import ElectionFactory
 from organisations.models import (
@@ -14,6 +15,7 @@ from organisations.tests.factories import (
     DivisionGeographyFactory,
     IncompleteOrganisationBoundaryReviewFactory,
     OrganisationChangeFactory,
+    OrganisationChangeLegislationFactory,
     OrganisationDivisionFactory,
     OrganisationDivisionSetFactory,
     OrganisationFactory,
@@ -420,6 +422,26 @@ class TestOrganisationDivisionBoundaryReview(TestCase):
             self.processed_review.legislation_title,
             self.processed_review.generic_title,
         )
+
+
+class TestOrganisationChangeLegislation(TestCase):
+    def test_constraint_provisional_name_or_legislation_title_blank(self):
+        OrganisationChangeLegislationFactory(
+            provisional_name="test name",
+            legislation_title="test title",
+        )
+        OrganisationChangeLegislationFactory(
+            provisional_name="",
+            legislation_title="test title",
+        )
+        OrganisationChangeLegislationFactory(
+            provisional_name="test name",
+            legislation_title="",
+        )
+        with self.assertRaises(IntegrityError):
+            OrganisationChangeLegislationFactory(
+                provisional_name="", legislation_title=""
+            )
 
 
 class TestOrgChange(TestCase):
