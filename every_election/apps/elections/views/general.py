@@ -33,7 +33,7 @@ class ElectionTypesView(ListView):
             ex_subtype = obj.subtype.first().election_subtype
             id_elements.append(ex_subtype)
 
-        if obj.organisation_set.count() > 1:
+        if obj.organisation_set.exclude(provisional=True).count() > 1:
             ex_org = obj.organisation_set.exclude(provisional=True).first().slug
             id_elements.append(ex_org)
 
