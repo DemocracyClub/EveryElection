@@ -81,7 +81,7 @@ class Election(metaclass=ABCMeta):
     @property
     def replacement_pack_start_date(self) -> dt.date:
         """
-        Calculate the replacement pack start date for an election to the Greater London Assembly
+        Calculate the replacement pack start date for this Election
 
         This is defined by Representation of the People (England and Wales) Regulations 2001, Regulation 78
         https://www.legislation.gov.uk/uksi/2001/341/regulation/78
