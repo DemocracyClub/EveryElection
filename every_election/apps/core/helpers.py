@@ -1,9 +1,9 @@
 from django.conf import settings
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import AnonymousUser, Group, User
 from rest_framework.pagination import LimitOffsetPagination
 
 
-def user_is_moderator(user: User):
+def user_is_moderator(user: User | AnonymousUser):
     if not user.is_authenticated:
         return False
     group = Group.objects.get(name="moderators")
