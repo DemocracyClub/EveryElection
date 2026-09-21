@@ -45,7 +45,7 @@ def test_timetable_vac_application_deadline():
 def test_timetable_sort_order():
     election = from_election_id("local.2021-05-06", country=Country.ENGLAND)
 
-    assert len(election.timetable) == 6
+    assert len(election.timetable) == 8
 
     assert election.timetable == [
         {
@@ -74,9 +74,19 @@ def test_timetable_sort_order():
             "event": "POSTAL_VOTE_APPLICATION_DEADLINE",
         },
         {
+            "label": "Proxy vote application deadline",
+            "date": dt.date(2021, 4, 27),
+            "event": "PROXY_VOTE_APPLICATION_DEADLINE",
+        },
+        {
             "label": "VAC application deadline",
             "date": dt.date(2021, 4, 27),
             "event": "VAC_APPLICATION_DEADLINE",
+        },
+        {
+            "label": "First date electors can apply for a postal vote replacement pack",
+            "date": dt.date(2021, 4, 29),
+            "event": "REPLACEMENT_PACK_START_DATE",
         },
     ]
 
@@ -84,7 +94,7 @@ def test_timetable_sort_order():
 def test_timetable_sort_order_scottish_parliament_postal_vote():
     election = from_election_id("sp.c.2021-05-06")
 
-    assert len(election.timetable) == 6
+    assert len(election.timetable) == 8
 
     assert election.timetable == [
         {
@@ -113,9 +123,19 @@ def test_timetable_sort_order_scottish_parliament_postal_vote():
             "event": "REGISTRATION_DEADLINE",
         },
         {
+            "label": "Proxy vote application deadline",
+            "date": dt.date(2021, 4, 27),
+            "event": "PROXY_VOTE_APPLICATION_DEADLINE",
+        },
+        {
             "label": "VAC application deadline",
             "date": dt.date(2021, 4, 27),
             "event": "VAC_APPLICATION_DEADLINE",
+        },
+        {
+            "label": "First date electors can apply for a postal vote replacement pack",
+            "date": dt.date(2021, 4, 29),
+            "event": "REPLACEMENT_PACK_START_DATE",
         },
     ]
 
@@ -123,7 +143,7 @@ def test_timetable_sort_order_scottish_parliament_postal_vote():
 def test_timetable_referendum():
     election = from_election_id("ref.2021-05-06", country=Country.ENGLAND)
 
-    assert len(election.timetable) == 3
+    assert len(election.timetable) == 5
 
     assert election.timetable == [
         {
@@ -137,9 +157,19 @@ def test_timetable_referendum():
             "event": "POSTAL_VOTE_APPLICATION_DEADLINE",
         },
         {
+            "label": "Proxy vote application deadline",
+            "date": dt.date(2021, 4, 27),
+            "event": "PROXY_VOTE_APPLICATION_DEADLINE",
+        },
+        {
             "label": "VAC application deadline",
             "date": dt.date(2021, 4, 27),
             "event": "VAC_APPLICATION_DEADLINE",
+        },
+        {
+            "label": "First date electors can apply for a postal vote replacement pack",
+            "date": dt.date(2021, 4, 29),
+            "event": "REPLACEMENT_PACK_START_DATE",
         },
     ]
 

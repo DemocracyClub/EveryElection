@@ -29,3 +29,17 @@ def test_notice_of_election_deadline():
     election = SeneddCymruElection(dt.date(2026, 5, 7))
 
     assert election.notice_of_election_deadline == dt.date(2026, 3, 30)
+
+
+# Reference election: senedd.2026-05-07
+def test_proxy_vote_application_deadline():
+    election = SeneddCymruElection(dt.date(2026, 5, 7))
+
+    assert election.proxy_vote_application_deadline == dt.date(2026, 4, 28)
+
+
+# Reference election: senedd.2026-05-07
+def test_replacement_pack_start_date():
+    election = SeneddCymruElection(dt.date(2026, 5, 7))
+
+    assert election.replacement_pack_start_date == dt.date(2026, 4, 30)
