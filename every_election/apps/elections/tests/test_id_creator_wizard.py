@@ -4,6 +4,7 @@ from unittest.mock import patch
 import pytest
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from election_snooper.models import SnoopedElection
 from elections.models import (
     ElectedRole,
     Election,
@@ -515,3 +516,20 @@ def test_gla_a_doesnt_show_division_picker(
         "gla.2023-01-05",
         "gla.a.2023-01-05",
     ]
+
+
+@pytest.mark.django_db
+def test_radar_id_shows_the_linked_snooped_election(client):
+    other = SnoopedElection.objects.create(
+        title="Some other election", snooper_name="TestSnooper"
+    )
+    linked = SnoopedElection.objects.create(
+        title="The linked election", snooper_name="TestSnooper"
+    )
+    assert linked.pk != other.pk
+
+    resp = client.get(f"/id_creator/?radar_id={linked.pk}", follow=True)
+
+    content = resp.content.decode()
+    assert "The linked election" in content
+    assert "Some other election" not in content
