@@ -12,7 +12,7 @@ dev = [
     "requests==2.33.0",
 ]
 docs = [
-    "sphinx-markdown-tables==0.0.12",
+    "sphinx-markdown-tables==0.0.17",
     "sphinx==7.4.7",
     "recommonmark==0.7.1",
     "sphinx-rtd-theme==3.1.0",
