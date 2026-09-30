@@ -1,9 +1,8 @@
 import urllib
 
 from core.helpers import user_is_moderator
-from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
@@ -12,15 +11,12 @@ from election_snooper.forms import ReviewElectionForm
 from election_snooper.models import SnoopedElection
 
 
-class SnoopedElectionView(UserPassesTestMixin, TemplateView):
+class SnoopedElectionView(TemplateView):
     template_name = "election_snooper/snooped_election_list.html"
 
     @method_decorator(never_cache)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
-
-    def test_func(self):
-        return user_is_moderator(self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -47,9 +43,13 @@ class SnoopedElectionView(UserPassesTestMixin, TemplateView):
             # If page is out of range, deliver last page of results.
             context["objects"] = paginator.page(paginator.num_pages)
 
+        context["user_is_moderator"] = user_is_moderator(self.request.user)
+
         return context
 
     def post(self, request, *args, **kwargs):
+        if not user_is_moderator(self.request.user):
+            return HttpResponseForbidden()
         instance = SnoopedElection.objects.get(pk=request.POST.get("pk"))
         form = ReviewElectionForm(
             request.POST, instance=instance, prefix=instance.pk

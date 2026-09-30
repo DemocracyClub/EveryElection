@@ -11,7 +11,7 @@
         </aside>
     {% endif %}
 
-    {% if request.user.is_authenticated and radar_obj %}
+    {% if radar_obj %}
         <div class="ds-card">
             <div class="ds-card-body">
                 <p><strong>Creating election for "{{ radar_obj.title }}"</strong></p>
