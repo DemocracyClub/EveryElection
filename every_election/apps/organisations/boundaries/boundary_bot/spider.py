@@ -184,8 +184,7 @@ class LgbceSpider(scrapy.Spider):
 
             yield rec
         for next_page in response.css("div.letter_section > div > a"):
-            if "all-reviews" in next_page.extract():
-                yield response.follow(next_page, self.parse)
+            yield response.follow(next_page, self.parse)
 
 
 class SpiderWrapper:
