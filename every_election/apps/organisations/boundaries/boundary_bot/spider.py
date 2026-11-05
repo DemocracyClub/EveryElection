@@ -156,11 +156,6 @@ class LgbceSpider(scrapy.Spider):
         status = self.get_status(response)
         if status:
             latest_event = self.get_latest_event(response)
-            if (
-                latest_event == "Initial consultation"
-                and status == ReviewStatus.COMPLETED
-            ):
-                status = ReviewStatus.CURRENT
             legislation_title, legislation_url = self.get_eco_title_and_link(
                 response, latest_event
             )
