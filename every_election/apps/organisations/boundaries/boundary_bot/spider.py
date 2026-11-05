@@ -104,6 +104,10 @@ class LgbceSpider(scrapy.Spider):
             return selector.xpath("*/a/@href").extract_first()
 
         def is_relevant_review(title):
+            # Ignore correction slips
+            if "correction" in title.lower():
+                return False
+
             return (
                 "(electoral changes) order" in title.lower()
                 or "(structural changes) order" in title.lower()
