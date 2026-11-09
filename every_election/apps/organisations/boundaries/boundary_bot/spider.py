@@ -144,6 +144,12 @@ class LgbceSpider(scrapy.Spider):
 
         return None, None
 
+    def has_upcoming_events(self, response):
+        return (
+            "Upcoming"
+            in response.css("div.vits-review-card__status::text").getall()
+        )
+
     def get_status(self, response):
         lgbce_status = response.css("div.status::text")
         if lgbce_status:
@@ -160,6 +166,15 @@ class LgbceSpider(scrapy.Spider):
         status = self.get_status(response)
         if status:
             latest_event = self.get_latest_event(response)
+
+            # if there is a planned review but the first event hasn't happened yet then just ignore it
+            if (
+                latest_event == "Effective date"
+                and status == ReviewStatus.CURRENT
+                and self.has_upcoming_events(response)
+            ):
+                status = ReviewStatus.COMPLETED
+
             legislation_title, legislation_url = self.get_eco_title_and_link(
                 response, latest_event
             )
