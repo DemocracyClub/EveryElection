@@ -65,7 +65,7 @@ hooks:
 #   in the script specified in "location".
   BeforeInstall:
     - location: deploy/hooks/beforeinstall/initial_setup.sh
-      timeout: 500
+      timeout: 300
       runas: root
   #   - location:
   #     timeout:
