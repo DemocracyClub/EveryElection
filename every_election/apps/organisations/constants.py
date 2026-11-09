@@ -612,6 +612,8 @@ ORG_CURIE_TO_MAPIT_AREA_TYPE = {
     "local-authority-eng:WNT": "UTA",
     "local-authority-eng:NNT": "UTA",
     "local-authority-eng:BUC": "UTA",
+    "local-authority-eng:SMT": "UTA",
+    "local-authority-eng:NYE": "UTA",
 }
 
 
