@@ -104,6 +104,10 @@ class LgbceSpider(scrapy.Spider):
             return selector.xpath("*/a/@href").extract_first()
 
         def is_relevant_review(title):
+            # Ignore correction slips
+            if "correction" in title.lower():
+                return False
+
             return (
                 "(electoral changes) order" in title.lower()
                 or "(structural changes) order" in title.lower()
@@ -140,6 +144,12 @@ class LgbceSpider(scrapy.Spider):
 
         return None, None
 
+    def has_upcoming_events(self, response):
+        return (
+            "Upcoming"
+            in response.css("div.vits-review-card__status::text").getall()
+        )
+
     def get_status(self, response):
         lgbce_status = response.css("div.status::text")
         if lgbce_status:
@@ -156,11 +166,15 @@ class LgbceSpider(scrapy.Spider):
         status = self.get_status(response)
         if status:
             latest_event = self.get_latest_event(response)
+
+            # if there is a planned review but the first event hasn't happened yet then just ignore it
             if (
-                latest_event == "Initial consultation"
-                and status == ReviewStatus.COMPLETED
+                latest_event == "Effective date"
+                and status == ReviewStatus.CURRENT
+                and self.has_upcoming_events(response)
             ):
-                status = ReviewStatus.CURRENT
+                status = ReviewStatus.COMPLETED
+
             legislation_title, legislation_url = self.get_eco_title_and_link(
                 response, latest_event
             )
@@ -184,8 +198,7 @@ class LgbceSpider(scrapy.Spider):
 
             yield rec
         for next_page in response.css("div.letter_section > div > a"):
-            if "all-reviews" in next_page.extract():
-                yield response.follow(next_page, self.parse)
+            yield response.follow(next_page, self.parse)
 
 
 class SpiderWrapper:

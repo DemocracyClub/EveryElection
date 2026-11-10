@@ -310,7 +310,7 @@ LGBCE_SLUG_TO_ORG_SLUG = {
     "rother": "rother",
     "rotherham": "rotherham",
     "greenwich": "greenwich",
-    "kensington-and-chelsea": "kensington-and-chelsea",
+    "kensingtonandchelsea": "kensington-and-chelsea",
     "kingston-upon-thames": "kingston-upon-thames",
     "windsor-and-maidenhead": "windsor-and-maidenhead",
     "rugby": "rugby",
