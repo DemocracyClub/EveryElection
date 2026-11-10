@@ -134,8 +134,10 @@ class OrganisationDivisionSet(
         verbose_name_plural = "Organisation Division Sets"
         ordering = ("-start_date",)
         get_latest_by = "start_date"
-        unique_together = ("organisation", "start_date")
-        unique_together = ("organisation", "end_date")
+        unique_together = (
+            ("organisation", "start_date"),
+            ("organisation", "end_date"),
+        )
         """
         Note:
         This model also has an additional constraint to prevent

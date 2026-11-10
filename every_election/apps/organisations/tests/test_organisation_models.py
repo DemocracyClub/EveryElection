@@ -308,6 +308,19 @@ class TestDateConstraints(TestCase):
         except ValidationError:
             self.fail("ValidationError raised unexpectedly!")
 
+    def test_divisionset_start_date_unique_per_organisation(self):
+        OrganisationDivisionSetFactory(
+            organisation=self.org,
+            start_date=dt.date(2001, 1, 1),
+            end_date=dt.date(2001, 1, 1),
+        )
+        with self.assertRaises(IntegrityError):
+            OrganisationDivisionSetFactory(
+                organisation=self.org,
+                start_date=dt.date(2001, 1, 1),
+                end_date=dt.date(2002, 1, 1),
+            )
+
     def test_save_organisationgeography_before_start(self):
         with self.assertRaises(ValidationError):
             OrganisationGeographyFactory(
