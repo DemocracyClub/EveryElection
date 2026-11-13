@@ -518,6 +518,7 @@ class TestElectionAPIQueries(APITestCase):
         }
         """
         )
+        self.expected_object["division"]["divisionset"]["id"] = div_set.id
 
         resp = self.client.get("/api/elections/")
         data = resp.json()

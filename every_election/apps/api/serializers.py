@@ -83,6 +83,7 @@ class OrganisationDivisionSetSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrganisationDivisionSet
         fields = (
+            "id",
             "start_date",
             "end_date",
             "legislation_url",
