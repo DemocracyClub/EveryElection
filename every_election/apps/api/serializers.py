@@ -10,6 +10,7 @@ from organisations.models import (
     OrganisationDivisionSet,
 )
 from rest_framework import serializers
+from rest_framework.reverse import reverse
 from rest_framework_gis.serializers import (
     GeoFeatureModelSerializer,
     GeometrySerializerMethodField,
@@ -108,6 +109,17 @@ class DivisionSetHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
         )
 
 
+divisionset_summary_fields = (
+    "url",
+    "start_date",
+    "end_date",
+    "short_title",
+    "legislation_url",
+    "consultation_url",
+    "notes",
+)
+
+
 class DivisionSetSummarySerializer(serializers.ModelSerializer):
     """
     A division set without its divisions. Used in list responses.
@@ -119,15 +131,7 @@ class DivisionSetSummarySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrganisationDivisionSet
-        fields = (
-            "url",
-            "start_date",
-            "end_date",
-            "short_title",
-            "legislation_url",
-            "consultation_url",
-            "notes",
-        )
+        fields = divisionset_summary_fields
 
 
 class OrganisationDivisionSetSerializer(serializers.ModelSerializer):
@@ -143,23 +147,95 @@ class OrganisationDivisionSetSerializer(serializers.ModelSerializer):
         )
 
 
+division_fields = (
+    "name",
+    "official_identifier",
+    "slug",
+    "division_type",
+    "division_subtype",
+    "division_election_sub_type",
+    "seats_total",
+    "territory_code",
+    "created",
+    "modified",
+)
+
+
+class DivisionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrganisationDivision
+        fields = division_fields
+
+
 class OrganisationDivisionSerializer(serializers.ModelSerializer):
     divisionset = OrganisationDivisionSetSerializer()
 
     class Meta:
         model = OrganisationDivision
-        fields = (
-            "divisionset",
-            "name",
-            "official_identifier",
-            "slug",
-            "division_type",
-            "division_subtype",
-            "division_election_sub_type",
-            "seats_total",
-            "territory_code",
-            "created",
-            "modified",
+        fields = division_fields + ("divisionset",)
+
+
+class DivisionSetSerializer(DivisionSetSummarySerializer):
+    """
+    A division set including its divisions. Used in the detail response.
+
+    If the serializer context contains `division_type`, only divisions of
+    that type are included in `divisions`.
+    """
+
+    divisions = serializers.SerializerMethodField()
+    division_types = serializers.SerializerMethodField()
+    previous = serializers.SerializerMethodField()
+    next = serializers.SerializerMethodField()
+
+    class Meta:
+        model = OrganisationDivisionSet
+        fields = divisionset_summary_fields + (
+            "division_types",
+            "previous",
+            "next",
+            "divisions",
+        )
+
+    def get_divisions(self, obj: OrganisationDivisionSet):
+        divisions = obj.divisions.all()
+        if division_type := self.context.get("division_type"):
+            divisions = divisions.filter(division_type=division_type)
+        return DivisionSerializer(
+            divisions, many=True, context=self.context
+        ).data
+
+    def get_division_types(self, obj: OrganisationDivisionSet) -> list[str]:
+        # order_by() clears the model's default ordering by name, which
+        # would otherwise be added to the SELECT and defeat distinct()
+        return sorted(
+            obj.divisions.order_by()
+            .values_list("division_type", flat=True)
+            .distinct()
+        )
+
+    def _detail_url(self, divisionset):
+        if divisionset is None:
+            return None
+        return reverse(
+            "api:divisionset-detail",
+            kwargs=divisionset_url_kwargs(divisionset),
+            request=self.context.get("request"),
+            format=self.context.get("format"),
+        )
+
+    def get_previous(self, obj: OrganisationDivisionSet):
+        return self._detail_url(
+            obj.organisation.divisionset.filter(start_date__lt=obj.start_date)
+            .order_by("-start_date")
+            .first()
+        )
+
+    def get_next(self, obj: OrganisationDivisionSet):
+        return self._detail_url(
+            obj.organisation.divisionset.filter(start_date__gt=obj.start_date)
+            .order_by("start_date")
+            .first()
         )
 
 
