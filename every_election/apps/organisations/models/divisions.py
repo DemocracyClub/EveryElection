@@ -5,8 +5,14 @@ from core.mixins import UpdateElectionsTimestampedModel
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.aggregates import StringAgg
+from django.contrib.postgres.constraints import ExclusionConstraint
+from django.contrib.postgres.fields import (
+    DateRangeField,
+    RangeBoundary,
+    RangeOperators,
+)
 from django.db import connection, transaction
-from django.db.models import Q
+from django.db.models import Func, Q
 from django.db.models.fields import BinaryField, CharField
 from django.db.models.functions import MD5, Cast, Concat
 from django.utils.functional import cached_property
@@ -16,6 +22,11 @@ from organisations.constants import PMTILES_FEATURE_ATTR_FIELDS
 from storage.s3wrapper import S3Wrapper
 
 from .mixins import DateConstraintMixin, DateDisplayMixin
+
+
+class DateRange(Func):
+    function = "DATERANGE"
+    output_field = DateRangeField()
 
 
 class DivisionSetQuerySet(models.QuerySet):
@@ -138,12 +149,28 @@ class OrganisationDivisionSet(
             ("organisation", "start_date"),
             ("organisation", "end_date"),
         )
-        """
-        Note:
-        This model also has an additional constraint to prevent
-        overlapping start and end dates which is defined in
-        organisations/migrations/0031_end_date_constraint.py
-        """
+        constraints = [
+            # Divisionsets for the same organisation may not be in force
+            # on the same day. end_date is the last day a divisionset is
+            # in force, so both bounds of the range are inclusive. A NULL
+            # end_date gives a range with no upper bound.
+            ExclusionConstraint(
+                name="no_divset_overlaps",
+                expressions=[
+                    ("organisation", RangeOperators.EQUAL),
+                    (
+                        DateRange(
+                            "start_date",
+                            "end_date",
+                            RangeBoundary(
+                                inclusive_lower=True, inclusive_upper=True
+                            ),
+                        ),
+                        RangeOperators.OVERLAPS,
+                    ),
+                ],
+            ),
+        ]
 
 
 class DivisionManager(models.QuerySet):

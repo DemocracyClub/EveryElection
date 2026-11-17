@@ -151,10 +151,6 @@ class TestDivisionSetOverlapConstraint:
                 end_date=None,
             )
 
-    @pytest.mark.xfail(  # remove once fixed
-        strict=True,
-        reason="no_divset_overlaps treats end_date as exclusive",
-    )
     def test_divsets_sharing_boundary_day_rejected(self, first_divset):
         with pytest.raises(IntegrityError), transaction.atomic():
             OrganisationDivisionSetFactory(
