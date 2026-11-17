@@ -79,6 +79,57 @@ class OrganisationGeoSerializer(GeoFeatureModelSerializer):
         fields = org_fields
 
 
+def divisionset_url_kwargs(divisionset: OrganisationDivisionSet) -> dict:
+    """
+    The URL kwargs that identify a DivisionSet by its natural key:
+    the Organisation's type, official identifier and start date,
+    followed by the DivisionSet's own start date.
+    """
+    organisation = divisionset.organisation
+    return {
+        "organisation_type": organisation.organisation_type,
+        "official_identifier": organisation.official_identifier,
+        "date": organisation.start_date,
+        "divset_date": divisionset.start_date,
+    }
+
+
+class DivisionSetHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
+    def get_url(self, obj, view_name, request, format):
+        # Unsaved objects will not yet have a valid URL.
+        if obj.pk is None:
+            return None
+
+        return self.reverse(
+            view_name,
+            kwargs=divisionset_url_kwargs(obj),
+            request=request,
+            format=format,
+        )
+
+
+class DivisionSetSummarySerializer(serializers.ModelSerializer):
+    """
+    A division set without its divisions. Used in list responses.
+    """
+
+    url = DivisionSetHyperlinkedIdentityField(
+        view_name="api:divisionset-detail", read_only=True
+    )
+
+    class Meta:
+        model = OrganisationDivisionSet
+        fields = (
+            "url",
+            "start_date",
+            "end_date",
+            "short_title",
+            "legislation_url",
+            "consultation_url",
+            "notes",
+        )
+
+
 class OrganisationDivisionSetSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrganisationDivisionSet
