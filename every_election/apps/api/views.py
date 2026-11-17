@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from datetime import datetime
+from datetime import date, datetime
 
 from api import filters
 from django.conf import settings
@@ -12,14 +12,20 @@ from elections.models import (
     ModerationStatuses,
 )
 from elections.query_helpers import PostcodeError
-from organisations.models import Organisation, OrganisationDivision
+from organisations.models import (
+    Organisation,
+    OrganisationDivision,
+    OrganisationDivisionSet,
+)
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import APIException, NotFound
 from rest_framework.response import Response
 from uk_election_ids.election_ids import validate
 
 from .serializers import (
+    DivisionSetSerializer,
+    DivisionSetSummarySerializer,
     ElectionGeoSerializer,
     ElectionSerializer,
     ElectionSubTypeSerializer,
@@ -278,3 +284,66 @@ class OrganisationDivisionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = OrganisationDivision.objects.all()
     serializer_class = OrganisationDivisionSerializer
     filterset_fields = ["modified"]
+
+
+def parse_url_date(value: str) -> date:
+    """
+    Parse a yyyy-mm-dd URL segment. The URL patterns only check that the
+    segment is made of digits in the right places, so a value like
+    2026-13-45 reaches the view and is treated as not found.
+    """
+    try:
+        return datetime.strptime(value, "%Y-%m-%d").date()
+    except ValueError:
+        raise NotFound(f"'{value}' is not a valid yyyy-mm-dd date")
+
+
+class DivisionSetViewSet(viewsets.GenericViewSet):
+    """
+    Division sets keyed by:
+        `(organisation_type, official_identifier, organisation date, divisionset date)`
+
+    This is the organisation natural key + date for the division set. Since there is
+    only ever one division set active for each organisation this is also a natural key
+    for division sets.
+
+    URLs in responses will always use the start date of the organisation and
+    divisionset. But neither date _has_ to be the start date.
+    The organisation and division set active on the given dates will be returned.
+    """
+
+    # Organisation.public_objects excludes provisional organisations.
+    # We need to replicate that here to make sure we don't return
+    # division sets for provisional orgs.
+    queryset = OrganisationDivisionSet.objects.filter(
+        organisation__provisional=False
+    ).select_related("organisation")
+    serializer_class = DivisionSetSummarySerializer
+
+    def get_organisation(self) -> Organisation:
+        try:
+            return Organisation.public_objects.get_by_date(
+                organisation_type=self.kwargs["organisation_type"],
+                official_identifier=self.kwargs["official_identifier"],
+                date=parse_url_date(self.kwargs["date"]),
+            )
+        except Organisation.DoesNotExist:
+            raise Http404()
+
+    def get_object(self) -> OrganisationDivisionSet:
+        organisation = self.get_organisation()
+        try:
+            return (
+                self.get_queryset()
+                .filter(organisation=organisation)
+                .filter_by_date(parse_url_date(self.kwargs["divset_date"]))
+                .get()
+            )
+        except OrganisationDivisionSet.DoesNotExist:
+            raise Http404()
+
+    def retrieve(self, request, **kwargs):
+        context = self.get_serializer_context()
+        context["division_type"] = request.query_params.get("division_type")
+        serializer = DivisionSetSerializer(self.get_object(), context=context)
+        return Response(serializer.data)
