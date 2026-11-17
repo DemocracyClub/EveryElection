@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 import pytest
+from django.db import IntegrityError, transaction
 from elections.tests.factories import ElectedRoleFactory
 from elections.utils import ElectionBuilder
 from organisations.tests.factories import (
@@ -120,3 +121,49 @@ def test_pmtiles_hash_not_regenerated_if_already_exists(db):
 
         ds.save()  # should not not generate hash
         assert mock_generate_hash.call_count == 1
+
+
+class TestDivisionSetOverlapConstraint:
+    """
+    A divisionset's end_date is the last day it is in force (see
+    DivisionManager.filter_by_date, which uses end_date__gte), so two
+    divisionsets for the same organisation must not share any day.
+    """
+
+    @pytest.fixture
+    def first_divset(self, db):
+        return OrganisationDivisionSetFactory(
+            start_date="2017-05-04", end_date="2022-05-04"
+        )
+
+    def test_adjacent_divsets_allowed(self, first_divset):
+        OrganisationDivisionSetFactory(
+            organisation=first_divset.organisation,
+            start_date="2022-05-05",
+            end_date=None,
+        )
+
+    def test_overlapping_divsets_rejected(self, first_divset):
+        with pytest.raises(IntegrityError), transaction.atomic():
+            OrganisationDivisionSetFactory(
+                organisation=first_divset.organisation,
+                start_date="2020-01-01",  # in the middle of the range for first_divset
+                end_date=None,
+            )
+
+    @pytest.mark.xfail(  # remove once fixed
+        strict=True,
+        reason="no_divset_overlaps treats end_date as exclusive",
+    )
+    def test_divsets_sharing_boundary_day_rejected(self, first_divset):
+        with pytest.raises(IntegrityError), transaction.atomic():
+            OrganisationDivisionSetFactory(
+                organisation=first_divset.organisation,
+                start_date="2022-05-04",  # same as first_divset.enddate
+                end_date=None,
+            )
+
+    def test_same_dates_for_different_organisations_allowed(self, first_divset):
+        OrganisationDivisionSetFactory(
+            start_date="2017-05-04", end_date="2022-05-04"
+        )
