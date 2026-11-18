@@ -342,6 +342,19 @@ class DivisionSetViewSet(viewsets.GenericViewSet):
         except OrganisationDivisionSet.DoesNotExist:
             raise Http404()
 
+    def organisation_list(self, request, **kwargs):
+        """
+        The division sets of one organisation.
+        """
+        queryset = (
+            self.get_queryset()
+            .filter(organisation=self.get_organisation())
+            .order_by("-start_date")
+        )
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
+
     def retrieve(self, request, **kwargs):
         context = self.get_serializer_context()
         context["division_type"] = request.query_params.get("division_type")

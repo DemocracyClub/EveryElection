@@ -40,6 +40,11 @@ routes = router.get_urls()
 divisionset_routes = format_suffix_patterns(
     [
         re_path(
+            rf"^organisations/{ORGANISATION_LOOKUP_REGEX}/division_sets/$",
+            DivisionSetViewSet.as_view({"get": "organisation_list"}),
+            name="divisionset-organisation-list",
+        ),
+        re_path(
             rf"^organisations/{ORGANISATION_LOOKUP_REGEX}/division_sets/(?P<divset_date>\d{{4}}-\d{{2}}-\d{{2}})/$",
             DivisionSetViewSet.as_view({"get": "retrieve"}),
             name="divisionset-detail",
