@@ -11,6 +11,19 @@ from organisations.tests.factories import (
 )
 
 
+def divisionset_model_fields(ballot: dict) -> dict:
+    """
+    The `divisionset` object from a ballot in the API, without `url`.
+    The rest of its keys are fields on OrganisationDivisionSet, so the
+    result can be used to look up the model.
+    """
+    return {
+        key: value
+        for key, value in ballot["division"]["divisionset"].items()
+        if key != "url"
+    }
+
+
 class TestSyncElectionsHelper(TestCase):
     """
     Tests for the election sync management command.
@@ -116,7 +129,7 @@ class TestDivisionSetStartAndEndDates(TestCase):
         ballot = get_local_ballot()
         helper.add_single_election(ballot)
         div_set = OrganisationDivisionSet.objects.get(
-            **ballot["division"]["divisionset"]
+            **divisionset_model_fields(ballot)
         )
         self.assertIsNone(div_set.end_date)
 
@@ -134,7 +147,7 @@ class TestDivisionSetStartAndEndDates(TestCase):
         ballot = get_local_ballot()
         helper.add_single_election(ballot)
         div_set = OrganisationDivisionSet.objects.get(
-            **ballot["division"]["divisionset"]
+            **divisionset_model_fields(ballot)
         )
 
         # Set an end date
@@ -176,7 +189,7 @@ class TestDivisionSetStartAndEndDates(TestCase):
 
         helper.add_single_election(ballot)
         div_set = OrganisationDivisionSet.objects.get(
-            **ballot["division"]["divisionset"]
+            **divisionset_model_fields(ballot)
         )
         self.assertIsNone(div_set.end_date)
 
@@ -250,7 +263,7 @@ class TestElectionSyncerCreatesElection(TestCase):
 
         # show the divset doesn't have an end date
         div_set = OrganisationDivisionSet.objects.get(
-            **ballot["division"]["divisionset"]
+            **divisionset_model_fields(ballot)
         )
         self.assertIsNone(div_set.end_date)
 

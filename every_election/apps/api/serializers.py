@@ -122,7 +122,8 @@ divisionset_summary_fields = (
 
 class DivisionSetSummarySerializer(serializers.ModelSerializer):
     """
-    A division set without its divisions. Used in list responses.
+    A division set without its divisions. Used in list responses, and
+    nested inside each division in the elections endpoint.
     """
 
     url = DivisionSetHyperlinkedIdentityField(
@@ -132,19 +133,6 @@ class DivisionSetSummarySerializer(serializers.ModelSerializer):
     class Meta:
         model = OrganisationDivisionSet
         fields = divisionset_summary_fields
-
-
-class OrganisationDivisionSetSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = OrganisationDivisionSet
-        fields = (
-            "start_date",
-            "end_date",
-            "legislation_url",
-            "consultation_url",
-            "short_title",
-            "notes",
-        )
 
 
 division_fields = (
@@ -168,7 +156,7 @@ class DivisionSerializer(serializers.ModelSerializer):
 
 
 class OrganisationDivisionSerializer(serializers.ModelSerializer):
-    divisionset = OrganisationDivisionSetSerializer()
+    divisionset = DivisionSetSummarySerializer()
 
     class Meta:
         model = OrganisationDivision
