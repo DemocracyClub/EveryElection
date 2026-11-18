@@ -1,5 +1,6 @@
 from datetime import date
 
+from freezegun import freeze_time
 from organisations.tests.factories import (
     OrganisationDivisionFactory,
     OrganisationDivisionSetFactory,
@@ -359,3 +360,205 @@ class TestDivisionSetOrganisationList(DivisionSetAPITestCase):
         # organisation, count, division sets
         with self.assertNumQueries(3):
             self.client.get(f"{ORG_URL}/division_sets/")
+
+
+@freeze_time("2026-11-12")
+class TestDivisionSetList(DivisionSetAPITestCase):
+    """
+    On the frozen date:
+        ended:       "Old divisions" (TEST1)
+        active:      "Current divisions" (TEST1), "Constituencies" (parl),
+                     "Scottish Parliament divisions" (sp)
+        not started: "Future divisions" (TEST1)
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.parl = OrganisationFactory(
+            official_identifier="parl-hoc",
+            organisation_type="parl",
+            common_name="House of Commons",
+        )
+        cls.parl_divset = OrganisationDivisionSetFactory(
+            organisation=cls.parl,
+            start_date="2024-07-04",
+            end_date=None,
+            short_title="Constituencies",
+        )
+
+    def get_titles(self, query=""):
+        resp = self.client.get(f"/api/division_sets/{query}")
+        self.assertEqual(200, resp.status_code, resp.content)
+        data = resp.json()
+        self.assertEqual(data["count"], len(data["results"]))
+        return [result["short_title"] for result in data["results"]]
+
+    def test_list(self):
+        resp = self.client.get("/api/division_sets/")
+        self.assertEqual(200, resp.status_code)
+        data = resp.json()
+        self.assertEqual(
+            ["count", "next", "previous", "results"], list(data.keys())
+        )
+        self.assertEqual(5, data["count"])
+        self.assertEqual(
+            [
+                "Future divisions",
+                "Constituencies",
+                "Current divisions",
+                "Old divisions",
+                "Scottish Parliament divisions",
+            ],
+            [result["short_title"] for result in data["results"]],
+        )
+        self.assertEqual(SUMMARY_FIELDS, list(data["results"][0].keys()))
+        self.assertEqual(
+            f"{HOST}{ORG_URL}/division_sets/2027-05-06/",
+            data["results"][0]["url"],
+        )
+
+    def test_format_suffix(self):
+        resp = self.client.get("/api/division_sets.json")
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(5, resp.json()["count"])
+
+    def test_listed_in_api_root(self):
+        data = self.client.get("/api/").json()
+        self.assertEqual(f"{HOST}/api/division_sets/", data["division_sets"])
+
+    def test_no_route_by_primary_key(self):
+        resp = self.client.get(f"/api/division_sets/{self.parl_divset.pk}/")
+        self.assertEqual(404, resp.status_code)
+
+    def test_pagination(self):
+        data = self.client.get("/api/division_sets/?limit=3").json()
+        self.assertEqual(5, data["count"])
+        self.assertEqual(3, len(data["results"]))
+        self.assertIsNotNone(data["next"])
+
+    def test_excludes_provisional_organisations(self):
+        OrganisationDivisionSetFactory(
+            organisation=OrganisationFactory(
+                official_identifier="PROV", provisional=True
+            ),
+            short_title="Provisional organisation divisions",
+        )
+        self.assertNotIn(
+            "Provisional organisation divisions", self.get_titles()
+        )
+
+    def test_filter_date(self):
+        self.assertEqual(
+            ["Old divisions", "Scottish Parliament divisions"],
+            self.get_titles("?date=2018-01-01"),
+        )
+        self.assertEqual(
+            [
+                "Future divisions",
+                "Constituencies",
+                "Scottish Parliament divisions",
+            ],
+            self.get_titles("?date=2028-01-01"),
+        )
+
+    def test_filter_date_invalid(self):
+        resp = self.client.get("/api/division_sets/?date=yesterday")
+        self.assertEqual(400, resp.status_code)
+        self.assertIn("date", resp.json())
+
+    def test_filter_active(self):
+        # Django parses `?active` and `?active=` the same way
+        for query in ("?active", "?active="):
+            with self.subTest(query=query):
+                self.assertEqual(
+                    [
+                        "Constituencies",
+                        "Current divisions",
+                        "Scottish Parliament divisions",
+                    ],
+                    self.get_titles(query),
+                )
+
+    def test_filter_future(self):
+        for query in ("?future", "?future="):
+            with self.subTest(query=query):
+                self.assertEqual(["Future divisions"], self.get_titles(query))
+
+    def test_flags_reject_values(self):
+        for param in ("active", "future"):
+            for value in ("true", "1", "false", "0", "maybe"):
+                with self.subTest(param=param, value=value):
+                    resp = self.client.get(
+                        f"/api/division_sets/?{param}={value}"
+                    )
+                    self.assertEqual(400, resp.status_code)
+                    (message,) = resp.json()[param]
+                    self.assertIn("doesn't take a value", message)
+
+    def test_flags_not_in_browsable_api_filter_form(self):
+        """
+        The filter form submits every input, including empty ones, and
+        an empty value turns a flag on.
+        """
+        resp = self.client.get("/api/division_sets/", HTTP_ACCEPT="text/html")
+        self.assertEqual(200, resp.status_code)
+        # The form is there, with the other filters in it
+        self.assertContains(resp, 'name="date"')
+        for param in ("active", "future"):
+            with self.subTest(param=param):
+                self.assertNotContains(resp, f'name="{param}"')
+
+    def test_date_filters_are_mutually_exclusive(self):
+        for query, names in [
+            ("date=2026-11-12&active", "'date', 'active'"),
+            ("date=2026-11-12&future", "'date', 'future'"),
+            ("active&future", "'active', 'future'"),
+            ("date=2026-11-12&active&future", "'date', 'active', 'future'"),
+        ]:
+            with self.subTest(query=query):
+                resp = self.client.get(f"/api/division_sets/?{query}")
+                self.assertEqual(400, resp.status_code)
+                (message,) = resp.json()["__all__"]
+                self.assertIn(
+                    "Only one of 'date', 'active' and 'future'", message
+                )
+                self.assertTrue(message.endswith(names), message)
+
+    def test_empty_date_is_ignored(self):
+        self.assertEqual(
+            [
+                "Constituencies",
+                "Current divisions",
+                "Scottish Parliament divisions",
+            ],
+            self.get_titles("?active&date="),
+        )
+
+    def test_filter_organisation_type(self):
+        self.assertEqual(
+            ["Constituencies"], self.get_titles("?organisation_type=parl")
+        )
+
+    def test_filter_organisation_type_rejects_unknown_values(self):
+        resp = self.client.get("/api/division_sets/?organisation_type=nope")
+        self.assertEqual(400, resp.status_code)
+        (message,) = resp.json()["organisation_type"]
+        self.assertIn("Select a valid choice", message)
+
+    def test_organisation_type_is_dropdown_in_browsable_api(self):
+        resp = self.client.get("/api/division_sets/", HTTP_ACCEPT="text/html")
+        self.assertEqual(200, resp.status_code)
+        self.assertContains(resp, '<select name="organisation_type"')
+        self.assertContains(resp, '<option value="parl">parl</option>')
+
+    def test_combined_filters(self):
+        self.assertEqual(
+            ["Current divisions"],
+            self.get_titles("?active&organisation_type=local-authority"),
+        )
+
+    def test_query_count(self):
+        # count, division sets
+        with self.assertNumQueries(2):
+            self.client.get("/api/division_sets/")

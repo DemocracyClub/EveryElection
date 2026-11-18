@@ -319,6 +319,24 @@ class DivisionSetViewSet(viewsets.GenericViewSet):
         organisation__provisional=False
     ).select_related("organisation")
     serializer_class = DivisionSetSummarySerializer
+    # Only used by list(). The routes nested under an organisation don't
+    # call filter_queryset().
+    filterset_class = filters.DivisionSetFilter
+
+    def list(self, request, **kwargs):
+        """
+        All division sets, newest first.
+
+        `date`, `active` and `future` can't be combined with each other.
+        """
+        # Many division sets share a start date, so order by primary key
+        # as well to keep the order the same from one page to the next.
+        queryset = self.filter_queryset(self.get_queryset()).order_by(
+            "-start_date", "pk"
+        )
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
 
     def get_organisation(self) -> Organisation:
         try:
@@ -355,7 +373,7 @@ class DivisionSetViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(page, many=True)
         return self.get_paginated_response(serializer.data)
 
-    def retrieve(self, request, **kwargs):
+    def organisation_detail(self, request, **kwargs):
         context = self.get_serializer_context()
         context["division_type"] = request.query_params.get("division_type")
         serializer = DivisionSetSerializer(self.get_object(), context=context)
