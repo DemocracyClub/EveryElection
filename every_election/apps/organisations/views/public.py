@@ -1,10 +1,11 @@
 from datetime import datetime
 
+from core.helpers import parse_url_date
 from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Prefetch, Q
 from django.http import FileResponse, Http404, HttpResponseRedirect
-from django.urls import reverse
+from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView, ListView, TemplateView, View
 from elections.models import Election
 from organisations.models import (
@@ -108,13 +109,59 @@ class SingleBoundaryReviewView(DetailView):
     slug_url_kwarg = "boundary_review_id"
 
 
+class DivisionsetRedirectView(View):
+    """
+    Division set pages used to live at /organisations/divisionsets/{pk}/.
+    Redirect those URLs to the natural-key URL.
+
+    The redirect is temporary because the destination contains the
+    division set's start date, which is sometimes corrected.
+    """
+
+    def get(self, request, divisionset_id):
+        divisionset = get_object_or_404(
+            OrganisationDivisionSet.objects.select_related("organisation"),
+            pk=divisionset_id,
+        )
+        return HttpResponseRedirect(divisionset.get_absolute_url())
+
+
 class DivisionsetDetailView(DetailView):
     template_name = "organisations/divisionset_detail.html"
 
     model = OrganisationDivisionSet
     context_object_name = "divisionset"
-    slug_field = "id"
-    slug_url_kwarg = "divisionset_id"
+
+    def get_object(self, queryset=None):
+        """
+        Find the division set by natural key. As in the API, the dates
+        don't have to be start dates: `date` matches the organisation
+        that existed on that date, and `divset_date` matches the division
+        set that was active on that date.
+        """
+        try:
+            # Before division sets had natural-key URLs this page served
+            # any division set by primary key, including those belonging
+            # to provisional organisations. Looking the organisation up
+            # with private_objects keeps that the case.
+            organisation = Organisation.private_objects.get_by_date(
+                organisation_type=self.kwargs["organisation_type"],
+                official_identifier=self.kwargs["official_identifier"],
+                date=parse_url_date(self.kwargs["date"]),
+            )
+            return (
+                OrganisationDivisionSet.objects.filter(
+                    organisation=organisation
+                )
+                .select_related("organisation")
+                .filter_by_date(parse_url_date(self.kwargs["divset_date"]))
+                .get()
+            )
+        except (
+            Organisation.DoesNotExist,
+            OrganisationDivisionSet.DoesNotExist,
+        ):
+            raise Http404()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -151,17 +198,16 @@ class PMtilesView(View):
     """
 
     def get(self, request, divisionset_id):
-        # redirect to detail page if in production
-        if settings.PUBLIC_DATA_BUCKET:
-            divset_detail_url = reverse(
-                "divset_detail_view", args=[divisionset_id]
-            )
-            return HttpResponseRedirect(divset_detail_url)
-
         try:
-            divset = OrganisationDivisionSet.objects.get(id=divisionset_id)
+            divset = OrganisationDivisionSet.objects.select_related(
+                "organisation"
+            ).get(id=divisionset_id)
         except OrganisationDivisionSet.DoesNotExist:
             raise Http404("DivisionSet not found")
+
+        # redirect to detail page if in production
+        if settings.PUBLIC_DATA_BUCKET:
+            return HttpResponseRedirect(divset.get_absolute_url())
 
         if not divset.has_pmtiles_file:
             raise Http404("pmtiles file not found")

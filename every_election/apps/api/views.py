@@ -1,7 +1,8 @@
 from collections import OrderedDict
-from datetime import date, datetime
+from datetime import datetime
 
 from api import filters
+from core.helpers import parse_url_date
 from django.conf import settings
 from django.db.models import Prefetch
 from django.http import Http404, HttpResponseRedirect
@@ -19,7 +20,7 @@ from organisations.models import (
 )
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import APIException, NotFound
+from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 from uk_election_ids.election_ids import validate
 
@@ -287,18 +288,6 @@ class OrganisationDivisionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = OrganisationDivision.objects.all()
     serializer_class = OrganisationDivisionSerializer
     filterset_fields = ["modified"]
-
-
-def parse_url_date(value: str) -> date:
-    """
-    Parse a yyyy-mm-dd URL segment. The URL patterns only check that the
-    segment is made of digits in the right places, so a value like
-    2026-13-45 reaches the view and is treated as not found.
-    """
-    try:
-        return datetime.strptime(value, "%Y-%m-%d").date()
-    except ValueError:
-        raise NotFound(f"'{value}' is not a valid yyyy-mm-dd date")
 
 
 class DivisionSetViewSet(viewsets.GenericViewSet):

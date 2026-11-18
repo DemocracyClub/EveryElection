@@ -60,6 +60,22 @@ class OrganisationDivisionSet(
             self.pk, self.short_title, self.active_period_text
         )
 
+    def get_absolute_url(self):
+        """
+        Division sets are addressed by natural key: the organisation's
+        type, identifier and start date, then the division set's start
+        date. This mirrors the division set detail URL in the API.
+        """
+        return reverse(
+            "divset_detail_view",
+            kwargs={
+                "organisation_type": self.organisation.organisation_type,
+                "official_identifier": self.organisation.official_identifier,
+                "date": self.organisation.start_date,
+                "divset_date": self.start_date,
+            },
+        )
+
     @cached_property
     def has_pmtiles_file(self):
         try:
