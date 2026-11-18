@@ -15,6 +15,7 @@ from django.db import connection, transaction
 from django.db.models import Func, Q
 from django.db.models.fields import BinaryField, CharField
 from django.db.models.functions import MD5, Cast, Concat
+from django.urls import reverse
 from django.utils.functional import cached_property
 from django_extensions.db.models import TimeStampedModel
 from elections.baker import send_event
@@ -86,6 +87,18 @@ class OrganisationDivisionSet(
     @property
     def pmtiles_s3_key(self):
         return f"pmtiles-store/{self.pmtiles_file_name}"
+
+    @property
+    def pmtiles_source_url(self):
+        """
+        Where the PMTiles file can be downloaded from. Either
+        PUBLIC_DATA_BUCKET if set, else PMTilesView for
+        local development.
+        Does not guarantee that the file actually exists.
+        """
+        if settings.PUBLIC_DATA_BUCKET:
+            return f"https://s3.eu-west-2.amazonaws.com/{settings.PUBLIC_DATA_BUCKET}/{self.pmtiles_s3_key}"
+        return reverse("pmtiles_view", args=[self.id])
 
     @property
     def has_related_geographies(self):

@@ -187,6 +187,7 @@ class DivisionSetSerializer(DivisionSetSummarySerializer):
     division_types = serializers.SerializerMethodField()
     previous = serializers.SerializerMethodField()
     next = serializers.SerializerMethodField()
+    pmtiles_url = serializers.SerializerMethodField()
 
     class Meta:
         model = OrganisationDivisionSet
@@ -194,6 +195,7 @@ class DivisionSetSerializer(DivisionSetSummarySerializer):
             "division_types",
             "previous",
             "next",
+            "pmtiles_url",
             "divisions",
         )
 
@@ -236,6 +238,18 @@ class DivisionSetSerializer(DivisionSetSummarySerializer):
             obj.organisation.divisionset.filter(start_date__gt=obj.start_date)
             .order_by("start_date")
             .first()
+        )
+
+    def get_pmtiles_url(self, obj: OrganisationDivisionSet):
+        # This checks for a stored hash instead of using has_pmtiles_file
+        # because has_pmtiles_file makes a request to S3.
+        # This means you could get a 404 if the file hasn't been generated.
+        if not obj.pmtiles_md5_hash:
+            return None
+        return reverse(
+            "api:divisionset-pmtiles",
+            kwargs=divisionset_url_kwargs(obj),
+            request=self.context.get("request"),
         )
 
 
