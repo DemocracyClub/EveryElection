@@ -17,9 +17,22 @@ from rest_framework_gis.serializers import (
 from uk_election_ids.datapackage import VOTING_SYSTEMS
 
 
-class OrganisationHyperlinkedIdentityField(
-    serializers.HyperlinkedIdentityField
-):
+class NaturalKeyHyperlinkedField(serializers.HyperlinkedRelatedField):
+    """
+    A link to a model instance that is addressed by natural key rather
+    than primary key. The instance's url_kwargs() method supplies the
+    URL kwargs.
+
+    For a link to the object being serialized, pass `source="*"`.
+    For a link to another object, pass a `source` that returns it, and
+    the field will output null when that is None.
+    """
+
+    def use_pk_only_optimization(self):
+        # Without this, a `source` pointing at a property gets passed to
+        # get_url() as a PKOnlyObject, which has no url_kwargs().
+        return False
+
     def get_url(self, obj, view_name, request, format):
         # Unsaved objects will not yet have a valid URL.
         if obj.pk is None:
@@ -27,11 +40,7 @@ class OrganisationHyperlinkedIdentityField(
 
         return self.reverse(
             view_name,
-            kwargs={
-                "organisation_type": obj.organisation_type,
-                "official_identifier": obj.official_identifier,
-                "date": obj.start_date,
-            },
+            kwargs=obj.url_kwargs(),
             request=request,
             format=format,
         )
@@ -55,8 +64,8 @@ org_fields = (
 
 
 class OrganisationSerializer(serializers.ModelSerializer):
-    url = OrganisationHyperlinkedIdentityField(
-        view_name="api:organisation-detail", read_only=True
+    url = NaturalKeyHyperlinkedField(
+        view_name="api:organisation-detail", source="*", read_only=True
     )
 
     class Meta:
@@ -66,8 +75,8 @@ class OrganisationSerializer(serializers.ModelSerializer):
 
 class OrganisationGeoSerializer(GeoFeatureModelSerializer):
     geography_model = GeometrySerializerMethodField()
-    url = OrganisationHyperlinkedIdentityField(
-        view_name="api:organisation-geo", read_only=True
+    url = NaturalKeyHyperlinkedField(
+        view_name="api:organisation-geo", source="*", read_only=True
     )
 
     def get_geography_model(self, obj):
