@@ -12,6 +12,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "fake_org_2": {
         "slug": "gateshead",
@@ -24,6 +25,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "allerdale": {
         "slug": "allerdale",
@@ -36,6 +38,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "babergh": {
         "slug": "babergh",
@@ -48,6 +51,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "calderdale": {
         "slug": "calderdale",
@@ -60,6 +64,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "dacorum": {
         "slug": "dacorum",
@@ -72,6 +77,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "ealing": {
         "slug": "ealing",
@@ -84,6 +90,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "fareham": {
         "slug": "fareham",
@@ -96,6 +103,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "gateshead": {
         "slug": "gateshead",
@@ -108,6 +116,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "hackney": {
         "slug": "hackney",
@@ -120,6 +129,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "ipswich": {
         "slug": "ipswich",
@@ -132,6 +142,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "kensington-and-chelsea": {
         "slug": "kensington-and-chelsea",
@@ -144,6 +155,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "lambeth": {
         "slug": "lambeth",
@@ -156,6 +168,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "macclesfield": {
         "slug": "macclesfield",
@@ -168,6 +181,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "new-forest": {
         "slug": "new-forest",
@@ -180,6 +194,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "oadby-and-wigston": {
         "slug": "oadby-and-wigston",
@@ -192,6 +207,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "pabr-barnsley-and-sheffield": {
         "slug": "pabr-barnsley-and-sheffield",
@@ -204,6 +220,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "reading": {
         "slug": "reading",
@@ -216,6 +233,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "salford": {
         "slug": "salford",
@@ -228,6 +246,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "tameside": {
         "slug": "tameside",
@@ -240,6 +259,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "uttlesford": {
         "slug": "uttlesford",
@@ -252,6 +272,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "vale-white-horse": {
         "slug": "vale-white-horse",
@@ -264,6 +285,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "wakefield": {
         "slug": "wakefield",
@@ -276,6 +298,7 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
     "york": {
         "slug": "york",
@@ -288,5 +311,6 @@ base_data = {
         "legislation_url": None,
         "legislation_made": 0,
         "legislation_title": None,
+        "correction_slips": [],
     },
 }

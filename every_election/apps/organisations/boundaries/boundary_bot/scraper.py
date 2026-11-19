@@ -25,7 +25,11 @@ from organisations.boundaries.boundary_bot.spider import (
 )
 from organisations.boundaries.constants import LGBCE_SLUG_TO_ORG_SLUG
 from organisations.models import Organisation, OrganisationBoundaryReview
-from organisations.models.divisions import EditStatus, ReviewStatus
+from organisations.models.divisions import (
+    EditStatus,
+    OrganisationBoundaryReviewCorrectionSlip,
+    ReviewStatus,
+)
 
 AMBIGUOUS_ID_MAP = {
     "SHE": 504,  # Folkestone & Hythe
@@ -117,6 +121,7 @@ class LgbceScraper:
                     "legislation_url": None,
                     "legislation_made": 0,
                     "legislation_title": None,
+                    "correction_slips": [],
                 }
 
     def attach_spider_data(self):
@@ -318,20 +323,29 @@ class LgbceScraper:
 
                 br.save(push_event=False)
 
-            if (
-                len(result) == 1
-                and result[0].edit_status == EditStatus.UNLOCKED
-            ):
+            elif len(result) == 1:
+                br = result[0]
+            else:
+                raise ScraperException(
+                    f"Multiple reviews found for {record_as_string(record)}"
+                )
+
+            if len(result) == 1 and br.edit_status == EditStatus.UNLOCKED:
                 update_fields = {
                     k: v for k, v in record.items() if k in field_names and v
                 }
                 for field, value in update_fields.items():
-                    if value and getattr(result[0], field) != value:
-                        print(
-                            f"Updating {result[0]} with {record_as_string(record)}"
-                        )
+                    if value and getattr(br, field) != value:
+                        print(f"Updating {br} with {record_as_string(record)}")
                         result.update(**update_fields)
                         break
+
+            for slip in record.get("correction_slips", []):
+                OrganisationBoundaryReviewCorrectionSlip.objects.get_or_create(
+                    boundary_review=br,
+                    legislation_url=slip["url"],
+                    defaults={"legislation_title": slip["title"]},
+                )
 
     def send_notifications(self):
         # write the notifications we've generated to
