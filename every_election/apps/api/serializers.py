@@ -10,6 +10,7 @@ from organisations.models import (
     OrganisationDivisionSet,
 )
 from rest_framework import serializers
+from rest_framework.reverse import reverse
 from rest_framework_gis.serializers import (
     GeoFeatureModelSerializer,
     GeometrySerializerMethodField,
@@ -17,9 +18,22 @@ from rest_framework_gis.serializers import (
 from uk_election_ids.datapackage import VOTING_SYSTEMS
 
 
-class OrganisationHyperlinkedIdentityField(
-    serializers.HyperlinkedIdentityField
-):
+class NaturalKeyHyperlinkedField(serializers.HyperlinkedRelatedField):
+    """
+    A link to a model instance that is addressed by natural key rather
+    than primary key. The instance's url_kwargs() method supplies the
+    URL kwargs.
+
+    For a link to the object being serialized, pass `source="*"`.
+    For a link to another object, pass a `source` that returns it, and
+    the field will output null when that is None.
+    """
+
+    def use_pk_only_optimization(self):
+        # Without this, a `source` pointing at a property gets passed to
+        # get_url() as a PKOnlyObject, which has no url_kwargs().
+        return False
+
     def get_url(self, obj, view_name, request, format):
         # Unsaved objects will not yet have a valid URL.
         if obj.pk is None:
@@ -27,11 +41,7 @@ class OrganisationHyperlinkedIdentityField(
 
         return self.reverse(
             view_name,
-            kwargs={
-                "organisation_type": obj.organisation_type,
-                "official_identifier": obj.official_identifier,
-                "date": obj.start_date,
-            },
+            kwargs=obj.url_kwargs(),
             request=request,
             format=format,
         )
@@ -55,8 +65,8 @@ org_fields = (
 
 
 class OrganisationSerializer(serializers.ModelSerializer):
-    url = OrganisationHyperlinkedIdentityField(
-        view_name="api:organisation-detail", read_only=True
+    url = NaturalKeyHyperlinkedField(
+        view_name="api:organisation-detail", source="*", read_only=True
     )
 
     class Meta:
@@ -66,8 +76,8 @@ class OrganisationSerializer(serializers.ModelSerializer):
 
 class OrganisationGeoSerializer(GeoFeatureModelSerializer):
     geography_model = GeometrySerializerMethodField()
-    url = OrganisationHyperlinkedIdentityField(
-        view_name="api:organisation-geo", read_only=True
+    url = NaturalKeyHyperlinkedField(
+        view_name="api:organisation-geo", source="*", read_only=True
     )
 
     def get_geography_model(self, obj):
@@ -79,26 +89,38 @@ class OrganisationGeoSerializer(GeoFeatureModelSerializer):
         fields = org_fields
 
 
-class OrganisationDivisionSetSerializer(serializers.ModelSerializer):
+class DivisionSetSummarySerializer(serializers.ModelSerializer):
+    """
+    A division set without its divisions. Used in list responses, and
+    nested inside each division in the elections endpoint.
+    """
+
+    url = NaturalKeyHyperlinkedField(
+        view_name="api:divisionset-detail", source="*", read_only=True
+    )
+
     class Meta:
         model = OrganisationDivisionSet
         fields = (
+            "url",
             "start_date",
             "end_date",
+            "short_title",
             "legislation_url",
             "consultation_url",
-            "short_title",
             "notes",
         )
 
 
-class OrganisationDivisionSerializer(serializers.ModelSerializer):
-    divisionset = OrganisationDivisionSetSerializer()
+class DivisionSerializer(serializers.ModelSerializer):
+    """
+    A division without its division set. Used in the division set
+    detail response, where the division set is the parent object.
+    """
 
     class Meta:
         model = OrganisationDivision
         fields = (
-            "divisionset",
             "name",
             "official_identifier",
             "slug",
@@ -109,6 +131,82 @@ class OrganisationDivisionSerializer(serializers.ModelSerializer):
             "territory_code",
             "created",
             "modified",
+        )
+
+
+class OrganisationDivisionSerializer(DivisionSerializer):
+    """
+    A division including a summary of its division set. Used in the
+    elections endpoint.
+    """
+
+    divisionset = DivisionSetSummarySerializer()
+
+    class Meta(DivisionSerializer.Meta):
+        fields = DivisionSerializer.Meta.fields + ("divisionset",)
+
+
+class DivisionSetSerializer(DivisionSetSummarySerializer):
+    """
+    A division set including its divisions. Used in the detail response.
+
+    If the serializer context contains `division_type`, only divisions of
+    that type are included in `divisions`.
+    """
+
+    divisions = serializers.SerializerMethodField()
+    division_types = serializers.SerializerMethodField()
+    previous = NaturalKeyHyperlinkedField(
+        view_name="api:divisionset-detail",
+        source="previous_divisionset",
+        read_only=True,
+    )
+    next = NaturalKeyHyperlinkedField(
+        view_name="api:divisionset-detail",
+        source="next_divisionset",
+        read_only=True,
+    )
+    pmtiles_url = serializers.SerializerMethodField()
+
+    class Meta(DivisionSetSummarySerializer.Meta):
+        fields = DivisionSetSummarySerializer.Meta.fields + (
+            "division_types",
+            "previous",
+            "next",
+            "pmtiles_url",
+            "divisions",
+        )
+
+    def get_divisions(self, obj: OrganisationDivisionSet):
+        divisions = obj.divisions.all()
+        if division_type := self.context.get("division_type"):
+            divisions = divisions.filter(division_type=division_type)
+        return DivisionSerializer(
+            divisions, many=True, context=self.context
+        ).data
+
+    def get_division_types(self, obj: OrganisationDivisionSet) -> list[str]:
+        # order_by() clears the model's default ordering by name, which
+        # would otherwise be added to the SELECT and defeat distinct()
+        return sorted(
+            obj.divisions.order_by()
+            .values_list("division_type", flat=True)
+            .distinct()
+        )
+
+    def get_pmtiles_url(self, obj: OrganisationDivisionSet):
+        # This checks for a stored hash instead of using has_pmtiles_file
+        # because has_pmtiles_file makes a request to S3.
+        # This means you could get a 404 if the file hasn't been generated.
+        # It doesn't use NaturalKeyHyperlinkedField because that passes
+        # on the request's format (e.g. .json), and the PMTiles route
+        # has no format suffix.
+        if not obj.pmtiles_md5_hash:
+            return None
+        return reverse(
+            "api:divisionset-pmtiles",
+            kwargs=obj.url_kwargs(),
+            request=self.context.get("request"),
         )
 
 

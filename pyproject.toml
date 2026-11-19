@@ -111,10 +111,10 @@ norecursedirs = [
     ".aws-sam",
     ".ruff-cache",
     ".circleci",
+    ".*",
 ]
 addopts = [
     "--ignore=*/__pycache__",
-    "--ignore=.*",
     "--ignore=.download-cache",
     "--ignore=every_election/settings/local.py",
     "--ignore=lib",

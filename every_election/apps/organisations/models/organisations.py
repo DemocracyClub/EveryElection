@@ -120,14 +120,22 @@ class Organisation(UpdateElectionsTimestampedModel, DateDisplayMixin):
         organisations/migrations/0034_end_date_constraint.py
         """
 
+    def url_kwargs(self) -> dict:
+        """
+        The URL kwargs that identify this organisation by its natural key.
+        The front-end and API URL patterns use the same kwarg names.
+        """
+        return {
+            "organisation_type": self.organisation_type,
+            "official_identifier": self.official_identifier,
+            "date": self.start_date,
+        }
+
     def get_url(self, view, ext=None):
-        args = (
-            self.organisation_type,
-            self.official_identifier,
-            self.start_date,
-        )
-        args = args + (ext,) if ext else args
-        return reverse(view, args=args)
+        kwargs = self.url_kwargs()
+        if ext:
+            kwargs["format"] = ext
+        return reverse(view, kwargs=kwargs)
 
     def get_absolute_url(self):
         return self.get_url("organisation_view")
