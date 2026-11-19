@@ -59,6 +59,39 @@ class OrganisationDivisionSet(
             self.pk, self.short_title, self.active_period_text
         )
 
+    def url_kwargs(self) -> dict:
+        """
+        The URL kwargs that identify this division set by its natural key:
+        the organisation's type, identifier and start date, then the
+        division set's start date.
+        """
+        return {
+            **self.organisation.url_kwargs(),
+            "divset_date": self.start_date,
+        }
+
+    @cached_property
+    def previous_divisionset(self):
+        """
+        The same organisation's division set before this one, or None.
+        """
+        return (
+            self.organisation.divisionset.filter(start_date__lt=self.start_date)
+            .order_by("-start_date")
+            .first()
+        )
+
+    @cached_property
+    def next_divisionset(self):
+        """
+        The same organisation's division set after this one, or None.
+        """
+        return (
+            self.organisation.divisionset.filter(start_date__gt=self.start_date)
+            .order_by("start_date")
+            .first()
+        )
+
     @cached_property
     def has_pmtiles_file(self):
         try:

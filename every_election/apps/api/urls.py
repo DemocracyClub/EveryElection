@@ -1,12 +1,16 @@
 from django.urls import include, re_path
 from rest_framework import routers
+from rest_framework.urlpatterns import format_suffix_patterns
 
 from .views import (
+    DivisionSetViewSet,
     ElectionSubTypeViewSet,
     ElectionTypeViewSet,
     ElectionViewSet,
     OrganisationViewSet,
 )
+
+ORGANISATION_LOOKUP_REGEX = r"(?P<organisation_type>[-\w]+)/(?P<official_identifier>[-\w]+)/(?P<date>\d{4}-\d{2}-\d{2})"
 
 
 class EERouter(routers.DefaultRouter):
@@ -17,7 +21,7 @@ class EERouter(routers.DefaultRouter):
         # (much like the rest of django)
         # so it needs a bit of... gentle persuasion
         if viewset == OrganisationViewSet:
-            return r"(?P<organisation_type>[-\w]+)/(?P<official_identifier>[-\w]+)/(?P<date>\d{4}-\d{2}-\d{2})"
+            return ORGANISATION_LOOKUP_REGEX
         return super().get_lookup_regex(viewset, lookup_prefix)
 
 
@@ -29,8 +33,23 @@ router.register(r"organisations", OrganisationViewSet)
 
 routes = router.get_urls()
 
+# Division sets are nested under the organisation they belong to and are
+# identified by date, in the same way that organisations are.
+# format_suffix_patterns adds a second pattern for each of these so that
+# they can be requested with an extension like .json
+divisionset_routes = format_suffix_patterns(
+    [
+        re_path(
+            rf"^organisations/{ORGANISATION_LOOKUP_REGEX}/division_sets/(?P<divset_date>\d{{4}}-\d{{2}}-\d{{2}})/$",
+            DivisionSetViewSet.as_view({"get": "organisation_detail"}),
+            name="divisionset-detail",
+        ),
+    ]
+)
+
 urlpatterns = [
     re_path(r"^", include(routes)),
+    re_path(r"^", include(divisionset_routes)),
     re_path(
         r"^organisations/(?P<organisation_type>[-\w]+)/$",
         OrganisationViewSet.as_view({"get": "filter"}),

@@ -121,6 +121,97 @@ class OrganisationDivisionSerializer(serializers.ModelSerializer):
         )
 
 
+class DivisionSetSummarySerializer(serializers.ModelSerializer):
+    """
+    A division set without its divisions.
+    """
+
+    url = NaturalKeyHyperlinkedField(
+        view_name="api:divisionset-detail", source="*", read_only=True
+    )
+
+    class Meta:
+        model = OrganisationDivisionSet
+        fields = (
+            "url",
+            "start_date",
+            "end_date",
+            "short_title",
+            "legislation_url",
+            "consultation_url",
+            "notes",
+        )
+
+
+class DivisionSerializer(serializers.ModelSerializer):
+    """
+    A division without its division set. Used in the division set
+    detail response, where the division set is the parent object.
+    """
+
+    class Meta:
+        model = OrganisationDivision
+        fields = (
+            "name",
+            "official_identifier",
+            "slug",
+            "division_type",
+            "division_subtype",
+            "division_election_sub_type",
+            "seats_total",
+            "territory_code",
+            "created",
+            "modified",
+        )
+
+
+class DivisionSetSerializer(DivisionSetSummarySerializer):
+    """
+    A division set including its divisions. Used in the detail response.
+
+    If the serializer context contains `division_type`, only divisions of
+    that type are included in `divisions`.
+    """
+
+    divisions = serializers.SerializerMethodField()
+    division_types = serializers.SerializerMethodField()
+    previous = NaturalKeyHyperlinkedField(
+        view_name="api:divisionset-detail",
+        source="previous_divisionset",
+        read_only=True,
+    )
+    next = NaturalKeyHyperlinkedField(
+        view_name="api:divisionset-detail",
+        source="next_divisionset",
+        read_only=True,
+    )
+
+    class Meta(DivisionSetSummarySerializer.Meta):
+        fields = DivisionSetSummarySerializer.Meta.fields + (
+            "division_types",
+            "previous",
+            "next",
+            "divisions",
+        )
+
+    def get_divisions(self, obj: OrganisationDivisionSet):
+        divisions = obj.divisions.all()
+        if division_type := self.context.get("division_type"):
+            divisions = divisions.filter(division_type=division_type)
+        return DivisionSerializer(
+            divisions, many=True, context=self.context
+        ).data
+
+    def get_division_types(self, obj: OrganisationDivisionSet) -> list[str]:
+        # order_by() clears the model's default ordering by name, which
+        # would otherwise be added to the SELECT and defeat distinct()
+        return sorted(
+            obj.divisions.order_by()
+            .values_list("division_type", flat=True)
+            .distinct()
+        )
+
+
 class ElectionTypeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ElectionType
