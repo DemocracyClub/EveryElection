@@ -123,7 +123,7 @@ class OrganisationDivisionSerializer(serializers.ModelSerializer):
 
 class DivisionSetSummarySerializer(serializers.ModelSerializer):
     """
-    A division set without its divisions.
+    A division set without its divisions. Used in list responses.
     """
 
     url = NaturalKeyHyperlinkedField(

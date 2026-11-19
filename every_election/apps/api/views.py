@@ -25,6 +25,7 @@ from uk_election_ids.election_ids import validate
 
 from .serializers import (
     DivisionSetSerializer,
+    DivisionSetSummarySerializer,
     ElectionGeoSerializer,
     ElectionSerializer,
     ElectionSubTypeSerializer,
@@ -299,6 +300,9 @@ class DivisionSetViewSet(viewsets.GenericViewSet):
     The organisation and division set active on the given dates will be returned.
     """
 
+    queryset = OrganisationDivisionSet.objects.select_related("organisation")
+    serializer_class = DivisionSetSummarySerializer
+
     def get_organisation(self) -> Organisation:
         try:
             return Organisation.public_objects.get_by_date(
@@ -319,6 +323,19 @@ class DivisionSetViewSet(viewsets.GenericViewSet):
             ).get()
         except OrganisationDivisionSet.DoesNotExist:
             raise Http404()
+
+    def organisation_list(self, request, **kwargs):
+        """
+        The division sets of one organisation.
+        """
+        queryset = (
+            self.get_queryset()
+            .filter(organisation=self.get_organisation())
+            .order_by("-start_date")
+        )
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
 
     def organisation_detail(self, request, **kwargs):
         context = self.get_serializer_context()

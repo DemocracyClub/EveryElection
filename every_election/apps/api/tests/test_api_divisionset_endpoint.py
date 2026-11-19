@@ -260,3 +260,102 @@ class TestDivisionSetDetail(DivisionSetAPITestCase):
         # divisions
         with self.assertNumQueries(6):
             self.client.get(f"{ORG_URL}/division_sets/2019-05-02/")
+
+
+SUMMARY_FIELDS = [
+    "url",
+    "start_date",
+    "end_date",
+    "short_title",
+    "legislation_url",
+    "consultation_url",
+    "notes",
+]
+
+
+class TestDivisionSetOrganisationList(DivisionSetAPITestCase):
+    def test_list(self):
+        # A division set belonging to a different organisation,
+        # which should not be listed
+        OrganisationDivisionSetFactory(
+            organisation=OrganisationFactory(official_identifier="TEST2")
+        )
+
+        resp = self.client.get(f"{ORG_URL}/division_sets/")
+        self.assertEqual(200, resp.status_code)
+        data = resp.json()
+        self.assertEqual(
+            ["count", "next", "previous", "results"], list(data.keys())
+        )
+        self.assertEqual(3, data["count"])
+        self.assertEqual(
+            ["Future divisions", "Current divisions", "Old divisions"],
+            [result["short_title"] for result in data["results"]],
+        )
+        self.assertEqual(SUMMARY_FIELDS, list(data["results"][0].keys()))
+        self.assertEqual(
+            f"{HOST}{ORG_URL}/division_sets/2027-05-06/",
+            data["results"][0]["url"],
+        )
+
+    def test_format_suffix(self):
+        resp = self.client.get(f"{ORG_URL}/division_sets.json")
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(3, resp.json()["count"])
+
+    def test_organisation_date_matches_within_lifetime(self):
+        resp = self.client.get(
+            "/api/organisations/local-authority/TEST1/2024-01-01/division_sets/"
+        )
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(3, resp.json()["count"])
+
+    def test_only_lists_one_generation_of_an_organisation(self):
+        self.org.end_date = date(2030, 1, 1)
+        self.org.save()
+        self.future_divset.end_date = date(2030, 1, 1)
+        self.future_divset.save()
+        next_generation = OrganisationFactory(
+            official_identifier="TEST1",
+            organisation_type="local-authority",
+            start_date=date(2030, 1, 2),
+        )
+        OrganisationDivisionSetFactory(
+            organisation=next_generation,
+            start_date="2030-01-02",
+            end_date=None,
+            short_title="Next generation divisions",
+        )
+        data = self.client.get(
+            "/api/organisations/local-authority/TEST1/2030-01-02/division_sets/"
+        ).json()
+        self.assertEqual(
+            ["Next generation divisions"],
+            [result["short_title"] for result in data["results"]],
+        )
+
+    def test_organisation_without_division_sets(self):
+        OrganisationFactory(official_identifier="TEST2")
+        resp = self.client.get(
+            "/api/organisations/local-authority/TEST2/2016-10-01/division_sets/"
+        )
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual([], resp.json()["results"])
+
+    def test_organisation_not_found(self):
+        resp = self.client.get(
+            "/api/organisations/local-authority/NOPE/2016-10-01/division_sets/"
+        )
+        self.assertEqual(404, resp.status_code)
+
+    def test_provisional_organisation_not_found(self):
+        OrganisationFactory(official_identifier="PROV", provisional=True)
+        resp = self.client.get(
+            "/api/organisations/local-authority/PROV/2016-10-01/division_sets/"
+        )
+        self.assertEqual(404, resp.status_code)
+
+    def test_query_count(self):
+        # organisation, count, division sets
+        with self.assertNumQueries(3):
+            self.client.get(f"{ORG_URL}/division_sets/")
