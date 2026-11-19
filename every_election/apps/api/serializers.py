@@ -10,6 +10,7 @@ from organisations.models import (
     OrganisationDivisionSet,
 )
 from rest_framework import serializers
+from rest_framework.reverse import reverse
 from rest_framework_gis.serializers import (
     GeoFeatureModelSerializer,
     GeometrySerializerMethodField,
@@ -185,12 +186,14 @@ class DivisionSetSerializer(DivisionSetSummarySerializer):
         source="next_divisionset",
         read_only=True,
     )
+    pmtiles_url = serializers.SerializerMethodField()
 
     class Meta(DivisionSetSummarySerializer.Meta):
         fields = DivisionSetSummarySerializer.Meta.fields + (
             "division_types",
             "previous",
             "next",
+            "pmtiles_url",
             "divisions",
         )
 
@@ -209,6 +212,21 @@ class DivisionSetSerializer(DivisionSetSummarySerializer):
             obj.divisions.order_by()
             .values_list("division_type", flat=True)
             .distinct()
+        )
+
+    def get_pmtiles_url(self, obj: OrganisationDivisionSet):
+        # This checks for a stored hash instead of using has_pmtiles_file
+        # because has_pmtiles_file makes a request to S3.
+        # This means you could get a 404 if the file hasn't been generated.
+        # It doesn't use NaturalKeyHyperlinkedField because that passes
+        # on the request's format (e.g. .json), and the PMTiles route
+        # has no format suffix.
+        if not obj.pmtiles_md5_hash:
+            return None
+        return reverse(
+            "api:divisionset-pmtiles",
+            kwargs=obj.url_kwargs(),
+            request=self.context.get("request"),
         )
 
 

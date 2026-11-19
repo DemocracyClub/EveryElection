@@ -118,14 +118,7 @@ class DivisionsetDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.object.has_pmtiles_file:
-            if settings.PUBLIC_DATA_BUCKET:
-                context["pmtiles_source_link"] = (
-                    f"https://s3.eu-west-2.amazonaws.com/{settings.PUBLIC_DATA_BUCKET}/{self.object.pmtiles_s3_key}"
-                )
-            else:
-                context["pmtiles_source_link"] = reverse(
-                    "pmtiles_view", args=[self.object.id]
-                )
+            context["pmtiles_source_link"] = self.object.pmtiles_source_url
 
         div_type_and_subtype_pairs = set(
             self.object.divisions.values_list(

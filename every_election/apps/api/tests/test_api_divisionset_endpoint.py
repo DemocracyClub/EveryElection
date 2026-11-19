@@ -1,5 +1,7 @@
 from datetime import date
+from unittest.mock import patch
 
+from django.test import override_settings
 from freezegun import freeze_time
 from organisations.tests.factories import (
     OrganisationDivisionFactory,
@@ -103,6 +105,7 @@ class TestDivisionSetDetail(DivisionSetAPITestCase):
                 "division_types",
                 "previous",
                 "next",
+                "pmtiles_url",
                 "divisions",
             ],
             list(data.keys()),
@@ -562,3 +565,103 @@ class TestDivisionSetList(DivisionSetAPITestCase):
         # count, division sets
         with self.assertNumQueries(2):
             self.client.get("/api/division_sets/")
+
+
+class TestDivisionSetPMTiles(DivisionSetAPITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.current_divset.pmtiles_md5_hash = "abc123"
+        cls.current_divset.save()
+        cls.file_name = f"{cls.org.slug}_{cls.current_divset.pk}_abc123.pmtiles"
+
+    def test_detail_links_to_pmtiles_endpoint(self):
+        data = self.client.get(f"{ORG_URL}/division_sets/2019-05-02/").json()
+        self.assertEqual(
+            f"{HOST}{ORG_URL}/division_sets/2019-05-02/pmtiles/",
+            data["pmtiles_url"],
+        )
+
+    def test_detail_pmtiles_url_has_no_format_suffix(self):
+        data = self.client.get(
+            f"{ORG_URL}/division_sets/2019-05-02.json"
+        ).json()
+        self.assertEqual(
+            f"{HOST}{ORG_URL}/division_sets/2019-05-02/pmtiles/",
+            data["pmtiles_url"],
+        )
+
+    def test_detail_pmtiles_url_null_without_hash(self):
+        data = self.client.get(f"{ORG_URL}/division_sets/2016-10-01/").json()
+        self.assertIsNone(data["pmtiles_url"])
+
+    @override_settings(PUBLIC_DATA_BUCKET="test-bucket")
+    def test_detail_does_not_check_file_exists(self):
+        with patch("organisations.models.divisions.S3Wrapper") as s3_wrapper:
+            self.client.get(f"{ORG_URL}/division_sets/2019-05-02/")
+        s3_wrapper.assert_not_called()
+
+    @override_settings(PUBLIC_DATA_BUCKET="test-bucket")
+    def test_redirects_to_s3(self):
+        with patch("organisations.models.divisions.S3Wrapper") as s3_wrapper:
+            s3_wrapper.return_value.check_s3_obj_exists.return_value = True
+            resp = self.client.get(
+                f"{ORG_URL}/division_sets/2019-05-02/pmtiles/"
+            )
+        self.assertEqual(302, resp.status_code)
+        self.assertEqual(
+            f"https://s3.eu-west-2.amazonaws.com/test-bucket/pmtiles-store/{self.file_name}",
+            resp["Location"],
+        )
+
+    @override_settings(PUBLIC_DATA_BUCKET="test-bucket")
+    def test_not_found_when_file_missing_from_s3(self):
+        with patch("organisations.models.divisions.S3Wrapper") as s3_wrapper:
+            s3_wrapper.return_value.check_s3_obj_exists.return_value = False
+            resp = self.client.get(
+                f"{ORG_URL}/division_sets/2019-05-02/pmtiles/"
+            )
+        self.assertEqual(404, resp.status_code)
+
+    @override_settings(PUBLIC_DATA_BUCKET=None)
+    def test_redirects_to_local_file_view(self):
+        with patch(
+            "organisations.models.divisions.os.path.exists", return_value=True
+        ) as exists:
+            resp = self.client.get(
+                f"{ORG_URL}/division_sets/2019-05-02/pmtiles/"
+            )
+        self.assertTrue(exists.call_args[0][0].endswith(self.file_name))
+        self.assertEqual(302, resp.status_code)
+        self.assertEqual(
+            f"/organisations/boundaries/pmtiles/{self.current_divset.pk}/",
+            resp["Location"],
+        )
+
+    @override_settings(PUBLIC_DATA_BUCKET=None)
+    def test_not_found_when_local_file_missing(self):
+        with patch(
+            "organisations.models.divisions.os.path.exists", return_value=False
+        ):
+            resp = self.client.get(
+                f"{ORG_URL}/division_sets/2019-05-02/pmtiles/"
+            )
+        self.assertEqual(404, resp.status_code)
+
+    def test_not_found_without_hash(self):
+        resp = self.client.get(f"{ORG_URL}/division_sets/2016-10-01/pmtiles/")
+        self.assertEqual(404, resp.status_code)
+
+    def test_division_set_not_found(self):
+        resp = self.client.get(f"{ORG_URL}/division_sets/2001-01-01/pmtiles/")
+        self.assertEqual(404, resp.status_code)
+
+    @override_settings(PUBLIC_DATA_BUCKET="test-bucket")
+    def test_date_matches_within_lifetime(self):
+        with patch("organisations.models.divisions.S3Wrapper") as s3_wrapper:
+            s3_wrapper.return_value.check_s3_obj_exists.return_value = True
+            resp = self.client.get(
+                f"{ORG_URL}/division_sets/2025-06-15/pmtiles/"
+            )
+        self.assertEqual(302, resp.status_code)
+        self.assertIn(self.file_name, resp["Location"])

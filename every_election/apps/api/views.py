@@ -4,7 +4,7 @@ from api import filters
 from core.helpers import parse_url_date
 from django.conf import settings
 from django.db.models import Prefetch
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from elections.models import (
     Election,
     ElectionSubType,
@@ -366,3 +366,18 @@ class DivisionSetViewSet(viewsets.GenericViewSet):
         context["division_type"] = request.query_params.get("division_type")
         serializer = DivisionSetSerializer(self.get_object(), context=context)
         return Response(serializer.data)
+
+    def pmtiles(self, request, **kwargs):
+        """
+        Redirect to the PMTiles file containing the geographies of the
+        division set's divisions.
+
+        The redirect is temporary because the file name contains a hash
+        of the division set's contents so could change.
+        """
+        divisionset = self.get_object()
+        # has_pmtiles_file makes a request to S3 in production. That is
+        # fine for one object, but don't call it for each row of a list.
+        if not divisionset.has_pmtiles_file:
+            raise Http404("This division set has no PMTiles file")
+        return HttpResponseRedirect(divisionset.pmtiles_source_url)

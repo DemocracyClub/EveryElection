@@ -59,6 +59,12 @@ divisionset_routes = format_suffix_patterns(
 urlpatterns = [
     re_path(r"^", include(routes)),
     re_path(r"^", include(divisionset_routes)),
+    # This redirects to a file, so it has no alternative formats
+    re_path(
+        rf"^organisations/{ORGANISATION_LOOKUP_REGEX}/division_sets/(?P<divset_date>\d{{4}}-\d{{2}}-\d{{2}})/pmtiles/$",
+        DivisionSetViewSet.as_view({"get": "pmtiles"}),
+        name="divisionset-pmtiles",
+    ),
     re_path(
         r"^organisations/(?P<organisation_type>[-\w]+)/$",
         OrganisationViewSet.as_view({"get": "filter"}),
