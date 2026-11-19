@@ -17,6 +17,7 @@ from organisations.models import (
     OrganisationDivision,
     OrganisationDivisionSet,
 )
+from organisations.views.mixins import DivisionSetLookupMixin
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException
@@ -289,7 +290,7 @@ class OrganisationDivisionViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_fields = ["modified"]
 
 
-class DivisionSetViewSet(viewsets.GenericViewSet):
+class DivisionSetViewSet(DivisionSetLookupMixin, viewsets.GenericViewSet):
     """
     Division sets keyed by:
         `(organisation_type, official_identifier, organisation date, divisionset date)`
@@ -303,10 +304,10 @@ class DivisionSetViewSet(viewsets.GenericViewSet):
     The organisation and division set active on the given dates will be returned.
     """
 
-    # The routes nested under an organisation look it up with
-    # Organisation.public_objects, which excludes provisional
-    # organisations. The flat list needs the same filter to make sure we
-    # don't return their division sets.
+    # The routes nested under an organisation find it with
+    # DivisionSetLookupMixin, which uses Organisation.public_objects and
+    # so excludes provisional organisations. The flat list needs the
+    # same filter to make sure we don't return their division sets.
     queryset = OrganisationDivisionSet.objects.filter(
         organisation__provisional=False
     ).select_related("organisation")
@@ -330,26 +331,8 @@ class DivisionSetViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(page, many=True)
         return self.get_paginated_response(serializer.data)
 
-    def get_organisation(self) -> Organisation:
-        try:
-            return Organisation.public_objects.get_by_date(
-                organisation_type=self.kwargs["organisation_type"],
-                official_identifier=self.kwargs["official_identifier"],
-                date=parse_url_date(self.kwargs["date"]),
-            )
-        except Organisation.DoesNotExist:
-            raise Http404()
-
     def get_object(self) -> OrganisationDivisionSet:
-        organisation = self.get_organisation()
-        try:
-            # The related manager sets each division set's `organisation`
-            # to this instance, so building its URL doesn't fetch it again.
-            return organisation.divisionset.filter_by_date(
-                parse_url_date(self.kwargs["divset_date"])
-            ).get()
-        except OrganisationDivisionSet.DoesNotExist:
-            raise Http404()
+        return self.get_divisionset()
 
     def organisation_list(self, request, **kwargs):
         """

@@ -64,12 +64,16 @@ class OrganisationDivisionSet(
         """
         The URL kwargs that identify this division set by its natural key:
         the organisation's type, identifier and start date, then the
-        division set's start date.
+        division set's start date. The front-end and API URL patterns use
+        the same kwarg names.
         """
         return {
             **self.organisation.url_kwargs(),
             "divset_date": self.start_date,
         }
+
+    def get_absolute_url(self):
+        return reverse("divset_detail_view", kwargs=self.url_kwargs())
 
     @cached_property
     def previous_divisionset(self):
