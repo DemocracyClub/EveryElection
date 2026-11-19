@@ -1,7 +1,7 @@
 from collections import OrderedDict
-from datetime import datetime
 
 from api import filters
+from core.helpers import parse_url_date
 from django.conf import settings
 from django.db.models import Prefetch
 from django.http import Http404
@@ -195,7 +195,7 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_fields = ["modified"]
 
     def get_object(self, **kwargs):
-        kwargs["date"] = datetime.strptime(kwargs["date"], "%Y-%m-%d").date()
+        kwargs["date"] = parse_url_date(kwargs["date"])
         try:
             return self.queryset.get_by_date(**kwargs)
         except Organisation.DoesNotExist:

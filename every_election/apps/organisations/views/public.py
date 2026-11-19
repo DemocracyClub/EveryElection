@@ -1,5 +1,4 @@
-from datetime import datetime
-
+from core.helpers import parse_url_date
 from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Prefetch, Q
@@ -48,7 +47,7 @@ class OrganisationDetailView(TemplateView):
     template_name = "organisations/organisation_detail.html"
 
     def get_context_data(self, **kwargs):
-        kwargs["date"] = datetime.strptime(kwargs["date"], "%Y-%m-%d").date()
+        kwargs["date"] = parse_url_date(kwargs["date"])
 
         mayor_q = Q(election_id__startswith="mayor")
         pcc_q = Q(election_id__startswith="pcc")
