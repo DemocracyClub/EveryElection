@@ -30,6 +30,10 @@ router.register(r"elections", ElectionViewSet)
 router.register(r"election_types", ElectionTypeViewSet)
 router.register(r"election_subtypes", ElectionSubTypeViewSet)
 router.register(r"organisations", OrganisationViewSet)
+# The router only creates the list route for this viewset, because the
+# viewset has no `retrieve` method. Single division sets are served by
+# the routes nested under organisations, below.
+router.register(r"division_sets", DivisionSetViewSet, basename="divisionset")
 
 routes = router.get_urls()
 

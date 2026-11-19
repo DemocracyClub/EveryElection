@@ -300,8 +300,32 @@ class DivisionSetViewSet(viewsets.GenericViewSet):
     The organisation and division set active on the given dates will be returned.
     """
 
-    queryset = OrganisationDivisionSet.objects.select_related("organisation")
+    # The routes nested under an organisation look it up with
+    # Organisation.public_objects, which excludes provisional
+    # organisations. The flat list needs the same filter to make sure we
+    # don't return their division sets.
+    queryset = OrganisationDivisionSet.objects.filter(
+        organisation__provisional=False
+    ).select_related("organisation")
     serializer_class = DivisionSetSummarySerializer
+    # Only used by list(). The routes nested under an organisation don't
+    # call filter_queryset().
+    filterset_class = filters.DivisionSetFilter
+
+    def list(self, request, **kwargs):
+        """
+        All division sets, newest first.
+
+        `date`, `active` and `future` can't be combined with each other.
+        """
+        # Many division sets share a start date, so order by primary key
+        # as well to keep the order the same from one page to the next.
+        queryset = self.filter_queryset(self.get_queryset()).order_by(
+            "-start_date", "pk"
+        )
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
 
     def get_organisation(self) -> Organisation:
         try:
