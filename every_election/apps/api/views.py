@@ -76,6 +76,8 @@ class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
             "elected_role",
             "division",
             "division__divisionset",
+            # needed to build the URL of the ballot's division set
+            "division__divisionset__organisation",
             "group",
             "replaces",
             "metadata",
@@ -230,6 +232,7 @@ class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
                 "organisation",
                 "division",
                 "division__divisionset",
+                "division__divisionset__organisation",
                 "elected_role",
                 "explanation",
                 "metadata",

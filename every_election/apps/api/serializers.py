@@ -89,42 +89,10 @@ class OrganisationGeoSerializer(GeoFeatureModelSerializer):
         fields = org_fields
 
 
-class OrganisationDivisionSetSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = OrganisationDivisionSet
-        fields = (
-            "start_date",
-            "end_date",
-            "legislation_url",
-            "consultation_url",
-            "short_title",
-            "notes",
-        )
-
-
-class OrganisationDivisionSerializer(serializers.ModelSerializer):
-    divisionset = OrganisationDivisionSetSerializer()
-
-    class Meta:
-        model = OrganisationDivision
-        fields = (
-            "divisionset",
-            "name",
-            "official_identifier",
-            "slug",
-            "division_type",
-            "division_subtype",
-            "division_election_sub_type",
-            "seats_total",
-            "territory_code",
-            "created",
-            "modified",
-        )
-
-
 class DivisionSetSummarySerializer(serializers.ModelSerializer):
     """
-    A division set without its divisions. Used in list responses.
+    A division set without its divisions. Used in list responses, and
+    nested inside each division in the elections endpoint.
     """
 
     url = NaturalKeyHyperlinkedField(
@@ -164,6 +132,18 @@ class DivisionSerializer(serializers.ModelSerializer):
             "created",
             "modified",
         )
+
+
+class OrganisationDivisionSerializer(DivisionSerializer):
+    """
+    A division including a summary of its division set. Used in the
+    elections endpoint.
+    """
+
+    divisionset = DivisionSetSummarySerializer()
+
+    class Meta(DivisionSerializer.Meta):
+        fields = DivisionSerializer.Meta.fields + ("divisionset",)
 
 
 class DivisionSetSerializer(DivisionSetSummarySerializer):

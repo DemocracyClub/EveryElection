@@ -461,6 +461,7 @@ class TestElectionAPIQueries(APITestCase):
                 "name": "Division 0",
                 "slug": "0",
                 "divisionset": {
+                    "url": "http://testserver/api/organisations/local-authority/0/2016-10-01/division_sets/2017-05-04/",
                     "start_date": "2017-05-04",
                     "legislation_url": "https://example.com/the-law",
                     "short_title": "Made up boundary changes",
