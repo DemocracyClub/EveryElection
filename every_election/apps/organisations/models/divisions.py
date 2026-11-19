@@ -334,6 +334,9 @@ class OrganisationBoundaryReviewQuerySet(models.QuerySet):
         """
         return self.unprocessed().filter(effective_date=None)
 
+    def has_corrections_issued(self):
+        return self.filter(correction_slips__isnull=False)
+
 
 class ReviewStatus(models.TextChoices):
     COMPLETED = "COMPLETED", "Completed"
