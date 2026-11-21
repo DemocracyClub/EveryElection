@@ -97,7 +97,7 @@ class ElectionQuerySet(models.QuerySet):
             When(group_type="subtype", then=2),
             When(group_type=None, then=3),
         )
-        return self.order_by(order)
+        return self.order_by(order, "election_id")
 
 
 class PublicElectionsManager(models.Manager.from_queryset(ElectionQuerySet)):

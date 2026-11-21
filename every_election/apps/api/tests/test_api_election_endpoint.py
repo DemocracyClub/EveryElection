@@ -243,6 +243,27 @@ class TestElectionAPIQueries(APITestCase):
         data = resp.json()
         self.assertEqual(0, data["count"])
 
+    def test_list_breaks_group_type_ties_by_election_id(self):
+        # Paging by offset needs a total order. Every ballot has the same
+        # group_type, so created out of order, they must still sort by id.
+        for election_id in (
+            "local.place-c.2017-03-23",
+            "local.place-a.2017-03-23",
+            "local.place-b.2017-03-23",
+        ):
+            ElectionWithStatusFactory(group=None, election_id=election_id)
+
+        resp = self.client.get("/api/elections/?identifier_type=ballot")
+        data = resp.json()
+        self.assertEqual(
+            [
+                "local.place-a.2017-03-23",
+                "local.place-b.2017-03-23",
+                "local.place-c.2017-03-23",
+            ],
+            [result["election_id"] for result in data["results"]],
+        )
+
     def test_election_id_regex_filters(self):
         """
         Test using a simple regex to:
