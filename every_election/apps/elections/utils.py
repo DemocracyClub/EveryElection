@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Union
 
 from elections.models import (
     ElectedRole,
@@ -38,10 +38,13 @@ def reset_cache():
     CACHE = NEW_CACHE
 
 
-def election_type_has_divisions(election_type: ElectionType):
-    return ELECTION_TYPES.get(election_type.election_type, {}).get(
-        "can_have_divs", True
-    )
+def election_type_has_divisions(election_type: Union[ElectionType, str]):
+    if isinstance(election_type, ElectionType):
+        election_type_str = election_type.election_type
+    else:
+        election_type_str = election_type
+
+    return ELECTION_TYPES.get(election_type_str, {}).get("can_have_divs", True)
 
 
 def get_voter_id_requirement(election: Election) -> Optional[str]:
