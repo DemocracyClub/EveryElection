@@ -301,6 +301,21 @@ class LgbceScraper:
                 ):
                     self.slack_helper.append_event_message(record)
 
+            slips = record.get("correction_slips", [])
+            if slips:
+                existing_slips = set()
+                if result:
+                    existing_slips.update(
+                        result[0].correction_slips.values_list(
+                            "legislation_url", flat=True
+                        )
+                    )
+                for slip in slips:
+                    if slip["url"] not in existing_slips:
+                        self.slack_helper.append_new_correction_slip_message(
+                            record, slip
+                        )
+
     def save(self):
         field_names = [f.name for f in OrganisationBoundaryReview._meta.fields]
         for key, record in self.data.items():

@@ -15,6 +15,12 @@ class SlackHelper:
             % (record["name"], record["consultation_url"])
         )
 
+    def append_new_correction_slip_message(self, record, slip):
+        self.messages.append(
+            "New correction slip found for %s boundary review: %s: %s"
+            % (record["name"], slip["title"], slip["url"])
+        )
+
     def append_completed_review_message(self, record):
         self.messages.append(
             "Completed boundary review for %s: %s"
