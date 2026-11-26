@@ -193,6 +193,10 @@ class DivisionSetFilter(django_filters.FilterSet):
         lookup_expr="exact",
         choices=Organisation.ORGTYPES,
     )
+    last_modified = django_filters.IsoDateTimeFilter(
+        method="last_modified_filter",
+        label="Only division sets with last_modified after this ISO datetime",
+    )
 
     def date_filter(self, queryset, name, value):
         return queryset.filter_by_date(value)
@@ -202,6 +206,9 @@ class DivisionSetFilter(django_filters.FilterSet):
 
     def future_filter(self, queryset, name, value):
         return queryset.filter(start_date__gt=datetime.date.today())
+
+    def last_modified_filter(self, queryset, name, value):
+        return queryset.last_modified_after(value)
 
     class Meta:
         model = OrganisationDivisionSet

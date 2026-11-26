@@ -226,3 +226,14 @@ class TestWithLastModified:
         OrganisationDivisionFactory(divisionset=divset)
         OrganisationDivisionFactory(divisionset=divset)
         assert OrganisationDivisionSet.objects.with_last_modified().count() == 1
+
+    def test_last_modified_after(self, divset):
+        with freeze_time("2026-02-01"):
+            OrganisationDivisionFactory(divisionset=divset)
+        qs = OrganisationDivisionSet.objects
+        assert list(
+            qs.last_modified_after(datetime(2026, 1, 15, tzinfo=UTC))
+        ) == [divset]
+        assert not qs.last_modified_after(
+            datetime(2026, 2, 1, tzinfo=UTC)
+        ).exists()

@@ -52,6 +52,13 @@ class DivisionSetQuerySet(models.QuerySet):
             last_modified=Greatest("modified", Max("divisions__modified"))
         )
 
+    def last_modified_after(self, when):
+        """
+        Division sets whose `last_modified` (see with_last_modified()) is
+        later than `when`.
+        """
+        return self.with_last_modified().filter(last_modified__gt=when)
+
 
 class OrganisationDivisionSet(
     DateConstraintMixin, DateDisplayMixin, TimeStampedModel

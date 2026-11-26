@@ -716,3 +716,34 @@ class TestDivisionSetLastModified(DivisionSetAPITestCase):
             },
             self.get_last_modified_by_title("/api/division_sets/"),
         )
+
+    def test_list_filter(self):
+        self.save_a_current_division()
+        resp = self.client.get(
+            "/api/division_sets/?last_modified=2026-01-15T00:00:00Z"
+        )
+        self.assertEqual(200, resp.status_code)
+        data = resp.json()
+        self.assertEqual(1, data["count"])
+        self.assertEqual(
+            ["Current divisions"],
+            [result["short_title"] for result in data["results"]],
+        )
+
+    def test_list_filter_excludes_equal_timestamp(self):
+        self.save_a_current_division()
+        resp = self.client.get(
+            "/api/division_sets/?last_modified=2026-02-01T00:00:00Z"
+        )
+        self.assertEqual(0, resp.json()["count"])
+
+    def test_list_filter_combines_with_date_filters(self):
+        self.save_a_current_division()
+        resp = self.client.get(
+            "/api/division_sets/?last_modified=2026-01-15T00:00:00Z&future"
+        )
+        self.assertEqual(0, resp.json()["count"])
+
+    def test_list_filter_invalid(self):
+        resp = self.client.get("/api/division_sets/?last_modified=nope")
+        self.assertEqual(400, resp.status_code)
