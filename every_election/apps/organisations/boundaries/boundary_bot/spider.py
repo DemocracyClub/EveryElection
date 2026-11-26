@@ -80,9 +80,7 @@ class LgbceSpider(scrapy.Spider):
         return None
 
     def get_eco_containers(self, response):
-        latest_info_containers = response.xpath(
-            '//div[@class="latest-information"]//div[@class="link-name-and-view-container"]'
-        )
+        latest_info_containers = self.get_latest_info_containers(response)
         # if there's a link container in latest info, use that
         if latest_info_containers:
             return latest_info_containers
@@ -94,18 +92,40 @@ class LgbceSpider(scrapy.Spider):
             return previous_stages_containers
         return []
 
-    def get_eco_title_and_link(self, response, latest_event):
-        def get_link_title(selector):
-            return selector.xpath(
-                '*/div[@class="link-title"]//text()'
-            ).extract_first()
+    def get_latest_info_containers(self, response):
+        return response.xpath(
+            '//div[@class="latest-information"]//div[@class="link-name-and-view-container"]'
+        )
 
-        def get_link(selector):
-            return selector.xpath("*/a/@href").extract_first()
+    def _get_link_title(self, container):
+        return (
+            container.xpath('*/div[@class="link-title"]//text()').get().strip()
+        )
+
+    def _get_link(self, container):
+        return container.xpath("*/a/@href").get().strip()
+
+    def _title_has_correction(self, title):
+        return "correction" in title.lower()
+
+    def get_correction_slips(self, response):
+        # We only care want to check for correction slips in the latest info section
+        # Either we already scraped the previous correction slips or its too late to care
+        containers = self.get_latest_info_containers(response)
+        slips = []
+        for container in containers:
+            title = self._get_link_title(container)
+            if not self._title_has_correction(title):
+                continue
+            link = self._get_link(container)
+            slips.append({"title": title, "url": link})
+        return slips
+
+    def get_eco_title_and_link(self, response, latest_event):
 
         def is_relevant_review(title):
             # Ignore correction slips
-            if "correction" in title.lower():
+            if self._title_has_correction(title):
                 return False
 
             return (
@@ -118,7 +138,7 @@ class LgbceSpider(scrapy.Spider):
         eco_containers = self.get_eco_containers(response)
 
         links = [
-            (get_link_title(selector), get_link(selector))
+            (self._get_link_title(selector), self._get_link(selector))
             for selector in eco_containers
         ]
 
@@ -191,6 +211,7 @@ class LgbceSpider(scrapy.Spider):
                 "legislation_url": legislation_url,
                 "legislation_made": 0,
                 "legislation_title": legislation_title,
+                "correction_slips": self.get_correction_slips(response),
             }
 
             if rec["legislation_url"]:

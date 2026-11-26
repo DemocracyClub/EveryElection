@@ -10,6 +10,7 @@ from organisations.boundaries.boundary_bot.scraper import (
 from organisations.models.divisions import (
     EditStatus,
     OrganisationBoundaryReview,
+    OrganisationBoundaryReviewCorrectionSlip,
     ReviewStatus,
 )
 from organisations.tests.factories import (
@@ -123,6 +124,56 @@ class TestScraperSaves(MockedCodeMatcherMixin, TestCase):
             "allerdale": base_data["allerdale"].copy(),
         }
         self.scraper.data["allerdale"]["register_code"] = "ALL"
+
+    def test_save_correction_slips_on_review_once(self):
+        # Save initial review before corrections issued
+        self.scraper.data["allerdale"].update(
+            latest_event="Effective date",
+            status=ReviewStatus.CURRENT,
+            legislation_title="The Allerdale (Electoral Changes) Order 2026",
+        )
+
+        self.scraper.save()
+        # Save review with corrections
+        self.scraper.data["allerdale"].update(
+            latest_event="Effective date",
+            status=ReviewStatus.CURRENT,
+            correction_slips=[
+                {"title": "Correction one", "url": "https://example.com/1"},
+                {"title": "Correction two", "url": "https://example.com/2"},
+            ],
+        )
+        self.scraper.save()
+        # Save review with corrections again
+        self.scraper.save()
+
+        review = OrganisationBoundaryReview.objects.get(slug="allerdale")
+        self.assertEqual(
+            2,
+            OrganisationBoundaryReviewCorrectionSlip.objects.filter(
+                boundary_review=review
+            ).count(),
+        )
+
+    def test_save_correction_slip_on_locked_review(self):
+        completed = CompletedOrganisationBoundaryReviewFactory(
+            organisation=self.allerdale_org,
+            edit_status=EditStatus.LOCKED,
+            latest_event="Effective Date",
+        )
+        self.scraper.data["allerdale"].update(
+            legislation_url=completed.legislation_url,
+            latest_event="Updated event",
+            correction_slips=[
+                {"title": "Correction", "url": "https://example.com/slip"},
+            ],
+        )
+
+        self.scraper.save()
+        completed.refresh_from_db()
+        self.assertEqual("Effective Date", completed.latest_event)
+        slip = OrganisationBoundaryReviewCorrectionSlip.objects.get()
+        self.assertEqual(completed, slip.boundary_review)
 
     def test_save_new_review(self):
         self.assertEqual(0, len(OrganisationBoundaryReview.objects.all()))

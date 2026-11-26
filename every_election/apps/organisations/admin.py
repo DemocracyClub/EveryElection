@@ -9,6 +9,7 @@ from organisations.models import (
     DivisionProblem,
     Organisation,
     OrganisationBoundaryReview,
+    OrganisationBoundaryReviewCorrectionSlip,
     OrganisationChange,
     OrganisationChangeLegislation,
     OrganisationDivision,
@@ -59,6 +60,19 @@ class ReadyForProcessingListFilter(SimpleListFilter):
         return queryset
 
 
+class HasCorrectionsIssuedFilter(SimpleListFilter):
+    title = "Has Corrections Issued"
+    parameter_name = "corrections_issued"
+
+    def lookups(self, request, model_admin):
+        return [(True, "Yes"), (False, "No")]
+
+    def queryset(self, request, queryset):
+        if self.value() == "True":
+            return queryset.has_corrections_issued()
+        return queryset
+
+
 class WriteCSVToS3AdminForm(forms.Form):
     overwrite = forms.BooleanField(required=False)
 
@@ -106,12 +120,28 @@ class WriteCSVToS3(FormView):
         )
 
 
+class OrganisationBoundaryReviewCorrectionSliplInline(admin.TabularInline):
+    model = OrganisationBoundaryReviewCorrectionSlip
+    extra = 0
+    show_change_link = False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
 class OrganisationBoundaryReviewAdmin(admin.ModelAdmin):
     # List view
     search_fields = ("organisation__common_name", "slug")
     list_display = ("lgbce_review_title", "status", "latest_event")
     list_filter = (
         ReadyForProcessingListFilter,
+        HasCorrectionsIssuedFilter,
         "public_visibility",
         "status",
         "latest_event",
@@ -120,6 +150,12 @@ class OrganisationBoundaryReviewAdmin(admin.ModelAdmin):
 
     # Detail view
     raw_id_fields = ("organisation", "divisionset")
+
+    def get_inlines(self, request, obj):
+        # Only display the inline correction slip a review has corrections
+        if obj.correction_slips.exists():
+            return [OrganisationBoundaryReviewCorrectionSliplInline]
+        return super().get_inlines(request, obj)
 
     def get_urls(self):
         urls = super().get_urls()

@@ -334,6 +334,9 @@ class OrganisationBoundaryReviewQuerySet(models.QuerySet):
         """
         return self.unprocessed().filter(effective_date=None)
 
+    def has_corrections_issued(self):
+        return self.filter(correction_slips__isnull=False)
+
 
 class ReviewStatus(models.TextChoices):
     COMPLETED = "COMPLETED", "Completed"
@@ -466,3 +469,32 @@ class OrganisationBoundaryReview(TimeStampedModel):
                 detail={"description": "boundary review saved"},
                 detail_type="boundary_change_set_changed",
             )
+
+
+class OrganisationBoundaryReviewCorrectionSlip(TimeStampedModel):
+    """
+    LGBCE sometimes publishes corrections slips for review legislation on their site.
+    This Model lets us track correction slips for a boundary review.
+    """
+
+    boundary_review = models.ForeignKey(
+        OrganisationBoundaryReview,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="correction_slips",
+    )
+    legislation_title = models.CharField(max_length=255)
+    legislation_url = models.URLField()
+
+    def __str__(self):
+        return f"{self.legislation_title}"
+
+    class Meta:
+        verbose_name = "Correction Slip"
+        verbose_name_plural = "Correction Slips"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["boundary_review", "legislation_url"],
+                name="unique_correction_slip",
+            )
+        ]

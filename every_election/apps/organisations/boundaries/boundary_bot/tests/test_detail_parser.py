@@ -17,6 +17,92 @@ def mock_response(file_name, url):
 
 
 class DetailParserTest(TestCase):
+    def test_correction_slip_does_not_replace_order(self):
+        spider = LgbceSpider()
+        fixture = mock_response(
+            "fixtures/detail/correction_slip.html",
+            "https://www.lgbce.org.uk/all-reviews/wirral",
+        )
+        result = list(spider.parse(fixture))
+
+        self.assertEqual(
+            "The Wirral (Electoral Changes) Order 2026",
+            result[0]["legislation_title"],
+        )
+        self.assertEqual(
+            "https://www.legislation.gov.uk/uksi/2026/1045/made",
+            result[0]["legislation_url"],
+        )
+        self.assertEqual(
+            [
+                {
+                    "title": "Correction slip for The Wirral (Electoral Changes) Order 2026",
+                    "url": "https://www.legislation.gov.uk/uksi/2026/1045/pdfs/uksics_20261045_en_001.pdf",
+                }
+            ],
+            result[0]["correction_slips"],
+        )
+
+    def test_correction_slips_in_latest_and_previous_made_order(self):
+        response = TextResponse(
+            url="https://www.lgbce.org.uk/all-reviews/example",
+            body=b"""
+                <div class="latest-information">
+                  <div class="link-name-and-view-container">
+                    <div><div class="link-title">Correction one</div></div>
+                    <div><a href="/current-slip-one.pdf">View</a></div>
+                  </div>
+                </div>
+                <div class="previous-steps">
+                  <div><h5>Made Order</h5>
+                    <div class="link-name-and-view-container">
+                      <div><div class="link-title">CORRECTION one</div></div>
+                      <div><a href="/past-slip-one.pdf">View</a></div>
+                    </div>
+                  </div>
+                </div>
+            """,
+        )
+        self.assertEqual(
+            [
+                {
+                    "title": "Correction one",
+                    "url": "/current-slip-one.pdf",
+                },
+            ],
+            LgbceSpider().get_correction_slips(response),
+        )
+
+    def test_two_correction_slips_in_latest_made_order(self):
+        response = TextResponse(
+            url="https://www.lgbce.org.uk/all-reviews/example",
+            body=b"""
+                <div class="latest-information">
+                  <div class="link-name-and-view-container">
+                    <div><div class="link-title">Correction one</div></div>
+                    <div><a href="/current-slip-one.pdf">View</a></div>
+                  </div>
+                  <div class="link-name-and-view-container">
+                    <div><div class="link-title">Correction two</div></div>
+                    <div><a href="/current-slip-two.pdf">View</a></div>
+                  </div>
+                </div>
+            """,
+        )
+        self.assertEqual(
+            [
+                {
+                    "title": "Correction one",
+                    "url": "/current-slip-one.pdf",
+                },
+                {
+                    "title": "Correction two",
+                    "url": "/current-slip-two.pdf",
+                },
+            ],
+            LgbceSpider().get_correction_slips(response),
+        )
+
     def test_no_eco_with_shapefiles(self):
         spider = LgbceSpider()
         fixture = mock_response(

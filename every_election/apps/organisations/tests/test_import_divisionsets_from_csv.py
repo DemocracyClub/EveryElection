@@ -117,6 +117,18 @@ class ImportDivisionSetsFromCsvTests(TestCase):
         with self.assertRaises(Organisation.DoesNotExist):
             cmd.handle(**self.opts)
 
+    # def test_div_type_unspecified_for_UTA_org(self):
+    #     cmd = Command()
+    #     uta_record = self.base_record
+    #     uta_record["Organisation ID"] = "TEST"
+    #     uta_record["Name"] = "Church"
+    #     uta_record["seats_total"] = "2"
+    #     uta_record["Organisation ID type"] = "local-authority-eng"
+
+    #     cmd.read_from_url = lambda x: [uta_record]
+    #     cmd.org_curie_to_area_type["local-authority-eng:TEST"] = "UTA"
+    #     cmd.handle(**self.opts)
+
     def test_divset_not_found(self):
         # Organisation does exist, but has no associated DivisionSets
         cmd = Command()
