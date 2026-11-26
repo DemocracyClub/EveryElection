@@ -3,6 +3,7 @@ from django.urls import re_path
 from .views import (
     AllBoundaryReviewsView,
     DivisionsetDetailView,
+    DivisionsetRedirectView,
     OrganisationDetailView,
     OrganisationsFilterView,
     PMtilesView,
@@ -26,9 +27,16 @@ urlpatterns = [
         SingleBoundaryReviewView.as_view(),
         name="single_boundary_review_view",
     ),
+    # Division sets used to be addressed by primary key.
+    # This redirects those URLs to the division set detail page.
+    re_path(
+        r"^divisionsets/(?P<divisionset_id>\d+)/$",
+        DivisionsetRedirectView.as_view(),
+        name="divset_pk_redirect_view",
+    ),
     # divisionset detail page
     re_path(
-        r"^divisionsets/(?P<divisionset_id>.+)/$",
+        r"^(?P<organisation_type>[-\w]+)/(?P<official_identifier>[-\w]+)/(?P<date>\d{4}-\d{2}-\d{2})/division_sets/(?P<divset_date>\d{4}-\d{2}-\d{2})/$",
         DivisionsetDetailView.as_view(),
         name="divset_detail_view",
     ),

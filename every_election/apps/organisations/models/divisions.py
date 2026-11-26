@@ -12,9 +12,10 @@ from django.contrib.postgres.fields import (
     RangeOperators,
 )
 from django.db import connection, transaction
-from django.db.models import Func, Q
+from django.db.models import Func, Max, Q
 from django.db.models.fields import BinaryField, CharField
-from django.db.models.functions import MD5, Cast, Concat
+from django.db.models.functions import MD5, Cast, Concat, Greatest
+from django.urls import reverse
 from django.utils.functional import cached_property
 from django_extensions.db.models import TimeStampedModel
 from elections.baker import send_event
@@ -36,9 +37,31 @@ class DivisionSetQuerySet(models.QuerySet):
             & (models.Q(end_date__gte=date) | models.Q(end_date=None))
         )
 
+    def with_last_modified(self):
+        """
+        Annotates `last_modified`: the most recent `modified` timestamp
+        out of the division set and its divisions.
+
+        A division set with no divisions gets its own `modified`, because
+        PostgreSQL's GREATEST ignores NULLs.
+
+        Deleting a division doesn't change `last_modified`, because
+        the timestamp went with the deleted row.
+        """
+        return self.annotate(
+            last_modified=Greatest("modified", Max("divisions__modified"))
+        )
+
+    def last_modified_after(self, when):
+        """
+        Division sets whose `last_modified` (see with_last_modified()) is
+        later than `when`.
+        """
+        return self.with_last_modified().filter(last_modified__gt=when)
+
 
 class OrganisationDivisionSet(
-    DateConstraintMixin, DateDisplayMixin, models.Model
+    DateConstraintMixin, DateDisplayMixin, TimeStampedModel
 ):
     organisation = models.ForeignKey(
         "Organisation", related_name="divisionset", on_delete=models.CASCADE
@@ -57,6 +80,43 @@ class OrganisationDivisionSet(
     def __str__(self):
         return "{}:{} ({})".format(
             self.pk, self.short_title, self.active_period_text
+        )
+
+    def url_kwargs(self) -> dict:
+        """
+        The URL kwargs that identify this division set by its natural key:
+        the organisation's type, identifier and start date, then the
+        division set's start date. The front-end and API URL patterns use
+        the same kwarg names.
+        """
+        return {
+            **self.organisation.url_kwargs(),
+            "divset_date": self.start_date,
+        }
+
+    def get_absolute_url(self):
+        return reverse("divset_detail_view", kwargs=self.url_kwargs())
+
+    @cached_property
+    def previous_divisionset(self):
+        """
+        The same organisation's division set before this one, or None.
+        """
+        return (
+            self.organisation.divisionset.filter(start_date__lt=self.start_date)
+            .order_by("-start_date")
+            .first()
+        )
+
+    @cached_property
+    def next_divisionset(self):
+        """
+        The same organisation's division set after this one, or None.
+        """
+        return (
+            self.organisation.divisionset.filter(start_date__gt=self.start_date)
+            .order_by("start_date")
+            .first()
         )
 
     @cached_property
@@ -86,6 +146,18 @@ class OrganisationDivisionSet(
     @property
     def pmtiles_s3_key(self):
         return f"pmtiles-store/{self.pmtiles_file_name}"
+
+    @property
+    def pmtiles_source_url(self):
+        """
+        Where the PMTiles file can be downloaded from. Either
+        PUBLIC_DATA_BUCKET if set, else PMTilesView for
+        local development.
+        Does not guarantee that the file actually exists.
+        """
+        if settings.PUBLIC_DATA_BUCKET:
+            return f"https://s3.eu-west-2.amazonaws.com/{settings.PUBLIC_DATA_BUCKET}/{self.pmtiles_s3_key}"
+        return reverse("pmtiles_view", args=[self.id])
 
     @property
     def has_related_geographies(self):
@@ -129,7 +201,7 @@ class OrganisationDivisionSet(
 
         return aggregate_dict["result_hash"]
 
-    def save(self, *args, **kwargs):
+    def save(self, **kwargs):
         self.check_end_date()
 
         # generate pmtiles md5 hash if missing
@@ -139,7 +211,7 @@ class OrganisationDivisionSet(
         ):
             self.pmtiles_md5_hash = self.generate_pmtiles_md5_hash()
 
-        return super().save(*args, **kwargs)
+        return super().save(**kwargs)
 
     class Meta:
         verbose_name_plural = "Organisation Division Sets"

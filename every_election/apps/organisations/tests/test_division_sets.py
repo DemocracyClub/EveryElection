@@ -1,9 +1,12 @@
+from datetime import UTC, datetime
 from unittest.mock import patch
 
 import pytest
 from django.db import IntegrityError, transaction
 from elections.tests.factories import ElectedRoleFactory
 from elections.utils import ElectionBuilder
+from freezegun import freeze_time
+from organisations.models import OrganisationDivisionSet
 from organisations.tests.factories import (
     DivisionGeographyFactory,
     OrganisationDivisionFactory,
@@ -163,3 +166,74 @@ class TestDivisionSetOverlapConstraint:
         OrganisationDivisionSetFactory(
             start_date="2017-05-04", end_date="2022-05-04"
         )
+
+
+class TestWithLastModified:
+    """
+    The division set in these tests is saved on 2026-01-01.
+    """
+
+    @pytest.fixture
+    def divset(self, db):
+        with freeze_time("2026-01-01"):
+            return OrganisationDivisionSetFactory()
+
+    def get_last_modified(self, divset):
+        return (
+            OrganisationDivisionSet.objects.with_last_modified()
+            .get(pk=divset.pk)
+            .last_modified
+        )
+
+    def test_without_divisions(self, divset):
+        assert self.get_last_modified(divset) == datetime(
+            2026, 1, 1, tzinfo=UTC
+        )
+
+    def test_division_saved_after_division_set(self, divset):
+        with freeze_time("2026-02-01"):
+            OrganisationDivisionFactory(divisionset=divset)
+        assert self.get_last_modified(divset) == datetime(
+            2026, 2, 1, tzinfo=UTC
+        )
+
+    def test_division_set_saved_after_divisions(self, divset):
+        with freeze_time("2026-02-01"):
+            OrganisationDivisionFactory(divisionset=divset)
+        with freeze_time("2026-03-01"):
+            divset.save()
+        assert self.get_last_modified(divset) == datetime(
+            2026, 3, 1, tzinfo=UTC
+        )
+
+    def test_most_recently_saved_division(self, divset):
+        with freeze_time("2026-03-01"):
+            OrganisationDivisionFactory(divisionset=divset)
+        with freeze_time("2026-02-01"):
+            OrganisationDivisionFactory(divisionset=divset)
+        assert self.get_last_modified(divset) == datetime(
+            2026, 3, 1, tzinfo=UTC
+        )
+
+    def test_ignores_other_division_sets_divisions(self, divset):
+        with freeze_time("2026-02-01"):
+            OrganisationDivisionFactory()
+        assert self.get_last_modified(divset) == datetime(
+            2026, 1, 1, tzinfo=UTC
+        )
+
+    def test_one_row_per_division_set(self, divset):
+        OrganisationDivisionFactory(divisionset=divset)
+        OrganisationDivisionFactory(divisionset=divset)
+        assert OrganisationDivisionSet.objects.with_last_modified().count() == 1
+
+    def test_last_modified_after(self, divset):
+        with freeze_time("2026-02-01"):
+            OrganisationDivisionFactory(divisionset=divset)
+        qs = OrganisationDivisionSet.objects
+        assert list(
+            qs.last_modified_after(datetime(2026, 1, 15, tzinfo=UTC))
+        ) == [divset]
+        assert not qs.last_modified_after(
+            datetime(2026, 2, 1, tzinfo=UTC)
+        ).exists()

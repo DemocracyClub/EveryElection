@@ -49,6 +49,19 @@ class TestOrganisationAPIEndpoint(APITestCase):
         )
         self.assertEqual(404, resp.status_code)
 
+    def test_impossible_dates_not_found(self):
+        for url in [
+            "/api/organisations/local-authority/TEST1/2016-13-45/",
+            "/api/organisations/local-authority/TEST1/2016-02-30/geo/",
+            "/api/organisations/local-authority/TEST1/2016-02-30/elections/",
+        ]:
+            with self.subTest(url=url):
+                resp = self.client.get(url)
+                self.assertEqual(404, resp.status_code)
+                self.assertIn(
+                    "is not a valid yyyy-mm-dd date", resp.json()["detail"]
+                )
+
     def test_get_org_geo_valid(self):
         resp = self.client.get(
             "/api/organisations/local-authority/TEST1/2016-10-01/geo.json"
