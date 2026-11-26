@@ -22,6 +22,8 @@
         "model": "organisations.organisationdivisionset",
         "pk": 115,
         "fields": {
+            "created": "2013-05-20T00:00:00Z",
+            "modified": "2013-05-20T00:00:00Z",
             "organisation": 387,
             "start_date": "2013-05-20",
             "end_date": null,

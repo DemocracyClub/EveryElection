@@ -39,7 +39,7 @@ class DivisionSetQuerySet(models.QuerySet):
 
 
 class OrganisationDivisionSet(
-    DateConstraintMixin, DateDisplayMixin, models.Model
+    DateConstraintMixin, DateDisplayMixin, TimeStampedModel
 ):
     organisation = models.ForeignKey(
         "Organisation", related_name="divisionset", on_delete=models.CASCADE
@@ -179,7 +179,7 @@ class OrganisationDivisionSet(
 
         return aggregate_dict["result_hash"]
 
-    def save(self, *args, **kwargs):
+    def save(self, **kwargs):
         self.check_end_date()
 
         # generate pmtiles md5 hash if missing
@@ -189,7 +189,7 @@ class OrganisationDivisionSet(
         ):
             self.pmtiles_md5_hash = self.generate_pmtiles_md5_hash()
 
-        return super().save(*args, **kwargs)
+        return super().save(**kwargs)
 
     class Meta:
         verbose_name_plural = "Organisation Division Sets"
