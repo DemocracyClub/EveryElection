@@ -1,4 +1,4 @@
-from core.helpers import parse_url_date
+from core.helpers import parse_date_or_404
 from django.http import Http404
 from organisations.models import Organisation, OrganisationDivisionSet
 
@@ -25,7 +25,7 @@ class DivisionSetLookupMixin:
             return self.get_organisation_queryset().get_by_date(
                 organisation_type=self.kwargs["organisation_type"],
                 official_identifier=self.kwargs["official_identifier"],
-                date=parse_url_date(self.kwargs["date"]),
+                date=parse_date_or_404(self.kwargs["date"]),
             )
         except Organisation.DoesNotExist:
             raise Http404()
@@ -44,7 +44,7 @@ class DivisionSetLookupMixin:
         try:
             return (
                 self.get_divisionset_queryset(organisation)
-                .filter_by_date(parse_url_date(self.kwargs["divset_date"]))
+                .filter_by_date(parse_date_or_404(self.kwargs["divset_date"]))
                 .get()
             )
         except OrganisationDivisionSet.DoesNotExist:

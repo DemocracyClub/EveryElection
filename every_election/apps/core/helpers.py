@@ -17,7 +17,7 @@ class MaxSizeLimitOffsetPagination(LimitOffsetPagination):
     max_limit = getattr(settings, "API_MAX_LIMIT", 100)
 
 
-def parse_url_date(value: str) -> date:
+def parse_date_or_404(value: str) -> date:
     """
     Parse a yyyy-mm-dd URL segment. The URL patterns only check that the
     segment is made of digits in the right places, so a value like
