@@ -12,9 +12,9 @@ from django.contrib.postgres.fields import (
     RangeOperators,
 )
 from django.db import connection, transaction
-from django.db.models import Func, Q
+from django.db.models import Func, Max, Q
 from django.db.models.fields import BinaryField, CharField
-from django.db.models.functions import MD5, Cast, Concat
+from django.db.models.functions import MD5, Cast, Concat, Greatest
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django_extensions.db.models import TimeStampedModel
@@ -35,6 +35,21 @@ class DivisionSetQuerySet(models.QuerySet):
         return self.filter(
             models.Q(start_date__lte=date)
             & (models.Q(end_date__gte=date) | models.Q(end_date=None))
+        )
+
+    def with_last_modified(self):
+        """
+        Annotates `last_modified`: the most recent `modified` timestamp
+        out of the division set and its divisions.
+
+        A division set with no divisions gets its own `modified`, because
+        PostgreSQL's GREATEST ignores NULLs.
+
+        Deleting a division doesn't change `last_modified`, because
+        the timestamp went with the deleted row.
+        """
+        return self.annotate(
+            last_modified=Greatest("modified", Max("divisions__modified"))
         )
 
 

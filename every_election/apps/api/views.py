@@ -308,9 +308,11 @@ class DivisionSetViewSet(DivisionSetLookupMixin, viewsets.GenericViewSet):
     # DivisionSetLookupMixin, which uses Organisation.public_objects and
     # so excludes provisional organisations. The flat list needs the
     # same filter to make sure we don't return their division sets.
-    queryset = OrganisationDivisionSet.objects.filter(
-        organisation__provisional=False
-    ).select_related("organisation")
+    queryset = (
+        OrganisationDivisionSet.objects.filter(organisation__provisional=False)
+        .select_related("organisation")
+        .with_last_modified()
+    )
     serializer_class = DivisionSetSummarySerializer
     # Only used by list(). The routes nested under an organisation don't
     # call filter_queryset().
@@ -330,6 +332,11 @@ class DivisionSetViewSet(DivisionSetLookupMixin, viewsets.GenericViewSet):
         page = self.paginate_queryset(queryset)
         serializer = self.get_serializer(page, many=True)
         return self.get_paginated_response(serializer.data)
+
+    def get_divisionset_queryset(self, organisation):
+        return (
+            super().get_divisionset_queryset(organisation).with_last_modified()
+        )
 
     def get_object(self) -> OrganisationDivisionSet:
         return self.get_divisionset()

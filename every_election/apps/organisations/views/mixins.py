@@ -30,13 +30,22 @@ class DivisionSetLookupMixin:
         except Organisation.DoesNotExist:
             raise Http404()
 
+    def get_divisionset_queryset(self, organisation: Organisation):
+        """
+        The division sets of `organisation` that get_divisionset()
+        chooses from. Override to annotate them.
+        """
+        # The related manager sets each division set's `organisation`
+        # to this instance, so building its URL doesn't fetch it again.
+        return organisation.divisionset.all()
+
     def get_divisionset(self) -> OrganisationDivisionSet:
         organisation = self.get_organisation()
         try:
-            # The related manager sets each division set's `organisation`
-            # to this instance, so building its URL doesn't fetch it again.
-            return organisation.divisionset.filter_by_date(
-                parse_url_date(self.kwargs["divset_date"])
-            ).get()
+            return (
+                self.get_divisionset_queryset(organisation)
+                .filter_by_date(parse_url_date(self.kwargs["divset_date"]))
+                .get()
+            )
         except OrganisationDivisionSet.DoesNotExist:
             raise Http404()

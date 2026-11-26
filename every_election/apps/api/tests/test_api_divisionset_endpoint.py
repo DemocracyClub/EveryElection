@@ -102,6 +102,7 @@ class TestDivisionSetDetail(DivisionSetAPITestCase):
                 "legislation_url",
                 "consultation_url",
                 "notes",
+                "last_modified",
                 "division_types",
                 "previous",
                 "next",
@@ -274,6 +275,7 @@ SUMMARY_FIELDS = [
     "legislation_url",
     "consultation_url",
     "notes",
+    "last_modified",
 ]
 
 
@@ -665,3 +667,52 @@ class TestDivisionSetPMTiles(DivisionSetAPITestCase):
             )
         self.assertEqual(302, resp.status_code)
         self.assertIn(self.file_name, resp["Location"])
+
+
+@freeze_time("2026-01-01")
+class TestDivisionSetLastModified(DivisionSetAPITestCase):
+    """
+    Every object in the fixtures is saved on the frozen date. Each test
+    saves one division of "Current divisions" on a later date, which
+    should then be its division set's last_modified.
+    """
+
+    def save_a_current_division(self):
+        with freeze_time("2026-02-01"):
+            self.current_divset.divisions.first().save()
+
+    def get_last_modified_by_title(self, url):
+        results = self.client.get(url).json()["results"]
+        return {r["short_title"]: r["last_modified"] for r in results}
+
+    def test_detail(self):
+        self.save_a_current_division()
+        data = self.client.get(f"{ORG_URL}/division_sets/2019-05-02/").json()
+        self.assertEqual("2026-02-01T00:00:00Z", data["last_modified"])
+
+    def test_detail_without_divisions(self):
+        data = self.client.get(f"{ORG_URL}/division_sets/2016-10-01/").json()
+        self.assertEqual("2026-01-01T00:00:00Z", data["last_modified"])
+
+    def test_organisation_list(self):
+        self.save_a_current_division()
+        self.assertEqual(
+            {
+                "Future divisions": "2026-01-01T00:00:00Z",
+                "Current divisions": "2026-02-01T00:00:00Z",
+                "Old divisions": "2026-01-01T00:00:00Z",
+            },
+            self.get_last_modified_by_title(f"{ORG_URL}/division_sets/"),
+        )
+
+    def test_list(self):
+        self.save_a_current_division()
+        self.assertEqual(
+            {
+                "Future divisions": "2026-01-01T00:00:00Z",
+                "Current divisions": "2026-02-01T00:00:00Z",
+                "Old divisions": "2026-01-01T00:00:00Z",
+                "Scottish Parliament divisions": "2026-01-01T00:00:00Z",
+            },
+            self.get_last_modified_by_title("/api/division_sets/"),
+        )

@@ -89,10 +89,13 @@ class OrganisationGeoSerializer(GeoFeatureModelSerializer):
         fields = org_fields
 
 
-class DivisionSetSummarySerializer(serializers.ModelSerializer):
+class DivisionSetBaseSerializer(serializers.ModelSerializer):
     """
-    A division set without its divisions. Used in list responses, and
-    nested inside each division in the elections endpoint.
+    A division set without its divisions or `last_modified`. Nested
+    inside each division in the elections endpoint.
+
+    The elections endpoint fetches division sets with select_related(),
+    which can't add the annotation that `last_modified` comes from.
     """
 
     url = NaturalKeyHyperlinkedField(
@@ -110,6 +113,20 @@ class DivisionSetSummarySerializer(serializers.ModelSerializer):
             "consultation_url",
             "notes",
         )
+
+
+class DivisionSetSummarySerializer(DivisionSetBaseSerializer):
+    """
+    A division set without its divisions. Used in list responses.
+
+    Division sets must come from a queryset that has been through
+    with_last_modified().
+    """
+
+    last_modified = serializers.DateTimeField(read_only=True)
+
+    class Meta(DivisionSetBaseSerializer.Meta):
+        fields = DivisionSetBaseSerializer.Meta.fields + ("last_modified",)
 
 
 class DivisionSerializer(serializers.ModelSerializer):
@@ -140,7 +157,7 @@ class OrganisationDivisionSerializer(DivisionSerializer):
     elections endpoint.
     """
 
-    divisionset = DivisionSetSummarySerializer()
+    divisionset = DivisionSetBaseSerializer()
 
     class Meta(DivisionSerializer.Meta):
         fields = DivisionSerializer.Meta.fields + ("divisionset",)
@@ -149,6 +166,7 @@ class OrganisationDivisionSerializer(DivisionSerializer):
 class DivisionSetSerializer(DivisionSetSummarySerializer):
     """
     A division set including its divisions. Used in the detail response.
+    Like DivisionSetSummarySerializer, it needs with_last_modified().
 
     If the serializer context contains `division_type`, only divisions of
     that type are included in `divisions`.
